@@ -1,0 +1,8 @@
+[submodule "third_party/wasmtime"]
+	path = third_party/wasmtime
+	url = https://github.com/Takashiidobe/wasmtime.git
+	branch = gbc-lr35902
+[submodule "third_party/rustc_codegen_cranelift"]
+	path = third_party/rustc_codegen_cranelift
+	url = https://github.com/Takashiidobe/rustc_codegen_cranelift.git
+	branch = gbc-lr35902

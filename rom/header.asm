@@ -1,0 +1,11 @@
+SECTION "Cartridge entry", ROM0[$100]
+    jp Start
+    ds $150 - @, 0
+
+SECTION "Startup", ROM0
+Start:
+    ld sp, $FFFE
+    call __rust_gbc_main
+.idle
+    halt
+    jr .idle
