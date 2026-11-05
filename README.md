@@ -32,6 +32,7 @@ and link the generated assembly with RGBDS.
       compiler.
 - [x] Lower `stack_addr.i16` and bytewise stack accesses.
 - [x] Represent `i32` values as four byte registers.
+- [x] Limit small memory-copy chunks to the target pointer width.
 - [x] Disable experimental `f16`/`f128` compiler-builtins for LR35902.
 - [x] Omit float-bearing `core` and compiler-builtins routines and reject float
       use in game code.
@@ -52,7 +53,7 @@ arguments, comparisons, conditional branches, and little-endian loads and
 stores. `rgbasm` and `rgblink` can assemble and link a minimal ROM. A build of
 `stack_addr.i16` now uses the LR35902 `ld hl, sp + offset` instruction, and
 spill loads and stores operate bytewise. Both Rust forks use the `gbc-lr35902`
-toolchain. A `core` build reaches `core::str::split_inclusive` and reports that
-an `i64` value needs eight byte registers; the LR35902 backend currently
-represents values up to four bytes. The full Rust ABI, indirect and tail calls,
-stack return values, and Rust data objects are still unsupported.
+toolchain. A `core` build now gets past `core::str::split_inclusive`, but stops
+at an unsupported `trap user1` in a Unicode slice binary-search routine. The
+full Rust ABI, indirect and tail calls, stack return values, and Rust data
+objects are still unsupported.
