@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-const TOOLCHAIN: &str = "nightly-2026-11-05";
+const TOOLCHAIN: &str = "gbc-lr35902";
 
 fn main() -> ExitCode {
     match run() {

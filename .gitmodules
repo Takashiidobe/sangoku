@@ -6,3 +6,7 @@
 	path = third_party/rustc_codegen_cranelift
 	url = https://github.com/Takashiidobe/rustc_codegen_cranelift.git
 	branch = gbc-lr35902
+[submodule "third_party/rust"]
+	path = third_party/rust
+	url = https://github.com/Takashiidobe/rust.git
+	branch = gbc-lr35902

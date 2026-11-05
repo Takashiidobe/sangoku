@@ -5,14 +5,11 @@ Boy ROM, and provide a Rust runtime for Game Boy hardware.
 
 ## Build the example ROM
 
-Install the pinned nightly with the components required by
-rustc_codegen_cranelift, then install RGBDS (`rgbasm`, `rgblink`, and `rgbfix`):
+Build and link the `gbc-lr35902` Rust toolchain with `rustc-dev`, then install
+RGBDS (`rgbasm`, `rgblink`, and `rgbfix`). A stock nightly cannot load the
+backend because it uses private rustc APIs from the Rust fork.
 
 ```sh
-rustup toolchain install nightly-2026-11-05 \
-  --component rustc-dev --component rust-src
-cargo +nightly-2026-11-05 build --release --locked \
-  --manifest-path third_party/rustc_codegen_cranelift/Cargo.toml
 cargo run -- example
 ```
 
@@ -28,25 +25,34 @@ and link the generated assembly with RGBDS.
 
 ## Roadmap
 
-- [x] Lower basic CLIF functions through register allocation and emission.
-- [x] Lower `i8` arithmetic, bitwise operations, spills, and jumps.
-- [x] Print allocated LR35902 instructions as RGBDS assembly.
-- [x] Emit one RGBDS source unit per codegen unit with sections and symbols.
-- [ ] Emit Rust data and preserve function/data references as RGBDS relocations.
-- [x] Add an LR35902 `--emit=asm` path that skips object writing.
-- [x] Assemble and link generated source with `rgbasm` and `rgblink`.
-- [x] Lower direct calls with byte arguments in registers and on the stack.
-- [ ] Complete rustc's LR35902 ABI mapping for parameters, returns, and foreign
-      ABIs.
-- [ ] Build a runtime for startup, graphics, input, audio, and cartridge memory.
-- [x] Add a `gbc-rs` command that compiles a `no_core` source file and links a
-      ROM.
+- [x] Lower basic `i8`/`i16` ops, comparisons, branches, loads, and stores.
+- [x] Emit RGBDS assembly and link a minimal cartridge ROM.
+- [x] Add rustc's LR35902 C ABI mapping in the pinned Rust fork.
+- [x] Build the Rust fork and compile `rustc_codegen_cranelift` against that
+      compiler.
+- [x] Lower `stack_addr.i16` and bytewise stack accesses.
+- [x] Represent `i32` values as four byte registers.
+- [x] Disable experimental `f16`/`f128` compiler-builtins for LR35902.
+- [x] Omit float-bearing `core` and compiler-builtins routines and reject float
+      use in game code.
+- [x] Reject C variadic function definitions and calls on LR35902.
+- [ ] Keep `i64` out of required `core` paths or add the minimum bytewise
+      support they need.
+- [ ] Add the intrinsics, data objects, and relocations required by `core`.
+- [ ] Build `core` for LR35902 with assembly-only output.
+- [ ] Add a runtime for ROM startup, panics, memory, and hardware access.
+- [ ] Build a small game and extend the runtime for graphics, input, and audio.
+- [ ] Make `gbc-rs` a reliable driver for compiling and linking Rust games.
 
 ## Current state
 
-The backend can compile small `no_core` Rust functions, including direct calls
-with byte arguments passed in registers and on the stack, to RGBDS assembly.
-`rgbasm` and `rgblink` can assemble and link the result. The CLIF subset
-includes `i8` arithmetic, bitwise operations, returns, spills, and unconditional
-jumps. Indirect and tail calls, stack return values, and the full Rust ABI are
-not supported. The assembly path still rejects Rust data objects.
+The backend compiles small `no_core` Rust functions to RGBDS assembly. Its
+LR35902 lowering covers a small `i8`/`i16` subset, direct calls, and basic stack
+arguments, comparisons, conditional branches, and little-endian loads and
+stores. `rgbasm` and `rgblink` can assemble and link a minimal ROM. A build of
+`stack_addr.i16` now uses the LR35902 `ld hl, sp + offset` instruction, and
+spill loads and stores operate bytewise. Both Rust forks use the `gbc-lr35902`
+toolchain. A `core` build reaches `core::str::split_inclusive` and reports that
+an `i64` value needs eight byte registers; the LR35902 backend currently
+represents values up to four bytes. The full Rust ABI, indirect and tail calls,
+stack return values, and Rust data objects are still unsupported.
