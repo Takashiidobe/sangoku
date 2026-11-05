@@ -33,12 +33,12 @@ and link the generated assembly with RGBDS.
 - [x] Lower `stack_addr.i16` and bytewise stack accesses.
 - [x] Represent `i32` values as four byte registers.
 - [x] Limit small memory-copy chunks to the target pointer width.
+- [x] Lower Cranelift traps through the LR35902 `rst $10` vector.
 - [x] Disable experimental `f16`/`f128` compiler-builtins for LR35902.
 - [x] Omit float-bearing `core` and compiler-builtins routines and reject float
       use in game code.
 - [x] Reject C variadic function definitions and calls on LR35902.
-- [ ] Keep `i64` out of required `core` paths or add the minimum bytewise
-      support they need.
+- [ ] Lower unsigned `i16` division required by `core` slice binary search.
 - [ ] Add the intrinsics, data objects, and relocations required by `core`.
 - [ ] Build `core` for LR35902 with assembly-only output.
 - [ ] Add a runtime for ROM startup, panics, memory, and hardware access.
@@ -54,6 +54,7 @@ stores. `rgbasm` and `rgblink` can assemble and link a minimal ROM. A build of
 `stack_addr.i16` now uses the LR35902 `ld hl, sp + offset` instruction, and
 spill loads and stores operate bytewise. Both Rust forks use the `gbc-lr35902`
 toolchain. A `core` build now gets past `core::str::split_inclusive`, but stops
-at an unsupported `trap user1` in a Unicode slice binary-search routine. The
-full Rust ABI, indirect and tail calls, stack return values, and Rust data
-objects are still unsupported.
+at unsupported `udiv.i16` in a Unicode slice binary-search routine. Trap
+instructions use the ROM's `rst $10` vector, which disables interrupts and loops
+forever. The full Rust ABI, indirect and tail calls, stack return values, and
+Rust data objects are still unsupported.
