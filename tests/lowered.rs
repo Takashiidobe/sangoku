@@ -202,3 +202,82 @@ fn sign_extension_matches_host() -> Result<()> {
     }
     Ok(())
 }
+
+fn invoke(program: &harness::Program, name: &str, data: &[u8]) -> Result<u32> {
+    let memory: Vec<_> = data
+        .iter()
+        .enumerate()
+        .map(|(i, byte)| (BASE + i as u16, *byte))
+        .collect();
+    let e = call(program, name, &memory)?;
+    Ok(u32::from(e.a) | u32::from(e.b) << 8 | u32::from(e.c) << 16 | u32::from(e.d) << 24)
+}
+
+fn operands<const N: usize>(a: u32, b: u32) -> Vec<u8> {
+    let mut data = a.to_le_bytes()[..N].to_vec();
+    data.resize(4, 0);
+    data.extend_from_slice(&b.to_le_bytes()[..N]);
+    data
+}
+
+#[test]
+fn min_max_abs_match_host() -> Result<()> {
+    let program = program("min-max-abs")?;
+    macro_rules! check {
+        ($ty:ty, $uty:ty, $bytes:literal, $name:literal) => {{
+            let edges: [$ty; 7] = [
+                0,
+                1,
+                -1,
+                <$ty>::MAX,
+                <$ty>::MIN,
+                <$ty>::MAX - 1,
+                <$ty>::MIN + 1,
+            ];
+            let mut state = 0x2545_F491u32;
+            let mut sampled = edges.to_vec();
+            for _ in 0..12 {
+                state = state.wrapping_mul(1_664_525).wrapping_add(1_013_904_223);
+                sampled.push((state >> 8) as $uty as $ty);
+            }
+            for a in sampled.iter().copied() {
+                let read = |name: &str, data: &[u8]| -> Result<$ty> {
+                    Ok(invoke(&program, &format!("__rust_{name}_{}", $name), data)? as $uty as $ty)
+                };
+                assert_eq!(
+                    read("iabs", &(a as $uty).to_le_bytes())?,
+                    a.wrapping_abs(),
+                    "iabs {a}"
+                );
+                for b in sampled.iter().copied() {
+                    let data = operands::<$bytes>(a as $uty as u32, b as $uty as u32);
+                    assert_eq!(read("smin", &data)?, a.min(b), "smin {a} {b}");
+                    assert_eq!(read("smax", &data)?, a.max(b), "smax {a} {b}");
+                    assert_eq!(
+                        read("umin", &data)? as $uty,
+                        (a as $uty).min(b as $uty),
+                        "umin {a} {b}"
+                    );
+                    assert_eq!(
+                        read("umax", &data)? as $uty,
+                        (a as $uty).max(b as $uty),
+                        "umax {a} {b}"
+                    );
+                }
+            }
+        }};
+    }
+    check!(i8, u8, 1, "i8");
+    check!(i16, u16, 2, "i16");
+    check!(i32, u32, 4, "i32");
+
+    for value in [0u8, 0x0f, 0xff] {
+        assert_eq!(
+            invoke(&program, "__rust_bnot_i8", &[value])? & 0xff,
+            u32::from(!value)
+        );
+    }
+    assert_eq!(invoke(&program, "__rust_select_i8", &[7, 9, 1])? & 0xff, 7);
+    assert_eq!(invoke(&program, "__rust_select_i8", &[7, 9, 0])? & 0xff, 9);
+    Ok(())
+}

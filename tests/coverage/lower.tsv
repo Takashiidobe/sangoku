@@ -18,7 +18,7 @@ bnot	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 bnot	i16	ok	
 bnot	i32	ok	
 bnot	i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
-bnot	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = bnot.i8 v0`, type = `Some(types::I8)`
+bnot	i8	ok	
 bor	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 bor	i16	ok	
 bor	i32	ok	
@@ -264,10 +264,10 @@ fsub	f32	unsupported	Unsupported feature: Unsupported type for LR35902: f32
 fsub	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 func_addr	-	ok	
 iabs	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
-iabs	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = iabs.i16 v0`, type = `Some(types::I16)`
-iabs	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = iabs.i32 v0`, type = `Some(types::I32)`
+iabs	i16	ok	
+iabs	i32	ok	
 iabs	i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
-iabs	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = iabs.i8 v0`, type = `Some(types::I8)`
+iabs	i8	ok	
 iadd	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 iadd	i16	ok	
 iadd	i32	ok	
@@ -426,7 +426,7 @@ select	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 select	i16	ok	
 select	i32	ok	
 select	i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
-select	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = select.i8 v2, v0, v1`, type = `Some(types::I8)`
+select	i8	ok	
 sextend	i16->i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 sextend	i16->i32	ok	
 sextend	i16->i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
@@ -441,15 +441,15 @@ sload16	i16->i32	ok
 sload8	i8->i16	ok	
 sload8	i8->i32	ok	
 smax	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
-smax	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smax.i16 v0, v1`, type = `Some(types::I16)`
-smax	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smax.i32 v0, v1`, type = `Some(types::I32)`
+smax	i16	ok	
+smax	i32	ok	
 smax	i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
-smax	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smax.i8 v0, v1`, type = `Some(types::I8)`
+smax	i8	ok	
 smin	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
-smin	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smin.i16 v0, v1`, type = `Some(types::I16)`
-smin	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smin.i32 v0, v1`, type = `Some(types::I32)`
+smin	i16	ok	
+smin	i32	ok	
 smin	i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
-smin	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smin.i8 v0, v1`, type = `Some(types::I8)`
+smin	i8	ok	
 smul_overflow	i128	inexpressible	
 smul_overflow	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = smul_overflow.i16 v0, v1`, type = `Some(types::I16)`
 smul_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = smul_overflow.i32 v0, v1`, type = `Some(types::I32)`
@@ -527,14 +527,14 @@ uload8	i8->i16	ok
 uload8	i8->i32	ok	
 umax	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 umax	i16	ok	
-umax	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = umax.i32 v0, v1`, type = `Some(types::I32)`
+umax	i32	ok	
 umax	i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
-umax	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = umax.i8 v0, v1`, type = `Some(types::I8)`
+umax	i8	ok	
 umin	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 umin	i16	ok	
-umin	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = umin.i32 v0, v1`, type = `Some(types::I32)`
+umin	i32	ok	
 umin	i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
-umin	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = umin.i8 v0, v1`, type = `Some(types::I8)`
+umin	i8	ok	
 umul_overflow	i128	inexpressible	
 umul_overflow	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = umul_overflow.i16 v0, v1`, type = `Some(types::I16)`
 umul_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = umul_overflow.i32 v0, v1`, type = `Some(types::I32)`

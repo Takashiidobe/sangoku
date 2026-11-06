@@ -1,0 +1,137 @@
+set enable_verifier=false
+target z80
+
+function %smin_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+4
+    v3 = smin v1, v2
+    return v3
+}
+
+function %smax_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+4
+    v3 = smax v1, v2
+    return v3
+}
+
+function %umin_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+4
+    v3 = umin v1, v2
+    return v3
+}
+
+function %umax_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+4
+    v3 = umax v1, v2
+    return v3
+}
+
+function %iabs_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iabs v1
+    return v2
+}
+
+function %smin_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+4
+    v3 = smin v1, v2
+    return v3
+}
+
+function %smax_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+4
+    v3 = smax v1, v2
+    return v3
+}
+
+function %umin_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+4
+    v3 = umin v1, v2
+    return v3
+}
+
+function %umax_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+4
+    v3 = umax v1, v2
+    return v3
+}
+
+function %iabs_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iabs v1
+    return v2
+}
+
+function %smin_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = smin v1, v2
+    return v3
+}
+
+function %smax_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = smax v1, v2
+    return v3
+}
+
+function %umin_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = umin v1, v2
+    return v3
+}
+
+function %umax_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = umax v1, v2
+    return v3
+}
+
+function %iabs_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = iabs v1
+    return v2
+}
+
+function %bnot_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = bnot v1
+    return v2
+}
+
+function %select_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+1
+    v3 = load.i8 v0+2
+    v6 = iconst.i8 0
+    v4 = icmp ne v3, v6
+    v5 = select v4, v1, v2
+    return v5
+}
