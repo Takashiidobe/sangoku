@@ -1,42 +1,17 @@
 import random
-import subprocess
-import tempfile
 import unittest
-from pathlib import Path
 
 from emu import Emulator
-
-ROOT = Path(__file__).resolve().parents[1]
+from runtime_harness import ROOT, assemble
 
 
 class Mul16Test(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        with tempfile.TemporaryDirectory() as directory:
-            directory = Path(directory)
-            source = (ROOT / "runtime/mul16.asm").read_text()
-            (directory / "mul16.asm").write_text(
-                source.replace("ROM0", "ROM0[$100]", 1)
-            )
-            subprocess.run(
-                [
-                    "rgbasm",
-                    "-o",
-                    str(directory / "mul16.o"),
-                    str(directory / "mul16.asm"),
-                ],
-                check=True,
-            )
-            subprocess.run(
-                [
-                    "rgblink",
-                    "-o",
-                    str(directory / "mul16.gb"),
-                    str(directory / "mul16.o"),
-                ],
-                check=True,
-            )
-            cls.code = (directory / "mul16.gb").read_bytes()
+        source = (
+            (ROOT / "runtime/mul16.asm").read_text().replace("ROM0", "ROM0[$100]", 1)
+        )
+        cls.code = assemble({"multiply.asm": source}).rom
 
     def run_product(self, lhs, rhs):
         emu = Emulator(self.code, pc=0x100)

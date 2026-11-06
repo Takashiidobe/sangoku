@@ -51,6 +51,9 @@ cost to reach an address, bounded by an instruction limit. Costs are CPU clock
 cycles (T-cycles), accumulated in `cycles`. Unsupported instructions raise an
 error.
 
+To compare helper and caller costs, ROM sizes, stack use, and scratch RAM, see
+[runtime audit measurements](wiki/runtime-audits.md).
+
 The backend supports a limited set of LR35902 operations and does not yet
 support the full Rust ABI, indirect or tail calls, stack return values, or Rust
 data objects. Current ASCII-only changes to `core` alter string and character
