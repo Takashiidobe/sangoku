@@ -142,8 +142,8 @@ notices and the license text accompany the audit-only adapted sources in
 ## Reproduce the tests and measurements
 
 ```bash
-python -B -m unittest discover -s tests -v
-python -B tests/audit_division.py --samples 1024 --seed 0 --exhaustive8 \
+cargo test
+cargo run --example audit-division -- --samples 1024 --seed 0 --exhaustive8 \
   --output build/division-audit/results.json \
   --artifacts build/division-audit/artifacts --csv wiki/audits/division16.csv
 ```
@@ -185,7 +185,7 @@ exception, and the GPL text accompany the production source in `runtime/NOTICE`
 and `runtime/COPYING`.
 
 ```bash
-python -B tests/audit_division.py --variant runtime --samples 1024 --seed 0 \
+cargo run --example audit-division -- --variant runtime --samples 1024 --seed 0 \
   --exhaustive8 --output build/runtime-division/results.json \
   --artifacts build/runtime-division/artifacts \
   --csv wiki/audits/division16-runtime.csv

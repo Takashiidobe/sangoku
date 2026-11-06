@@ -53,14 +53,14 @@ Rust `core` needs, then compiling `core` to assembly.
 The runtime supports wrapping 16-bit multiplication for signed and unsigned
 operands, and unsigned 16-bit division/remainder. Division and remainder share
 an SM83 core and reach the trap vector for a zero divisor. With RGBDS installed,
-run the assembly execution tests with `python -m unittest discover -s tests -v`.
+run the assembly execution tests with `cargo test`.
 
-Use `Emulator` from `tests/emu.py` for runtime tests. It executes a subset of
-SM83 instructions against flat 64 KiB memory. Set registers and memory directly;
-`step()` returns one instruction's cost and `run_until(address)` returns the
-cost to reach an address, bounded by an instruction limit. Costs are CPU clock
-cycles (T-cycles), accumulated in `cycles`. Unsupported instructions raise an
-error.
+Use `Emulator` from `sangoku_test_support::emu` for runtime tests. It executes a
+subset of SM83 instructions against flat 64 KiB memory. Set byte registers and
+memory directly; use `set_sp()` and `set_hl()` for SP and HL. `step()` returns
+one instruction's cost and `run_until(address, max_instructions)` returns the
+cost to reach an address. Costs are CPU clock cycles (T-cycles), accumulated in
+`cycles`. Unsupported instructions return an error.
 
 To compare helper and caller costs, ROM sizes, stack use, and scratch RAM, see
 [runtime audit measurements](wiki/runtime-audits.md).
@@ -69,12 +69,13 @@ The [division audit](wiki/audits/division16.md) records the selected 95-byte
 implementation and its cycle, ROM, and stack costs.
 
 Spills and reloads preserve live registers and flags; the
-[spill regression check](tests/check_spills.py) executes generated compiler
+[spill regression check](tests/bin/check_spills.rs) executes generated compiler
 output. Native `popcnt.i16` lowering supports narrow and zero-extended results
 with live inputs and register pressure. The
 [popcount audit](wiki/audits/popcount16.md) records the algorithms and current
-compiler measurements. Run `python -B tests/check_popcount.py --exhaustive16` to
-validate the replacement at all six optimization levels.
+compiler measurements. Run
+`cargo run --example check-popcount -- --exhaustive16` to validate the
+replacement at all six optimization levels.
 
 The backend supports a limited set of LR35902 operations and does not yet
 support the full Rust ABI, indirect or tail calls, stack return values, or Rust

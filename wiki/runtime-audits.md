@@ -1,11 +1,11 @@
 # Measure runtime helpers
 
-Install RGBDS and use Python 3.10 or newer. Run tests, then generate a report
-with retained assembly, objects, ROMs, linker maps, and symbols:
+Install RGBDS and the repository's Rust toolchain. Run tests, then generate a
+report with retained assembly, objects, ROMs, linker maps, and symbols:
 
 ```bash
-python -B -m unittest discover -s tests -v
-python -B tests/audit_runtime.py --output build/runtime-audit.json \
+cargo test
+cargo run --example audit-runtime -- --output build/runtime-audit.json \
   --artifacts build/runtime-audit
 ```
 
@@ -14,7 +14,7 @@ registers, a ROM table, and scratch RAM. It uses five explicit input pairs,
 recorded in the JSON. Select a helper and operands with:
 
 ```bash
-python -B tests/audit_runtime.py --helper udiv16 --helper urem16 \
+cargo run --example audit-runtime -- --helper udiv16 --helper urem16 \
   --lhs 0x1234 --rhs 0x10 --output build/division-audit.json \
   --artifacts build/division-audit
 ```
@@ -27,9 +27,9 @@ reaching that vector is the expected outcome. The trap handler itself is not
 executed.
 
 For the unsigned division candidate comparison, see the
-[division audit](audits/division16.md). Run `tests/audit_division.py` to compare
-the repaired restoring loops and SDCC-derived SM83 candidates with the same
-inputs and ABI.
+[division audit](audits/division16.md). Run
+`cargo run --example audit-division --` to compare the repaired restoring loops
+and SDCC-derived SM83 candidates with the same inputs and ABI.
 
 Select `--variant runtime` to validate and measure the production division and
 remainder entries. With `--exhaustive8`, both public entries run against every
@@ -38,15 +38,16 @@ quotient/remainder wrappers and the shared core; paired results use two calls.
 
 ## Read the measurements
 
-For population count, run `tests/audit_popcount.py` with `--exhaustive16` to
-compare the frozen compiler baseline and validated algorithm fixtures. The
-[popcount audit](audits/popcount16.md) records body/caller costs, inline versus
-call tradeoffs, lookup-table alignment, and source-regeneration commands.
+For population count, run `cargo run --example audit-popcount --` with
+`--exhaustive16` to compare the frozen compiler baseline and validated algorithm
+fixtures. The [popcount audit](audits/popcount16.md) records body/caller costs,
+inline versus call tradeoffs, lookup-table alignment, and source-regeneration
+commands.
 
-Run `python -B tests/check_popcount.py --exhaustive16` to rebuild and execute
-current compiler output at optimization levels `0`, `1`, `2`, `3`, `s`, and `z`.
-This checks narrow/wide results, live inputs and spilling callers, with the
-compiler verifier and register-allocation checker enabled.
+Run `cargo run --example check-popcount -- --exhaustive16` to rebuild and
+execute current compiler output at optimization levels `0`, `1`, `2`, `3`, `s`,
+and `z`. This checks narrow/wide results, live inputs and spilling callers, with
+the compiler verifier and register-allocation checker enabled.
 
 Each case reports the helper body and a synthetic caller using the backend ABI:
 first operand low/high in B/C, second operand low/high in A/[SP+2], and result
@@ -79,18 +80,23 @@ registers a helper preserves. Keep the artifacts with the audit's testing log.
 
 ## Extend the fixtures
 
-Use `assemble()` from `tests/runtime_harness.py` to assemble source snapshots
-and obtain symbols, section sizes, and an initialized emulator. Pass an
-`artifacts` directory to retain inputs and outputs; otherwise they are
-temporary. The harness accepts ROM0 and WRAM0 sections in bank zero. Keep lookup
-data in a separate section so instruction and table sizes can be measured
-independently.
+The shared Rust test crate lives in `tests/support`; ordinary regressions run
+with `cargo test`. Audit and compiler-check commands are Cargo examples in
+`tests/bin`. Each command accepts `--help`. Seeded inputs retain the previous
+Python generator's sequences, including rejection sampling.
 
-Set emulator registers and memory, then call `reset_metrics()` immediately
-before execution. It resets cycles, peak stack growth, and written-address
-tracking. Use `write8()` or `write16()` for tracked writes; direct memory setup
-does not contribute to write tracking. Stack growth uses signed 16-bit SP deltas
-and assumes each movement and total frame depth stay below 32 KiB.
+Use `sangoku_test_support::harness::assemble()` to assemble source snapshots and
+obtain symbols, section sizes, and an initialized emulator. Pass an `artifacts`
+directory to retain inputs and outputs; otherwise they are temporary. The
+harness accepts ROM0 and WRAM0 sections in bank zero. Keep lookup data in a
+separate section so instruction and table sizes can be measured independently.
+
+Set byte registers and memory directly; use `set_sp()` and `set_hl()` to update
+the stack pointer and HL pair. Call `reset_metrics()` immediately before
+execution. It resets cycles, peak stack growth, and written-address tracking.
+Use `write8()` or `write16()` for tracked writes; direct memory setup does not
+contribute to write tracking. Stack growth uses signed 16-bit SP deltas and
+assumes each movement and total frame depth stay below 32 KiB.
 
 The emulator models an instruction subset against flat memory. Unsupported
 instructions fail explicitly. Add independent result, flag, memory, and timing

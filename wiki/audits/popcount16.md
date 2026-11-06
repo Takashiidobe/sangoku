@@ -46,7 +46,7 @@ counts alone do not predict complete caller costs. The pressure probe reads its
 fourth input byte from the incoming stack and computes the wrapping sum of both
 inputs and both counts. It forces preservation across two counting instructions.
 
-Reproduce with `python -B tests/check_popcount.py --exhaustive16`. All four
+Reproduce with `cargo run --example check-popcount -- --exhaustive16`. All four
 probes pass every u16 input at all six levels; the second pressure input uses
 `(40503 * input + 12345) & 65535`, plus independent seed-11 pairs. Alternate
 stacks, poisoned registers, native-byte/RGBDS parity, general stack-access
@@ -276,8 +276,8 @@ changed.
 ## Reproduce
 
 ```bash
-python -B -m unittest discover -s tests -v
-python -B tests/audit_popcount.py --samples 1024 --seed 0 --exhaustive16 \
+cargo test
+cargo run --example audit-popcount -- --samples 1024 --seed 0 --exhaustive16 \
   --output build/popcount-audit/results.json \
   --artifacts build/popcount-audit/artifacts --csv wiki/audits/popcount16.csv
 ```
@@ -294,7 +294,7 @@ code/data/caller sizes, stack metrics, clobbers and source/tool records.
 To regenerate compiler outputs without replacing the frozen historical files:
 
 ```bash
-python -B tests/generate_popcount_baselines.py \
+cargo run --example generate-popcount-baselines -- \
   --sdcc build/popcount-audit/sdcc-build/src/sdcc \
   --output build/popcount-audit/regenerated
 ```

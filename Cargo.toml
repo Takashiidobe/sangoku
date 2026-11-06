@@ -2,5 +2,38 @@
 name = "sangoku"
 version = "0.1.0"
 edition = "2024"
+autoexamples = false
+
+[workspace]
+members = ["tests/support"]
+exclude = ["third_party/rust", "third_party/wasmtime", "third_party/rustc_codegen_cranelift"]
+resolver = "3"
 
 [dependencies]
+
+[dev-dependencies]
+sangoku-test-support = { path = "tests/support" }
+
+[[example]]
+name = "audit-runtime"
+path = "tests/bin/audit_runtime.rs"
+
+[[example]]
+name = "audit-division"
+path = "tests/bin/audit_division.rs"
+
+[[example]]
+name = "audit-popcount"
+path = "tests/bin/audit_popcount.rs"
+
+[[example]]
+name = "check-spills"
+path = "tests/bin/check_spills.rs"
+
+[[example]]
+name = "check-popcount"
+path = "tests/bin/check_popcount.rs"
+
+[[example]]
+name = "generate-popcount-baselines"
+path = "tests/bin/generate_popcount_baselines.rs"
