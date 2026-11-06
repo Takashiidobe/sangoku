@@ -44,6 +44,13 @@ The runtime supports wrapping 16-bit multiplication for signed and unsigned
 operands. With RGBDS installed, run its assembly execution regression tests with
 `python -m unittest discover -s tests -v`.
 
+Use `Emulator` from `tests/emu.py` for runtime tests. It executes a subset of
+SM83 instructions against flat 64 KiB memory. Set registers and memory directly;
+`step()` returns one instruction's cost and `run_until(address)` returns the
+cost to reach an address, bounded by an instruction limit. Costs are CPU clock
+cycles (T-cycles), accumulated in `cycles`. Unsupported instructions raise an
+error.
+
 The backend supports a limited set of LR35902 operations and does not yet
 support the full Rust ABI, indirect or tail calls, stack return values, or Rust
 data objects. Current ASCII-only changes to `core` alter string and character

@@ -4,94 +4,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from emu import Emulator
+
 ROOT = Path(__file__).resolve().parents[1]
-
-
-def run(code, lhs, rhs):
-    r = [lhs & 255, lhs >> 8, 0x55, 0xAA, 0x12, 0x34, 0, rhs & 255]
-    pc, sp, carry, zero, ticks = 0x100, 0xD000, 0, False, 0
-    memory = bytearray(65536)
-    memory[sp + 2] = rhs >> 8
-
-    def hl():
-        return r[4] * 256 + r[5]
-
-    def sethl(v):
-        r[4], r[5] = (v >> 8) & 255, v & 255
-
-    for _ in range(1000):
-        op = code[pc]
-        pc += 1
-        if op == 0xC9:
-            return r[7] | (r[0] << 8), ticks + 16
-        if 0x40 <= op <= 0x7F:
-            dst, src = (op >> 3) & 7, op & 7
-            v = memory[hl()] if src == 6 else r[src]
-            r[dst] = v
-            ticks += 8 if src == 6 else 4
-        elif op == 0xF8:
-            sethl(sp + code[pc])
-            pc += 1
-            carry = 0
-            zero = False
-            ticks += 12
-        elif op == 0x21:
-            sethl(code[pc] | code[pc + 1] << 8)
-            pc += 2
-            ticks += 12
-        elif op in (0x3E, 0x06):
-            r[7 if op == 0x3E else 0] = code[pc]
-            pc += 1
-            ticks += 8
-        elif op in (0x09, 0x19, 0x29):
-            v = (
-                hl()
-                + ({0x09: r[0] * 256 + r[1], 0x19: r[2] * 256 + r[3], 0x29: hl()}[op])
-            )
-            carry = int(v > 65535)
-            sethl(v)
-            ticks += 8
-        elif op == 0xCB:
-            sub = code[pc]
-            pc += 1
-            reg = sub & 7
-            old = r[reg]
-            if sub >> 3 == 7:
-                r[reg], carry = old >> 1, old & 1
-            elif sub >> 3 == 3:
-                r[reg], carry = (old >> 1) | (carry << 7), old & 1
-            elif sub >> 3 == 4:
-                r[reg], carry = (old << 1) & 255, old >> 7
-            elif sub >> 3 == 2:
-                r[reg], carry = ((old << 1) | carry) & 255, old >> 7
-            else:
-                raise ValueError(hex(sub))
-            zero = r[reg] == 0
-            ticks += 8
-        elif op == 0x17:
-            old = r[7]
-            r[7], carry = ((old << 1) | carry) & 255, old >> 7
-            zero = False
-            ticks += 4
-        elif op == 0xB7:
-            zero = r[7] == 0
-            carry = 0
-            ticks += 4
-        elif op in (0x05, 0x3D):
-            reg = 0 if op == 0x05 else 7
-            r[reg] = (r[reg] - 1) & 255
-            zero = r[reg] == 0
-            ticks += 4
-        elif op in (0x20, 0x30):
-            disp = code[pc]
-            pc += 1
-            taken = not (zero if op == 0x20 else carry)
-            if taken:
-                pc += disp if disp < 128 else disp - 256
-            ticks += 12 if taken else 8
-        else:
-            raise ValueError(hex(op))
-    raise RuntimeError("loop")
 
 
 class Mul16Test(unittest.TestCase):
@@ -123,8 +38,22 @@ class Mul16Test(unittest.TestCase):
             )
             cls.code = (directory / "mul16.gb").read_bytes()
 
+    def run_product(self, lhs, rhs):
+        emu = Emulator(self.code, pc=0x100)
+        emu.b, emu.c = lhs & 0xFF, lhs >> 8
+        emu.a = rhs & 0xFF
+        emu.d, emu.e, emu.hl = 0x55, 0xAA, 0x1234
+        emu.f = 0xF0
+        emu.sp = 0xD000
+        emu.write16(emu.sp, 0x150)
+        emu.memory[emu.sp + 2] = rhs >> 8
+        ticks = emu.run_until(0x150)
+        self.assertEqual(emu.sp, 0xD002)
+        self.assertEqual(emu.memory[0xD002], rhs >> 8)
+        return emu.a | emu.b << 8, ticks
+
     def check_product(self, lhs, rhs):
-        result, _ = run(self.code, lhs & 0xFFFF, rhs & 0xFFFF)
+        result, _ = self.run_product(lhs & 0xFFFF, rhs & 0xFFFF)
         self.assertEqual(result, (lhs * rhs) & 0xFFFF, (lhs, rhs))
 
     def test_boundaries_and_byte_order(self):
@@ -159,7 +88,7 @@ class Mul16Test(unittest.TestCase):
     def test_shortcut_timing(self):
         for rhs in (0, 1, 0xFF, 0x100, 0xFFFF):
             with self.subTest(rhs=rhs):
-                result, ticks = run(self.code, 0x1234, rhs)
+                result, ticks = self.run_product(0x1234, rhs)
                 self.assertEqual(result, (0x1234 * rhs) & 0xFFFF)
                 base = 480 if rhs < 256 else 848
                 self.assertEqual(ticks, base + 4 * rhs.bit_count())
