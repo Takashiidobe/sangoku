@@ -428,18 +428,18 @@ select	i32	ok
 select	i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
 select	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = select.i8 v2, v0, v1`, type = `Some(types::I8)`
 sextend	i16->i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
-sextend	i16->i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sextend.i32 v0`, type = `Some(types::I32)`
+sextend	i16->i32	ok	
 sextend	i16->i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
 sextend	i32->i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 sextend	i32->i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
 sextend	i64->i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 sextend	i8->i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
-sextend	i8->i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sextend.i16 v0`, type = `Some(types::I16)`
-sextend	i8->i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sextend.i32 v0`, type = `Some(types::I32)`
+sextend	i8->i16	ok	
+sextend	i8->i32	ok	
 sextend	i8->i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
-sload16	i16->i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sload16.i32 v0`, type = `Some(types::I32)`
-sload8	i8->i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sload8.i16 v0`, type = `Some(types::I16)`
-sload8	i8->i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sload8.i32 v0`, type = `Some(types::I32)`
+sload16	i16->i32	ok	
+sload8	i8->i16	ok	
+sload8	i8->i32	ok	
 smax	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 smax	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smax.i16 v0, v1`, type = `Some(types::I16)`
 smax	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smax.i32 v0, v1`, type = `Some(types::I32)`

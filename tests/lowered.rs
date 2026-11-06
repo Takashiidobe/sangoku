@@ -130,3 +130,75 @@ fn memory_offsets_beyond_a_signed_byte() -> Result<()> {
     );
     Ok(())
 }
+
+fn run_with(
+    program: &harness::Program,
+    name: &str,
+    regs: (u8, u8, u8),
+    memory: &[(u16, u8)],
+) -> Result<sangoku_test_support::emu::Emulator> {
+    let stop = program.symbols["done"];
+    let mut emulator = program.emulator(name)?;
+    for (address, byte) in memory {
+        emulator.memory[*address as usize] = *byte;
+    }
+    (emulator.a, emulator.b, emulator.c) = regs;
+    emulator.set_sp(STACK - 2);
+    emulator.write16(STACK - 2, stop);
+    emulator.run_until(stop, 8192)?;
+    Ok(emulator)
+}
+
+#[test]
+fn sign_extension_matches_host() -> Result<()> {
+    let program = program("sign-extend")?;
+    let wide = |e: &sangoku_test_support::emu::Emulator| {
+        u32::from(e.a) | u32::from(e.b) << 8 | u32::from(e.c) << 16 | u32::from(e.d) << 24
+    };
+    for value in [0i8, 1, 0x7f, -1, -128, -2] {
+        let byte = value as u8;
+        let e = run_with(&program, "__rust_sx8_16", (0, byte, 0), &[])?;
+        assert_eq!(
+            u16::from(e.a) | u16::from(e.b) << 8,
+            i16::from(value) as u16
+        );
+        let e = run_with(&program, "__rust_sx8_32", (0, byte, 0), &[])?;
+        assert_eq!(wide(&e), i32::from(value) as u32);
+    }
+    for value in [0i16, 1, 0x7fff, -1, -32768, 0x00ff, -256] {
+        let bits = value as u16;
+        let e = run_with(
+            &program,
+            "__rust_sx16_32",
+            (0, bits as u8, (bits >> 8) as u8),
+            &[],
+        )?;
+        assert_eq!(wide(&e), i32::from(value) as u32);
+    }
+    let (b, c) = (BASE as u8, (BASE >> 8) as u8);
+    for value in [0u8, 0x7f, 0x80, 0xff] {
+        let e = run_with(&program, "__rust_sld8_16", (0, b, c), &[(BASE, value)])?;
+        assert_eq!(
+            u16::from(e.a) | u16::from(e.b) << 8,
+            i16::from(value as i8) as u16
+        );
+        let e = run_with(
+            &program,
+            "__rust_sld8_32",
+            (0, b, c),
+            &[(BASE + 300, value)],
+        )?;
+        assert_eq!(wide(&e), i32::from(value as i8) as u32);
+    }
+    for value in [0i16, 0x7fff, -1, -32768] {
+        let bits = (value as u16).to_le_bytes();
+        let e = run_with(
+            &program,
+            "__rust_sld16_32",
+            (0, b, c),
+            &[(BASE, bits[0]), (BASE + 1, bits[1])],
+        )?;
+        assert_eq!(wide(&e), i32::from(value) as u32);
+    }
+    Ok(())
+}

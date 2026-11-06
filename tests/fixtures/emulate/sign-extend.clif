@@ -1,0 +1,38 @@
+set enable_verifier=false
+target z80
+
+function %sx8_16(i8) -> i16 system_v {
+block0(v0: i8):
+    v1 = sextend.i16 v0
+    return v1
+}
+
+function %sx8_32(i8) -> i32 system_v {
+block0(v0: i8):
+    v1 = sextend.i32 v0
+    return v1
+}
+
+function %sx16_32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = sextend.i32 v0
+    return v1
+}
+
+function %sld8_16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = sload8.i16 v0
+    return v1
+}
+
+function %sld8_32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = sload8.i32 v0+300
+    return v1
+}
+
+function %sld16_32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = sload16.i32 v0
+    return v1
+}
