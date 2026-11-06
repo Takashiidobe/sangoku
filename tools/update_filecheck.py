@@ -43,7 +43,7 @@ class ToolError(Exception):
 
 
 def escape(line):
-    return line.replace("{{", "{{[{]}}{").replace("[[", "{{[[]}}[").strip()
+    return line.replace("{{", "{{[{]}}{").replace("[[", "{{[[]}}[").rstrip()
 
 
 def stage_of(fixture):
