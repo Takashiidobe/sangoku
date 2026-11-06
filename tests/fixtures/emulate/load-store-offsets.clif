@@ -1,0 +1,53 @@
+set enable_verifier=false
+target z80
+
+function %ld8_300(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0+300
+    return v1
+}
+
+function %ld16_n200(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0-200
+    return v1
+}
+
+function %ld32_126(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0+126
+    return v1
+}
+
+function %uld16_128(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = uload16.i32 v0+128
+    return v1
+}
+
+function %uld8_n5(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = uload8.i16 v0-5
+    return v1
+}
+
+function %st8_300(i16) system_v {
+block0(v0: i16):
+    v1 = iconst.i8 0x5a
+    store v1, v0+300
+    return
+}
+
+function %ist16_n5(i16) system_v {
+block0(v0: i16):
+    v1 = iconst.i32 0x12345678
+    istore16 v1, v0-5
+    return
+}
+
+function %ist8_127(i16) system_v {
+block0(v0: i16):
+    v1 = iconst.i16 0x7766
+    istore8 v1, v0+127
+    return
+}

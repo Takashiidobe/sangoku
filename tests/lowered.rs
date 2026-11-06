@@ -60,3 +60,73 @@ fn i32_load_and_store_round_trip() -> Result<()> {
     );
     Ok(())
 }
+
+const BASE: u16 = 0xC200;
+
+fn call(
+    program: &harness::Program,
+    name: &str,
+    memory: &[(u16, u8)],
+) -> Result<sangoku_test_support::emu::Emulator> {
+    let stop = program.symbols["done"];
+    let mut emulator = program.emulator(name)?;
+    for (address, byte) in memory {
+        emulator.memory[*address as usize] = *byte;
+    }
+    emulator.b = BASE as u8;
+    emulator.c = (BASE >> 8) as u8;
+    emulator.set_sp(STACK - 2);
+    emulator.write16(STACK - 2, stop);
+    emulator.run_until(stop, 8192)?;
+    Ok(emulator)
+}
+
+#[test]
+fn memory_offsets_beyond_a_signed_byte() -> Result<()> {
+    let program = program("load-store-offsets")?;
+
+    let e = call(&program, "__rust_ld8_300", &[(BASE + 300, 0x9c)])?;
+    assert_eq!(e.a, 0x9c);
+
+    let e = call(
+        &program,
+        "__rust_ld16_n200",
+        &[(BASE - 200, 0x34), (BASE - 199, 0x12)],
+    )?;
+    assert_eq!((e.a, e.b), (0x34, 0x12));
+
+    let bytes = [0x11u8, 0x22, 0x33, 0x44];
+    let memory: Vec<_> = bytes
+        .iter()
+        .enumerate()
+        .map(|(i, b)| (BASE + 126 + i as u16, *b))
+        .collect();
+    let e = call(&program, "__rust_ld32_126", &memory)?;
+    assert_eq!((e.a, e.b, e.c, e.d), (0x11, 0x22, 0x33, 0x44));
+
+    let e = call(
+        &program,
+        "__rust_uld16_128",
+        &[(BASE + 128, 0xef), (BASE + 129, 0xbe)],
+    )?;
+    assert_eq!((e.a, e.b, e.c, e.d), (0xef, 0xbe, 0, 0));
+
+    let e = call(&program, "__rust_uld8_n5", &[(BASE - 5, 0xf0)])?;
+    assert_eq!((e.a, e.b), (0xf0, 0));
+
+    let e = call(&program, "__rust_st8_300", &[])?;
+    assert_eq!(e.memory[(BASE + 300) as usize], 0x5a);
+
+    let e = call(&program, "__rust_ist16_n5", &[(BASE - 3, 0xee)])?;
+    assert_eq!(
+        e.memory[(BASE - 5) as usize..(BASE - 2) as usize],
+        [0x78, 0x56, 0xee]
+    );
+
+    let e = call(&program, "__rust_ist8_127", &[(BASE + 128, 0xee)])?;
+    assert_eq!(
+        e.memory[(BASE + 127) as usize..(BASE + 129) as usize],
+        [0x66, 0xee]
+    );
+    Ok(())
+}
