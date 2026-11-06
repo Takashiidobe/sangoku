@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "sangoku",
+  "project_id": "e100c623-33bb-404f-b09f-4a62787eac9b"
+}
