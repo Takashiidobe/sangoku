@@ -1,0 +1,34 @@
+{
+  "sdcc_version": "4.6.4",
+  "upstream_sources": [
+    {
+      "path": "device/lib/sm83/divint.s",
+      "svn_revision": "17147",
+      "sha256": "12735c657272765dae15d33e7396ac1fa5cd17ed0f9cb902480ccff3ddd77f72"
+    },
+    {
+      "path": "device/lib/z80-common/divunsigned.s",
+      "svn_revision": "17147",
+      "sha256": "c58c8b453e0944bbb91f2d335675cf3582a21b926a2450813941f396076e8207"
+    },
+    {
+      "path": "device/lib/z80-common/modunsigned.s",
+      "svn_revision": "17147",
+      "sha256": "27925488f94c12a7bda232d314302d95ddee523644200a0b858ef703b58fd291"
+    },
+    {
+      "path": "device/lib/_divulong.c",
+      "svn_revision": "17147",
+      "sha256": "e60fda0abfdc88848a5eac3982ec642e23d185e31e822c02b9baabb5a6d05125"
+    },
+    {
+      "path": "device/lib/_modulong.c",
+      "svn_revision": "17147",
+      "sha256": "b0d708e4d93760accbd4766a606ae8761bf51894fa551ed2e9dd8c81d37b02bf"
+    }
+  ],
+  "production_baselines": {
+    "udiv16.asm": "71a2663c0f01ab88fac3ca83cae1beb155159fff7c1686d2f8a8a4dcaa0d8a49",
+    "udiv16alt.asm": "e2facb0dfd9db424e1f29eb4fabc0d047267b6aa96a8930a29deb8459ddbb5fc"
+  }
+}

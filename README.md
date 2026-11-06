@@ -54,6 +54,10 @@ error.
 To compare helper and caller costs, ROM sizes, stack use, and scratch RAM, see
 [runtime audit measurements](wiki/runtime-audits.md).
 
+Unsigned 16-bit division/remainder helpers still have ABI/setup defects. The
+[division audit](wiki/audits/division16.md) records validated replacements and
+their cycle, ROM, and stack costs.
+
 The backend supports a limited set of LR35902 operations and does not yet
 support the full Rust ABI, indirect or tail calls, stack return values, or Rust
 data objects. Current ASCII-only changes to `core` alter string and character

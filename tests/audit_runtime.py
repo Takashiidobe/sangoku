@@ -46,7 +46,9 @@ audit_done::
 """
 
 
-def execute(program, entry, *, lhs, rhs, body):
+def execute(
+    program, entry, *, lhs, rhs, body, initialize=None, stop_symbol="audit_done"
+):
     emu = program.emulator(entry)
     emu.d, emu.e, emu.hl, emu.f = 0x55, 0xAA, 0x1234, 0xF0
     emu.sp = 0xD000
@@ -54,12 +56,14 @@ def execute(program, entry, *, lhs, rhs, body):
     if body:
         emu.b, emu.c, emu.a = lhs & 255, lhs >> 8, rhs & 255
         emu.sp -= 4
-        emu.write16(emu.sp, program.symbols["audit_done"])
+        emu.write16(emu.sp, program.symbols[stop_symbol])
         emu.memory[emu.sp + 2] = rhs >> 8
         entry_stack = 4
+    if initialize is not None:
+        initialize(emu)
     initial = {name: getattr(emu, name) for name in "abcdefhl"}
     emu.reset_metrics()
-    stop = program.symbols["audit_done"]
+    stop = program.symbols[stop_symbol]
     for _ in range(1000):
         if emu.pc in (stop, 0x10):
             break
@@ -80,6 +84,7 @@ def execute(program, entry, *, lhs, rhs, body):
     }
     return {
         "cycles": emu.cycles,
+        "written_addresses": sorted(emu.written_addresses),
         "entry_stack_bytes": entry_stack,
         "peak_additional_stack_bytes": emu.peak_stack_bytes,
         "peak_stack_bytes": entry_stack + emu.peak_stack_bytes,

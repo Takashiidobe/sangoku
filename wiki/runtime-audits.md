@@ -26,6 +26,11 @@ current arithmetic loop with explicitly initialized registers. A helper that
 reaches `$0010` is reported as `rst_10`; for division by zero, reaching that
 vector is the expected outcome. The trap handler itself is not executed.
 
+For the unsigned division candidate comparison, see the
+[division audit](audits/division16.md). Run `tests/audit_division.py` to compare
+the repaired restoring loops and SDCC-derived SM83 candidates with the same
+inputs and ABI.
+
 ## Read the measurements
 
 Each case reports the helper body and a synthetic caller using the backend ABI:

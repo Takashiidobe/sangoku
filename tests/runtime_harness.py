@@ -45,6 +45,16 @@ def assemble(sources, *, artifacts=None):
     directory = Path(artifacts).resolve()
     directory.mkdir(parents=True, exist_ok=True)
     commands = []
+
+    def run(command):
+        commands.append(command)
+        result = subprocess.run(command, capture_output=True, text=True)
+        if result.returncode:
+            (directory / "build-error.txt").write_text(result.stdout + result.stderr)
+            raise subprocess.CalledProcessError(
+                result.returncode, command, output=result.stdout, stderr=result.stderr
+            )
+
     objects = []
     for index, (name, source) in enumerate(sources.items()):
         if Path(name).name != name:
@@ -53,8 +63,7 @@ def assemble(sources, *, artifacts=None):
         path.write_text(source)
         obj = directory / f"{index}.o"
         command = ["rgbasm", "-I", str(ROOT) + "/", "-o", str(obj), str(path)]
-        subprocess.run(command, check=True, text=True)
-        commands.append(command)
+        run(command)
         objects.append(str(obj))
     command = [
         "rgblink",
@@ -66,8 +75,7 @@ def assemble(sources, *, artifacts=None):
         str(directory / "runtime.map"),
         *objects,
     ]
-    subprocess.run(command, check=True, text=True)
-    commands.append(command)
+    run(command)
     symbols = {}
     for line in (directory / "runtime.sym").read_text().splitlines():
         match = re.fullmatch(r"([0-9a-fA-F]+):([0-9a-fA-F]+) (.+)", line)
