@@ -1,5 +1,10 @@
 # SM83 16-bit population count audit
 
+The spill defect below was subsequently fixed in `sangoku-7em`; see the
+[repair log](../log/2026-11-06-14-51.md). The retained baseline and measurements
+describe the compiler at audit time. The current expansion now computes correct
+results, but its replacement recommendation remains.
+
 **Replace the current expansion: YES.** It is incorrect when its temporaries
 spill, and a minimally repaired version is still much larger and slower than the
 audited alternatives. The general spill/reload defect is tracked in

@@ -58,9 +58,10 @@ To compare helper and caller costs, ROM sizes, stack use, and scratch RAM, see
 The [division audit](wiki/audits/division16.md) records the selected 95-byte
 implementation and its cycle, ROM, and stack costs.
 
-The current `popcnt.i16` expansion miscompiles when its temporaries spill. The
-[popcount audit](wiki/audits/popcount16.md) records the reproducer, validated
-replacement candidates, and pending compiler fixes.
+Spills and reloads preserve live registers and flags; the
+[spill regression check](tests/check_spills.py) executes generated compiler
+output. The [popcount audit](wiki/audits/popcount16.md) records the original
+defect and the pending optimization of the current expansion.
 
 The backend supports a limited set of LR35902 operations and does not yet
 support the full Rust ABI, indirect or tail calls, stack return values, or Rust
