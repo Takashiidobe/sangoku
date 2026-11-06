@@ -1,0 +1,37 @@
+set enable_verifier=false
+target z80
+
+function %fneg(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = fneg v1
+    v3 = bitcast.i32 v2
+    return v3
+}
+
+function %fabs(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = fabs v1
+    v3 = bitcast.i32 v2
+    return v3
+}
+
+function %fcopysign(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = load.f32 v0+4
+    v3 = fcopysign v1, v2
+    v4 = bitcast.i32 v3
+    return v4
+}
+
+function %copy_select(i16) system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = f32const 0x1.8p1
+    v3 = load.i8 v0+4
+    v4 = select v3, v1, v2
+    store v4, v0+8
+    return
+}

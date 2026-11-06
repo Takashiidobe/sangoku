@@ -397,6 +397,58 @@ fn many_wide_arguments_and_stack_returns_round_trip() -> Result<()> {
 }
 
 #[test]
+fn f32_sign_ops_select_and_const_match_host() -> Result<()> {
+    let program = program("float-bits")?;
+    let values = [
+        0.0f32,
+        -0.0,
+        1.5,
+        -2.25,
+        f32::INFINITY,
+        f32::NAN,
+        1e-40,
+        f32::MAX,
+    ];
+    for a in values {
+        let data = a.to_bits().to_le_bytes();
+        assert_eq!(invoke(&program, "__rust_fneg", &data)?, (-a).to_bits());
+        assert_eq!(invoke(&program, "__rust_fabs", &data)?, a.abs().to_bits());
+        for b in [1.0f32, -1.0] {
+            let mut data = data.to_vec();
+            data.extend(b.to_bits().to_le_bytes());
+            assert_eq!(
+                invoke(&program, "__rust_fcopysign", &data)?,
+                a.copysign(b).to_bits()
+            );
+        }
+        for flag in [0u8, 1] {
+            let mut data = data.to_vec();
+            data.extend([flag, 0, 0, 0]);
+            let e = call(
+                &program,
+                "__rust_copy_select",
+                &data
+                    .iter()
+                    .enumerate()
+                    .map(|(i, b)| (BASE + i as u16, *b))
+                    .collect::<Vec<_>>(),
+            )?;
+            let at = BASE as usize + 8;
+            let got = u32::from_le_bytes(e.memory[at..at + 4].try_into().unwrap());
+            assert_eq!(
+                got,
+                if flag == 1 {
+                    a.to_bits()
+                } else {
+                    3.0f32.to_bits()
+                }
+            );
+        }
+    }
+    Ok(())
+}
+
+#[test]
 fn division_traps_reach_the_rst_vector() -> Result<()> {
     let program = program("wide-ops")?;
     let cases: [(&str, Vec<u8>); 5] = [
