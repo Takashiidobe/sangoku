@@ -11,7 +11,7 @@ fn main() -> ExitCode {
     match run() {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
-            eprintln!("gbc-rs: {error}");
+            eprintln!("sangoku: {error}");
             ExitCode::FAILURE
         }
     }
@@ -53,7 +53,7 @@ fn run() -> Result<(), String> {
 }
 
 fn usage() -> String {
-    "usage: gbc-rs example [output.gb] | gbc-rs build <source.rs> [output.gb]".into()
+    "usage: sangoku example [output.gb] | sangoku build <source.rs> [output.gb]".into()
 }
 
 fn build_rom(root: &Path, source: &Path, output: &Path) -> Result<(), String> {
@@ -109,16 +109,32 @@ fn build_rom(root: &Path, source: &Path, output: &Path) -> Result<(), String> {
             .arg(&game_object)
             .arg(rust_asm),
     )?;
+    let runtime_object = temp.path().join("runtime.o");
+    run_command(
+        Command::new("rgbasm")
+            .arg("-o")
+            .arg(&runtime_object)
+            .arg(root.join("runtime/udiv16.asm")),
+    )?;
+    let multiply_runtime_object = temp.path().join("mul16.o");
+    run_command(
+        Command::new("rgbasm")
+            .arg("-o")
+            .arg(&multiply_runtime_object)
+            .arg(root.join("runtime/mul16.asm")),
+    )?;
     run_command(
         Command::new("rgblink")
             .arg("-o")
             .arg(&output)
             .arg(header_object)
-            .arg(game_object),
+            .arg(game_object)
+            .arg(runtime_object)
+            .arg(multiply_runtime_object),
     )?;
     run_command(
         Command::new("rgbfix")
-            .args(["-v", "-p", "0", "-t", "GBC-RS"])
+            .args(["-v", "-p", "0", "-t", "SANGOKU"])
             .arg(&output),
     )?;
 
@@ -156,7 +172,7 @@ impl TempDir {
             .duration_since(UNIX_EPOCH)
             .map_err(|error| format!("system clock error: {error}"))?
             .as_nanos();
-        let path = env::temp_dir().join(format!("gbc-rs-{}-{timestamp}", std::process::id()));
+        let path = env::temp_dir().join(format!("sangoku-{}-{timestamp}", std::process::id()));
         fs::create_dir(&path)
             .map_err(|error| format!("could not create {}: {error}", path.display()))?;
         Ok(Self(path))
