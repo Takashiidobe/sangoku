@@ -20,16 +20,21 @@ python -B tests/audit_runtime.py --helper udiv16 --helper urem16 \
 ```
 
 The command exits with status 1 if a result or restored stack pointer is
-incorrect. Existing division entry points have ABI/initialization defects; their
-reports expose failures. The division execution tests separately enter the
-current arithmetic loop with explicitly initialized registers. A helper that
-reaches `$0010` is reported as `rst_10`; for division by zero, reaching that
-vector is the expected outcome. The trap handler itself is not executed.
+incorrect. Division tests exercise both public entry points with the backend
+ABI. Historical faulty helpers remain frozen in the division audit fixtures. A
+helper that reaches `$0010` is reported as `rst_10`; for division by zero,
+reaching that vector is the expected outcome. The trap handler itself is not
+executed.
 
 For the unsigned division candidate comparison, see the
 [division audit](audits/division16.md). Run `tests/audit_division.py` to compare
 the repaired restoring loops and SDCC-derived SM83 candidates with the same
 inputs and ABI.
+
+Select `--variant runtime` to validate and measure the production division and
+remainder entries. With `--exhaustive8`, both public entries run against every
+eight-bit operand pair, including zero divisors. The runtime object contains
+quotient/remainder wrappers and the shared core; paired results use two calls.
 
 ## Read the measurements
 

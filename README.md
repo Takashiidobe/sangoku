@@ -41,8 +41,9 @@ is focused on supporting the operations, intrinsics, data, and relocations that
 Rust `core` needs, then compiling `core` to assembly.
 
 The runtime supports wrapping 16-bit multiplication for signed and unsigned
-operands. With RGBDS installed, run its assembly execution regression tests with
-`python -m unittest discover -s tests -v`.
+operands, and unsigned 16-bit division/remainder. Division and remainder share
+an SM83 core and reach the trap vector for a zero divisor. With RGBDS installed,
+run the assembly execution tests with `python -m unittest discover -s tests -v`.
 
 Use `Emulator` from `tests/emu.py` for runtime tests. It executes a subset of
 SM83 instructions against flat 64 KiB memory. Set registers and memory directly;
@@ -54,9 +55,8 @@ error.
 To compare helper and caller costs, ROM sizes, stack use, and scratch RAM, see
 [runtime audit measurements](wiki/runtime-audits.md).
 
-Unsigned 16-bit division/remainder helpers still have ABI/setup defects. The
-[division audit](wiki/audits/division16.md) records validated replacements and
-their cycle, ROM, and stack costs.
+The [division audit](wiki/audits/division16.md) records the selected 95-byte
+implementation and its cycle, ROM, and stack costs.
 
 The backend supports a limited set of LR35902 operations and does not yet
 support the full Rust ABI, indirect or tail calls, stack return values, or Rust

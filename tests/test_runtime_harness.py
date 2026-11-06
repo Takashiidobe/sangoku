@@ -82,7 +82,7 @@ SECTION "scratch", WRAM0[$c000]
         for result in report["measurements"].values():
             self.assertTrue(result["correct"])
             self.assertEqual(result["status"], "rst_10")
-            self.assertEqual(result["peak_stack_bytes"], 6)
+            self.assertEqual(result["peak_stack_bytes"], 8)
 
     def test_retained_artifacts_and_incorrect_stack(self):
         with tempfile.TemporaryDirectory() as directory:

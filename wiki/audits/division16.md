@@ -2,8 +2,9 @@
 
 **Replace quotient and remainder: YES.** Use the compact `sdcc-z80` SM83
 adaptation with independent, correct ABI wrappers and a shared arithmetic core.
-The q/r-only object links to 95 bytes; the current 97-byte object is incorrect.
-Implementation is tracked separately in `sangoku-88j`.
+The q/r-only object links to 95 bytes; the previous 97-byte object was
+incorrect. The runtime replacement is implemented in `sangoku-88j`; its
+verification is recorded below.
 
 **Use a shared divmod call when both results are needed: YES.** The audit entry
 returns quotient in A/B and remainder in C/D, with low bytes first. Backend
@@ -21,8 +22,9 @@ Z80-derived port on the narrow/wide random classes.
 These decisions cover 16-bit unsigned operations only. The backend currently
 libcalls `udiv.i16` and `urem.i16`. SDCC's generic `_divulong.c` and
 `_modulong.c` were inspected as references; 32-bit code was not benchmarked
-without a concrete core reproducer. No verdict is claimed for that width.
-Production runtime and compiler sources are unchanged by this audit.
+without a concrete core reproducer. No verdict is claimed for that width. The
+candidate measurements below precede the runtime migration recorded in the
+verification section.
 
 ## Results
 
@@ -168,3 +170,43 @@ interrupts, peripherals, memory banking and bus-cycle behavior. Unsupported
 instructions fail. No new emulator instructions were required for this audit.
 The reporting helper now accepts an initialization callback and a named stop
 symbol so multiple caller fixtures can share one linked candidate image.
+
+## Runtime verification (sangoku-88j)
+
+`runtime/udiv16.asm` now uses the compact port with independent quotient and
+remainder ABI wrappers. The linked object is 95 bytes, including both wrappers
+and the 70-byte shared core. At the same fixed link address, its instruction
+bytes match the audited q/r-only object exactly. The unused combined wrapper is
+omitted; paired-operation lowering remains in `sangoku-yz4`.
+
+The broken alternate was removed from `runtime/`; its frozen copy remains in the
+audit fixtures. Source provenance, the original SDCC notice and additional
+exception, and the GPL text accompany the production source in `runtime/NOTICE`
+and `runtime/COPYING`.
+
+```bash
+python -B tests/audit_division.py --variant runtime --samples 1024 --seed 0 \
+  --exhaustive8 --output build/runtime-division/results.json \
+  --artifacts build/runtime-division/artifacts \
+  --csv wiki/audits/division16-runtime.csv
+cargo run -- build examples/blank.rs build/blank.gb
+```
+
+All 149,329 production-entry executions passed: 18,245 ordinary corpus cases, 12
+zero-divisor caller cases, and 131,072 executions covering every eight-bit
+operand pair through each public entry. Unit tests also cover both entries and
+their callers with seed 2, poisoned scratch registers, stack restoration, write
+bounds, and zero-divisor behavior. The ROM smoke build passes.
+
+The runtime measurements match the audit's compact candidate:
+
+| Entry     | Narrow body clocks | Narrow caller clocks | Wide caller mean | Normal peak stack |
+| --------- | -----------------: | -------------------: | ---------------: | ----------------: |
+| quotient  |               1084 |                 1236 |           1133.3 |                 6 |
+| remainder |               1088 |                 1240 |           1137.3 |                 6 |
+
+Both entries use zero scratch RAM and zero table bytes. Zero-divisor callers
+reach the trap vector with eight peak stack bytes. The caller timing here uses
+the same memory-backed operand setup as the candidate audit; a caller packing
+constant operands has different setup costs. Full per-class statistics are in
+[division16-runtime.csv](division16-runtime.csv).

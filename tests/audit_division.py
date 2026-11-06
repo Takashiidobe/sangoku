@@ -44,6 +44,19 @@ OPERATIONS = ("q", "r", "both", "separate")
 
 
 def source_for(variant):
+    if variant == "runtime":
+        return (
+            (ROOT / "runtime/udiv16.asm")
+            .read_text()
+            .replace(
+                'SECTION "Unsigned 16-bit division", ROM0',
+                'SECTION "Audit division", ROM0[$400]',
+                1,
+            )
+            .replace("__gbc_udiv16::", "audit_q::\n__gbc_udiv16::")
+            .replace("__gbc_urem16::", "audit_r::\n__gbc_urem16::")
+            .replace("div16_core:", "audit_core::\ndiv16_core:")
+        )
     if variant in ("raw", "raw-alt"):
         path = "baseline.asm" if variant == "raw" else "baseline-alt.asm"
         return (
@@ -102,7 +115,11 @@ def setup_call(entry):
 
 
 def build(variant, *, artifacts=None):
-    operations = ("q", "r") if variant in ("raw", "raw-alt") else OPERATIONS
+    operations = (
+        ("q", "r", "separate")
+        if variant == "runtime"
+        else (("q", "r") if variant in ("raw", "raw-alt") else OPERATIONS)
+    )
     caller = 'SECTION "Audit callers", ROM0[$100]\n'
     for operation in operations:
         caller += f"audit_{operation}_start::\n"
@@ -219,7 +236,7 @@ def audit(variants, *, samples, seed, exhaustive8=False, artifacts=None):
         "limitations": [
             "flat-memory SM83 subset, no interrupts/peripherals/bank switching/bus timing",
             "hand-written callers reload operands from a 4-byte harness-owned WRAM input block",
-            "all code sizes include quotient, remainder and combined wrappers plus the core",
+            "code sizes include available quotient/remainder/combined wrappers and the core",
             "combined result quotient A/B and remainder C/D; separate calls preserve quotient on stack",
             "body measurements include RET and a preexisting 4-byte caller frame",
             "no 32-bit core reproducer: generic SDCC 32-bit C inspected but not benchmarked",
@@ -262,13 +279,16 @@ def audit(variants, *, samples, seed, exhaustive8=False, artifacts=None):
     for variant in variants:
         print(f"auditing {variant}", flush=True)
         program = build(variant, artifacts=artifacts / variant if artifacts else None)
+        operations = tuple(
+            op for op in OPERATIONS if f"audit_{op}_start" in program.symbols
+        )
         groups = defaultdict(list)
         errors = []
         cases = 0
         changed = set()
         for label, pairs in classes.items():
             for lhs, rhs in pairs:
-                for operation in OPERATIONS:
+                for operation in operations:
                     for body in (True, False) if operation != "separate" else (False,):
                         result = run_case(program, operation, lhs, rhs, body=body)
                         cases += 1
@@ -289,7 +309,7 @@ def audit(variants, *, samples, seed, exhaustive8=False, artifacts=None):
                         )
         traps = []
         for lhs in (0, 1, 32768, 65535):
-            for operation in OPERATIONS:
+            for operation in operations:
                 result = run_case(program, operation, lhs, 0)
                 traps.append(
                     {
@@ -301,16 +321,17 @@ def audit(variants, *, samples, seed, exhaustive8=False, artifacts=None):
                     }
                 )
         exhaustive = {"executed": 0, "correct": True}
-        if exhaustive8 and variant in ("sdcc-z80", "sdcc-z80-early"):
+        if exhaustive8 and variant in ("sdcc-z80", "sdcc-z80-early", "runtime"):
             print(
-                "validating all 8-bit operand pairs through combined ABI entry",
+                "validating all 8-bit operand pairs through public ABI entries",
                 flush=True,
             )
             for lhs in range(256):
                 for rhs in range(256):
-                    result = run_case(program, "both", lhs, rhs, body=True)
-                    exhaustive["executed"] += 1
-                    exhaustive["correct"] &= result["correct"]
+                    for operation in ("q", "r") if variant == "runtime" else ("both",):
+                        result = run_case(program, operation, lhs, rhs, body=True)
+                        exhaustive["executed"] += 1
+                        exhaustive["correct"] &= result["correct"]
         summary = []
         for (label, operation, mode), values in groups.items():
             cycles = [value["cycles"] for value in values]
@@ -346,7 +367,7 @@ def audit(variants, *, samples, seed, exhaustive8=False, artifacts=None):
                 "caller_bytes": {
                     operation: program.symbols[f"audit_{operation}_done"]
                     - program.symbols[f"audit_{operation}_start"]
-                    for operation in OPERATIONS
+                    for operation in operations
                 },
                 "allowed_clobbers": list("abcdefhl"),
                 "observed_changes": sorted(changed),
@@ -399,7 +420,7 @@ def write_csv(report, path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--variant", action="append", choices=VARIANTS)
+    parser.add_argument("--variant", action="append", choices=(*VARIANTS, "runtime"))
     parser.add_argument("--samples", type=int, default=256)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--exhaustive8", action="store_true")

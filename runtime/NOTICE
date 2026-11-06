@@ -1,0 +1,39 @@
+udiv16.asm adapts the unsigned split-division algorithm in SDCC
+4.6.4 device/lib/z80-common/divunsigned.s, SVN revision 17147.
+Upstream SHA-256:
+c58c8b453e0944bbb91f2d335675cf3582a21b926a2450813941f396076e8207
+
+The SM83 port replaces ADC HL,HL and SBC HL,DE with byte operations, uses
+C to preserve A during the wide subtraction, replaces DJNZ with DEC/JR,
+and maps the core result to the sangoku calling convention. The quotient
+and remainder entries independently unpack their arguments. Division by
+zero reaches RST $10. The core leaves quotient in BC and remainder in HL.
+
+The original notice and additional exception follow. COPYING contains
+the complete GNU GPL version 2 text.
+
+divunsigned.s
+
+Copyright (C) 2000-2021, Michael Hope, Philipp Klaus Krause, Marco Bodrato
+
+This library is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this library; see the file COPYING. If not, write to the
+Free Software Foundation, 51 Franklin Street, Fifth Floor, Boston,
+ MA 02110-1301, USA.
+
+As a special exception, if you link this library with other files,
+some of which are compiled with SDCC, to produce an executable,
+this library does not by itself cause the resulting executable to
+be covered by the GNU General Public License. This exception does
+not however invalidate any other reasons why the executable file
+ might be covered by the GNU General Public License.
