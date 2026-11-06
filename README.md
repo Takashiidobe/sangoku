@@ -81,28 +81,13 @@ cost to reach an address. Costs are CPU clock cycles (T-cycles), accumulated in
 `cycles`. Unsupported instructions return an error.
 
 Spills and reloads preserve live registers and flags. Native `popcnt.i16`
-lowering supports narrow and zero-extended results with live inputs and
-register pressure.
+lowering supports narrow and zero-extended results with live inputs and register
+pressure.
 
 The backend supports a limited set of LR35902 operations and does not yet
 support the full Rust ABI, indirect or tail calls, stack return values, or Rust
-data objects. The fork's ASCII-only changes to `core` are being reverted (sangoku-30k).
-
-## Split the compiler into five phases
-
-Make each phase independently runnable, with saved inputs and outputs. These are
-development priorities; the current ROM command still runs the stages together.
-
-1. **Rust frontend:** use the pinned rustc fork to check Rust and produce MIR.
-2. **CLIF generation:** use `rustc_codegen_cranelift` to translate MIR and ABI
-   information into Cranelift IR.
-3. **LR35902 lowering:** lower CLIF, allocate registers, and construct target
-   instructions. Test this phase directly with small CLIF fixtures.
-4. **Assembly and objects:** emit structured RGBDS assembly with explicit
-   symbols, labels, data, and relocations, then assemble it with `rgbasm`.
-   Replace the current formatted-VCode rewriting with a dedicated emitter.
-5. **Link and execute:** link objects with startup code and runtime helpers, fix
-   the ROM header, and check results in an emulator.
+data objects. The fork's ASCII-only changes to `core` are being reverted
+(sangoku-30k).
 
 ## Testing
 
@@ -111,16 +96,18 @@ carry their expected output as `// CHECK:` lines for LLVM `FileCheck`. Run a
 phase on its own, for example `cargo run -- frontend file.rs` (MIR) or
 `cargo run -- clif file.rs` (CLIF) or `cargo run -- lower file.clif` (RGBDS
 assembly from CLIF, no rustc); `-` writes to stdout. Lowering fixtures in
-`tests/fixtures/lower` are small hand-written or saved `.clif` files. To add a fixture, put a small source file in the phase's directory and
-run `tools/update_filecheck.py [glob]` to write its CHECK lines, then review the
-diff. `tools/update_filecheck.py --check` (also run by `cargo nextest run --no-fail-fast`) verifies
-them. Reduce each `core` blocker to a fixture for the phase where it fails.
+`tests/fixtures/lower` are small hand-written or saved `.clif` files. To add a
+fixture, put a small source file in the phase's directory and run
+`tools/update_filecheck.py [glob]` to write its CHECK lines, then review the
+diff. `tools/update_filecheck.py --check` (also run by
+`cargo nextest run --no-fail-fast`) verifies them. Reduce each `core` blocker to
+a fixture for the phase where it fails.
 
 ## Preserve Rust string behavior
 
 Restore UTF-8 decoding and consistent `str`/`char` behavior in the Rust fork.
 The current target-specific `next_code_point` reads one byte per character
 without rejecting non-ASCII input, so valid non-ASCII strings can be decoded
-incorrectly. Add
-regression fixtures for multibyte strings, character boundaries, and
-forward/reverse iteration. Tracked by sangoku-30k, which also covers compact Unicode tables and wider integer support.
+incorrectly. Add regression fixtures for multibyte strings, character
+boundaries, and forward/reverse iteration. Tracked by sangoku-30k, which also
+covers compact Unicode tables and wider integer support.
