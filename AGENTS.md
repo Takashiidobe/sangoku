@@ -26,11 +26,13 @@ validating changes; core compilation is the target milestone.
 
 ## Testing Loop
 
+Run tests with `cargo nextest run --no-fail-fast`, not `cargo test`.
+
 After backend or compiler changes, rebuild the affected toolchain component,
 then use the smallest reproducer for the feature being worked on. Use
 `cargo run -- build examples/blank.rs build/blank.gb` as the end-to-end smoke
 check; it rebuilds the backend, compiles Rust to assembly, and links a ROM. For
-core support work, test the failing phase directly (`cargo run -- frontend`, FileCheck fixtures in `tests/fixtures/<phase>`, `tools/update_filecheck.py`) so failures
+core support work, test the failing phase directly (`cargo run -- frontend|clif`, FileCheck fixtures in `tests/fixtures/<phase>`, `tools/update_filecheck.py`) so failures
 in code generation are distinct from RGBDS or ROM-linking failures. Record newly
 supported or still-blocked core behavior in the README roadmap.
 

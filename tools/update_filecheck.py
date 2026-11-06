@@ -31,8 +31,17 @@ ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "tests" / "fixtures"
 SANGOKU = Path(os.environ.get("SANGOKU", ROOT / "target" / "debug" / "sangoku"))
 
+VOLATILE_CLIF = re.compile(r"^(?:set |; abi |; instance )")
+CRATE_HASH = re.compile(r"\[[0-9a-f]{4}\]")
+
+
+def clif_lines(lines):
+    return [CRATE_HASH.sub("[..]", l) for l in lines if not VOLATILE_CLIF.match(l)]
+
+
 STAGES = {
-    "mir": lambda fixture: [str(SANGOKU), "frontend", str(fixture), "-"],
+    "mir": (lambda fixture: [str(SANGOKU), "frontend", str(fixture), "-"], lambda lines: lines),
+    "clif": (lambda fixture: [str(SANGOKU), "clif", str(fixture), "-"], clif_lines),
 }
 
 GENERATED = re.compile(r"^// CHECK(?:-[A-Z]+)?:.*$")
@@ -54,8 +63,9 @@ def stage_of(fixture):
 
 
 def run_stage(fixture):
+    command, normalize = STAGES[stage_of(fixture)]
     result = subprocess.run(
-        STAGES[stage_of(fixture)](fixture),
+        command(fixture),
         capture_output=True,
         text=True,
         cwd=ROOT,
@@ -63,9 +73,8 @@ def run_stage(fixture):
     if result.returncode != 0:
         raise ToolError(f"{fixture.name} failed:\n{result.stderr}")
     lines = result.stdout.rstrip("\n").split("\n")
-    while lines and lines[0].startswith("//"):
-        lines.pop(0)
-    while lines and lines[0] == "":
+    lines = normalize(lines)
+    while lines and (lines[0].startswith("//") or lines[0] == ""):
         lines.pop(0)
     return lines
 
@@ -109,7 +118,7 @@ def check(fixture):
 def discover(patterns):
     if not patterns:
         patterns = [str(FIXTURES / stage / "*.rs") for stage in STAGES]
-    paths = sorted({Path(p) for pattern in patterns for p in glob.glob(pattern)})
+    paths = sorted({Path(p).resolve() for pattern in patterns for p in glob.glob(pattern)})
     fixtures = [p for p in paths if stage_of(p)]
     if not fixtures:
         raise ToolError("no fixtures matched")

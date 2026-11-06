@@ -1,6 +1,7 @@
 use std::env;
 use std::ffi::{OsStr, OsString};
 use std::fs;
+use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode, Stdio};
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -62,12 +63,25 @@ fn run() -> Result<(), String> {
             }
             emit_mir(&root, source, &output, &opt_level)
         }
+        Some("clif") => {
+            let Some(source) = paths.first() else {
+                return Err(usage());
+            };
+            let output = paths.get(1).cloned().unwrap_or_else(|| {
+                let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
+                PathBuf::from("build").join(name).with_extension("clif")
+            });
+            if paths.len() > 2 {
+                return Err(usage());
+            }
+            emit_clif(&root, source, &output, &opt_level)
+        }
         _ => Err(usage()),
     }
 }
 
 fn usage() -> String {
-    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku frontend <source.rs> [output.mir|-] [--opt-level 0|1|2|3|s|z]".into()
+    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku frontend <source.rs> [output.mir|-] [--opt-level 0|1|2|3|s|z] | sangoku clif <source.rs> [output.clif|-] [--opt-level 0|1|2|3|s|z]".into()
 }
 
 fn parse_build_args(
@@ -118,6 +132,57 @@ fn rustc_command(root: &Path, opt_level: &str) -> Command {
     command
 }
 
+fn build_backend(root: &Path) -> Result<PathBuf, String> {
+    run_command(
+        Command::new("cargo")
+            .current_dir(root)
+            .arg(format!("+{TOOLCHAIN}"))
+            .args(["build", "--release", "--locked", "--manifest-path"])
+            .arg(root.join("third_party/rustc_codegen_cranelift/Cargo.toml")),
+    )?;
+    Ok(root
+        .join("third_party/rustc_codegen_cranelift/target/release/librustc_codegen_cranelift.so"))
+}
+
+fn emit_clif(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<(), String> {
+    let source = absolute_path(source)?;
+    if !source.is_file() {
+        return Err(format!("Rust source does not exist: {}", source.display()));
+    }
+
+    let backend = build_backend(root)?;
+    let temp = TempDir::new()?;
+    run_command(
+        rustc_command(root, opt_level)
+            .env("CG_CLIF_CLIF_ONLY", "1")
+            .arg(format!("-Zcodegen-backend={}", backend.display()))
+            .arg("--emit=asm,llvm-ir")
+            .arg(&source)
+            .arg("-o")
+            .arg(temp.path().join("game.s")),
+    )?;
+    let clif = fs::read(temp.path().join("game.ll"))
+        .map_err(|error| format!("backend did not write CLIF: {error}"))?;
+    write_output(output, clif)
+}
+
+fn write_output(output: &Path, contents: Vec<u8>) -> Result<(), String> {
+    if output == Path::new("-") {
+        return io::stdout()
+            .write_all(&contents)
+            .map_err(|error| format!("could not write stdout: {error}"));
+    }
+    let output = absolute_path(output)?;
+    if let Some(parent) = output.parent() {
+        fs::create_dir_all(parent)
+            .map_err(|error| format!("could not create {}: {error}", parent.display()))?;
+    }
+    fs::write(&output, contents)
+        .map_err(|error| format!("could not write {}: {error}", output.display()))?;
+    println!("Wrote {}", output.display());
+    Ok(())
+}
+
 fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<(), String> {
     let source = absolute_path(source)?;
     if !source.is_file() {
@@ -130,11 +195,6 @@ fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resul
         return run_command(&mut command);
     }
 
-    let output = absolute_path(output)?;
-    if let Some(parent) = output.parent() {
-        fs::create_dir_all(parent)
-            .map_err(|error| format!("could not create {}: {error}", parent.display()))?;
-    }
     let result = command
         .stderr(Stdio::inherit())
         .output()
@@ -142,10 +202,7 @@ fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resul
     if !result.status.success() {
         return Err(format!("{command:?} exited with {}", result.status));
     }
-    fs::write(&output, result.stdout)
-        .map_err(|error| format!("could not write {}: {error}", output.display()))?;
-    println!("Wrote {}", output.display());
-    Ok(())
+    write_output(output, result.stdout)
 }
 
 fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<(), String> {
@@ -160,16 +217,7 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
             .map_err(|error| format!("could not create {}: {error}", parent.display()))?;
     }
 
-    run_command(
-        Command::new("cargo")
-            .current_dir(root)
-            .arg(format!("+{TOOLCHAIN}"))
-            .args(["build", "--release", "--locked", "--manifest-path"])
-            .arg(root.join("third_party/rustc_codegen_cranelift/Cargo.toml")),
-    )?;
-
-    let backend = root
-        .join("third_party/rustc_codegen_cranelift/target/release/librustc_codegen_cranelift.so");
+    let backend = build_backend(root)?;
     let temp = TempDir::new()?;
     let rust_asm = temp.path().join("game.asm");
 

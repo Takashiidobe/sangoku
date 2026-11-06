@@ -1,0 +1,39 @@
+thread 'rustc' panicked at src/driver/aot.rs:66:6:
+called `Result::unwrap()` on an `Err` value: Backend(binary format is unknown)
+stack backtrace:
+   0:     0x7fa79256e0e5 - <std[6ee2287fca6b1018]::backtrace::Backtrace>::create
+   1:     0x7fa79256e035 - <std[6ee2287fca6b1018]::backtrace::Backtrace>::force_capture
+   2:     0x7fa78e725bb5 - <alloc[39ba53cfc80f8fec]::boxed::Box<rustc_driver_impl[54a6c088cb9b7848]::install_ice_hook::{closure#1}> as core[49b6f044c3c5f9d3]::ops::function::Fn<(&dyn for<'a, 'b> core[49b6f044c3c5f9d3]::ops::function::Fn<(&'a std[6ee2287fca6b1018]::panic::PanicHookInfo<'b>,), Output = ()> + core[49b6f044c3c5f9d3]::marker::Sync + core[49b6f044c3c5f9d3]::marker::Send, &std[6ee2287fca6b1018]::panic::PanicHookInfo)>>::call
+   3:     0x7fa7925861e2 - std[6ee2287fca6b1018]::panicking::panic_with_hook
+   4:     0x7fa79255fa62 - std[6ee2287fca6b1018]::panicking::panic_handler::{closure#0}
+   5:     0x7fa792558209 - std[6ee2287fca6b1018]::sys::backtrace::__rust_end_short_backtrace::<std[6ee2287fca6b1018]::panicking::panic_handler::{closure#0}, !>
+   6:     0x7fa79256142d - __rustc[899d8ae308f64181]::rust_begin_unwind
+   7:     0x7fa78e6378bc - core[49b6f044c3c5f9d3]::panicking::panic_fmt
+   8:     0x7fa78e637e82 - core[49b6f044c3c5f9d3]::result::unwrap_failed::unwrap_failed_inner
+   9:     0x7fa77b51fd97 - core[49b6f044c3c5f9d3]::result::unwrap_failed::<cranelift_module[b898a042cc69bc99]::module::ModuleError>
+  10:     0x7fa77b67bd3a - rustc_codegen_cranelift[cb3ffd4549991f77]::driver::aot::make_module
+  11:     0x7fa77b679b62 - rustc_codegen_cranelift[cb3ffd4549991f77]::driver::aot::codegen_cgu
+  12:     0x7fa77b67c1ea - <rustc_codegen_cranelift[cb3ffd4549991f77]::driver::aot::AotDriver as rustc_codegen_ssa[c2bb67a8e885077f]::traits::backend::ExtraBackendMethods>::compile_codegen_unit
+  13:     0x7fa77b569f12 - rustc_codegen_ssa[c2bb67a8e885077f]::base::codegen_crate::<rustc_codegen_cranelift[cb3ffd4549991f77]::driver::aot::AotDriver, rustc_codegen_cranelift[cb3ffd4549991f77]::driver::aot::AotModule>
+  14:     0x7fa77b6c3295 - <rustc_codegen_cranelift[cb3ffd4549991f77]::CraneliftCodegenBackend as rustc_codegen_ssa[c2bb67a8e885077f]::traits::backend::CodegenBackend>::codegen_crate
+  15:     0x7fa78e9655d1 - <rustc_session[2627c54ff426124]::session::Session>::time::<alloc[39ba53cfc80f8fec]::boxed::Box<dyn core[49b6f044c3c5f9d3]::any::Any>, rustc_interface[f424787718a16072]::passes::start_codegen::{closure#1}>
+  16:     0x7fa78e8c5171 - rustc_interface[f424787718a16072]::passes::start_codegen
+  17:     0x7fa78e98f680 - <rustc_interface[f424787718a16072]::queries::Linker>::codegen_and_build_linker
+  18:     0x7fa78e6ceb4b - <std[6ee2287fca6b1018]::thread::local::LocalKey<core[49b6f044c3c5f9d3]::cell::Cell<*const ()>>>::with::<rustc_middle[c27b429cd6291be]::ty::context::tls::enter_context<<rustc_middle[c27b429cd6291be]::ty::context::GlobalCtxt>::enter<rustc_interface[f424787718a16072]::passes::create_and_enter_global_ctxt<core[49b6f044c3c5f9d3]::option::Option<rustc_interface[f424787718a16072]::queries::Linker>, rustc_driver_impl[54a6c088cb9b7848]::compiler_entrypoint::{closure#0}::{closure#1}>::{closure#2}, core[49b6f044c3c5f9d3]::option::Option<rustc_interface[f424787718a16072]::queries::Linker>>::{closure#1}, core[49b6f044c3c5f9d3]::option::Option<rustc_interface[f424787718a16072]::queries::Linker>>::{closure#0}, core[49b6f044c3c5f9d3]::option::Option<rustc_interface[f424787718a16072]::queries::Linker>>
+  19:     0x7fa78e66b803 - <rustc_middle[c27b429cd6291be]::ty::context::TyCtxt>::create_global_ctxt::<core[49b6f044c3c5f9d3]::option::Option<rustc_interface[f424787718a16072]::queries::Linker>, rustc_interface[f424787718a16072]::passes::create_and_enter_global_ctxt<core[49b6f044c3c5f9d3]::option::Option<rustc_interface[f424787718a16072]::queries::Linker>, rustc_driver_impl[54a6c088cb9b7848]::compiler_entrypoint::{closure#0}::{closure#1}>::{closure#2}>
+  20:     0x7fa78e759690 - rustc_interface[f424787718a16072]::passes::create_and_enter_global_ctxt::<core[49b6f044c3c5f9d3]::option::Option<rustc_interface[f424787718a16072]::queries::Linker>, rustc_driver_impl[54a6c088cb9b7848]::compiler_entrypoint::{closure#0}::{closure#1}>
+  21:     0x7fa78e6d851d - <scoped_tls[8267042215c7f723]::ScopedKey<rustc_span[82c4fec40552acf8]::SessionGlobals>>::set::<rustc_interface[f424787718a16072]::util::run_in_thread_with_globals<rustc_interface[f424787718a16072]::util::run_in_thread_pool_with_globals<rustc_interface[f424787718a16072]::interface::run_compiler<(), rustc_driver_impl[54a6c088cb9b7848]::compiler_entrypoint::{closure#0}>::{closure#2}, ()>::{closure#0}, ()>::{closure#0}::{closure#0}::{closure#0}, ()>
+  22:     0x7fa78e70d18a - rustc_span[82c4fec40552acf8]::create_session_globals_then::<(), rustc_interface[f424787718a16072]::util::run_in_thread_with_globals<rustc_interface[f424787718a16072]::util::run_in_thread_pool_with_globals<rustc_interface[f424787718a16072]::interface::run_compiler<(), rustc_driver_impl[54a6c088cb9b7848]::compiler_entrypoint::{closure#0}>::{closure#2}, ()>::{closure#0}, ()>::{closure#0}::{closure#0}::{closure#0}>
+  23:     0x7fa78e6c5e78 - std[6ee2287fca6b1018]::sys::backtrace::__rust_begin_short_backtrace::<rustc_interface[f424787718a16072]::util::run_in_thread_with_globals<rustc_interface[f424787718a16072]::util::run_in_thread_pool_with_globals<rustc_interface[f424787718a16072]::interface::run_compiler<(), rustc_driver_impl[54a6c088cb9b7848]::compiler_entrypoint::{closure#0}>::{closure#2}, ()>::{closure#0}, ()>::{closure#0}::{closure#0}, ()>
+  24:     0x7fa78e6ca0cd - <std[6ee2287fca6b1018]::thread::lifecycle::spawn_unchecked<rustc_interface[f424787718a16072]::util::run_in_thread_with_globals<rustc_interface[f424787718a16072]::util::run_in_thread_pool_with_globals<rustc_interface[f424787718a16072]::interface::run_compiler<(), rustc_driver_impl[54a6c088cb9b7848]::compiler_entrypoint::{closure#0}>::{closure#2}, ()>::{closure#0}, ()>::{closure#0}::{closure#0}, ()>::{closure#1} as core[49b6f044c3c5f9d3]::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}
+  25:     0x7fa79259145f - <std[6ee2287fca6b1018]::sys::thread::unix::Thread>::new::thread_start
+  26:     0x7fa78daacef1 - <unknown>
+  27:     0x7fa78db4c05c - <unknown>
+  28:                0x0 - <unknown>
+
+
+rustc version: 1.101.0-dev
+platform: x86_64-unknown-linux-gnu
+
+query stack during panic:
+end of query stack

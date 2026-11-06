@@ -37,6 +37,14 @@ Run only the Rust frontend, saving MIR to `build/game.mir`:
 cargo run -- frontend game.rs
 ```
 
+Run only CLIF generation, saving Cranelift IR (with ABI and MIR comments) to
+`build/game.clif`. The backend runs inside rustc, so this takes the Rust source
+rather than saved MIR, and stops before LR35902 lowering:
+
+```bash
+cargo run -- clif game.rs
+```
+
 Select optimization with `--opt-level 2` for speed or `--opt-level z` for size:
 
 ```bash
@@ -59,7 +67,7 @@ Rust `core` needs, then compiling `core` to assembly.
 The runtime supports wrapping 16-bit multiplication for signed and unsigned
 operands, and unsigned 16-bit division/remainder. Division and remainder share
 an SM83 core and reach the trap vector for a zero divisor. With RGBDS installed,
-run the assembly execution tests with `cargo test`.
+run the assembly execution tests with `cargo nextest run --no-fail-fast`.
 
 Current lowering supports constant 16-bit logical shifts and 32-bit logical
 right shifts; arithmetic shifts, rotations and variable counts still need the
@@ -101,10 +109,10 @@ development priorities; the current ROM command still runs the stages together.
 
 Each phase has a fixture type: a directory under `tests/fixtures/` whose files
 carry their expected output as `// CHECK:` lines for LLVM `FileCheck`. Run a
-phase on its own, for example `cargo run -- frontend file.rs` (MIR, `-` for
-stdout). To add a fixture, put a small source file in the phase's directory and
+phase on its own, for example `cargo run -- frontend file.rs` (MIR) or
+`cargo run -- clif file.rs` (CLIF); `-` writes to stdout. To add a fixture, put a small source file in the phase's directory and
 run `tools/update_filecheck.py [glob]` to write its CHECK lines, then review the
-diff. `tools/update_filecheck.py --check` (also run by `cargo test`) verifies
+diff. `tools/update_filecheck.py --check` (also run by `cargo nextest run --no-fail-fast`) verifies
 them. Reduce each `core` blocker to a fixture for the phase where it fails.
 
 ## Preserve Rust string behavior
