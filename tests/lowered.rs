@@ -357,6 +357,46 @@ fn wide_arithmetic_and_bit_ops_match_host() -> Result<()> {
 }
 
 #[test]
+fn many_wide_arguments_and_stack_returns_round_trip() -> Result<()> {
+    let program = program("abi")?;
+    for seed in [1u32, 0x0102_0304, 0xFFFF_FFFF] {
+        let args: Vec<u32> = (0..5u32)
+            .map(|i| seed.wrapping_mul(i + 3).wrapping_add(i * 0x1111_1111))
+            .collect();
+        let data: Vec<u8> = args.iter().flat_map(|arg| arg.to_le_bytes()).collect();
+
+        let expected = args.iter().fold(0u32, |sum, arg| sum.wrapping_add(*arg));
+        assert_eq!(invoke(&program, "__rust_call_sum5", &data)?, expected);
+
+        let memory: Vec<_> = data
+            .iter()
+            .enumerate()
+            .map(|(i, byte)| (BASE + i as u16, *byte))
+            .collect();
+        let e = call(&program, "__rust_call_quad", &memory)?;
+        let results: Vec<u32> = (0..4)
+            .map(|i| {
+                let at = (BASE + 32 + 4 * i) as usize;
+                u32::from_le_bytes(e.memory[at..at + 4].try_into().unwrap())
+            })
+            .collect();
+        let [a, b, c, d, e5] = args[..] else {
+            unreachable!()
+        };
+        assert_eq!(
+            results,
+            [
+                a.wrapping_add(b),
+                c.wrapping_add(d),
+                e5 ^ a,
+                b.wrapping_sub(e5)
+            ]
+        );
+    }
+    Ok(())
+}
+
+#[test]
 fn division_traps_reach_the_rst_vector() -> Result<()> {
     let program = program("wide-ops")?;
     let cases: [(&str, Vec<u8>); 5] = [

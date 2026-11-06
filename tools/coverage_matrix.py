@@ -145,7 +145,8 @@ add("stack_addr", "-", [], ADDR,
 
 
 def header(verify):
-    return f"set enable_verifier={'true' if verify else 'false'}\ntarget z80\n\n"
+    verifier = "true" if verify else "false"
+    return f"set enable_verifier={verifier}\nset enable_multi_ret_implicit_sret=true\ntarget z80\n\n"
 
 
 def probe(binary, verify):

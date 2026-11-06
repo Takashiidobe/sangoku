@@ -84,9 +84,16 @@ Spills and reloads preserve live registers and flags. Native `popcnt.i16`
 lowering supports narrow and zero-extended results with live inputs and register
 pressure.
 
+Calling convention: each argument byte goes in B, C, A in that order, then on
+the stack (low address first, caller-owned, not popped by the callee). Return
+values use A, B, C, D, E, H, L; a value that does not fit in the registers left
+is returned whole in a caller-allocated return area. That case adds a hidden
+16-bit pointer argument after the declared arguments (requires
+`enable_multi_ret_implicit_sret`). All registers are caller-saved.
+
 The backend supports a limited set of LR35902 operations and does not yet
-support the full Rust ABI, indirect or tail calls, stack return values, or Rust
-data objects. The fork's ASCII-only changes to `core` are being reverted
+support the full Rust ABI, indirect or tail calls, i64 and wider values, or
+Rust data objects. The fork's ASCII-only changes to `core` are being reverted
 (sangoku-30k).
 
 ## Testing
