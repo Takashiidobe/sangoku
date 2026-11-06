@@ -387,3 +387,53 @@ fn unsupported_instruction_fails() {
             .contains("opcode D3 at 0000")
     );
 }
+
+#[test]
+fn arithmetic_shift_right_all_registers_bytes_flags_and_costs() {
+    for register in 0..8 {
+        let mut e = emu(&[0xCB, 0x28 | register]);
+        for value in 0..=255u16 {
+            for flags in (0..=0xF0).step_by(16) {
+                e.pc = 0;
+                e.set_hl(0xC000);
+                e.write_reg(register, value as u8);
+                e.f = flags;
+                step(&mut e, if register == 6 { 16 } else { 8 });
+                let expected = ((value as u8 as i8) >> 1) as u8;
+                assert_eq!(e.read8(register), expected);
+                assert_eq!(
+                    e.f,
+                    if expected == 0 { 0x80 } else { 0 } | if value & 1 != 0 { 0x10 } else { 0 }
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn auto_indexed_hl_load_store_preserve_flags_and_wrap() {
+    for op in [0x22, 0x2A, 0x32, 0x3A] {
+        for address in [0u16, 0xC000, 0xFFFF] {
+            let mut e = emu(&[]);
+            e.memory[0x100] = op;
+            e.pc = 0x100;
+            e.set_hl(address);
+            e.a = 0xA5;
+            e.f = 0xF0;
+            e.memory[address as usize] = 0x5A;
+            e.reset_metrics();
+            step(&mut e, 8);
+            assert_eq!(
+                e.hl(),
+                address.wrapping_add(if op & 0x10 == 0 { 1 } else { u16::MAX })
+            );
+            assert_eq!(e.f, 0xF0);
+            assert_eq!(e.a, if op & 8 == 0 { 0xA5 } else { 0x5A });
+            assert_eq!(
+                e.memory[address as usize],
+                if op & 8 == 0 { 0xA5 } else { 0x5A }
+            );
+            assert_eq!(e.written_addresses.len(), usize::from(op & 8 == 0));
+        }
+    }
+}

@@ -277,6 +277,15 @@ impl Emulator {
         } else if op == 0xF9 {
             self.set_sp(self.hl());
             8
+        } else if matches!(op, 0x22 | 0x2A | 0x32 | 0x3A) {
+            let address = self.hl();
+            if op & 8 == 0 {
+                self.write8(address, self.a);
+            } else {
+                self.a = self.memory[address as usize];
+            }
+            self.set_hl(address.wrapping_add(if op & 0x10 == 0 { 1 } else { u16::MAX }));
+            8
         } else if op & 0xCF == 3 || op & 0xCF == 0x0B {
             let p = (op >> 4) & 3;
             let v = self
@@ -333,6 +342,7 @@ impl Emulator {
                     2 => (v.wrapping_shl(1) | incoming, v >> 7),
                     3 => (v >> 1 | incoming << 7, v & 1),
                     4 => (v.wrapping_shl(1), v >> 7),
+                    5 => ((v >> 1) | (v & 0x80), v & 1),
                     6 => (v.rotate_left(4), 0),
                     7 => (v >> 1, v & 1),
                     _ => bail!("opcode CB {sub:02X} at {address:04X}"),

@@ -1,0 +1,48 @@
+{
+  "sdcc_version": "SDCC : sm83 TD- 4.6.4 #17147 (Linux)\npublished under GNU General Public License (GPL)\n",
+  "cc_version": "cc (GCC) 16.2.1 20260810\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "upstream": {
+    "path": "/home/takashi/sdcc/src/z80/gen.c",
+    "svn_revision": "17147",
+    "sha256": "64047b45cec1f29871c1ef6b9ebd963de08ae0266a112f3e826e12e8fd1e22fc",
+    "svn_status": ""
+  },
+  "commands": [
+    [
+      "cc",
+      "-E",
+      "-P",
+      "tests/fixtures/shifts/sdcc.c"
+    ],
+    [
+      "/home/takashi/Projects/sangoku/build/popcount-audit/sdcc-build/src/sdcc",
+      "--c1mode",
+      "-msm83",
+      "--std-c23",
+      "--opt-code-speed",
+      "-o",
+      "/home/takashi/Projects/sangoku/build/shift-audit/sdcc-speed.s"
+    ],
+    [
+      "/home/takashi/Projects/sangoku/build/popcount-audit/sdcc-build/src/sdcc",
+      "--c1mode",
+      "-msm83",
+      "--std-c23",
+      "--opt-code-size",
+      "-o",
+      "/home/takashi/Projects/sangoku/build/shift-audit/sdcc-size.s"
+    ]
+  ],
+  "stdin": "build/shift-audit/sdcc.i",
+  "stdin_sha256": "094bca77b9cc6d69a70dc5a0b8c4a4a1aca4a5408f83460202da4f8811bb9069",
+  "reference_functions": [
+    "genLeftShiftLiteral",
+    "genLeftShift",
+    "genRightShiftLiteral",
+    "genRightShift",
+    "genRot1",
+    "genRotW",
+    "genSwap"
+  ],
+  "note": "Z80 and SM83 share gen.c; actual compiled comparisons use -msm83. Independent C audit inputs contain only masked variable counts and in-range literal counts."
+}

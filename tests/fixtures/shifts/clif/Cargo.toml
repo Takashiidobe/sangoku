@@ -1,0 +1,13 @@
+[package]
+name = "sangoku-shift-probes"
+version = "0.1.0"
+edition = "2024"
+
+[workspace]
+
+[dependencies]
+cranelift-codegen = { path = "../../../../third_party/wasmtime/cranelift/codegen", default-features = false, features = ["std", "lr35902", "x86"] }
+cranelift-control = { path = "../../../../third_party/wasmtime/cranelift/control" }
+regalloc2 = "0.15.2"
+target-lexicon = "0.13.5"
+serde_json = { version = "1", features = ["preserve_order"] }

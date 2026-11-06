@@ -38,6 +38,12 @@ quotient/remainder wrappers and the shared core; paired results use two calls.
 
 ## Read the measurements
 
+For shifts and rotates, run `cargo run --example audit-shifts --`. Its default
+uses a small representative matrix; `--full` enables the broad audit and
+`--full --exhaustive16` enables exhaustive constant-16 checks. The
+[shift audit](audits/shifts.md) records constant specializations, variable
+helper choices, caller costs and implementation follow-ups.
+
 For population count, run `cargo run --example audit-popcount --` with
 `--exhaustive16` to compare the frozen compiler baseline and validated algorithm
 fixtures. The [popcount audit](audits/popcount16.md) records body/caller costs,

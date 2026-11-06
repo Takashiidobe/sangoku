@@ -37,3 +37,7 @@ path = "tests/bin/check_popcount.rs"
 [[example]]
 name = "generate-popcount-baselines"
 path = "tests/bin/generate_popcount_baselines.rs"
+
+[[example]]
+name = "audit-shifts"
+path = "tests/bin/audit_shifts.rs"

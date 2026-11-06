@@ -196,6 +196,9 @@ pub fn finish_runtime(report: &Value, output: Option<&Path>) -> Result<()> {
     Ok(())
 }
 pub fn run_args(tool: &str, args: &[String]) -> Result<()> {
+    if tool == "audit-shifts" {
+        return crate::shifts::main(args);
+    }
     if args.len() == 1 && (args[0] == "--help" || args[0] == "-h") {
         let flags = match tool {
             "audit-runtime" => {

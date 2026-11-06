@@ -55,6 +55,11 @@ operands, and unsigned 16-bit division/remainder. Division and remainder share
 an SM83 core and reach the trap vector for a zero divisor. With RGBDS installed,
 run the assembly execution tests with `cargo test`.
 
+The [shift audit](wiki/audits/shifts.md) selects constant specializations and
+variable helper strategies. Current lowering supports constant 16-bit logical
+shifts and 32-bit logical right shifts; arithmetic shifts, rotations and
+variable counts still need the linked implementation work before core support.
+
 Use `Emulator` from `sangoku_test_support::emu` for runtime tests. It executes a
 subset of SM83 instructions against flat 64 KiB memory. Set byte registers and
 memory directly; use `set_sp()` and `set_hl()` for SP and HL. `step()` returns
