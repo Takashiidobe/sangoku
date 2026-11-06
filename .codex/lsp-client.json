@@ -1,7 +1,7 @@
 {
   "lsp": {
-    "rgbds": {
-      "command": ["rgbds-language-server", "--stdio"],
+    "asm": {
+      "command": ["asm-lsp"],
       "extensions": [".asm", ".sm83"]
     }
   }
