@@ -48,6 +48,9 @@ supported or still-blocked core behavior in the README roadmap.
   turn.
 - Add an up to 50 line `llog` and commit at the end of a turn. Don't push unless
   asked.
+- Use the LSP tool (definitions, references, symbols, diagnostics) to navigate
+  and check Rust code, especially in the large `third_party` backends, instead
+  of reading files or grepping blindly.
 - Keep changes scoped and explain the next steps before multi-step work.
 - Do not modify vendored `third_party` sources unless the task requires a
   compiler or backend change.

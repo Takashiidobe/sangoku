@@ -371,7 +371,7 @@ load	f32	unsupported	Unsupported feature: Unsupported type for LR35902: f32
 load	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 load	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 load	i16	ok	
-load	i32	panic	panicked at third_party/wasmtime/cranelift/codegen/src/machinst/compile.rs:77:14: register allocation: SSA(VReg(vreg = 198, class = Int), Inst(2))
+load	i32	ok	
 load	i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
 load	i8	ok	
 load.offset	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
@@ -491,7 +491,7 @@ store	f32	unsupported	Unsupported feature: Unsupported type for LR35902: f32
 store	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 store	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 store	i16	ok	
-store	i32	panic	panicked at third_party/wasmtime/cranelift/codegen/src/machinst/compile.rs:77:14: register allocation: SSA(VReg(vreg = 198, class = Int), Inst(5))
+store	i32	ok	
 store	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
 store	i8	ok	
 symbol_value	-	ok	

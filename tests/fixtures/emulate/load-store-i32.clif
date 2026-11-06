@@ -1,0 +1,15 @@
+set enable_verifier=false
+target z80
+
+function %ld(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    return v1
+}
+
+function %st(i16) system_v {
+block0(v0: i16):
+    v1 = iconst.i32 0x12345678
+    store v1, v0
+    return
+}
