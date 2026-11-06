@@ -277,6 +277,14 @@ impl Emulator {
         } else if op == 0xF9 {
             self.set_sp(self.hl());
             8
+        } else if matches!(op, 0x02 | 0x0A | 0x12 | 0x1A) {
+            let address = self.read_pair((op >> 4) & 3);
+            if op & 8 == 0 {
+                self.write8(address, self.a);
+            } else {
+                self.a = self.memory[address as usize];
+            }
+            8
         } else if matches!(op, 0x22 | 0x2A | 0x32 | 0x3A) {
             let address = self.hl();
             if op & 8 == 0 {
@@ -335,6 +343,10 @@ impl Emulator {
                 self.f =
                     (self.f & CARRY) | HALF_CARRY | flag(v & (1 << ((sub >> 3) & 7)) == 0, ZERO);
                 if r == 6 { 12 } else { 8 }
+            } else if sub >= 0x80 {
+                let bit = 1u8 << ((sub >> 3) & 7);
+                self.write_reg(r, if sub >= 0xC0 { v | bit } else { v & !bit });
+                if r == 6 { 16 } else { 8 }
             } else {
                 let (result, carry) = match sub >> 3 {
                     0 => (v.rotate_left(1), v >> 7),

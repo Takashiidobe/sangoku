@@ -437,3 +437,36 @@ fn auto_indexed_hl_load_store_preserve_flags_and_wrap() {
         }
     }
 }
+#[test]
+fn set_and_res_change_one_bit_and_keep_flags() {
+    let mut e = emu(&[0xCB, 0xC0, 0xCB, 0x80]);
+    e.b = 0x0A;
+    e.f = 0xF0;
+    step(&mut e, 8);
+    assert_eq!((e.b, e.f), (0x0B, 0xF0));
+    step(&mut e, 8);
+    assert_eq!((e.b, e.f), (0x0A, 0xF0));
+    let mut e = emu(&[0xCB, 0xFE]);
+    e.set_hl(0xC000);
+    step(&mut e, 16);
+    assert_eq!(e.memory[0xC000], 0x80);
+}
+#[test]
+fn accumulator_transfers_through_bc_and_de() {
+    let mut e = emu(&[0x1A, 0x02, 0x0A, 0x12]);
+    e.set_hl(0);
+    e.d = 0xC0;
+    e.e = 0x10;
+    e.b = 0xC0;
+    e.c = 0x20;
+    e.memory[0xC010] = 0x5A;
+    step(&mut e, 8);
+    assert_eq!(e.a, 0x5A);
+    step(&mut e, 8);
+    assert_eq!(e.memory[0xC020], 0x5A);
+    e.memory[0xC020] = 0x77;
+    step(&mut e, 8);
+    assert_eq!(e.a, 0x77);
+    step(&mut e, 8);
+    assert_eq!(e.memory[0xC010], 0x77);
+}

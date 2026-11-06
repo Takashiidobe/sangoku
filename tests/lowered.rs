@@ -20,6 +20,9 @@ fn program(fixture: &str) -> Result<harness::Program> {
     harness::assemble(
         &[
             ("lowered.s", String::from_utf8(output.stdout)?),
+            ("udiv16.asm", harness::read("runtime/udiv16.asm")?),
+            ("mul16.asm", harness::read("runtime/mul16.asm")?),
+            ("wide32.asm", harness::read("runtime/wide32.asm")?),
             (
                 "stop.s",
                 "SECTION \"done\", ROM0\nEXPORT done\ndone::\n  nop\n".into(),
@@ -77,7 +80,7 @@ fn call(
     emulator.c = (BASE >> 8) as u8;
     emulator.set_sp(STACK - 2);
     emulator.write16(STACK - 2, stop);
-    emulator.run_until(stop, 8192)?;
+    emulator.run_until(stop, 2_000_000)?;
     Ok(emulator)
 }
 
@@ -145,7 +148,7 @@ fn run_with(
     (emulator.a, emulator.b, emulator.c) = regs;
     emulator.set_sp(STACK - 2);
     emulator.write16(STACK - 2, stop);
-    emulator.run_until(stop, 8192)?;
+    emulator.run_until(stop, 2_000_000)?;
     Ok(emulator)
 }
 
@@ -279,5 +282,100 @@ fn min_max_abs_match_host() -> Result<()> {
     }
     assert_eq!(invoke(&program, "__rust_select_i8", &[7, 9, 1])? & 0xff, 7);
     assert_eq!(invoke(&program, "__rust_select_i8", &[7, 9, 0])? & 0xff, 9);
+    Ok(())
+}
+
+fn samples<T: Copy>(edges: &[T], convert: impl Fn(u32) -> T) -> Vec<T> {
+    let mut state = 0x1357_9BDFu32;
+    let mut values = edges.to_vec();
+    for _ in 0..4 {
+        state = state.wrapping_mul(1_664_525).wrapping_add(1_013_904_223);
+        values.push(convert(state >> 4));
+    }
+    values
+}
+
+#[test]
+fn wide_arithmetic_and_bit_ops_match_host() -> Result<()> {
+    let program = program("wide-ops")?;
+    macro_rules! check {
+        ($ty:ty, $uty:ty, $bytes:literal, $name:literal) => {{
+            let values = samples(&[0 as $ty, 1, 2, 3, -1, <$ty>::MAX, <$ty>::MIN], |x| {
+                x as $uty as $ty
+            });
+            let run = |op: &str, data: &[u8]| -> Result<$uty> {
+                Ok(invoke(&program, &format!("__rust_{op}_{}", $name), data)? as $uty)
+            };
+            for a in values.iter().copied() {
+                let data = (a as $uty).to_le_bytes();
+                assert_eq!(run("popcnt", &data)?, a.count_ones() as $uty, "popcnt {a}");
+                assert_eq!(run("clz", &data)?, a.leading_zeros() as $uty, "clz {a}");
+                assert_eq!(run("ctz", &data)?, a.trailing_zeros() as $uty, "ctz {a}");
+                assert_eq!(
+                    run("bitrev", &data)?,
+                    a.reverse_bits() as $uty,
+                    "bitrev {a}"
+                );
+                for b in values.iter().copied() {
+                    let data = operands::<$bytes>(a as $uty as u32, b as $uty as u32);
+                    assert_eq!(
+                        run("imul", &data)?,
+                        a.wrapping_mul(b) as $uty,
+                        "imul {a} {b}"
+                    );
+                    if b == 0 {
+                        continue;
+                    }
+                    let (ua, ub) = (a as $uty, b as $uty);
+                    if ub != 0 {
+                        assert_eq!(run("udiv", &data)?, ua / ub, "udiv {a} {b}");
+                        assert_eq!(run("urem", &data)?, ua % ub, "urem {a} {b}");
+                    }
+                    if !(a == <$ty>::MIN && b == -1) {
+                        assert_eq!(run("sdiv", &data)?, (a / b) as $uty, "sdiv {a} {b}");
+                    }
+                    assert_eq!(
+                        run("srem", &data)?,
+                        a.wrapping_rem(b) as $uty,
+                        "srem {a} {b}"
+                    );
+                }
+            }
+        }};
+    }
+    check!(i8, u8, 1, "i8");
+    check!(i16, u16, 2, "i16");
+    check!(i32, u32, 4, "i32");
+
+    for value in [0u32, 0x1234_5678, 0xA1B2_C3D4, u32::MAX] {
+        assert_eq!(
+            invoke(&program, "__rust_bswap_i32", &value.to_le_bytes())?,
+            value.swap_bytes()
+        );
+    }
+    Ok(())
+}
+
+#[test]
+fn division_traps_reach_the_rst_vector() -> Result<()> {
+    let program = program("wide-ops")?;
+    let cases: [(&str, Vec<u8>); 5] = [
+        ("udiv_i32", operands::<4>(5, 0)),
+        ("srem_i32", operands::<4>(5, 0)),
+        ("sdiv_i32", operands::<4>(0x8000_0000, 0xFFFF_FFFF)),
+        ("udiv_i16", operands::<2>(5, 0)),
+        ("sdiv_i8", operands::<1>(5, 0)),
+    ];
+    for (name, data) in cases {
+        let mut emulator = program.emulator(&format!("__rust_{name}"))?;
+        for (i, byte) in data.iter().enumerate() {
+            emulator.memory[BASE as usize + i] = *byte;
+        }
+        emulator.b = BASE as u8;
+        emulator.c = (BASE >> 8) as u8;
+        emulator.set_sp(STACK - 2);
+        emulator.write16(STACK - 2, program.symbols["done"]);
+        emulator.run_until(0x0010, 2_000_000)?;
+    }
     Ok(())
 }

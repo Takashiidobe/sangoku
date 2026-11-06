@@ -278,28 +278,24 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
             .arg(&game_object)
             .arg(rust_asm),
     )?;
-    let runtime_object = temp.path().join("runtime.o");
-    run_command(
-        Command::new("rgbasm")
-            .arg("-o")
-            .arg(&runtime_object)
-            .arg(root.join("runtime/udiv16.asm")),
-    )?;
-    let multiply_runtime_object = temp.path().join("mul16.o");
-    run_command(
-        Command::new("rgbasm")
-            .arg("-o")
-            .arg(&multiply_runtime_object)
-            .arg(root.join("runtime/mul16.asm")),
-    )?;
+    let mut runtime_objects = Vec::new();
+    for source in ["udiv16", "mul16", "wide32"] {
+        let object = temp.path().join(format!("{source}.o"));
+        run_command(
+            Command::new("rgbasm")
+                .arg("-o")
+                .arg(&object)
+                .arg(root.join(format!("runtime/{source}.asm"))),
+        )?;
+        runtime_objects.push(object);
+    }
     run_command(
         Command::new("rgblink")
             .arg("-o")
             .arg(&output)
             .arg(header_object)
             .arg(game_object)
-            .arg(runtime_object)
-            .arg(multiply_runtime_object),
+            .args(&runtime_objects),
     )?;
     run_command(
         Command::new("rgbfix")

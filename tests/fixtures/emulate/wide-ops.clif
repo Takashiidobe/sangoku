@@ -1,0 +1,214 @@
+set enable_verifier=false
+target z80
+
+function %imul_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+4
+    v3 = imul v1, v2
+    return v3
+}
+
+function %udiv_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+4
+    v3 = udiv v1, v2
+    return v3
+}
+
+function %urem_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+4
+    v3 = urem v1, v2
+    return v3
+}
+
+function %sdiv_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+4
+    v3 = sdiv v1, v2
+    return v3
+}
+
+function %srem_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+4
+    v3 = srem v1, v2
+    return v3
+}
+
+function %popcnt_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = popcnt v1
+    return v2
+}
+
+function %clz_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = clz v1
+    return v2
+}
+
+function %ctz_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = ctz v1
+    return v2
+}
+
+function %bitrev_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = bitrev v1
+    return v2
+}
+
+function %imul_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+4
+    v3 = imul v1, v2
+    return v3
+}
+
+function %udiv_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+4
+    v3 = udiv v1, v2
+    return v3
+}
+
+function %urem_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+4
+    v3 = urem v1, v2
+    return v3
+}
+
+function %sdiv_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+4
+    v3 = sdiv v1, v2
+    return v3
+}
+
+function %srem_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+4
+    v3 = srem v1, v2
+    return v3
+}
+
+function %popcnt_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = popcnt v1
+    return v2
+}
+
+function %clz_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = clz v1
+    return v2
+}
+
+function %ctz_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = ctz v1
+    return v2
+}
+
+function %bitrev_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = bitrev v1
+    return v2
+}
+
+function %imul_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = imul v1, v2
+    return v3
+}
+
+function %udiv_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = udiv v1, v2
+    return v3
+}
+
+function %urem_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = urem v1, v2
+    return v3
+}
+
+function %sdiv_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = sdiv v1, v2
+    return v3
+}
+
+function %srem_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = srem v1, v2
+    return v3
+}
+
+function %popcnt_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = popcnt v1
+    return v2
+}
+
+function %clz_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = clz v1
+    return v2
+}
+
+function %ctz_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = ctz v1
+    return v2
+}
+
+function %bitrev_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = bitrev v1
+    return v2
+}
+
+function %bswap_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = bswap v1
+    return v2
+}
+
