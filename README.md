@@ -31,6 +31,16 @@ Build a Rust source file into a ROM:
 cargo run -- build game.rs game.gb
 ```
 
+Select optimization with `--opt-level 2` for speed or `--opt-level z` for size:
+
+```bash
+cargo run -- build game.rs game.gb --opt-level 2
+```
+
+The default is `0` (unoptimized). Levels `1`, `2`, and `3` prefer speed; `s` and
+`z` prefer smaller code. For 16-bit population counts, speed builds use parallel
+counting, while unoptimized and size builds use a compact shift loop.
+
 The example ROM calls `gbc_main` and then idles. It does not provide graphics,
 input, or audio yet.
 
@@ -60,8 +70,11 @@ implementation and its cycle, ROM, and stack costs.
 
 Spills and reloads preserve live registers and flags; the
 [spill regression check](tests/check_spills.py) executes generated compiler
-output. The [popcount audit](wiki/audits/popcount16.md) records the original
-defect and the pending optimization of the current expansion.
+output. Native `popcnt.i16` lowering supports narrow and zero-extended results
+with live inputs and register pressure. The
+[popcount audit](wiki/audits/popcount16.md) records the algorithms and current
+compiler measurements. Run `python -B tests/check_popcount.py --exhaustive16` to
+validate the replacement at all six optimization levels.
 
 The backend supports a limited set of LR35902 operations and does not yet
 support the full Rust ABI, indirect or tail calls, stack return values, or Rust

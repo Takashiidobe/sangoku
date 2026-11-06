@@ -1,5 +1,5 @@
 use std::env;
-use std::ffi::OsStr;
+use std::ffi::{OsStr, OsString};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
@@ -24,39 +24,71 @@ fn run() -> Result<(), String> {
     };
 
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let (paths, opt_level) = parse_build_args(args)?;
     match command.to_str() {
         Some("example") => {
-            let output = args
-                .next()
-                .map(PathBuf::from)
+            let output = paths
+                .first()
+                .cloned()
                 .unwrap_or_else(|| PathBuf::from("build/blank.gb"));
-            if args.next().is_some() {
+            if paths.len() > 1 {
                 return Err(usage());
             }
-            build_rom(&root, &root.join("examples/blank.rs"), &output)
+            build_rom(&root, &root.join("examples/blank.rs"), &output, &opt_level)
         }
         Some("build") => {
-            let Some(source) = args.next().map(PathBuf::from) else {
+            let Some(source) = paths.first() else {
                 return Err(usage());
             };
-            let output = args.next().map(PathBuf::from).unwrap_or_else(|| {
+            let output = paths.get(1).cloned().unwrap_or_else(|| {
                 let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
                 PathBuf::from("build").join(name).with_extension("gb")
             });
-            if args.next().is_some() {
+            if paths.len() > 2 {
                 return Err(usage());
             }
-            build_rom(&root, &source, &output)
+            build_rom(&root, source, &output, &opt_level)
         }
         _ => Err(usage()),
     }
 }
 
 fn usage() -> String {
-    "usage: sangoku example [output.gb] | sangoku build <source.rs> [output.gb]".into()
+    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z]".into()
 }
 
-fn build_rom(root: &Path, source: &Path, output: &Path) -> Result<(), String> {
+fn parse_build_args(
+    args: impl IntoIterator<Item = OsString>,
+) -> Result<(Vec<PathBuf>, String), String> {
+    let mut args = args.into_iter();
+    let mut paths = Vec::new();
+    let mut opt_level = "0".to_owned();
+    while let Some(arg) = args.next() {
+        let level = if arg == "--opt-level" {
+            Some(
+                args.next()
+                    .ok_or("--opt-level requires 0, 1, 2, 3, s or z")?,
+            )
+        } else {
+            arg.to_str()
+                .and_then(|value| value.strip_prefix("--opt-level="))
+                .map(OsString::from)
+        };
+        if let Some(level) = level {
+            match level.to_str() {
+                Some(value @ ("0" | "1" | "2" | "3" | "s" | "z")) => opt_level = value.into(),
+                _ => return Err("--opt-level requires 0, 1, 2, 3, s or z".into()),
+            }
+        } else if arg.to_str().is_some_and(|value| value.starts_with('-')) {
+            return Err(format!("unknown build option: {}", arg.to_string_lossy()));
+        } else {
+            paths.push(PathBuf::from(arg));
+        }
+    }
+    Ok((paths, opt_level))
+}
+
+fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<(), String> {
     let source = absolute_path(source)?;
     if !source.is_file() {
         return Err(format!("Rust source does not exist: {}", source.display()));
@@ -90,6 +122,7 @@ fn build_rom(root: &Path, source: &Path, output: &Path) -> Result<(), String> {
             .arg("--target")
             .arg(root.join("targets/lr35902.json"))
             .args(["--emit=asm", "--crate-type=lib", "-Cpanic=abort"])
+            .arg(format!("-Copt-level={opt_level}"))
             .arg(source)
             .arg("-o")
             .arg(&rust_asm),
@@ -186,5 +219,44 @@ impl TempDir {
 impl Drop for TempDir {
     fn drop(&mut self) {
         let _ = fs::remove_dir_all(&self.0);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::parse_build_args;
+    use std::ffi::OsString;
+    use std::path::PathBuf;
+
+    #[test]
+    fn accepts_optimization_levels_around_paths() {
+        for level in ["0", "1", "2", "3", "s", "z"] {
+            for args in [
+                vec!["--opt-level", level, "game.rs", "game.gb"],
+                vec!["game.rs", "game.gb", "--opt-level", level],
+            ] {
+                let (paths, selected) =
+                    parse_build_args(args.into_iter().map(OsString::from)).unwrap();
+                assert_eq!(paths, [PathBuf::from("game.rs"), PathBuf::from("game.gb")]);
+                assert_eq!(selected, level);
+            }
+        }
+        let (_, selected) = parse_build_args([OsString::from("--opt-level=z")]).unwrap();
+        assert_eq!(selected, "z");
+        let (paths, selected) = parse_build_args([]).unwrap();
+        assert!(paths.is_empty());
+        assert_eq!(selected, "0");
+    }
+
+    #[test]
+    fn rejects_missing_or_invalid_optimization_levels() {
+        for args in [
+            vec!["--opt-level"],
+            vec!["--opt-level", "4"],
+            vec!["--opt-level="],
+            vec!["--unknown"],
+        ] {
+            assert!(parse_build_args(args.into_iter().map(OsString::from)).is_err());
+        }
     }
 }

@@ -43,6 +43,11 @@ compare the frozen compiler baseline and validated algorithm fixtures. The
 [popcount audit](audits/popcount16.md) records body/caller costs, inline versus
 call tradeoffs, lookup-table alignment, and source-regeneration commands.
 
+Run `python -B tests/check_popcount.py --exhaustive16` to rebuild and execute
+current compiler output at optimization levels `0`, `1`, `2`, `3`, `s`, and `z`.
+This checks narrow/wide results, live inputs and spilling callers, with the
+compiler verifier and register-allocation checker enabled.
+
 Each case reports the helper body and a synthetic caller using the backend ABI:
 first operand low/high in B/C, second operand low/high in A/[SP+2], and result
 low/high in A/B. The stack fixture returns A and preserves BC. These callers

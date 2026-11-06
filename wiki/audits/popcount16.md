@@ -2,8 +2,60 @@
 
 The spill defect below was subsequently fixed in `sangoku-7em`; see the
 [repair log](../log/2026-11-06-14-51.md). The retained baseline and measurements
-describe the compiler at audit time. The current expansion now computes correct
-results, but its replacement recommendation remains.
+describe the compiler at audit time. The replacement is implemented in
+`sangoku-pg3`; see the current results below.
+
+## Current compiler implementation
+
+Rust optimization level `0` uses the compact loop, `1`/`2`/`3` use parallel
+counting, and `s`/`z` use the compact loop. The compiler bridge preserves the
+size preference in the LR35902 `optimize_for_size` ISA flag; the shared
+`opt_level=none` setting identifies unoptimized code. Other targets retain their
+existing settings. Both algorithms are inline native instructions; neither adds
+a table or a runtime helper call.
+
+The target instruction consumes fixed B/C inputs and produces A/B outputs. It
+declares C/D scratch clobbers for the loop, plus E for parallel counting. HL
+remains available to the allocator. Inputs used after the instruction are
+preserved through ordinary allocation, including spills when necessary.
+
+The actual [Rust probes](../../tests/fixtures/popcount/replacement.rs) include
+compiler control flow, moves, zero extension and spills. Costs include RET;
+stack includes its two-byte return address and any frame/temporary saves. Each
+row has constant cycles across the tested inputs.
+
+| Level | Probe                  | Code bytes | T-cycles | Peak stack |
+| ----- | ---------------------- | ---------: | -------: | ---------: |
+| `0`   | Count returned as u16  |         27 |      728 |          2 |
+| `0`   | Count returned as u32  |         25 |      720 |          2 |
+| `0`   | Original input + count |         36 |      764 |          2 |
+| `0`   | Two live inputs/counts |        166 |     2488 |         14 |
+| `1–3` | Count returned as u16  |         57 |      248 |          2 |
+| `1–3` | Count returned as u32  |         63 |      272 |          2 |
+| `1–3` | Original input + count |         67 |      288 |          2 |
+| `1–3` | Two live inputs/counts |        245 |     1708 |         14 |
+| `s/z` | Count returned as u16  |         19 |      696 |          2 |
+| `s/z` | Count returned as u32  |         25 |      720 |          2 |
+| `s/z` | Original input + count |         29 |      736 |          2 |
+| `s/z` | Two live inputs/counts |        153 |     2436 |         14 |
+
+The simple direct CLIF functions still match the audited 13-byte/664-cycle and
+51-byte/216-cycle kernels including RET. The Rust fixture adds control-flow
+instructions; unoptimized Rust adds further moves/blocks. Consequently, kernel
+counts alone do not predict complete caller costs. The pressure probe reads its
+fourth input byte from the incoming stack and computes the wrapping sum of both
+inputs and both counts. It forces preservation across two counting instructions.
+
+Reproduce with `python -B tests/check_popcount.py --exhaustive16`. All four
+probes pass every u16 input at all six levels; the second pressure input uses
+`(40503 * input + 12345) & 65535`, plus independent seed-11 pairs. Alternate
+stacks, poisoned registers, native-byte/RGBDS parity, general stack-access
+regressions and the compiler/allocation verifiers are included. The run passes
+1,918,408 executions. Commands, sources, objects, ROMs, maps, symbols, hashes
+and results are retained in `build/popcount-replacement`. See the
+[implementation log](../log/2026-11-06-15-10.md) for validation.
+
+## Historical audit decision
 
 **Replace the current expansion: YES.** It is incorrect when its temporaries
 spill, and a minimally repaired version is still much larger and slower than the
@@ -29,9 +81,10 @@ component byte counts. The byte table is fastest but requires 256 data bytes.
 to the same inline sequence, and the normal call ABI can force register saves.
 Outlining can still save ROM across multiple uses; the per-mode component sizes
 below make that tradeoff explicit. A 13-byte constant-time shift loop is the
-smallest tested general implementation and is the audited size alternative. The
-current cg_clif bridge maps all optimized Rust levels to `speed_and_size`, so
-that flag alone cannot distinguish a size request from ordinary level 2.
+smallest tested general implementation and is the audited size alternative. At
+audit time, the cg_clif bridge mapped all optimized Rust levels to
+`speed_and_size`, so that flag alone could not distinguish a size request from
+ordinary level 2.
 
 This audit covers `popcnt.i16` and its 16-bit bit patterns, including all
 zero-extended eight-bit inputs. It does not establish support or decisions for
