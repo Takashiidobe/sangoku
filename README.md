@@ -86,8 +86,7 @@ register pressure.
 
 The backend supports a limited set of LR35902 operations and does not yet
 support the full Rust ABI, indirect or tail calls, stack return values, or Rust
-data objects. Current ASCII-only changes to `core` alter string and character
-behavior; correcting them is part of the compiler work below.
+data objects. The fork's ASCII-only changes to `core` are being reverted (sangoku-30k).
 
 ## Split the compiler into five phases
 
@@ -122,7 +121,6 @@ them. Reduce each `core` blocker to a fixture for the phase where it fails.
 Restore UTF-8 decoding and consistent `str`/`char` behavior in the Rust fork.
 The current target-specific `next_code_point` reads one byte per character
 without rejecting non-ASCII input, so valid non-ASCII strings can be decoded
-incorrectly. Keep ASCII restrictions in game text types or asset conversion. Add
+incorrectly. Add
 regression fixtures for multibyte strings, character boundaries, and
-forward/reverse iteration. Until corrected, treat the ASCII changes as a
-temporary semantic limitation of this fork.
+forward/reverse iteration. Tracked by sangoku-30k, which also covers compact Unicode tables and wider integer support.

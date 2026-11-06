@@ -68,5 +68,5 @@ supported or still-blocked core behavior in the README roadmap.
   backend support before assuming an instruction or Rust feature is available.
 - Rust `core` support is the priority. Runtime, graphics, input, and audio work
   comes after it can compile.
-- Rust strings on target are ASCII-only; non-ASCII Unicode behavior is not
-  supported.
+- The fork's ASCII-only string changes are a known mistake being reverted
+  (sangoku-30k); do not build on them.
