@@ -1,5 +1,5 @@
 [default_config]
-assembler = "gas"
+assembler = "rgbds"
 instruction_set = "sm83"
 
 [default_config.opts]
