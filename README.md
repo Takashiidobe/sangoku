@@ -93,7 +93,11 @@ is returned whole in a caller-allocated return area. That case adds a hidden
 
 The backend supports a limited set of LR35902 operations and does not yet
 support the full Rust ABI, indirect or tail calls, i64 and wider values, or
-Rust data objects. The fork's ASCII-only changes to `core` are being reverted
+Rust data objects.
+
+f32 is a soft-float type held in four byte registers. `runtime/softfloat32.asm`
+implements correctly rounded add, sub, mul, compare, min and max; div, sqrt,
+rounding and conversions are still missing, and f16 only has bit-level ops. The fork's ASCII-only changes to `core` are being reverted
 (sangoku-30k).
 
 ## Testing

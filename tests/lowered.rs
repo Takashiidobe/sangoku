@@ -23,6 +23,7 @@ fn program(fixture: &str) -> Result<harness::Program> {
             ("udiv16.asm", harness::read("runtime/udiv16.asm")?),
             ("mul16.asm", harness::read("runtime/mul16.asm")?),
             ("wide32.asm", harness::read("runtime/wide32.asm")?),
+            ("softfloat32.asm", harness::read("runtime/softfloat32.asm")?),
             (
                 "stop.s",
                 "SECTION \"done\", ROM0\nEXPORT done\ndone::\n  nop\n".into(),
@@ -442,6 +443,144 @@ fn f32_sign_ops_select_and_const_match_host() -> Result<()> {
                 } else {
                     3.0f32.to_bits()
                 }
+            );
+        }
+    }
+    Ok(())
+}
+
+fn float_samples() -> Vec<f32> {
+    let mut values = vec![
+        0.0f32,
+        -0.0,
+        1.0,
+        -1.0,
+        1.5,
+        0.1,
+        -3.75,
+        16777216.0,
+        f32::MAX,
+        f32::MIN_POSITIVE,
+        f32::from_bits(1),
+        f32::from_bits(0x0040_0000),
+        1e-40,
+        f32::INFINITY,
+        f32::NEG_INFINITY,
+        f32::NAN,
+    ];
+    let mut state = 0x1234_5678u32;
+    for _ in 0..6 {
+        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
+        let bits = state;
+        if f32::from_bits(bits).is_finite() {
+            values.push(f32::from_bits(bits));
+        }
+    }
+    values
+}
+
+fn same_float(got: u32, expected: f32, context: &str) {
+    if expected.is_nan() {
+        assert!(f32::from_bits(got).is_nan(), "{context}: got {got:08x}");
+    } else {
+        assert_eq!(got, expected.to_bits(), "{context}");
+    }
+}
+
+fn host_min(a: f32, b: f32) -> f32 {
+    if a.is_nan() || b.is_nan() {
+        f32::NAN
+    } else if a == b {
+        if a.is_sign_negative() { a } else { b }
+    } else if a < b {
+        a
+    } else {
+        b
+    }
+}
+
+fn host_max(a: f32, b: f32) -> f32 {
+    if a.is_nan() || b.is_nan() {
+        f32::NAN
+    } else if a == b {
+        if a.is_sign_negative() { b } else { a }
+    } else if a > b {
+        a
+    } else {
+        b
+    }
+}
+
+#[test]
+fn f32_arithmetic_and_compares_match_host() -> Result<()> {
+    let program = program("float-arith")?;
+    let values = float_samples();
+    for a in values.iter().copied() {
+        for b in values.iter().copied() {
+            let mut data = a.to_bits().to_le_bytes().to_vec();
+            data.extend(b.to_bits().to_le_bytes());
+            let run = |name: &str| invoke(&program, &format!("__rust_{name}"), &data);
+            let context = |op: &str| format!("{op} {:08x} {:08x}", a.to_bits(), b.to_bits());
+            same_float(run("fadd")?, a + b, &context("fadd"));
+            same_float(run("fsub")?, a - b, &context("fsub"));
+            same_float(run("fmul")?, a * b, &context("fmul"));
+            same_float(run("fmin")?, host_min(a, b), &context("fmin"));
+            same_float(run("fmax")?, host_max(a, b), &context("fmax"));
+            let unordered = a.is_nan() || b.is_nan();
+            let checks: [(&str, bool); 14] = [
+                ("eq", a == b),
+                ("ne", a != b),
+                ("one", !unordered && a != b),
+                ("ueq", unordered || a == b),
+                ("lt", a < b),
+                ("le", a <= b),
+                ("gt", a > b),
+                ("ge", a >= b),
+                ("ult", unordered || a < b),
+                ("ule", unordered || a <= b),
+                ("ugt", unordered || a > b),
+                ("uge", unordered || a >= b),
+                ("ord", !unordered),
+                ("uno", unordered),
+            ];
+            for (cond, expected) in checks {
+                let got = run(&format!("fcmp_{cond}"))? & 0xFF;
+                assert_eq!(
+                    got,
+                    u32::from(expected),
+                    "{}",
+                    context(&format!("fcmp {cond}"))
+                );
+            }
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn f32_rounding_matches_host_on_random_operands() -> Result<()> {
+    let program = program("float-arith")?;
+    let mut state = 0x9E37_79B9u32;
+    let mut next = || {
+        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
+        state >> 8
+    };
+    for index in 0..600 {
+        let (ea, eb) = match index % 3 {
+            0 => (100 + next() % 50, 100 + next() % 50),
+            1 => (1 + next() % 40, 1 + next() % 40),
+            _ => (60 + next() % 40, 100 + next() % 60),
+        };
+        let a = f32::from_bits((next() & 1) << 31 | ea << 23 | next() & 0x7F_FFFF);
+        let b = f32::from_bits((next() & 1) << 31 | eb << 23 | next() & 0x7F_FFFF);
+        let mut data = a.to_bits().to_le_bytes().to_vec();
+        data.extend(b.to_bits().to_le_bytes());
+        for (name, expected) in [("fadd", a + b), ("fsub", a - b), ("fmul", a * b)] {
+            let got = invoke(&program, &format!("__rust_{name}"), &data)?;
+            same_float(
+                got,
+                expected,
+                &format!("{name} {:08x} {:08x}", a.to_bits(), b.to_bits()),
             );
         }
     }

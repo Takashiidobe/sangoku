@@ -84,39 +84,39 @@ fabs	f32	ok
 fabs	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fadd	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fadd	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fadd.f16 v0, v1`, type = `Some(types::F16)`
-fadd	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fadd.f32 v0, v1`, type = `Some(types::F32)`
+fadd	f32	ok	
 fadd	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.eq	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcmp.eq	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 eq v0, v1`, type = `Some(types::I8)`
-fcmp.eq	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f32 eq v0, v1`, type = `Some(types::I8)`
+fcmp.eq	f32	ok	
 fcmp.eq	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.ge	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcmp.ge	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 ge v0, v1`, type = `Some(types::I8)`
-fcmp.ge	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f32 ge v0, v1`, type = `Some(types::I8)`
+fcmp.ge	f32	ok	
 fcmp.ge	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.gt	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcmp.gt	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 gt v0, v1`, type = `Some(types::I8)`
-fcmp.gt	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f32 gt v0, v1`, type = `Some(types::I8)`
+fcmp.gt	f32	ok	
 fcmp.gt	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.le	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcmp.le	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 le v0, v1`, type = `Some(types::I8)`
-fcmp.le	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f32 le v0, v1`, type = `Some(types::I8)`
+fcmp.le	f32	ok	
 fcmp.le	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.lt	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcmp.lt	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 lt v0, v1`, type = `Some(types::I8)`
-fcmp.lt	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f32 lt v0, v1`, type = `Some(types::I8)`
+fcmp.lt	f32	ok	
 fcmp.lt	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.ne	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcmp.ne	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 ne v0, v1`, type = `Some(types::I8)`
-fcmp.ne	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f32 ne v0, v1`, type = `Some(types::I8)`
+fcmp.ne	f32	ok	
 fcmp.ne	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.ord	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcmp.ord	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 ord v0, v1`, type = `Some(types::I8)`
-fcmp.ord	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f32 ord v0, v1`, type = `Some(types::I8)`
+fcmp.ord	f32	ok	
 fcmp.ord	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.uno	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcmp.uno	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 uno v0, v1`, type = `Some(types::I8)`
-fcmp.uno	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f32 uno v0, v1`, type = `Some(types::I8)`
+fcmp.uno	f32	ok	
 fcmp.uno	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcopysign	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcopysign	f16	ok	
@@ -238,15 +238,15 @@ fma	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `
 fma	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fmax	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fmax	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fmax.f16 v0, v1`, type = `Some(types::F16)`
-fmax	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fmax.f32 v0, v1`, type = `Some(types::F32)`
+fmax	f32	ok	
 fmax	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fmin	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fmin	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fmin.f16 v0, v1`, type = `Some(types::F16)`
-fmin	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fmin.f32 v0, v1`, type = `Some(types::F32)`
+fmin	f32	ok	
 fmin	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fmul	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fmul	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fmul.f16 v0, v1`, type = `Some(types::F16)`
-fmul	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fmul.f32 v0, v1`, type = `Some(types::F32)`
+fmul	f32	ok	
 fmul	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fneg	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fneg	f16	ok	
@@ -260,7 +260,7 @@ fpromote	f32->f64	unsupported	Unsupported feature: Unsupported type for LR35902:
 fpromote	f64->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fsub	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fsub	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fsub.f16 v0, v1`, type = `Some(types::F16)`
-fsub	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fsub.f32 v0, v1`, type = `Some(types::F32)`
+fsub	f32	ok	
 fsub	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 func_addr	-	ok	
 iabs	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128

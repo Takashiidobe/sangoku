@@ -279,7 +279,7 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
             .arg(rust_asm),
     )?;
     let mut runtime_objects = Vec::new();
-    for source in ["udiv16", "mul16", "wide32"] {
+    for source in ["udiv16", "mul16", "wide32", "softfloat32"] {
         let object = temp.path().join(format!("{source}.o"));
         run_command(
             Command::new("rgbasm")
