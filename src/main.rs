@@ -2,7 +2,7 @@ use std::env;
 use std::ffi::{OsStr, OsString};
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::process::{Command, ExitCode};
+use std::process::{Command, ExitCode, Stdio};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const TOOLCHAIN: &str = "gbc-lr35902";
@@ -49,12 +49,25 @@ fn run() -> Result<(), String> {
             }
             build_rom(&root, source, &output, &opt_level)
         }
+        Some("frontend") => {
+            let Some(source) = paths.first() else {
+                return Err(usage());
+            };
+            let output = paths.get(1).cloned().unwrap_or_else(|| {
+                let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
+                PathBuf::from("build").join(name).with_extension("mir")
+            });
+            if paths.len() > 2 {
+                return Err(usage());
+            }
+            emit_mir(&root, source, &output, &opt_level)
+        }
         _ => Err(usage()),
     }
 }
 
 fn usage() -> String {
-    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z]".into()
+    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku frontend <source.rs> [output.mir|-] [--opt-level 0|1|2|3|s|z]".into()
 }
 
 fn parse_build_args(
@@ -79,13 +92,60 @@ fn parse_build_args(
                 Some(value @ ("0" | "1" | "2" | "3" | "s" | "z")) => opt_level = value.into(),
                 _ => return Err("--opt-level requires 0, 1, 2, 3, s or z".into()),
             }
-        } else if arg.to_str().is_some_and(|value| value.starts_with('-')) {
+        } else if arg
+            .to_str()
+            .is_some_and(|value| value.starts_with('-') && value != "-")
+        {
             return Err(format!("unknown build option: {}", arg.to_string_lossy()));
         } else {
             paths.push(PathBuf::from(arg));
         }
     }
     Ok((paths, opt_level))
+}
+
+fn rustc_command(root: &Path, opt_level: &str) -> Command {
+    let mut command = Command::new("rustc");
+    command
+        .current_dir(root)
+        .arg(format!("+{TOOLCHAIN}"))
+        .arg("-Zunstable-options")
+        .arg("--target")
+        .arg(root.join("targets/lr35902.json"))
+        .args(["--crate-type=lib", "-Cpanic=abort"])
+        .arg(format!("--remap-path-prefix={}=.", root.display()))
+        .arg(format!("-Copt-level={opt_level}"));
+    command
+}
+
+fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<(), String> {
+    let source = absolute_path(source)?;
+    if !source.is_file() {
+        return Err(format!("Rust source does not exist: {}", source.display()));
+    }
+
+    let mut command = rustc_command(root, opt_level);
+    command.arg("-Zunpretty=mir").arg(&source);
+    if output == Path::new("-") {
+        return run_command(&mut command);
+    }
+
+    let output = absolute_path(output)?;
+    if let Some(parent) = output.parent() {
+        fs::create_dir_all(parent)
+            .map_err(|error| format!("could not create {}: {error}", parent.display()))?;
+    }
+    let result = command
+        .stderr(Stdio::inherit())
+        .output()
+        .map_err(|error| format!("could not run {command:?}: {error}"))?;
+    if !result.status.success() {
+        return Err(format!("{command:?} exited with {}", result.status));
+    }
+    fs::write(&output, result.stdout)
+        .map_err(|error| format!("could not write {}: {error}", output.display()))?;
+    println!("Wrote {}", output.display());
+    Ok(())
 }
 
 fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<(), String> {
@@ -114,15 +174,9 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
     let rust_asm = temp.path().join("game.asm");
 
     run_command(
-        Command::new("rustc")
-            .current_dir(root)
-            .arg(format!("+{TOOLCHAIN}"))
-            .arg("-Zunstable-options")
+        rustc_command(root, opt_level)
             .arg(format!("-Zcodegen-backend={}", backend.display()))
-            .arg("--target")
-            .arg(root.join("targets/lr35902.json"))
-            .args(["--emit=asm", "--crate-type=lib", "-Cpanic=abort"])
-            .arg(format!("-Copt-level={opt_level}"))
+            .arg("--emit=asm")
             .arg(source)
             .arg("-o")
             .arg(&rust_asm),

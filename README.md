@@ -31,6 +31,12 @@ Build a Rust source file into a ROM:
 cargo run -- build game.rs game.gb
 ```
 
+Run only the Rust frontend, saving MIR to `build/game.mir`:
+
+```bash
+cargo run -- frontend game.rs
+```
+
 Select optimization with `--opt-level 2` for speed or `--opt-level z` for size:
 
 ```bash
@@ -55,10 +61,9 @@ operands, and unsigned 16-bit division/remainder. Division and remainder share
 an SM83 core and reach the trap vector for a zero divisor. With RGBDS installed,
 run the assembly execution tests with `cargo test`.
 
-The [shift audit](wiki/audits/shifts.md) selects constant specializations and
-variable helper strategies. Current lowering supports constant 16-bit logical
-shifts and 32-bit logical right shifts; arithmetic shifts, rotations and
-variable counts still need the linked implementation work before core support.
+Current lowering supports constant 16-bit logical shifts and 32-bit logical
+right shifts; arithmetic shifts, rotations and variable counts still need the
+linked implementation work before core support.
 
 Use `Emulator` from `sangoku_test_support::emu` for runtime tests. It executes a
 subset of SM83 instructions against flat 64 KiB memory. Set byte registers and
@@ -67,20 +72,9 @@ one instruction's cost and `run_until(address, max_instructions)` returns the
 cost to reach an address. Costs are CPU clock cycles (T-cycles), accumulated in
 `cycles`. Unsupported instructions return an error.
 
-To compare helper and caller costs, ROM sizes, stack use, and scratch RAM, see
-[runtime audit measurements](wiki/runtime-audits.md).
-
-The [division audit](wiki/audits/division16.md) records the selected 95-byte
-implementation and its cycle, ROM, and stack costs.
-
-Spills and reloads preserve live registers and flags; the
-[spill regression check](tests/bin/check_spills.rs) executes generated compiler
-output. Native `popcnt.i16` lowering supports narrow and zero-extended results
-with live inputs and register pressure. The
-[popcount audit](wiki/audits/popcount16.md) records the algorithms and current
-compiler measurements. Run
-`cargo run --example check-popcount -- --exhaustive16` to validate the
-replacement at all six optimization levels.
+Spills and reloads preserve live registers and flags. Native `popcnt.i16`
+lowering supports narrow and zero-extended results with live inputs and
+register pressure.
 
 The backend supports a limited set of LR35902 operations and does not yet
 support the full Rust ABI, indirect or tail calls, stack return values, or Rust
@@ -103,24 +97,15 @@ development priorities; the current ROM command still runs the stages together.
 5. **Link and execute:** link objects with startup code and runtime helpers, fix
    the ROM header, and check results in an emulator.
 
-## Shorten the testing loop
+## Testing
 
-- Preserve failed build artifacts. `TempDir::drop` currently deletes assembly
-  and objects on failure; retain them with the command, stderr, CLIF, and fork
-  revisions so the failure can be reproduced.
-- Separate backend rebuilding from fixture reruns. Support a development backend
-  build and reuse it until its sources change; reserve full ROM builds for
-  integration checks.
-- Reduce each `core` blocker to a regression fixture. Use CLIF for lowering
-  failures and Rust for ABI, layout, and intrinsic failures. Check execution
-  results for arithmetic, spills, and calls as well as successful compilation.
-- Record each `core` attempt in an LLog under `wiki/log/`: command, revisions,
-  failing function and operation, artifact paths, change tried, and outcome.
-  Link the regression fixture and Beads issue. Distinguish type checking,
-  assembly generation, assembly, linking, and execution; list omitted functions
-  so a partial build cannot be mistaken for full `core` support.
-- Make unavailable RGBDS tools visible in integration checks instead of silently
-  passing tests that did not run.
+Each phase has a fixture type: a directory under `tests/fixtures/` whose files
+carry their expected output as `// CHECK:` lines for LLVM `FileCheck`. Run a
+phase on its own, for example `cargo run -- frontend file.rs` (MIR, `-` for
+stdout). To add a fixture, put a small source file in the phase's directory and
+run `tools/update_filecheck.py [glob]` to write its CHECK lines, then review the
+diff. `tools/update_filecheck.py --check` (also run by `cargo test`) verifies
+them. Reduce each `core` blocker to a fixture for the phase where it fails.
 
 ## Preserve Rust string behavior
 
