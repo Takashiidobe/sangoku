@@ -55,6 +55,10 @@ supported or still-blocked core behavior in the README roadmap.
   `third_party/rustc_codegen_cranelift`, `third_party/rust`) inside their submodules, then commit
   sangoku with the updated submodule pointers in the same turn. Never leave
   backend work uncommitted.
+- After changing any of them, rebuild what that change affects, then rerun the
+  tests. `tools/rebuild_toolchain.sh` rebuilds the whole chain (rust stage 2,
+  relink `gbc-lr35902`, cranelift backend). A `core` change needs the full
+  rebuild; do not test against a stale toolchain.
 - Backend crates depend on each other by `path`, not git, so edits are picked
   up immediately. Use path dependencies wherever possible.
 
