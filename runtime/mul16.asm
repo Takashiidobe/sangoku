@@ -2,21 +2,26 @@ SECTION "16-bit multiplication", ROM0
 
 EXPORT __gbc_mul16
 __gbc_mul16::
-    ld d, a
+    ld d, c
+    ld e, b
+    ld c, a
     ld hl, sp + 2
     ld a, [hl]
-    ld e, a
     ld hl, 0
-    ld a, 16
+    ld b, 16
+    or a
+    jr nz, .bit
+    ld b, 8
+    ld a, c
 .loop
-    srl d
-    rr e
+    add hl, hl
+.bit
+    rl c
+    rla
     jr nc, .skip_add
-    add hl, bc
+    add hl, de
 .skip_add
-    sla c
-    rl b
-    dec a
+    dec b
     jr nz, .loop
     ld a, l
     ld b, h

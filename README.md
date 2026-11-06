@@ -40,6 +40,10 @@ The backend can compile small `no_core` functions and link a minimal ROM. Work
 is focused on supporting the operations, intrinsics, data, and relocations that
 Rust `core` needs, then compiling `core` to assembly.
 
+The runtime supports wrapping 16-bit multiplication for signed and unsigned
+operands. With RGBDS installed, run its assembly execution regression tests with
+`python -m unittest discover -s tests -v`.
+
 The backend supports a limited set of LR35902 operations and does not yet
 support the full Rust ABI, indirect or tail calls, stack return values, or Rust
 data objects. Current ASCII-only changes to `core` alter string and character
