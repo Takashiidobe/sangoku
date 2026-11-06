@@ -51,6 +51,12 @@ supported or still-blocked core behavior in the README roadmap.
 - Keep changes scoped and explain the next steps before multi-step work.
 - Do not modify vendored `third_party` sources unless the task requires a
   compiler or backend change.
+- Commit all backend changes (`third_party/wasmtime`,
+  `third_party/rustc_codegen_cranelift`) inside their submodules, then commit
+  sangoku with the updated submodule pointers in the same turn. Never leave
+  backend work uncommitted.
+- Backend crates depend on each other by `path`, not git, so edits are picked
+  up immediately. Use path dependencies wherever possible.
 
 ## Current Constraints
 
