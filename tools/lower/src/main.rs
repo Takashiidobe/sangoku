@@ -21,7 +21,17 @@ fn main() -> ExitCode {
 }
 
 fn run() -> Result<(), String> {
-    let mut args = env::args().skip(1);
+    let mut args = env::args().skip(1).peekable();
+    if args.peek().map(String::as_str) == Some("--probe") {
+        args.next();
+        let input = args
+            .next()
+            .ok_or("usage: sangoku-lower --probe <file.clif>")?;
+        let text = fs::read_to_string(&input)
+            .map_err(|error| format!("could not read {input}: {error}"))?;
+        print!("{}", probe(&text, &input));
+        return Ok(());
+    }
     let input = args
         .next()
         .ok_or("usage: sangoku-lower <file.clif> [output.s|-]")?;
@@ -36,6 +46,62 @@ fn run() -> Result<(), String> {
     } else {
         fs::write(&output, asm).map_err(|error| format!("could not write {output}: {error}"))
     }
+}
+
+fn probe(text: &str, input: &str) -> String {
+    let mut chunks = vec![String::new()];
+    for line in text.lines() {
+        if line.starts_with("function ") {
+            chunks.push(String::new());
+        }
+        let chunk = chunks.last_mut().expect("chunks starts non-empty");
+        chunk.push_str(line);
+        chunk.push('\n');
+    }
+    let header = chunks.remove(0);
+    let mut report = String::new();
+    let panic_message = std::sync::Arc::new(std::sync::Mutex::new(String::new()));
+    let hook_message = panic_message.clone();
+    std::panic::set_hook(Box::new(move |info| {
+        *hook_message.lock().unwrap() = info.to_string().replace('\n', " ");
+    }));
+    for chunk in chunks {
+        let name = chunk
+            .strip_prefix("function ")
+            .and_then(|rest| rest.split('(').next())
+            .unwrap_or("?")
+            .trim_start_matches('%')
+            .to_owned();
+        let source = format!("{header}{chunk}");
+        let outcome = std::panic::catch_unwind(|| lower(&source, input));
+        let (status, message) = match outcome {
+            Ok(Ok(_)) => ("ok", String::new()),
+            Ok(Err(error))
+                if error.contains("Unsupported feature") || error.contains("not supported") =>
+            {
+                ("unsupported", error)
+            }
+            Ok(Err(error)) if error.contains("is not a valid typevar") => ("inexpressible", error),
+            Ok(Err(error)) if error.contains("verifier") => ("verifier", error),
+            Ok(Err(error)) => ("invalid", error),
+            Err(_) => ("panic", panic_message.lock().unwrap().clone()),
+        };
+        let message = if status == "panic" {
+            message
+        } else {
+            message
+                .lines()
+                .find(|l| {
+                    l.contains("rror") || l.contains("nsupported") || l.contains("not supported")
+                })
+                .unwrap_or("")
+                .to_owned()
+        }
+        .trim()
+        .replace('\t', " ");
+        report.push_str(&format!("{name}\t{status}\t{message}\n"));
+    }
+    report
 }
 
 fn symbols_by_function_name(text: &str) -> HashMap<String, String> {
