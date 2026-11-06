@@ -24,7 +24,7 @@ bor	i16	ok
 bor	i32	ok	
 bor	i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
 bor	i8	ok	
-br_table	i8	ok	
+br_table	i32	ok	
 brif	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 brif	i16	ok	
 brif	i32	ok	
@@ -54,7 +54,7 @@ call.arg	i16	ok
 call.arg	i32	ok	
 call.arg	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
 call.arg	i8	ok	
-call_indirect	i8	inexpressible	
+call_indirect	i8	ok	
 ceil	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 ceil	f16	unsupported	Unsupported feature: Unsupported type for LR35902: f16
 ceil	f32	unsupported	Unsupported feature: Unsupported type for LR35902: f32
@@ -262,7 +262,7 @@ fsub	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fsub	f16	unsupported	Unsupported feature: Unsupported type for LR35902: f16
 fsub	f32	unsupported	Unsupported feature: Unsupported type for LR35902: f32
 fsub	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-func_addr	-	inexpressible	
+func_addr	-	ok	
 iabs	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 iabs	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = iabs.i16 v0`, type = `Some(types::I16)`
 iabs	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = iabs.i32 v0`, type = `Some(types::I32)`
@@ -484,7 +484,7 @@ ssub_overflow	i16	unsupported	Unsupported feature: should be implemented in ISLE
 ssub_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = ssub_overflow.i32 v0, v1`, type = `Some(types::I32)`
 ssub_overflow	i64	unsupported	Unsupported feature: LR35902 stack return values are not supported
 ssub_overflow	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = ssub_overflow.i8 v0, v1`, type = `Some(types::I8)`
-stack_addr	-	inexpressible	
+stack_addr	-	ok	
 store	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 store	f16	unsupported	Unsupported feature: Unsupported type for LR35902: f16
 store	f32	unsupported	Unsupported feature: Unsupported type for LR35902: f32

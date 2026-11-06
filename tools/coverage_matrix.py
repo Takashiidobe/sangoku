@@ -133,7 +133,7 @@ for ty in FLOATS:
 add("trap", "-", [], None, "    trap user1")
 add("trapnz", "i8", ["i8"], None, "    trapnz v0, user1")
 add("trapz", "i8", ["i8"], None, "    trapz v0, user1")
-add("br_table", "i8", ["i8"], None,
+add("br_table", "i32", ["i32"], None,
     "    br_table v0, block1, [block1, block2]\nblock1:\n    return\nblock2:\n    return")
 add("call_indirect", "i8", [ADDR, "i8"], "i8",
     "    sig0 = (i8) -> i8 system_v\n    v9 = call_indirect sig0, v0(v1)\n    return v9")
@@ -210,7 +210,7 @@ def render(plain, verified):
     lines += crashes or ["none"]
     lines += ["", "## Rejected by the CLIF verifier", "",
               "These lower only because the backend runs with the verifier off (release)."
-              " For example `iAddr` is `ints(32..64)`, so 16-bit addresses are invalid CLIF.", ""]
+              " Anything listed is invalid CLIF for this target and needs fixing before the verifier can be enabled.", ""]
     rejected = sorted(f"{op} {ty}" for (op, ty), (st, _) in verified.items()
                       if plain[(op, ty)][0] == "ok" and st == "verifier")
     lines.append(", ".join(rejected) if rejected else "none")
