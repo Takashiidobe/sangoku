@@ -1,0 +1,29 @@
+target z80
+
+function %pick(i8, i8, i8) -> i8 system_v {
+block0(v0: i8, v1: i8, v2: i8):
+    brif v0, block1, block2
+
+block1:
+    return v1
+
+block2:
+    return v2
+}
+
+; CHECK: SECTION "__rust_cgu_select_2Dbranch", ROM0
+; CHECK-EMPTY:
+; CHECK-NEXT: EXPORT __rust_pick
+; CHECK-NEXT: __rust_pick::
+; CHECK-NEXT: .block0:
+; CHECK-NEXT:   ld l, a
+; CHECK-NEXT:   ld a, b
+; CHECK-NEXT: or a
+; CHECK-NEXT: jp nz, .block2
+; CHECK-NEXT: jp .block1
+; CHECK-NEXT: .block1:
+; CHECK-NEXT:   ld a, l
+; CHECK-NEXT:   ret
+; CHECK-NEXT: .block2:
+; CHECK-NEXT:   ld a, c
+; CHECK-NEXT:   ret

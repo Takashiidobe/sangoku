@@ -1,0 +1,23 @@
+target z80
+
+function %shl3(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = iconst.i16 3
+    v2 = ishl v0, v1
+    return v2
+}
+
+; CHECK: SECTION "__rust_cgu_shl16_2Dconst", ROM0
+; CHECK-EMPTY:
+; CHECK-NEXT: EXPORT __rust_shl3
+; CHECK-NEXT: __rust_shl3::
+; CHECK-NEXT: .block0:
+; CHECK-NEXT:   ld a, b
+; CHECK-NEXT:   ld b, c
+; CHECK-NEXT:   sla a
+; CHECK-NEXT: rl b
+; CHECK-NEXT: sla a
+; CHECK-NEXT: rl b
+; CHECK-NEXT: sla a
+; CHECK-NEXT: rl b
+; CHECK-NEXT:   ret

@@ -39,12 +39,20 @@ def clif_lines(lines):
     return [CRATE_HASH.sub("[..]", l) for l in lines if not VOLATILE_CLIF.match(l)]
 
 
+def mir_lines(lines):
+    while lines and lines[0].startswith("//"):
+        lines.pop(0)
+    return lines
+
+
+# stage: (command, output filter, fixture suffix, comment leader)
 STAGES = {
-    "mir": (lambda fixture: [str(SANGOKU), "frontend", str(fixture), "-"], lambda lines: lines),
-    "clif": (lambda fixture: [str(SANGOKU), "clif", str(fixture), "-"], clif_lines),
+    "mir": (lambda f: [str(SANGOKU), "frontend", str(f), "-"], mir_lines, ".rs", "//"),
+    "clif": (lambda f: [str(SANGOKU), "clif", str(f), "-"], clif_lines, ".rs", "//"),
+    "lower": (lambda f: [str(SANGOKU), "lower", str(f), "-"], lambda lines: lines, ".clif", ";"),
 }
 
-GENERATED = re.compile(r"^// CHECK(?:-[A-Z]+)?:.*$")
+GENERATED = re.compile(r"^(?://|;) CHECK(?:-[A-Z]+)?:.*$")
 
 
 class ToolError(Exception):
@@ -63,7 +71,7 @@ def stage_of(fixture):
 
 
 def run_stage(fixture):
-    command, normalize = STAGES[stage_of(fixture)]
+    command, normalize, _, _ = STAGES[stage_of(fixture)]
     result = subprocess.run(
         command(fixture),
         capture_output=True,
@@ -74,19 +82,19 @@ def run_stage(fixture):
         raise ToolError(f"{fixture.name} failed:\n{result.stderr}")
     lines = result.stdout.rstrip("\n").split("\n")
     lines = normalize(lines)
-    while lines and (lines[0].startswith("//") or lines[0] == ""):
+    while lines and lines[0] == "":
         lines.pop(0)
     return lines
 
 
-def checks_for(lines):
+def checks_for(lines, leader):
     out = []
     for index, line in enumerate(lines):
         if line.strip() == "":
-            out.append("// CHECK-EMPTY:")
+            out.append(f"{leader} CHECK-EMPTY:")
         else:
             directive = "CHECK" if index == 0 else "CHECK-NEXT"
-            out.append(f"// {directive}: {escape(line)}")
+            out.append(f"{leader} {directive}: {escape(line)}")
     return out
 
 
@@ -97,7 +105,7 @@ def source_without_checks(fixture):
 
 def update(fixture):
     text = source_without_checks(fixture) + "\n\n"
-    text += "\n".join(checks_for(run_stage(fixture))) + "\n"
+    text += "\n".join(checks_for(run_stage(fixture), STAGES[stage_of(fixture)][3])) + "\n"
     if text != fixture.read_text():
         fixture.write_text(text)
         return True
@@ -117,7 +125,7 @@ def check(fixture):
 
 def discover(patterns):
     if not patterns:
-        patterns = [str(FIXTURES / stage / "*.rs") for stage in STAGES]
+        patterns = [str(FIXTURES / stage / f"*{STAGES[stage][2]}") for stage in STAGES]
     paths = sorted({Path(p).resolve() for pattern in patterns for p in glob.glob(pattern)})
     fixtures = [p for p in paths if stage_of(p)]
     if not fixtures:

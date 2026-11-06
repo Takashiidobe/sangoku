@@ -5,7 +5,7 @@ edition = "2024"
 autoexamples = false
 
 [workspace]
-members = ["tests/support"]
+members = ["tests/support", "tools/lower"]
 exclude = ["third_party/rust", "third_party/wasmtime", "third_party/rustc_codegen_cranelift"]
 resolver = "3"
 

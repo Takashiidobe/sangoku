@@ -76,12 +76,25 @@ fn run() -> Result<(), String> {
             }
             emit_clif(&root, source, &output, &opt_level)
         }
+        Some("lower") => {
+            let Some(source) = paths.first() else {
+                return Err(usage());
+            };
+            let output = paths.get(1).cloned().unwrap_or_else(|| {
+                let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
+                PathBuf::from("build").join(name).with_extension("s")
+            });
+            if paths.len() > 2 {
+                return Err(usage());
+            }
+            lower_clif(&root, source, &output)
+        }
         _ => Err(usage()),
     }
 }
 
 fn usage() -> String {
-    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku frontend <source.rs> [output.mir|-] [--opt-level 0|1|2|3|s|z] | sangoku clif <source.rs> [output.clif|-] [--opt-level 0|1|2|3|s|z]".into()
+    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku frontend <source.rs> [output.mir|-] [--opt-level 0|1|2|3|s|z] | sangoku clif <source.rs> [output.clif|-] [--opt-level 0|1|2|3|s|z] | sangoku lower <input.clif> [output.s|-]".into()
 }
 
 fn parse_build_args(
@@ -142,6 +155,27 @@ fn build_backend(root: &Path) -> Result<PathBuf, String> {
     )?;
     Ok(root
         .join("third_party/rustc_codegen_cranelift/target/release/librustc_codegen_cranelift.so"))
+}
+
+fn lower_clif(root: &Path, input: &Path, output: &Path) -> Result<(), String> {
+    let input = absolute_path(input)?;
+    if !input.is_file() {
+        return Err(format!("CLIF input does not exist: {}", input.display()));
+    }
+    let mut command = Command::new("cargo");
+    command
+        .current_dir(root)
+        .args(["run", "-q", "-p", "sangoku-lower", "--"])
+        .arg(&input)
+        .arg("-");
+    let result = command
+        .stderr(Stdio::inherit())
+        .output()
+        .map_err(|error| format!("could not run {command:?}: {error}"))?;
+    if !result.status.success() {
+        return Err(format!("{command:?} exited with {}", result.status));
+    }
+    write_output(output, result.stdout)
 }
 
 fn emit_clif(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<(), String> {

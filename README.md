@@ -110,7 +110,9 @@ development priorities; the current ROM command still runs the stages together.
 Each phase has a fixture type: a directory under `tests/fixtures/` whose files
 carry their expected output as `// CHECK:` lines for LLVM `FileCheck`. Run a
 phase on its own, for example `cargo run -- frontend file.rs` (MIR) or
-`cargo run -- clif file.rs` (CLIF); `-` writes to stdout. To add a fixture, put a small source file in the phase's directory and
+`cargo run -- clif file.rs` (CLIF) or `cargo run -- lower file.clif` (RGBDS
+assembly from CLIF, no rustc); `-` writes to stdout. Lowering fixtures in
+`tests/fixtures/lower` are small hand-written or saved `.clif` files. To add a fixture, put a small source file in the phase's directory and
 run `tools/update_filecheck.py [glob]` to write its CHECK lines, then review the
 diff. `tools/update_filecheck.py --check` (also run by `cargo nextest run --no-fail-fast`) verifies
 them. Reduce each `core` blocker to a fixture for the phase where it fails.

@@ -1,0 +1,29 @@
+target z80
+
+function %callee(i8) -> i8 system_v {
+block0(v0: i8):
+    return v0
+}
+
+function %caller(i8) -> i8 system_v {
+    sig0 = (i8) -> i8 system_v
+    fn0 = colocated %callee sig0
+
+block0(v0: i8):
+    v1 = call fn0(v0)
+    return v1
+}
+
+; CHECK: SECTION "__rust_cgu_call", ROM0
+; CHECK-EMPTY:
+; CHECK-NEXT: EXPORT __rust_callee
+; CHECK-NEXT: __rust_callee::
+; CHECK-NEXT: .block0:
+; CHECK-NEXT:   ld a, b
+; CHECK-NEXT:   ret
+; CHECK-EMPTY:
+; CHECK-NEXT: EXPORT __rust_caller
+; CHECK-NEXT: __rust_caller::
+; CHECK-NEXT: .block0:
+; CHECK-NEXT:   call __rust_callee
+; CHECK-NEXT:   ret
