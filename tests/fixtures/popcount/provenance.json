@@ -1,0 +1,148 @@
+{
+  "commands": [
+    [
+      "cargo",
+      "+gbc-lr35902",
+      "build",
+      "--release",
+      "--locked",
+      "--manifest-path",
+      "third_party/rustc_codegen_cranelift/Cargo.toml"
+    ],
+    [
+      "rustc",
+      "+gbc-lr35902",
+      "-Zunstable-options",
+      "-Zcodegen-backend=/home/takashi/Projects/sangoku/third_party/rustc_codegen_cranelift/target/release/librustc_codegen_cranelift.so",
+      "--target",
+      "/home/takashi/Projects/sangoku/targets/lr35902.json",
+      "--emit=asm",
+      "--crate-type=lib",
+      "-Cpanic=abort",
+      "-Copt-level=2",
+      "/home/takashi/Projects/sangoku/tests/fixtures/popcount/baseline.rs",
+      "-o",
+      "/home/takashi/Projects/sangoku/build/popcount-audit/regenerated/baseline.asm"
+    ],
+    [
+      "/home/takashi/Projects/sangoku/build/popcount-audit/sdcc-build/src/sdcc",
+      "--c1mode",
+      "-msm83",
+      "--std-c23",
+      "--opt-code-speed",
+      "-o",
+      "/home/takashi/Projects/sangoku/build/popcount-audit/regenerated/sdcc-native.s"
+    ],
+    ["rustc", "+gbc-lr35902", "-vV"],
+    [
+      "/home/takashi/Projects/sangoku/build/popcount-audit/sdcc-build/src/sdcc",
+      "--version"
+    ],
+    [
+      "git",
+      "-C",
+      "/home/takashi/Projects/sangoku/third_party/rust",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/home/takashi/Projects/sangoku/third_party/rustc_codegen_cranelift",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/home/takashi/Projects/sangoku/third_party/wasmtime",
+      "rev-parse",
+      "HEAD"
+    ]
+  ],
+  "rustc_version": "rustc 1.101.0-dev\nbinary: rustc\ncommit-hash: unknown\ncommit-date: unknown\nhost: x86_64-unknown-linux-gnu\nrelease: 1.101.0-dev\nLLVM version: 23.1.4\n",
+  "sdcc_version": "SDCC : sm83 TD- 4.6.4 #17147 (Linux)\npublished under GNU General Public License (GPL)\n",
+  "sha256": {
+    "tests/fixtures/popcount/baseline.rs": "3f42bd3a87ceba0ecf996aa39bfe46696193a31579193dedcc4773791527d208",
+    "tests/fixtures/popcount/sdcc-loop.c": "bb007f13ed8b012b852d90e09017038f8e831f1e020182fc99e7cf97a9fb3180",
+    "third_party/rustc_codegen_cranelift/target/release/librustc_codegen_cranelift.so": "2985a990f12d883386dac0776d9f040df5b767644faaad3f518a536a52ede629",
+    "third_party/wasmtime/cranelift/codegen/src/isa/lr35902/lower.rs": "72265f19f3f6dab0b59f3b65000e35f5d2f667d1175f0fc3a6fbf97ee2d99603",
+    "third_party/wasmtime/cranelift/codegen/src/isa/lr35902/inst/emit.rs": "d405db513cdd00a053121adcddf02e80bb730bfb91ffd9f1049abaa7f37315da",
+    "third_party/wasmtime/cranelift/codegen/src/isa/lr35902/inst/regs.rs": "2b24d671daffc6630fba203f06a04d9fd9af76ea03b6e4da5b9db77894fc830b",
+    "third_party/wasmtime/cranelift/codegen/src/machinst/vcode.rs": "e0cf2713db47f17aec8e7996f515fc609753416bcfaa2f97b60e8af0d5b37d65",
+    "build/popcount-audit/regenerated/baseline.asm": "b9ff808647f9783cb45c499a0da913ba129efdb80569eb4302a92dcbf7d3befc",
+    "build/popcount-audit/regenerated/sdcc-native.s": "9ce3aa9beed34eccb402b6c2f19585416ad51a2e62314f7236c1a73286b3c8ea"
+  },
+  "git_revisions": {
+    "third_party/rust": "1d27b3947681d13440e2c0f04a4970ebefd4e90c",
+    "third_party/rustc_codegen_cranelift": "a5d02d4b3f9a4603314786432b0f8c3e959f236d",
+    "third_party/wasmtime": "ede96e8ab4a71650112ae8c7bafdc651644dd6cf"
+  },
+  "frozen_files_sha256": {
+    "baseline.rs": "3f42bd3a87ceba0ecf996aa39bfe46696193a31579193dedcc4773791527d208",
+    "baseline.asm": "a227794c4d67905b2b86448fcf0b15cfab632aee4373fd387db9f337d3d088c7",
+    "sdcc-loop.c": "bb007f13ed8b012b852d90e09017038f8e831f1e020182fc99e7cf97a9fb3180",
+    "sdcc-native.s": "c48328e7c5bee836ef79be1cf2cd187c0600308883e28f32def01bc054280a98",
+    "shift.asm": "a2501289dd264cd0a0b552060bc10096190654590ac5e89f2c2610553ab5e23f",
+    "byte-loop.asm": "13f99b5f8a8cd2587ea81e68a31240b0080e1fa64519be04ce55104bd7e77f19",
+    "unrolled.asm": "b84b76e8f9ec5688020f1d6906603f9d828aeb091a65a7a941ab619a4b4069c5",
+    "clear.asm": "23df179213949969db7d054efe82c851c48af2bf6228686ebcaca29ad5a179e8",
+    "nibble.asm": "4c93c807a72d84a5f0e173a6f3ed7c0b36df1ae89b007791944d05c5510df0ce",
+    "byte.asm": "c3cc9d6fc00ac7c1d73b03b5212d265dfb4307e4ff15dc60671fcb312796ea96",
+    "swar.asm": "5662a630eda0a351f1d722e4e86a53348117b235659f9282e8227f4b5b4dc753",
+    "swar-shared.asm": "b94f48f6a7415060e0cc7f124d35f28eb40c84116b2d1993553d00ff0f4624ab",
+    "NOTICE": "f6920c7a410b0531ec8e7baded7c568cbc0e13aac3e552cabc0e235132898335"
+  },
+  "sdcc_reference": {
+    "path": "device/lib/__stdc_count_ones.c",
+    "svn_revision": "17147",
+    "sha256": "29deef15b45e7fdd3afb0bfa19755770a66abfec4ae7df74acf98ac24d44ca08",
+    "adaptation": "unsigned 16-bit input and 16 iterations, count fits unsigned char, unsigned int result; source otherwise follows the generic library loop"
+  },
+  "sdcc_z80_gen_sha256": "64047b45cec1f29871c1ef6b9ebd963de08ae0266a112f3e826e12e8fd1e22fc",
+  "sdcc_build": {
+    "source": "~/sdcc",
+    "configure": [
+      "/home/takashi/sdcc/configure",
+      "--disable-mcs51-port",
+      "--disable-z80-port",
+      "--disable-z180-port",
+      "--disable-r2k-port",
+      "--disable-r2ka-port",
+      "--disable-r3ka-port",
+      "--disable-r4k-port",
+      "--disable-r5k-port",
+      "--disable-r6k-port",
+      "--disable-tlcs90-port",
+      "--disable-ez80-port",
+      "--disable-z80n-port",
+      "--disable-r800-port",
+      "--disable-ds390-port",
+      "--disable-ds400-port",
+      "--disable-pic14-port",
+      "--disable-pic16-port",
+      "--disable-hc08-port",
+      "--disable-s08-port",
+      "--disable-stm8-port",
+      "--disable-pdk13-port",
+      "--disable-pdk14-port",
+      "--disable-pdk15-port",
+      "--disable-mos6502-port",
+      "--disable-mos65c02-port",
+      "--disable-huc6280-port",
+      "--disable-f8-port",
+      "--disable-f8l-port",
+      "--disable-ucsim",
+      "--disable-device-lib",
+      "--disable-packihx",
+      "--disable-sdcpp",
+      "--disable-sdcdb",
+      "--disable-sdbinutils",
+      "--disable-non-free"
+    ],
+    "make": ["make", "-C", "src", "-j4"],
+    "boost_package_url": "https://mirror.krfoss.org/cachyos/repo/x86_64_v4/cachyos-extra-znver4/boost-1.92.0-1.1-x86_64_v4.pkg.tar.zst",
+    "boost_headers_include": "build/popcount-audit/sdcc-build/deps/usr/include"
+  },
+  "frozen_output_formatting": "Trailing whitespace and final blank lines removed; instruction bytes unchanged."
+}

@@ -277,6 +277,17 @@ class EmulatorTest(unittest.TestCase):
         self.assertEqual(emu.step(), 4)
         self.assertEqual(emu.pc, 0xCFFE)
 
+    def test_swap_flags_and_cost_for_all_bytes(self):
+        for register in (0, 6, 7):
+            emu = Emulator(bytes([0xCB, 0x30 | register]))
+            emu.hl = 0xC000
+            for value in range(256):
+                emu.pc, emu.f = 0, 0xF0
+                emu._write8(register, value)
+                self.assertEqual(emu.step(), 16 if register == 6 else 8)
+                self.assertEqual(emu._read8(register), (value % 16) * 16 + value // 16)
+                self.assertEqual(emu.f, 0x80 if value == 0 else 0)
+
     def test_unsupported_instruction_fails(self):
         emu = Emulator(bytes([0xD3]))
         with self.assertRaisesRegex(NotImplementedError, "opcode D3 at 0000"):

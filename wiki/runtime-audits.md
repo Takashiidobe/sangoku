@@ -38,6 +38,11 @@ quotient/remainder wrappers and the shared core; paired results use two calls.
 
 ## Read the measurements
 
+For population count, run `tests/audit_popcount.py` with `--exhaustive16` to
+compare the frozen compiler baseline and validated algorithm fixtures. The
+[popcount audit](audits/popcount16.md) records body/caller costs, inline versus
+call tradeoffs, lookup-table alignment, and source-regeneration commands.
+
 Each case reports the helper body and a synthetic caller using the backend ABI:
 first operand low/high in B/C, second operand low/high in A/[SP+2], and result
 low/high in A/B. The stack fixture returns A and preserves BC. These callers

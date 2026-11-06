@@ -241,6 +241,8 @@ class Emulator:
                     result, carry = value >> 1 | carry << 7, value & 1
                 case 4:
                     result, carry = value << 1, value >> 7
+                case 6:
+                    result, carry = value << 4 | value >> 4, 0
                 case 7:
                     result, carry = value >> 1, value & 1
                 case _:

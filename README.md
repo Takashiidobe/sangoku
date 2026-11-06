@@ -58,6 +58,10 @@ To compare helper and caller costs, ROM sizes, stack use, and scratch RAM, see
 The [division audit](wiki/audits/division16.md) records the selected 95-byte
 implementation and its cycle, ROM, and stack costs.
 
+The current `popcnt.i16` expansion miscompiles when its temporaries spill. The
+[popcount audit](wiki/audits/popcount16.md) records the reproducer, validated
+replacement candidates, and pending compiler fixes.
+
 The backend supports a limited set of LR35902 operations and does not yet
 support the full Rust ABI, indirect or tail calls, stack return values, or Rust
 data objects. Current ASCII-only changes to `core` alter string and character
