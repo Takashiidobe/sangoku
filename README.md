@@ -105,6 +105,10 @@ max, links at about 16 KB and runs in the emulator). Programs larger than 32 KiB
 need MBC banking with cross-bank calls, which is not built. See the
 `sangoku-30k.9.1` children.
 
+Avoid methods that can call panic or formatting code, including indirectly.
+They can pull substantial code into the ROM even when those paths never run.
+Prefer fallible accessors and direct serial output, and check build warnings.
+
 Immediate abort removes the ordinary panic-reporting path, but unoptimized
 slice-range failure helpers can still retain formatting arguments. The sort
 example uses a small bubble sort over mutable iterators to avoid these helpers.
