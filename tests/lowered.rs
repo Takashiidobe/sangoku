@@ -1216,3 +1216,51 @@ fn division_traps_reach_the_rst_vector() -> Result<()> {
     }
     Ok(())
 }
+
+#[test]
+fn i8_constant_shifts_and_rotates_match_host() -> Result<()> {
+    let program = program("shift-i8")?;
+    let values = [0u8, 1, 0x80, 0xff, 0x5a, 0xa5, 0x7f];
+    for value in values {
+        for n in [0u32, 1, 3, 7] {
+            let run = |op: &str| -> Result<u8> {
+                Ok(invoke(&program, &format!("__rust_{op}{n}_i8"), &[value])? as u8)
+            };
+            assert_eq!(run("ishl")?, value << n, "ishl {value:#x} {n}");
+            assert_eq!(run("ushr")?, value >> n, "ushr {value:#x} {n}");
+            assert_eq!(
+                run("sshr")?,
+                ((value as i8) >> n) as u8,
+                "sshr {value:#x} {n}"
+            );
+            assert_eq!(run("rotl")?, value.rotate_left(n), "rotl {value:#x} {n}");
+            assert_eq!(run("rotr")?, value.rotate_right(n), "rotr {value:#x} {n}");
+        }
+    }
+    for value in values {
+        for n in [0u8, 1, 3, 7, 8, 9, 255] {
+            let run = |op: &str| -> Result<u8> {
+                Ok(invoke(&program, &format!("__rust_{op}var_i8"), &[value, n])? as u8)
+            };
+            let m = u32::from(n & 7);
+            assert_eq!(run("ishl")?, value << m, "ishl var {value:#x} {n}");
+            assert_eq!(run("ushr")?, value >> m, "ushr var {value:#x} {n}");
+            assert_eq!(
+                run("sshr")?,
+                ((value as i8) >> m) as u8,
+                "sshr var {value:#x} {n}"
+            );
+            assert_eq!(
+                run("rotl")?,
+                value.rotate_left(m),
+                "rotl var {value:#x} {n}"
+            );
+            assert_eq!(
+                run("rotr")?,
+                value.rotate_right(m),
+                "rotr var {value:#x} {n}"
+            );
+        }
+    }
+    Ok(())
+}

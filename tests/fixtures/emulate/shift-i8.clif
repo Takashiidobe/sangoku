@@ -1,0 +1,202 @@
+set enable_verifier=false
+target z80
+
+function %ishl0_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 0
+    v3 = ishl v1, v2
+    return v3
+}
+
+function %ishl1_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 1
+    v3 = ishl v1, v2
+    return v3
+}
+
+function %ishl3_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 3
+    v3 = ishl v1, v2
+    return v3
+}
+
+function %ishl7_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 7
+    v3 = ishl v1, v2
+    return v3
+}
+
+function %ushr0_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 0
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr1_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 1
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr3_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 3
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr7_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 7
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %sshr0_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 0
+    v3 = sshr v1, v2
+    return v3
+}
+
+function %sshr1_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 1
+    v3 = sshr v1, v2
+    return v3
+}
+
+function %sshr3_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 3
+    v3 = sshr v1, v2
+    return v3
+}
+
+function %sshr7_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 7
+    v3 = sshr v1, v2
+    return v3
+}
+
+function %rotl0_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 0
+    v3 = rotl v1, v2
+    return v3
+}
+
+function %rotl1_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 1
+    v3 = rotl v1, v2
+    return v3
+}
+
+function %rotl3_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 3
+    v3 = rotl v1, v2
+    return v3
+}
+
+function %rotl7_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 7
+    v3 = rotl v1, v2
+    return v3
+}
+
+function %rotr0_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 0
+    v3 = rotr v1, v2
+    return v3
+}
+
+function %rotr1_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 1
+    v3 = rotr v1, v2
+    return v3
+}
+
+function %rotr3_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 3
+    v3 = rotr v1, v2
+    return v3
+}
+
+function %rotr7_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = iconst.i8 7
+    v3 = rotr v1, v2
+    return v3
+}
+
+function %ishlvar_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+1
+    v3 = ishl v1, v2
+    return v3
+}
+
+function %ushrvar_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+1
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %sshrvar_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+1
+    v3 = sshr v1, v2
+    return v3
+}
+
+function %rotlvar_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+1
+    v3 = rotl v1, v2
+    return v3
+}
+
+function %rotrvar_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = load.i8 v0+1
+    v3 = rotr v1, v2
+    return v3
+}

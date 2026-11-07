@@ -352,12 +352,12 @@ ishl.const	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i
 ishl.const	i16	ok	
 ishl.const	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = ishl.i32 v0, v8  ; v8 = 3`, type = `Some(types::I32)`
 ishl.const	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-ishl.const	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = ishl.i8 v0, v8  ; v8 = 3`, type = `Some(types::I8)`
+ishl.const	i8	ok	
 ishl.var	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 ishl.var	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = ishl.i16 v0, v1`, type = `Some(types::I16)`
 ishl.var	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = ishl.i32 v0, v1`, type = `Some(types::I32)`
 ishl.var	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-ishl.var	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = ishl.i8 v0, v1`, type = `Some(types::I8)`
+ishl.var	i8	ok	
 istore16	i32	ok	
 istore8	i16	ok	
 isub	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
@@ -392,22 +392,22 @@ rotl.const	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i
 rotl.const	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = rotl.i16 v0, v8  ; v8 = 3`, type = `Some(types::I16)`
 rotl.const	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = rotl.i32 v0, v8  ; v8 = 3`, type = `Some(types::I32)`
 rotl.const	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-rotl.const	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = rotl.i8 v0, v8  ; v8 = 3`, type = `Some(types::I8)`
+rotl.const	i8	ok	
 rotl.var	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 rotl.var	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = rotl.i16 v0, v1`, type = `Some(types::I16)`
 rotl.var	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = rotl.i32 v0, v1`, type = `Some(types::I32)`
 rotl.var	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-rotl.var	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = rotl.i8 v0, v1`, type = `Some(types::I8)`
+rotl.var	i8	ok	
 rotr.const	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 rotr.const	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = rotr.i16 v0, v8  ; v8 = 3`, type = `Some(types::I16)`
 rotr.const	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = rotr.i32 v0, v8  ; v8 = 3`, type = `Some(types::I32)`
 rotr.const	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-rotr.const	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = rotr.i8 v0, v8  ; v8 = 3`, type = `Some(types::I8)`
+rotr.const	i8	ok	
 rotr.var	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 rotr.var	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = rotr.i16 v0, v1`, type = `Some(types::I16)`
 rotr.var	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = rotr.i32 v0, v1`, type = `Some(types::I32)`
 rotr.var	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-rotr.var	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = rotr.i8 v0, v1`, type = `Some(types::I8)`
+rotr.var	i8	ok	
 sadd_overflow	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 sadd_overflow	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = sadd_overflow.i16 v0, v1`, type = `Some(types::I16)`
 sadd_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = sadd_overflow.i32 v0, v1`, type = `Some(types::I32)`
@@ -473,12 +473,12 @@ sshr.const	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i
 sshr.const	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sshr.i16 v0, v8  ; v8 = 3`, type = `Some(types::I16)`
 sshr.const	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sshr.i32 v0, v8  ; v8 = 3`, type = `Some(types::I32)`
 sshr.const	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-sshr.const	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sshr.i8 v0, v8  ; v8 = 3`, type = `Some(types::I8)`
+sshr.const	i8	ok	
 sshr.var	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 sshr.var	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sshr.i16 v0, v1`, type = `Some(types::I16)`
 sshr.var	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sshr.i32 v0, v1`, type = `Some(types::I32)`
 sshr.var	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-sshr.var	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sshr.i8 v0, v1`, type = `Some(types::I8)`
+sshr.var	i8	ok	
 ssub_overflow	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 ssub_overflow	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = ssub_overflow.i16 v0, v1`, type = `Some(types::I16)`
 ssub_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = ssub_overflow.i32 v0, v1`, type = `Some(types::I32)`
@@ -559,7 +559,7 @@ ushr.var	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i12
 ushr.var	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = ushr.i16 v0, v1`, type = `Some(types::I16)`
 ushr.var	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = ushr.i32 v0, v1`, type = `Some(types::I32)`
 ushr.var	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-ushr.var	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = ushr.i8 v0, v1`, type = `Some(types::I8)`
+ushr.var	i8	ok	
 usub_overflow	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 usub_overflow	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = usub_overflow.i16 v0, v1`, type = `Some(types::I16)`
 usub_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = usub_overflow.i32 v0, v1`, type = `Some(types::I32)`
