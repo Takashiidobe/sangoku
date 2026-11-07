@@ -69,6 +69,11 @@ Float-width conversions preserve source precision and round once at the
 destination width. Build `examples/conversions.rs` to exercise Rust casts;
 compiling all of `core` remains the next milestone.
 
+The Rust fork keeps `library/core` unchanged from its upstream base. Target
+limitations belong in backend work rather than disabled core APIs; see the
+[Rust fork audit](wiki/concepts/rust-fork.md) for the remaining compiler
+accommodation and validation limits.
+
 Rust lowers through Cranelift IR to LR35902 assembly. See
 [legalization](wiki/concepts/legalization.md),
 [lowering](wiki/concepts/lowering.md), and
