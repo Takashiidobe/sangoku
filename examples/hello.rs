@@ -24,7 +24,9 @@ impl Write for Serial {
 #[unsafe(no_mangle)]
 pub fn gbc_main() -> u8 {
     let mut out = Serial;
-    let _ = writeln!(out, "Hello, Game Boy!");
-    let _ = writeln!(out, "6 * 7 = {}", 6u16 * 7);
+
+    let _ = out.write_str("Hello, Game Boy!\n");
+    let _ = out.write_str("6 * 7 = 42\n");
+
     0
 }

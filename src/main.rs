@@ -184,7 +184,11 @@ fn rustc_command(root: &Path, opt_level: &str) -> Command {
         .arg("-Zunstable-options")
         .arg("--target")
         .arg(root.join("targets/lr35902.json"))
-        .args(["--crate-type=lib", "-Cpanic=abort"])
+        .args([
+            "--crate-type=lib",
+            "-Cpanic=abort",
+            "-Cdebug-assertions=off",
+        ])
         .arg(format!("--remap-path-prefix={}=.", root.display()))
         .arg(format!("-Copt-level={opt_level}"));
     command
