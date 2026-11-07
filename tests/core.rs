@@ -124,8 +124,7 @@ fn target_core_and_alloc_respect_16_bit_size_limits() -> Result<()> {
     Ok(())
 }
 
-#[test]
-fn wide_integer_libcall_returns_lower_through_the_backend() -> Result<()> {
+fn backend_lowers_fixture(source: &str) -> Result<()> {
     let root = harness::root();
     success(
         Command::new("cargo")
@@ -163,8 +162,18 @@ fn wide_integer_libcall_returns_lower_through_the_backend() -> Result<()> {
             )
             .display()
         ))
-        .args(["--emit=asm", "tests/fixtures/core/wide-return.rs", "-o"])
-        .arg(directory.path().join("wide-return.s"))
+        .args(["--emit=asm", source, "-o"])
+        .arg(directory.path().join("out.s"))
         .output()?;
     success(output)
+}
+
+#[test]
+fn wide_integer_libcall_returns_lower_through_the_backend() -> Result<()> {
+    backend_lowers_fixture("tests/fixtures/core/wide-return.rs")
+}
+
+#[test]
+fn over_aligned_stack_slots_lower_through_the_backend() -> Result<()> {
+    backend_lowers_fixture("tests/fixtures/core/over-aligned-slot.rs")
 }
