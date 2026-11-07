@@ -49,3 +49,12 @@ needed only if its lookup path is present in the linked program. Legalizing
 `u64` operations does not remove this data. The LR35902 backend has incomplete
 wide-operation and static-data support, so avoid APIs above until those paths
 are supported and their ROM cost is measured.
+
+## Rust string behavior
+
+The Rust fork uses upstream UTF-8 decoding and full Unicode tables for `str` and
+`char`, including reverse iteration and escaping. A focused `alloctests`
+regression covers forward and reverse iteration at each UTF-8 width boundary.
+Target-side MIR/CLIF/emulator coverage remains blocked until the target `core`
+build can run through the Cranelift backend. `sangoku-30k` tracks this work,
+including compact Unicode tables and wider integer support.

@@ -17,13 +17,8 @@ Use the [coverage matrix](../../tests/coverage/lower.md) for supported
 operations. Unsupported wide operations report an error. Division, remainder,
 multiply-high, and checked multiplication still need legalization.
 
-The 128-bit multiplier uses a 128-step shift/add loop; 128-bit shifts and
-rotates iterate at most 127 times. These loops bound ROM use at the cost of
-execution time.
-
-The generated 32-bit variable shifts are further split into 16-bit operations,
-using the existing shift helpers. This provides correct lowering but can produce
-large functions; code-size optimization remains separate work.
+See [optimizations](optimizations.md) for wide-operation loop costs and runtime
+inclusion, and [lowering](lowering.md) for the calling convention.
 
 Run the bounded emulator checks with:
 
@@ -40,9 +35,6 @@ cargo run -- build examples/u64.rs build/u64.gb
 cargo run -- build examples/u128.rs build/u128.gb
 cargo run -- build examples/u128-mul.rs build/u128-mul.gb
 ```
-
-Integer-only ROM builds omit the soft-float runtime. Floating helper references
-retain it. Keep operation examples separate while generated code uses ROM0.
 
 Remaining native 128-bit arithmetic is tracked by `sangoku-7qz.9.3`. Checked
 128-bit multiplication uses compiler-builtins rather than CLIF overflow opcodes.

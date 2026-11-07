@@ -1,0 +1,27 @@
+# Optimizations
+
+Use `--opt-level 2` to prefer speed or `--opt-level z` to prefer smaller ROMs.
+The default is `0`; levels `1`, `2` and `3` prefer speed, while `s` and `z`
+prefer size.
+
+## Population counts
+
+For `popcnt.i16`, speed builds use parallel counting. Unoptimized and size
+builds use a compact shift loop. Lowering supports narrow and zero-extended
+results with live inputs and register pressure.
+
+## Wide-operation expansion
+
+The i128 multiplier uses a 128-step shift/add loop. Its shifts and rotates
+iterate at most 127 times. These loops bound ROM use at the cost of execution
+time. Generated i32 variable shifts use narrower operations and helpers, which
+can produce large functions; code-size optimization remains separate work.
+
+See [wide integer legalization](64-bit-integer-legalization.md) for the
+representation and [lowering](lowering.md) for runtime helpers.
+
+## Runtime inclusion
+
+Integer-only ROM builds omit the softfloat runtime. Floating helper references
+retain it. Keep large operation examples in separate ROMs while generated code
+is limited to ROM0.

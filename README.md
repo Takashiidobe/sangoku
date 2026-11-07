@@ -52,65 +52,38 @@ cargo run -- build game.rs game.gb --opt-level 2
 ```
 
 The default is `0` (unoptimized). Levels `1`, `2`, and `3` prefer speed; `s` and
-`z` prefer smaller code. For 16-bit population counts, speed builds use parallel
-counting, while unoptimized and size builds use a compact shift loop.
+`z` prefer smaller code.
 
 The example ROM calls `gbc_main` and then idles. It does not provide graphics,
 input, or audio yet.
 
-## Current focus
+## Goals and status
 
-The backend can compile small `no_core` functions and link a minimal ROM. Work
-is focused on supporting the operations, intrinsics, data, and relocations that
-Rust `core` needs, then compiling `core` to assembly.
+The backend compiles small `no_core` functions and links minimal ROMs. The next
+milestone is compiling Rust `core`, before adding runtime and game features. The
+full Rust ABI and operation set are still incomplete.
 
-The runtime supports wrapping 16-bit multiplication for signed and unsigned
-operands, and unsigned 16-bit division/remainder. Division and remainder share
-an SM83 core and reach the trap vector for a zero divisor. With RGBDS installed,
-run the assembly execution tests with `cargo nextest run --no-fail-fast`.
-
-Current lowering covers every i8 and i16 op in the coverage matrix: shifts and
-rotates (constant counts inline, variable counts through `__gbc_shift8` and
-`__gbc_shift16`), overflow ops, cls, trapnz/trapz (i8) and umulhi/smulhi. Wide
-32-bit shifts other than constant logical right shifts, and the i32 overflow,
-cls and mulhi ops, remain in sangoku-7qz.19/.20/.23 and the shift
-specializations sangoku-9tk and sangoku-clp.
-
-Use `Emulator` from `sangoku_test_support::emu` for runtime tests. It executes a
-subset of SM83 instructions against flat 64 KiB memory. Set byte registers and
-memory directly; use `set_sp()` and `set_hl()` for SP and HL. `step()` returns
-one instruction's cost and `run_until(address, max_instructions)` returns the
-cost to reach an address. Costs are CPU clock cycles (T-cycles), accumulated in
-`cycles`. Unsupported instructions return an error.
-
-Spills and reloads preserve live registers and flags. Native `popcnt.i16`
-lowering supports narrow and zero-extended results with live inputs and register
-pressure.
-
-Calling convention: each argument byte goes in B, C, A in that order, then on
-the stack (low address first, caller-owned, not popped by the callee). Return
-values use A, B, C, D, E, H, L; a value that does not fit in the registers left
-is returned whole in a caller-allocated return area. That case adds a hidden
-16-bit pointer argument after the declared arguments (requires
-`enable_multi_ret_implicit_sret`). All registers are caller-saved.
-
-The backend supports a limited set of LR35902 operations and does not yet
-support the full Rust ABI, indirect or tail calls, i64 and wider values, or Rust
-data objects.
-
-f32 is a soft-float type held in four byte registers. `runtime/softfloat32.asm`
-implements correctly rounded add, sub, mul, div, sqrt, compare, min and max,
-fma, trunc, floor, ceil and nearest, i8/i16/i32 conversions to and from f32
-(trapping and saturating), and f16 promote/demote. f16 arithmetic, compares and
-rounding promote to f32, operate and demote, which is correctly rounded. f64
-constants, loads/stores, i64 bitcasts, select, block arguments, direct
-calls/returns, negation, absolute value and copysign use two i32 halves and
-preserve all bits, including NaN payloads. f64 arithmetic, comparisons, rounding
-and conversions still need softfloat helpers (sangoku-7qz.9.4.1). f128 and i64
-float conversions are not supported. The fork's ASCII-only changes to `core` are
-being reverted (sangoku-30k).
+Rust lowers through Cranelift IR to LR35902 assembly. See
+[legalization](wiki/concepts/legalization.md),
+[lowering](wiki/concepts/lowering.md), and
+[optimizations](wiki/concepts/optimizations.md) for the representation and
+lowering rules. The [coverage matrix](tests/coverage/lower.md) records supported
+operations; [Beads](AGENTS.md) tracks remaining work.
 
 ## Testing
+
+Run the tests with RGBDS installed:
+
+```bash
+cargo nextest run --no-fail-fast
+```
+
+Run the Rust-to-ROM smoke check after rebuilding an affected toolchain
+component:
+
+```bash
+cargo run -- build examples/blank.rs build/blank.gb
+```
 
 Each phase has a fixture type: a directory under `tests/fixtures/` whose files
 carry their expected output as `// CHECK:` lines for LLVM `FileCheck`. Run a
@@ -124,24 +97,9 @@ diff. `tools/update_filecheck.py --check` (also run by
 `cargo nextest run --no-fail-fast`) verifies them. Reduce each `core` blocker to
 a fixture for the phase where it fails.
 
-## Preserve Rust string behavior
-
-The Rust fork now uses upstream UTF-8 decoding and full Unicode tables for `str`
-and `char`, including reverse iteration and escaping. A focused `alloctests`
-regression covers forward and reverse iteration at each UTF-8 width boundary.
-Target-side MIR/CLIF/emulator coverage remains blocked until the target `core`
-build can run through the Cranelift backend. Tracked by sangoku-30k, which also
-covers compact Unicode tables and wider integer support.
-
-## Lower wide integers
-
-The LR35902 Cranelift pass splits `i64` into two `i32` limbs and `i128` into
-four `i32` limbs before machine lowering. Arithmetic, comparisons, bitwise
-operations, shifts, rotates, conversions, memory access, and calls use the
-existing narrower backend. Build `examples/u64.rs`, `examples/u128.rs`, or
-`examples/u128-mul.rs` with `cargo run -- build` for Rust-to-ROM examples.
-
-Division, remainder, multiply-high, and checked multiplication remain
-unsupported. The remaining 128-bit operations are tracked by `sangoku-7qz.9.3`.
-See the [legalization note](wiki/concepts/64-bit-integer-legalization.md) and
-[operation coverage](tests/coverage/lower.md). Tracked by `sangoku-7qz.9`.
+Use `Emulator` from `sangoku_test_support::emu` for runtime tests. It executes a
+subset of SM83 instructions against flat 64 KiB memory. Set byte registers and
+memory directly; use `set_sp()` and `set_hl()` for SP and HL. `step()` returns
+one instruction's cost and `run_until(address, max_instructions)` returns the
+cost to reach an address. Costs are CPU clock cycles (T-cycles), accumulated in
+`cycles`. Unsupported instructions return an error.
