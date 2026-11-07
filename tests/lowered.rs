@@ -1908,3 +1908,53 @@ fn rust_u128_memory_add_lowers_and_executes() -> Result<()> {
     }
     Ok(())
 }
+
+#[test]
+fn split_f64_preserves_bits() -> Result<()> {
+    let source = include_str!("fixtures/emulate/split-f64.clif");
+    for level in ["none", "speed"] {
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let path = directory.path().join("f64.clif");
+        std::fs::write(&path, format!("set opt_level={level}\n{source}"))?;
+        let program = lower_program(path.to_str().unwrap())?;
+        for (a, b) in [
+            (0u64, 1u64 << 63),
+            (1u64 << 63, 0),
+            (0x7ff0_0000_0000_0000, 0xfff0_0000_0000_0000),
+            (0xfff8_1234_5678_9abc, 0x7ff0_0000_0000_0001),
+            (1, 0x8000_0000_0000_0001),
+            (0x3ff0_0000_0000_0001, 0xbff0_0000_0000_0001),
+        ] {
+            for (name, expected) in [
+                ("copy", a),
+                ("bits", a),
+                ("neg", a ^ (1 << 63)),
+                ("abs", a & !(1 << 63)),
+                ("sign", (a & !(1 << 63)) | (b & (1 << 63))),
+                ("select", a),
+                (
+                    "constant",
+                    (-0x123456789abcde_i64 as f64 / 4294967296.0).to_bits(),
+                ),
+                ("transport", a),
+            ] {
+                let memory: Vec<_> = a
+                    .to_le_bytes()
+                    .into_iter()
+                    .chain(b.to_le_bytes())
+                    .enumerate()
+                    .map(|(i, byte)| (BASE + i as u16, byte))
+                    .chain([(BASE + 24, 1)])
+                    .collect();
+                let e = call(&program, &format!("__rust_{name}"), &memory)?;
+                let actual = u64::from_le_bytes(
+                    e.memory[BASE as usize + 16..BASE as usize + 24]
+                        .try_into()
+                        .unwrap(),
+                );
+                assert_eq!(actual, expected, "{level} {name} {a:016x}");
+            }
+        }
+    }
+    Ok(())
+}
