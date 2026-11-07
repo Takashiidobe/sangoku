@@ -85,21 +85,28 @@ component:
 cargo run -- build examples/blank.rs build/blank.gb
 ```
 
-Each phase has a fixture type: a directory under `tests/fixtures/` whose files
-carry their expected output as `// CHECK:` lines for LLVM `FileCheck`. Run a
-phase on its own, for example `cargo run -- frontend file.rs` (MIR) or
-`cargo run -- clif file.rs` (CLIF) or `cargo run -- lower file.clif` (RGBDS
-assembly from CLIF, no rustc); `-` writes to stdout. Lowering fixtures in
-`tests/fixtures/lower` are small hand-written or saved `.clif` files. To add a
-fixture, put a small source file in the phase's directory and run
-`tools/update_filecheck.py [glob]` to write its CHECK lines, then review the
-diff. `tools/update_filecheck.py --check` (also run by
-`cargo nextest run --no-fail-fast`) verifies them. Reduce each `core` blocker to
-a fixture for the phase where it fails.
+FileCheck fixtures:
 
-Use `Emulator` from `sangoku_test_support::emu` for runtime tests. It executes a
-subset of SM83 instructions against flat 64 KiB memory. Set byte registers and
-memory directly; use `set_sp()` and `set_hl()` for SP and HL. `step()` returns
-one instruction's cost and `run_until(address, max_instructions)` returns the
-cost to reach an address. Costs are CPU clock cycles (T-cycles), accumulated in
-`cycles`. Unsupported instructions return an error.
+- Each phase has a directory under `tests/fixtures/`. Fixture files carry
+  expected output as `// CHECK:` lines for LLVM `FileCheck`.
+- Run a phase independently: `cargo run -- frontend file.rs` for MIR,
+  `cargo run -- clif file.rs` for CLIF, or `cargo run -- lower file.clif` for
+  RGBDS assembly without rustc. Use `-` as the output path to write to stdout.
+- Lowering fixtures in `tests/fixtures/lower` contain hand-written or saved
+  CLIF.
+- To add a fixture, put a source file in the phase's directory, run
+  `tools/update_filecheck.py [glob]`, and review the generated CHECK lines.
+- Verify expectations with `tools/update_filecheck.py --check`. The test suite
+  also runs this check.
+- Reduce each `core` blocker to a fixture for the phase where it fails.
+
+Runtime tests:
+
+- Use `Emulator` from `sangoku_test_support::emu`. It executes a subset of SM83
+  instructions against flat 64 KiB memory.
+- Set byte registers and memory directly. Use `set_sp()` and `set_hl()` for SP
+  and HL.
+- `step()` executes one instruction and returns its cost.
+- `run_until(address, max_instructions)` returns the cost to reach an address.
+- Costs are CPU clock cycles (T-cycles), accumulated in `cycles`.
+- Unsupported instructions return an error.
