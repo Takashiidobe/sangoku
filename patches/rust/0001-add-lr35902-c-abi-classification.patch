@@ -1,0 +1,70 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: sangoku <sangoku@localhost>
+Date: Thu, 1 Jan 1970 00:00:00 +0000
+Subject: [PATCH] Add LR35902 C ABI classification
+
+---
+ compiler/rustc_target/src/callconv/mod.rs |  2 ++
+ compiler/rustc_target/src/callconv/z80.rs | 33 +++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
+ create mode 100644 compiler/rustc_target/src/callconv/z80.rs
+
+diff --git a/compiler/rustc_target/src/callconv/mod.rs b/compiler/rustc_target/src/callconv/mod.rs
+index 8d76fa6dbf9..fb8750431dd 100644
+--- a/compiler/rustc_target/src/callconv/mod.rs
++++ b/compiler/rustc_target/src/callconv/mod.rs
+@@ -35,6 +35,7 @@
+ mod x86_win32;
+ mod x86_win64;
+ mod xtensa;
++mod z80;
+ 
+ /// Different modes in which indirect arguments can be passed.
+ #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, StableHash)]
+@@ -763,6 +764,7 @@ pub fn adjust_for_foreign_abi<C>(&mut self, cx: &C, abi: ExternAbi)
+             Arch::RiscV32 | Arch::RiscV64 => riscv::compute_abi_info(cx, self),
+             Arch::Wasm32 | Arch::Wasm64 => wasm::compute_abi_info(cx, self),
+             Arch::Bpf => bpf::compute_abi_info(cx, self),
++            Arch::Other(arch) if arch == "z80" => z80::compute_abi_info(cx, self),
+             arch @ (Arch::SpirV | Arch::Other(_)) => {
+                 panic!("no lowering implemented for {arch}")
+             }
+diff --git a/compiler/rustc_target/src/callconv/z80.rs b/compiler/rustc_target/src/callconv/z80.rs
+new file mode 100644
+index 00000000000..f935401a64f
+--- /dev/null
++++ b/compiler/rustc_target/src/callconv/z80.rs
+@@ -0,0 +1,33 @@
++use rustc_abi::TyAbiInterface;
++
++use crate::callconv::{ArgAbi, FnAbi};
++
++fn classify_ret_ty<Ty>(ret: &mut ArgAbi<'_, Ty>) {
++    if ret.layout.is_aggregate() {
++        ret.make_indirect();
++    }
++}
++
++fn classify_arg_ty<'a, Ty, C>(cx: &C, arg: &mut ArgAbi<'a, Ty>)
++where
++    Ty: TyAbiInterface<'a, C> + Copy,
++{
++    if arg.layout.pass_indirectly_in_non_rustic_abis(cx) || arg.layout.is_aggregate() {
++        arg.make_indirect();
++    }
++}
++
++pub(crate) fn compute_abi_info<'a, Ty, C>(cx: &C, fty: &mut FnAbi<'a, Ty>)
++where
++    Ty: TyAbiInterface<'a, C> + Copy,
++{
++    if !fty.ret.is_ignore() {
++        classify_ret_ty(&mut fty.ret);
++    }
++
++    for arg in fty.args.iter_mut() {
++        if !arg.is_ignore() {
++            classify_arg_ty(cx, arg);
++        }
++    }
++}

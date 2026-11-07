@@ -77,7 +77,7 @@ runtime that is not provided. See
 [practical limits](wiki/concepts/practical-limits.md) for measurements and the
 distinction between lowering, linking and execution.
 
-The Rust fork keeps `library/core` unchanged from its upstream base. Target
+The Rust fork is a small patch series (`patches/rust/`, managed by `tools/rust_fork.sh`) on an upstream base, and keeps `library/core` unchanged. Target
 limitations belong in backend work rather than disabled core APIs; see the
 [Rust fork audit](wiki/concepts/rust-fork.md) for the remaining compiler
 accommodation and validation limits.

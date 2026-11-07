@@ -6,6 +6,8 @@ host=x86_64-unknown-linux-gnu
 build=$root/third_party/rust/build/$host
 lib=lib/rustlib/$host/lib
 
+"$root/tools/rust_fork.sh" check
+
 (cd "$root/third_party/rust" && ./x.py build --stage 2 compiler library)
 
 # bootstrap links the rustc_private rlibs into the stage1 sysroot only
@@ -16,3 +18,5 @@ done
 rustup toolchain link gbc-lr35902 "$build/stage2"
 cargo +gbc-lr35902 clean --manifest-path "$root/third_party/rustc_codegen_cranelift/Cargo.toml"
 cargo +gbc-lr35902 build --release --manifest-path "$root/third_party/rustc_codegen_cranelift/Cargo.toml"
+
+"$root/tools/rust_fork.sh" core

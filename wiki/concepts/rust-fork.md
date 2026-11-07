@@ -20,8 +20,7 @@ character, formatting or numeric-method implementations.
 | `Cargo.toml`                                     | The unused custom-architecture cfg allowance is removed.                                           |
 
 The earlier UTF-8 restoration already removed the ASCII-only string, character,
-escaping and Unicode-table replacements. The existing `alloctests` regression
-for UTF-8 iteration remains in the fork.
+escaping and Unicode-table replacements.
 
 ## Remaining compiler accommodation
 
@@ -51,8 +50,22 @@ arithmetic methods, wrapper methods, time and random APIs against that metadata.
 This checks the target frontend and API surface; it does not establish that all
 of core can generate and link into a ROM.
 
-To check core drift against the upstream base:
+## Patch series and rebasing
 
-```sh
-git -C third_party/rust diff 2d20b42b883 -- library/core
-```
+The fork is `patches/rust/*.patch` applied on the upstream commit recorded in
+`patches/rust/BASE`. Fork history on `gbc-lr35902` contains earlier churn; only
+the net diff against the base matters, and it is two files in
+`compiler/rustc_target/src/callconv/` (`library/` must stay identical).
+
+| Command                             | Effect                                                                     |
+| ----------------------------------- | -------------------------------------------------------------------------- |
+| `tools/rust_fork.sh check`          | Lists fork commits and diffstat; fails if the fork differs from base + patches or touches `library/`. |
+| `tools/rust_fork.sh core`           | `check`, then compiles `core` metadata for `targets/lr35902.json`.          |
+| `tools/rust_fork.sh export`         | Regenerates the patch from the fork's net diff after an intentional change. |
+| `tools/rust_fork.sh rebase [ref]`   | Fetches upstream `ref` (default `HEAD`), applies the patches on a new branch, updates `BASE`. |
+
+`tools/rebuild_toolchain.sh` runs `check` first and `core` last. To move to a
+newer upstream: `tools/rust_fork.sh rebase`, commit the submodule pointer and
+`patches/`, then `tools/rebuild_toolchain.sh` and `cargo nextest run
+--no-fail-fast`. Keep new fork changes out of `library/` and out of files that
+upstream edits often; put target behavior in the backend or `targets/`.
