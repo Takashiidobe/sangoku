@@ -16,6 +16,10 @@ operands, and unsigned 16-bit division/remainder. Division and remainder share
 an SM83 core and reach the trap vector for a zero divisor. Spills and reloads
 preserve live registers and flags.
 
+Signed i8/i16 division and remainder widen through the i32 helpers. Division
+checks that the result fits the original width and traps on `MIN / -1`.
+Remainder returns zero for `MIN % -1`; both operations trap on division by zero.
+
 Truncating stores accept a wider input and write only its low bits. `istore8`,
 `istore16` and `istore32` lower for every CLIF-expressible input width through
 i64. Extending loads read 8, 16 or 32 bits and sign- or zero-extend to the

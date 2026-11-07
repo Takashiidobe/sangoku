@@ -3087,3 +3087,69 @@ fn rust_numeric_conversions_lower_and_execute() -> Result<()> {
     }
     Ok(())
 }
+
+#[test]
+fn signed_division_overflow_and_remainder_follow_clif() -> Result<()> {
+    let functions: String = include_str!("fixtures/emulate/wide-ops.clif")
+        .split("\nfunction ")
+        .skip(1)
+        .filter(|function| function.starts_with("%sdiv_") || function.starts_with("%srem_"))
+        .map(|function| format!("\nfunction {function}"))
+        .collect();
+    for level in ["none", "speed"] {
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let path = directory.path().join("signed-division.clif");
+        std::fs::write(
+            &path,
+            format!("set opt_level={level}\ntarget z80\n{functions}"),
+        )?;
+        let program = lower_program(path.to_str().unwrap())?;
+        for bits in [8, 16, 32] {
+            let minimum = -(1i64 << (bits - 1));
+            let maximum = -minimum - 1;
+            for (a, b) in [
+                (minimum, -1),
+                (minimum, 1),
+                (minimum, -2),
+                (minimum + 1, -1),
+                (maximum, -1),
+                (-1, -1),
+                (0, -1),
+                (1, 0),
+            ] {
+                for op in ["sdiv", "srem"] {
+                    let name = format!("__rust_{op}_i{bits}");
+                    let mut e = program.emulator(&name)?;
+                    e.memory[BASE as usize..BASE as usize + 4]
+                        .copy_from_slice(&(a as u32).to_le_bytes());
+                    e.memory[BASE as usize + 4..BASE as usize + 8]
+                        .copy_from_slice(&(b as u32).to_le_bytes());
+                    e.b = BASE as u8;
+                    e.c = (BASE >> 8) as u8;
+                    e.set_sp(STACK - 2);
+                    e.write16(STACK - 2, program.symbols["done"]);
+                    let trap = b == 0 || op == "sdiv" && a == minimum && b == -1;
+                    let stop = if trap {
+                        0x0010
+                    } else {
+                        program.symbols["done"]
+                    };
+                    e.run_until(stop, 65536)?;
+                    if !trap {
+                        let result = if op == "sdiv" { a / b } else { a % b };
+                        let mask = (1u64 << bits) - 1;
+                        let got = u64::from(e.a)
+                            | u64::from(e.b) << 8
+                            | u64::from(e.c) << 16
+                            | u64::from(e.d) << 24;
+                        ensure!(
+                            got & mask == result as u64 & mask,
+                            "{level} {name} {a} {b}: got {got:x}"
+                        );
+                    }
+                }
+            }
+        }
+    }
+    Ok(())
+}
