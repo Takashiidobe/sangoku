@@ -55,6 +55,16 @@ def symbols(clif):
     return names
 
 
+def undefined_symbols(clif_dirs):
+    defined, imported = set(), set()
+    for directory in clif_dirs:
+        for path in directory.glob("*.clif"):
+            text = path.read_text()
+            defined.update(re.findall(r"^; symbol (\S+)", text, re.M))
+            imported.update(re.findall(r'^\s*fn\d+ = u0:\d+ sig\d+ ; "([^"]+)"', text, re.M))
+    return sorted(imported - defined)
+
+
 def probe(clif_path):
     result = run(["cargo", "run", "-q", "--release", "-p", "sangoku-lower", "--", "--probe", str(clif_path)])
     names = symbols(clif_path.read_text())
@@ -126,10 +136,11 @@ def main():
         driver_clif = out / "driver.ll"
         rows = probe(driver_clif) if driver_clif.exists() else []
         reports.append(summarise("core generics (driver)", rows, errors))
+        undefined = undefined_symbols([out / "core.clif", out / "compiler_builtins.clif", out / "driver.clif"])
 
 
     if args.json:
-        print(json.dumps(reports, indent=2))
+        print(json.dumps({"reports": reports, "undefined": undefined}, indent=2))
         return
     for report in reports:
         print(f"{report['label']}: {report['ok']}/{report['functions']} lower, {report['failed']} fail")
@@ -139,6 +150,9 @@ def main():
             print(f"  {group['count']:5}  {group['status']}: {group['message']}")
             for example in group["examples"]:
                 print(f"           e.g. {example}")
+    print(f"undefined symbols: {len(undefined)}")
+    for name in undefined:
+        print(f"  {name}")
 
 
 if __name__ == "__main__":
