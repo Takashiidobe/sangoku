@@ -5,3 +5,4 @@
 - [Lowering](concepts/lowering.md)
 - [Optimizations](concepts/optimizations.md)
 - [64- and 128-bit integer legalization](concepts/64-bit-integer-legalization.md)
+- [Single-file distribution](distribution.md)

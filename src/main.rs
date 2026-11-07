@@ -7,6 +7,7 @@ use std::process::{Command, ExitCode, Stdio};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use sangoku::{
+    bundle,
     emu::Emulator,
     error::{Error, Result},
 };
@@ -32,7 +33,7 @@ fn run() -> Result<()> {
         return Err(usage());
     };
 
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let root = bundle::root()?;
     let (paths, opt_level) = parse_build_args(args)?;
     match command.to_str() {
         Some("example") => {
@@ -177,10 +178,17 @@ fn parse_build_args(args: impl IntoIterator<Item = OsString>) -> Result<(Vec<Pat
 }
 
 fn rustc_command(root: &Path, opt_level: &str) -> Command {
-    let mut command = Command::new("rustc");
+    let mut command = if bundle::is_bundled(root) {
+        let mut command = bundle::command(root, &root.join("toolchain/bin/rustc"));
+        command.arg("--sysroot").arg(root.join("toolchain"));
+        command
+    } else {
+        let mut command = Command::new("rustc");
+        command.arg(format!("+{TOOLCHAIN}"));
+        command
+    };
     command
         .current_dir(root)
-        .arg(format!("+{TOOLCHAIN}"))
         .arg("-Zunstable-options")
         .arg("--target")
         .arg(root.join("targets/lr35902.json"))
@@ -195,6 +203,9 @@ fn rustc_command(root: &Path, opt_level: &str) -> Command {
 }
 
 fn build_backend(root: &Path) -> Result<PathBuf> {
+    if bundle::is_bundled(root) {
+        return Ok(root.join("backend/librustc_codegen_cranelift.so"));
+    }
     run_command(
         Command::new("cargo")
             .current_dir(root)
@@ -211,12 +222,14 @@ fn lower_clif(root: &Path, input: &Path, output: &Path) -> Result<()> {
     if !input.is_file() {
         return Err(format!("CLIF input does not exist: {}", input.display()).into());
     }
-    let mut command = Command::new("cargo");
-    command
-        .current_dir(root)
-        .args(["run", "-q", "-p", "sangoku-lower", "--"])
-        .arg(&input)
-        .arg("-");
+    let mut command = if bundle::is_bundled(root) {
+        bundle::command(root, &root.join("toolchain/bin/sangoku-lower"))
+    } else {
+        let mut command = Command::new("cargo");
+        command.args(["run", "-q", "-p", "sangoku-lower", "--"]);
+        command
+    };
+    command.current_dir(root).arg(&input).arg("-");
     let result = command
         .stderr(Stdio::inherit())
         .output()
@@ -237,11 +250,13 @@ fn emit_clif(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
     }
 
     let backend = build_backend(root)?;
-    let artifacts = ArtifactDir::new(root, &source)?;
+    let artifacts = ArtifactDir::new(&source)?;
+    let libraries = core_libraries(root, &backend, opt_level)?;
     run_command(
         rustc_command(root, opt_level)
             .env("CG_CLIF_CLIF_ONLY", "1")
             .arg(format!("-Zcodegen-backend={}", backend.display()))
+            .args(libraries.externs(true))
             .arg("--emit=asm,llvm-ir")
             .arg(&source)
             .arg("-o")
@@ -275,7 +290,10 @@ fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resul
         return Err(format!("Rust source does not exist: {}", source.display()).into());
     }
 
+    let backend = build_backend(root)?;
+    let libraries = core_libraries(root, &backend, opt_level)?;
     let mut command = rustc_command(root, opt_level);
+    command.args(libraries.externs(true));
     command.arg("-Zunpretty=mir").arg(&source);
     if output == Path::new("-") {
         return run_command(&mut command);
@@ -307,7 +325,7 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
     }
 
     let backend = build_backend(root)?;
-    let artifacts = ArtifactDir::new(root, &source)?;
+    let artifacts = ArtifactDir::new(&source)?;
     let rust_asm = artifacts.path().join("game.asm");
     let libraries = core_libraries(root, &backend, opt_level)?;
 
@@ -458,6 +476,23 @@ fn modified(path: &Path) -> Option<SystemTime> {
 }
 
 fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLibraries> {
+    if bundle::is_bundled(root) {
+        let directory = root.join("libraries").join(format!("opt-{opt_level}"));
+        for name in [
+            "core.s",
+            "compiler_builtins.s",
+            "libcore.rmeta",
+            "libcompiler_builtins.rmeta",
+        ] {
+            if !directory.join(name).is_file() {
+                return Err(Error::Bundle(format!(
+                    "missing prebuilt library {}",
+                    directory.join(name).display()
+                )));
+            }
+        }
+        return Ok(CoreLibraries(directory));
+    }
     let libraries = CoreLibraries(
         root.join("build/core/immediate-abort")
             .join(format!("opt-{opt_level}")),
@@ -535,13 +570,13 @@ fn run_command(command: &mut Command) -> Result<()> {
 struct ArtifactDir(PathBuf);
 
 impl ArtifactDir {
-    fn new(root: &Path, source: &Path) -> Result<Self> {
+    fn new(source: &Path) -> Result<Self> {
         let timestamp = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .map_err(Error::Clock)?
             .as_nanos();
         let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
-        let path = root.join("build/artifacts").join(format!(
+        let path = absolute_path(Path::new("build/artifacts"))?.join(format!(
             "{}-{}-{timestamp}",
             name.to_string_lossy(),
             std::process::id()

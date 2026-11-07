@@ -7,6 +7,9 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug, Error, Diagnostic)]
 pub enum Error {
+    #[error("bundled toolchain: {0}")]
+    #[diagnostic(code(sangoku::bundle))]
+    Bundle(String),
     #[error("system clock error")]
     #[diagnostic(code(sangoku::clock))]
     Clock(#[source] std::time::SystemTimeError),

@@ -1,7 +1,7 @@
 # sangoku
 
-Compile Rust into Game Boy and Game Boy Color ROMs. Rust `core` compiles;
-the next goal is compiling `alloc`.
+Compile Rust into Game Boy and Game Boy Color ROMs. Rust `core` compiles; the
+next goal is compiling `alloc`.
 
 ## Setup
 
@@ -37,6 +37,8 @@ failure paths can consume substantial ROM space. Check the build warnings.
 ```bash
 cargo nextest run --no-fail-fast
 ```
+
+For a single-file compiler package, see [distribution](wiki/distribution.md).
 
 See the [wiki](wiki/index.md) for backend details and
 [practical limits](wiki/concepts/practical-limits.md) for ROM constraints.
