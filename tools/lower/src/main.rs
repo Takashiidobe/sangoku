@@ -149,11 +149,7 @@ fn lower(text: &str, input: &str) -> Result<String, String> {
             .unwrap_or_else(|| name.to_owned())
     };
 
-    let stem = std::path::Path::new(input)
-        .file_stem()
-        .and_then(|s| s.to_str())
-        .unwrap_or("clif");
-    let mut source = rgbds::new_source(stem);
+    let mut source = String::new();
     let testcase_symbols: Vec<_> = parsed
         .functions
         .iter()

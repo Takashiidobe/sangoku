@@ -12,7 +12,7 @@ fn panic_handler_halts_without_returning() -> Result<()> {
         ],
         None,
     )?;
-    let mut e = program.emulator("rust_begin_unwind")?;
+    let mut e = program.emulator("__rust__RNvCsbOwsw4zHH1Z_7___rustc17rust_begin_unwind")?;
     e.set_sp(0xdf00);
     e.write16(0xdf00, program.symbols["done"]);
     let entry = e.pc;

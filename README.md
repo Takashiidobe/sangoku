@@ -76,8 +76,13 @@ function at a time, 0 failures out of 3,235 `core` functions, the
 `tests/core_driver/driver.rs` (iterators, slices, `str`, `char`, formatting
 through `u128`, parsing, sorting, hashing, `dyn`). These are lowering counts at
 `opt-level=0`, with `compiler_builtins` built with its `unmangled-names` and
-`mem` features (2,009 functions). Linking is not done: `rust_begin_unwind` is undefined, and each crate
-is one code section far larger than the 32 KiB ROM0 bank. See the `sangoku-30k.9.1` children.
+`mem` features (2,009 functions). `tools/link_core.py PROGRAM.rs OUT.gb` links a
+program against real `core`: each function is its own RGBDS section, only
+sections reachable from `gbc_main` are kept, and they fill ROM0 then spill into
+ROMX bank 1 of a 32 KiB cartridge (`tests/core_rom/rom.rs`, an iterator sum and
+max, links at about 16 KB and runs in the emulator). Programs larger than 32 KiB
+need MBC banking with cross-bank calls, which is not built. See the
+`sangoku-30k.9.1` children.
 
 Compilation support does not guarantee a practical ROM footprint. General float
 and wide-integer formatting are currently too large for normal use in the

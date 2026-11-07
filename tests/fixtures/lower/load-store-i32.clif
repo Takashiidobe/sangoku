@@ -14,8 +14,7 @@ block0(v0: i16):
     return
 }
 
-; CHECK: SECTION "__rust_cgu_load_2Dstore_2Di32", ROM0
-; CHECK-EMPTY:
+; CHECK: SECTION "__rust_ld", ROM0
 ; CHECK-NEXT: EXPORT __rust_ld
 ; CHECK-NEXT: __rust_ld::
 ; CHECK-NEXT:   add sp, -4
@@ -77,6 +76,7 @@ block0(v0: i16):
 ; CHECK-NEXT:   add sp, 4
 ; CHECK-NEXT:   ret
 ; CHECK-EMPTY:
+; CHECK-NEXT: SECTION "__rust_st", ROM0
 ; CHECK-NEXT: EXPORT __rust_st
 ; CHECK-NEXT: __rust_st::
 ; CHECK-NEXT:   add sp, -6
