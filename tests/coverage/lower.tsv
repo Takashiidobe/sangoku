@@ -233,8 +233,8 @@ floor	f16	ok
 floor	f32	ok	
 floor	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fma	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fma	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fma.f16 v0, v1, v2`, type = `Some(types::F16)`
-fma	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fma.f32 v0, v1, v2`, type = `Some(types::F32)`
+fma	f16	ok	
+fma	f32	ok	
 fma	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fmax	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fmax	f16	ok	

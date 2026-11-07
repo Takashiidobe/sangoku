@@ -900,11 +900,15 @@ fn f16_to_f32_ref(bits: u16) -> f32 {
 }
 
 fn f32_to_f16_ref(value: f32) -> u16 {
+    f64_to_f16_ref(f64::from(value))
+}
+
+fn f64_to_f16_ref(value: f64) -> u16 {
     if value.is_nan() {
         return 0x7E00;
     }
     let sign = if value.is_sign_negative() { 0x8000 } else { 0 };
-    let magnitude = f64::from(value.abs());
+    let magnitude = value.abs();
     if magnitude >= 65520.0 {
         return sign | 0x7C00;
     }
@@ -1088,6 +1092,103 @@ fn f16_operations_match_reference() -> Result<()> {
             demote(v as f32),
             &format!("i32 {v:#x}"),
         );
+    }
+    Ok(())
+}
+
+#[test]
+fn f32_fma_matches_host() -> Result<()> {
+    let program = program("float-arith")?;
+    let mut triples: Vec<(f32, f32, f32)> = Vec::new();
+    let edges = [
+        0.0f32,
+        -0.0,
+        1.0,
+        -1.0,
+        1.5,
+        3.0,
+        f32::MAX,
+        f32::MIN_POSITIVE,
+        f32::from_bits(1),
+        f32::INFINITY,
+        f32::NEG_INFINITY,
+        f32::NAN,
+        16777217.0,
+        0.1,
+    ];
+    for a in edges {
+        for b in edges {
+            for c in [
+                0.0f32,
+                -0.0,
+                1.0,
+                -1.0,
+                f32::INFINITY,
+                f32::NAN,
+                1e-30,
+                f32::MAX,
+            ] {
+                triples.push((a, b, c));
+            }
+        }
+    }
+    let mut state = 0xD1B5_4A33u32;
+    let mut next = || {
+        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
+        state >> 8
+    };
+    for index in 0..500 {
+        let ea = 90 + next() % 80;
+        let eb = 90 + next() % 80;
+        let ec = match index % 4 {
+            0 => (ea + eb).saturating_sub(127),
+            1 => (ea + eb).saturating_sub(127) + 1 + next() % 3,
+            2 => (ea + eb).saturating_sub(127) + next() % 40,
+            _ => 1 + next() % 250,
+        }
+        .clamp(1, 254);
+        let mut make = |e: u32| f32::from_bits((next() & 1) << 31 | e << 23 | next() & 0x7F_FFFF);
+        triples.push((make(ea), make(eb), make(ec)));
+    }
+    for (a, b, c) in triples {
+        let mut data = a.to_bits().to_le_bytes().to_vec();
+        data.extend(b.to_bits().to_le_bytes());
+        data.extend(c.to_bits().to_le_bytes());
+        let got = invoke(&program, "__rust_ffma", &data)?;
+        same_float(
+            got,
+            a.mul_add(b, c),
+            &format!(
+                "fma {:08x} {:08x} {:08x}",
+                a.to_bits(),
+                b.to_bits(),
+                c.to_bits()
+            ),
+        );
+    }
+    Ok(())
+}
+
+#[test]
+fn f16_fma_matches_reference() -> Result<()> {
+    let program = program("float-convert")?;
+    let values = half_samples();
+    for a in values.iter().copied() {
+        for b in values.iter().copied() {
+            for c in values.iter().copied() {
+                let mut data = half_operands(a, b);
+                data.extend(c.to_le_bytes());
+                data.resize(12, 0);
+                let got = invoke(&program, "__rust_h_ffma", &data)?;
+                let expected = f64::from(f16_to_f32_ref(a))
+                    .mul_add(f64::from(f16_to_f32_ref(b)), f64::from(f16_to_f32_ref(c)));
+                same_half(
+                    got,
+                    f64_to_f16_ref(expected),
+                    &format!("h_fma {a:04x} {b:04x} {c:04x}"),
+                );
+            }
+        }
     }
     Ok(())
 }

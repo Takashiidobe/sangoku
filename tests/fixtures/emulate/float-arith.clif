@@ -206,3 +206,13 @@ block0(v0: i16):
     v4 = bitcast.i32 v3
     return v4
 }
+
+function %ffma(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = load.f32 v0+4
+    v3 = load.f32 v0+8
+    v4 = fma v1, v2, v3
+    v5 = bitcast.i32 v4
+    return v5
+}
