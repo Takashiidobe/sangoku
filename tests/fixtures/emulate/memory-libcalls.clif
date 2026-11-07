@@ -1,0 +1,23 @@
+set enable_multi_ret_implicit_sret=true
+set opt_level=none
+target z80
+
+function %copy_to(i16) -> i16 system_v {
+    sig0 = (i16, i16, i16) -> i16 system_v
+    fn0 = %Memcpy sig0
+block0(v0: i16):
+    v1 = iconst.i16 0xC400
+    v2 = iconst.i16 37
+    v3 = call fn0(v0, v1, v2)
+    return v3
+}
+
+function %move_to(i16) -> i16 system_v {
+    sig0 = (i16, i16, i16) -> i16 system_v
+    fn0 = %Memmove sig0
+block0(v0: i16):
+    v1 = iconst.i16 0xC400
+    v2 = iconst.i16 37
+    v3 = call fn0(v0, v1, v2)
+    return v3
+}

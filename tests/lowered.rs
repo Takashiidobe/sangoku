@@ -22,7 +22,9 @@ fn lower_program(path: &str) -> Result<harness::Program> {
         String::from_utf8_lossy(&output.stderr)
     );
     let assembly = String::from_utf8(output.stdout)?;
-    let needs_memory = assembly.contains("__gbc_mem");
+    let needs_memory = assembly.contains("__gbc_mem")
+        || assembly.contains("memcpy")
+        || assembly.contains("memmove");
     let needs_convert = assembly.contains("__gbc_convert");
     let needs_float128 = assembly.contains("__gbc_f128");
     let needs_float64 = assembly.contains("__gbc_f64");
@@ -3282,6 +3284,39 @@ fn rust_usize_and_pointer_offsets_use_16_bits() -> Result<()> {
                 "level {level}: pointer {base} offset {offset}"
             );
         }
+    }
+    Ok(())
+}
+
+#[test]
+fn memory_libcalls_follow_the_lowered_calling_convention() -> Result<()> {
+    let program = program("memory-libcalls")?;
+    let source: Vec<u8> = (0..37u8)
+        .map(|i| i.wrapping_mul(5).wrapping_add(1))
+        .collect();
+    for (name, dst) in [
+        ("__rust_copy_to", 0xC500u16),
+        ("__rust_move_to", 0xC500),
+        ("__rust_move_to", 0xC410),
+        ("__rust_move_to", 0xC3F0),
+    ] {
+        let stop = program.symbols["done"];
+        let mut e = program.emulator(name)?;
+        e.memory[0xC400..0xC400 + source.len()].copy_from_slice(&source);
+        e.b = dst as u8;
+        e.c = (dst >> 8) as u8;
+        e.set_sp(STACK - 2);
+        e.write16(STACK - 2, stop);
+        e.run_until(stop, 2_000_000)?;
+        let at = usize::from(dst);
+        ensure!(
+            e.memory[at..at + source.len()] == source[..],
+            "{name} to {dst:#x} copied the wrong bytes"
+        );
+        ensure!(
+            u16::from(e.a) | u16::from(e.b) << 8 == dst,
+            "{name} to {dst:#x} returned the wrong pointer"
+        );
     }
     Ok(())
 }

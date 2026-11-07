@@ -266,7 +266,9 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
 
     let assembly = fs::read_to_string(&rust_asm)
         .map_err(|error| format!("could not read {}: {error}", rust_asm.display()))?;
-    let needs_memory = assembly.contains("__gbc_mem");
+    let needs_memory = assembly.contains("__gbc_mem")
+        || assembly.contains("memcpy")
+        || assembly.contains("memmove");
     let needs_convert = assembly.contains("__gbc_convert");
     let needs_float128 = assembly.contains("__gbc_f128");
     let needs_float64 = assembly.contains("__gbc_f64");
