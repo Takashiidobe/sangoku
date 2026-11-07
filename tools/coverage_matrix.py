@@ -201,14 +201,49 @@ def render(plain, verified):
             row = [mark[plain[(op, t)][0]] if (op, t) in plain else "" for t in types]
             lines.append(f"| {op} | " + " | ".join(row) + " |")
         lines.append("")
-    lines += ["## Conversions and other operations", ""]
-    grouped = {}
+    lines += ["## Conversions", "",
+              "Rows are source types; columns are destination types. `ok` lowers,",
+              "`-` is unsupported, `n/a` is outside the opcode's conversion domain,",
+              "and `?` is applicable but has no coverage fixture. `n/e` means the",
+              "fixture cannot be expressed in textual CLIF.", ""]
+    conversion_ops = sorted({op for op, ty in plain if "->" in ty})
+    for op in conversion_ops:
+        if op == "bitcast":
+            domains = [(INTS, FLOATS), (FLOATS, INTS)]
+        elif op.startswith("fcvt_from_"):
+            domains = [(INTS, FLOATS)]
+        elif op.startswith("fcvt_to_"):
+            domains = [(FLOATS, INTS)]
+        elif op in ("fpromote", "fdemote"):
+            domains = [(FLOATS, FLOATS)]
+        elif op.startswith(("sload", "uload")):
+            domains = [([f"i{op[5:]}"], INTS)]
+        else:
+            domains = [(INTS, INTS)]
+        lines += [f"### `{op}`", ""]
+        for sources, destinations in domains:
+            lines += ["| source \\ destination | " + " | ".join(destinations) + " |",
+                      "|---|" + "---|" * len(destinations)]
+            for source in sources:
+                row = []
+                for destination in destinations:
+                    src_bits, dst_bits = int(source[1:]), int(destination[1:])
+                    if op == "bitcast":
+                        applicable = src_bits == dst_bits
+                    elif op in ("ireduce", "fdemote"):
+                        applicable = src_bits > dst_bits
+                    elif op in ("uextend", "sextend", "fpromote") or op.startswith(("sload", "uload")):
+                        applicable = src_bits < dst_bits
+                    else:
+                        applicable = True
+                    entry = plain.get((op, f"{source}->{destination}"))
+                    row.append(mark[entry[0]] if entry else "?" if applicable else "n/a")
+                lines.append(f"| {source} | " + " | ".join(row) + " |")
+            lines.append("")
+    lines += ["## Other operations", "", "| op | status |", "|---|---|"]
     for (op, ty), (status, _) in sorted(plain.items()):
-        if ty not in INTS and ty not in FLOATS:
-            grouped.setdefault(op, {}).setdefault(status, []).append(ty)
-    for op, by_status in grouped.items():
-        parts = [f"{mark[st]}: {', '.join(tys)}" for st, tys in sorted(by_status.items())]
-        lines.append(f"- `{op}` " + "; ".join(parts))
+        if ty not in INTS and ty not in FLOATS and "->" not in ty:
+            lines.append(f"| {op} | {mark[status]} |")
     lines += ["", "## Backend crashes", ""]
     crashes = [f"- `{op}` {ty}: {m}" for (op, ty), (st, m) in sorted(plain.items()) if st == "panic"]
     lines += crashes or ["none"]

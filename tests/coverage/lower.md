@@ -109,28 +109,166 @@ Totals: inexpressible 3, ok 431, unsupported 135
 | store | ok | ok | ok | ok |
 | trunc | ok | ok | - | - |
 
-## Conversions and other operations
+## Conversions
 
-- `bitcast` ok: f128->i128, f16->i16, f32->i32, f64->i64, i128->f128, i16->f16, i32->f32, i64->f64
-- `fcvt_from_sint` ok: i16->f16, i16->f32, i32->f16, i32->f32, i8->f16, i8->f32; -: i16->f128, i16->f64, i32->f128, i32->f64, i64->f128, i64->f16, i64->f32, i64->f64, i8->f128, i8->f64
-- `fcvt_from_uint` ok: i16->f16, i16->f32, i32->f16, i32->f32, i8->f16, i8->f32; -: i16->f128, i16->f64, i32->f128, i32->f64, i64->f128, i64->f16, i64->f32, i64->f64, i8->f128, i8->f64
-- `fcvt_to_sint` ok: f16->i16, f16->i32, f16->i8, f32->i16, f32->i32, f32->i8; -: f128->i16, f128->i32, f128->i64, f128->i8, f16->i64, f32->i64, f64->i16, f64->i32, f64->i64, f64->i8
-- `fcvt_to_sint_sat` ok: f16->i16, f16->i32, f16->i8, f32->i16, f32->i32, f32->i8; -: f128->i16, f128->i32, f128->i64, f128->i8, f16->i64, f32->i64, f64->i16, f64->i32, f64->i64, f64->i8
-- `fcvt_to_uint` ok: f16->i16, f16->i32, f16->i8, f32->i16, f32->i32, f32->i8; -: f128->i16, f128->i32, f128->i64, f128->i8, f16->i64, f32->i64, f64->i16, f64->i32, f64->i64, f64->i8
-- `fcvt_to_uint_sat` ok: f16->i16, f16->i32, f16->i8, f32->i16, f32->i32, f32->i8; -: f128->i16, f128->i32, f128->i64, f128->i8, f16->i64, f32->i64, f64->i16, f64->i32, f64->i64, f64->i8
-- `fdemote` ok: f32->f16; -: f128->f16, f128->f32, f128->f64, f64->f16, f64->f32
-- `fpromote` ok: f16->f32; -: f16->f128, f16->f64, f32->f128, f32->f64, f64->f128
-- `func_addr` ok: -
-- `ireduce` ok: i128->i16, i128->i32, i128->i64, i128->i8, i16->i8, i32->i16, i32->i8, i64->i16, i64->i32, i64->i8
-- `sextend` ok: i16->i128, i16->i32, i16->i64, i32->i128, i32->i64, i64->i128, i8->i128, i8->i16, i8->i32, i8->i64
-- `sload16` ok: i16->i32
-- `sload8` ok: i8->i16, i8->i32
-- `stack_addr` ok: -
-- `symbol_value` ok: -
-- `trap` ok: -
-- `uextend` ok: i16->i128, i16->i32, i16->i64, i32->i128, i32->i64, i64->i128, i8->i128, i8->i16, i8->i32, i8->i64
-- `uload16` ok: i16->i32
-- `uload8` ok: i8->i16, i8->i32
+Rows are source types; columns are destination types. `ok` lowers,
+`-` is unsupported, `n/a` is outside the opcode's conversion domain,
+and `?` is applicable but has no coverage fixture. `n/e` means the
+fixture cannot be expressed in textual CLIF.
+
+### `bitcast`
+
+| source \ destination | f16 | f32 | f64 | f128 |
+|---|---|---|---|---|
+| i8 | n/a | n/a | n/a | n/a |
+| i16 | ok | n/a | n/a | n/a |
+| i32 | n/a | ok | n/a | n/a |
+| i64 | n/a | n/a | ok | n/a |
+| i128 | n/a | n/a | n/a | ok |
+
+| source \ destination | i8 | i16 | i32 | i64 | i128 |
+|---|---|---|---|---|---|
+| f16 | n/a | ok | n/a | n/a | n/a |
+| f32 | n/a | n/a | ok | n/a | n/a |
+| f64 | n/a | n/a | n/a | ok | n/a |
+| f128 | n/a | n/a | n/a | n/a | ok |
+
+### `fcvt_from_sint`
+
+| source \ destination | f16 | f32 | f64 | f128 |
+|---|---|---|---|---|
+| i8 | ok | ok | - | - |
+| i16 | ok | ok | - | - |
+| i32 | ok | ok | - | - |
+| i64 | - | - | - | - |
+| i128 | ? | ? | ? | ? |
+
+### `fcvt_from_uint`
+
+| source \ destination | f16 | f32 | f64 | f128 |
+|---|---|---|---|---|
+| i8 | ok | ok | - | - |
+| i16 | ok | ok | - | - |
+| i32 | ok | ok | - | - |
+| i64 | - | - | - | - |
+| i128 | ? | ? | ? | ? |
+
+### `fcvt_to_sint`
+
+| source \ destination | i8 | i16 | i32 | i64 | i128 |
+|---|---|---|---|---|---|
+| f16 | ok | ok | ok | - | ? |
+| f32 | ok | ok | ok | - | ? |
+| f64 | - | - | - | - | ? |
+| f128 | - | - | - | - | ? |
+
+### `fcvt_to_sint_sat`
+
+| source \ destination | i8 | i16 | i32 | i64 | i128 |
+|---|---|---|---|---|---|
+| f16 | ok | ok | ok | - | ? |
+| f32 | ok | ok | ok | - | ? |
+| f64 | - | - | - | - | ? |
+| f128 | - | - | - | - | ? |
+
+### `fcvt_to_uint`
+
+| source \ destination | i8 | i16 | i32 | i64 | i128 |
+|---|---|---|---|---|---|
+| f16 | ok | ok | ok | - | ? |
+| f32 | ok | ok | ok | - | ? |
+| f64 | - | - | - | - | ? |
+| f128 | - | - | - | - | ? |
+
+### `fcvt_to_uint_sat`
+
+| source \ destination | i8 | i16 | i32 | i64 | i128 |
+|---|---|---|---|---|---|
+| f16 | ok | ok | ok | - | ? |
+| f32 | ok | ok | ok | - | ? |
+| f64 | - | - | - | - | ? |
+| f128 | - | - | - | - | ? |
+
+### `fdemote`
+
+| source \ destination | f16 | f32 | f64 | f128 |
+|---|---|---|---|---|
+| f16 | n/a | n/a | n/a | n/a |
+| f32 | ok | n/a | n/a | n/a |
+| f64 | - | - | n/a | n/a |
+| f128 | - | - | - | n/a |
+
+### `fpromote`
+
+| source \ destination | f16 | f32 | f64 | f128 |
+|---|---|---|---|---|
+| f16 | n/a | ok | - | - |
+| f32 | n/a | n/a | - | - |
+| f64 | n/a | n/a | n/a | - |
+| f128 | n/a | n/a | n/a | n/a |
+
+### `ireduce`
+
+| source \ destination | i8 | i16 | i32 | i64 | i128 |
+|---|---|---|---|---|---|
+| i8 | n/a | n/a | n/a | n/a | n/a |
+| i16 | ok | n/a | n/a | n/a | n/a |
+| i32 | ok | ok | n/a | n/a | n/a |
+| i64 | ok | ok | ok | n/a | n/a |
+| i128 | ok | ok | ok | ok | n/a |
+
+### `sextend`
+
+| source \ destination | i8 | i16 | i32 | i64 | i128 |
+|---|---|---|---|---|---|
+| i8 | n/a | ok | ok | ok | ok |
+| i16 | n/a | n/a | ok | ok | ok |
+| i32 | n/a | n/a | n/a | ok | ok |
+| i64 | n/a | n/a | n/a | n/a | ok |
+| i128 | n/a | n/a | n/a | n/a | n/a |
+
+### `sload16`
+
+| source \ destination | i8 | i16 | i32 | i64 | i128 |
+|---|---|---|---|---|---|
+| i16 | n/a | n/a | ok | ? | ? |
+
+### `sload8`
+
+| source \ destination | i8 | i16 | i32 | i64 | i128 |
+|---|---|---|---|---|---|
+| i8 | n/a | ok | ok | ? | ? |
+
+### `uextend`
+
+| source \ destination | i8 | i16 | i32 | i64 | i128 |
+|---|---|---|---|---|---|
+| i8 | n/a | ok | ok | ok | ok |
+| i16 | n/a | n/a | ok | ok | ok |
+| i32 | n/a | n/a | n/a | ok | ok |
+| i64 | n/a | n/a | n/a | n/a | ok |
+| i128 | n/a | n/a | n/a | n/a | n/a |
+
+### `uload16`
+
+| source \ destination | i8 | i16 | i32 | i64 | i128 |
+|---|---|---|---|---|---|
+| i16 | n/a | n/a | ok | ? | ? |
+
+### `uload8`
+
+| source \ destination | i8 | i16 | i32 | i64 | i128 |
+|---|---|---|---|---|---|
+| i8 | n/a | ok | ok | ? | ? |
+
+## Other operations
+
+| op | status |
+|---|---|
+| func_addr | ok |
+| stack_addr | ok |
+| symbol_value | ok |
+| trap | ok |
 
 ## Backend crashes
 
