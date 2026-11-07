@@ -112,7 +112,8 @@ def main():
         reports = [summarise("core", probe(out / "core.ll"), [])]
         deps = ["--extern", f"core={out / 'libcore.rmeta'}", "-L", f"dependency={out}"]
         builtins_result = rustc(
-            ["--crate-name", "compiler_builtins", "--cfg", 'feature="compiler-builtins"', *deps],
+            ["--crate-name", "compiler_builtins", "--cfg", 'feature="compiler-builtins"',
+             "--cfg", 'feature="unmangled-names"', "--cfg", 'feature="mem"', *deps],
             BUILTINS, out / "compiler_builtins.s", env)
         builtins_clif = out / "compiler_builtins.ll"
         reports.append(summarise(

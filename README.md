@@ -71,14 +71,14 @@ compiling all of `core` remains the next milestone.
 
 Core compilation status (`tools/core_report.py`, also the nextest test
 `core_lowers_to_lr35902_without_failures`): compiled to CLIF and lowered one
-function at a time, 0 failures out of 3,235 `core` functions, 1,807
-`compiler_builtins` functions and 771 functions instantiated by
+function at a time, 0 failures out of 3,235 `core` functions, the
+`compiler_builtins` crate and 771 functions instantiated by
 `tests/core_driver/driver.rs` (iterators, slices, `str`, `char`, formatting
 through `u128`, parsing, sorting, hashing, `dyn`). These are lowering counts at
-`opt-level=0`. Linking is not done: `core` and `compiler_builtins` leave
-`__udivti3`, `__umodti3`, `__divti3`, `__rust_u128_mulo`, `memcmp` and
-`rust_begin_unwind` undefined, and each crate is one code section far larger
-than the 32 KiB ROM0 bank. See the `sangoku-30k.9.1` children.
+`opt-level=0`, with `compiler_builtins` built with its `unmangled-names` and
+`mem` features (2,009 functions). Linking is not done: `memcpy` and `memmove`
+have no runtime implementation, `rust_begin_unwind` is undefined, and each crate
+is one code section far larger than the 32 KiB ROM0 bank. See the `sangoku-30k.9.1` children.
 
 Compilation support does not guarantee a practical ROM footprint. General float
 and wide-integer formatting are currently too large for normal use in the
