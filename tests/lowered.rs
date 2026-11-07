@@ -9,8 +9,12 @@ fn program(fixture: &str) -> Result<harness::Program> {
         "{}/tests/fixtures/emulate/{fixture}.clif",
         harness::root().display()
     );
+    lower_program(&path)
+}
+
+fn lower_program(path: &str) -> Result<harness::Program> {
     let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
-        .args(["lower", &path, "-"])
+        .args(["lower", path, "-"])
         .output()?;
     ensure!(
         output.status.success(),
@@ -639,7 +643,7 @@ fn unary_samples() -> Vec<f32> {
         8388608.0,
         8388609.0,
         -8388607.5,
-        123456.789,
+        123_456.79,
         -1234.5678,
         2.0,
         4.0,
@@ -834,7 +838,7 @@ fn f32_to_int_matches_host() -> Result<()> {
                 ctx("u8")
             );
         }
-        if t >= -32768.0 && t < 32768.0 {
+        if (-32768.0..32768.0).contains(&t) {
             assert_eq!(
                 run("to_sint_i16")? & 0xFFFF,
                 u32::from(a as i16 as u16),
@@ -850,7 +854,7 @@ fn f32_to_int_matches_host() -> Result<()> {
                 ctx("u16")
             );
         }
-        if t >= -2147483648.0 && t < 2147483648.0 {
+        if (-2147483648.0..2147483648.0).contains(&t) {
             assert_eq!(run("to_sint_i32")?, a as i32 as u32, "{}", ctx("s32"));
         }
         if t > -1.0 && t < 4294967296.0 {
@@ -992,7 +996,7 @@ fn f16_promote_and_demote_match_reference() -> Result<()> {
         2050.0,
         2051.0,
         -65520.0,
-        6.0975552e-5,
+        6.097_555e-5,
         6.1005354e-5,
     ]);
     let mut state = 0x5151_7777u32;
@@ -1311,7 +1315,7 @@ fn i8_cls_and_mulhi_match_host() -> Result<()> {
         let expected = ((a ^ ((a as i8) >> 1) as u8).leading_zeros() - 1) as u8;
         assert_eq!(got, expected, "cls {a:#x}");
         for b in edges {
-            let unsigned = (u16::from(a) * u16::from(b) >> 8) as u8;
+            let unsigned = ((u16::from(a) * u16::from(b)) >> 8) as u8;
             let signed = ((i16::from(a as i8) * i16::from(b as i8)) >> 8) as u8;
             let run = |op: &str| -> Result<u8> {
                 Ok(invoke(&program, &format!("__rust_{op}_i8"), &[a, b])? as u8)
@@ -1420,7 +1424,7 @@ fn i16_cls_mulhi_and_overflow_match_host() -> Result<()> {
             };
             assert_eq!(
                 mulhi("umulhi")?,
-                (u32::from(a) * u32::from(b) >> 16) as u16,
+                ((u32::from(a) * u32::from(b)) >> 16) as u16,
                 "umulhi {a:#x} {b:#x}"
             );
             assert_eq!(
@@ -1461,6 +1465,225 @@ fn i16_cls_mulhi_and_overflow_match_host() -> Result<()> {
                 "smul {a:#x} {b:#x}"
             );
         }
+    }
+    Ok(())
+}
+
+#[test]
+fn split_i64_values_match_host() -> Result<()> {
+    for level in ["none", "speed"] {
+        check_split_i64(level)?;
+    }
+    Ok(())
+}
+
+fn check_split_i64(level: &str) -> Result<()> {
+    let source = include_str!("fixtures/emulate/split-i64.clif");
+    let functions: Vec<_> = source.split("\nfunction ").skip(1).collect();
+    let mut programs = std::collections::BTreeMap::new();
+    for function in &functions {
+        let name = function
+            .strip_prefix('%')
+            .unwrap()
+            .split('(')
+            .next()
+            .unwrap();
+        if name == "sum64" {
+            continue;
+        }
+        let mut text = format!(
+            "set enable_multi_ret_implicit_sret=true\nset opt_level={level}\ntarget z80\nfunction {function}"
+        );
+        if name.starts_with("call_") {
+            let callee = functions.iter().find(|f| f.starts_with("%sum64(")).unwrap();
+            text.push_str(&format!("\nfunction {callee}"));
+        }
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let path = directory.path().join(format!("{level}-{name}.clif"));
+        std::fs::write(&path, text)?;
+        programs.insert(name.to_owned(), lower_program(path.to_str().unwrap())?);
+    }
+    let inputs = [
+        0,
+        1,
+        0xffff_ffff,
+        0x1_0000_0000,
+        1u64 << 63,
+        u64::MAX,
+        0x0123_4567_89ab_cdef,
+    ];
+    let run = |name: &str, a: u64, b: u64| -> Result<_> {
+        let bytes: Vec<_> = a
+            .to_le_bytes()
+            .into_iter()
+            .chain(b.to_le_bytes())
+            .enumerate()
+            .map(|(i, byte)| (BASE + i as u16, byte))
+            .collect();
+        call(&programs[name], &format!("__rust_{name}"), &bytes)
+    };
+    let value = |e: &sangoku_test_support::emu::Emulator, offset: usize| {
+        u64::from_le_bytes(
+            e.memory[BASE as usize + offset..BASE as usize + offset + 8]
+                .try_into()
+                .unwrap(),
+        )
+    };
+    for (a, b) in [
+        (0u64, 0u64),
+        (u64::MAX, 1),
+        (0xffff_ffff, 1),
+        (0, 1),
+        (i64::MAX as u64, 1),
+        (1 << 63, u64::MAX),
+        (0x0123_4567_89ab_cdef, 0xfedc_ba98_7654_3210),
+    ] {
+        for (op, expected) in [
+            ("iadd", a.wrapping_add(b)),
+            ("isub", a.wrapping_sub(b)),
+            ("imul", a.wrapping_mul(b)),
+            ("band", a & b),
+            ("bor", a | b),
+            ("bxor", a ^ b),
+            ("umin", a.min(b)),
+            ("umax", a.max(b)),
+            ("smin", (a as i64).min(b as i64) as u64),
+            ("smax", (a as i64).max(b as i64) as u64),
+        ] {
+            let e = run(&format!("{op}64"), a, b)?;
+            assert_eq!(value(&e, 16), expected, "{op} {a:#x} {b:#x}");
+        }
+        for (cc, expected) in [
+            ("eq", a == b),
+            ("ne", a != b),
+            ("ult", a < b),
+            ("ule", a <= b),
+            ("ugt", a > b),
+            ("uge", a >= b),
+            ("slt", (a as i64) < b as i64),
+            ("sle", (a as i64) <= b as i64),
+            ("sgt", (a as i64) > b as i64),
+            ("sge", (a as i64) >= b as i64),
+        ] {
+            let e = run(&format!("cmp_{cc}64"), a, b)?;
+            assert_eq!(
+                e.memory[BASE as usize + 24],
+                expected as u8,
+                "{cc} {a:#x} {b:#x}"
+            );
+        }
+        for (op, (expected, overflow)) in [
+            ("uadd_overflow", a.overflowing_add(b)),
+            ("usub_overflow", a.overflowing_sub(b)),
+            ("sadd_overflow", {
+                let (x, o) = (a as i64).overflowing_add(b as i64);
+                (x as u64, o)
+            }),
+            ("ssub_overflow", {
+                let (x, o) = (a as i64).overflowing_sub(b as i64);
+                (x as u64, o)
+            }),
+        ] {
+            let e = run(&format!("{op}64"), a, b)?;
+            assert_eq!(
+                (value(&e, 16), e.memory[BASE as usize + 24] != 0),
+                (expected, overflow),
+                "{op} {a:#x} {b:#x}"
+            );
+        }
+        for name in ["call_sum64", "call_indirect_sum64"] {
+            let e = run(name, a, b)?;
+            assert_eq!(value(&e, 16), a.wrapping_add(b), "{name}");
+        }
+        let e = run("call_indirect_twice64", a, b)?;
+        assert_eq!(value(&e, 16), a.wrapping_add(b).wrapping_add(b));
+        let e = run("constant_mul64", a, b)?;
+        assert_eq!(value(&e, 16), a.wrapping_mul(65536));
+        let e = run("narrow_shift_wide_count64", a, b)?;
+        assert_eq!(value(&e, 16) as u32, (a as u32).wrapping_shl(b as u32));
+        let e = run("loop64", a, b)?;
+        assert_eq!(value(&e, 16), a.wrapping_add(b & 3));
+        let e = run("select64", a, b)?;
+        assert_eq!(value(&e, 16), if a != 0 { a } else { b });
+        let e = run("big_endian64", a, b)?;
+        assert_eq!(value(&e, 16), a.swap_bytes());
+        assert_eq!(value(&e, 24), b.swap_bytes());
+        let e = run("flow64", a, b)?;
+        assert_eq!(value(&e, 16), (if a != 0 { a } else { b }).wrapping_add(1));
+    }
+    for a in inputs {
+        for (op, expected) in [
+            ("bnot", !a),
+            ("ineg", a.wrapping_neg()),
+            ("iabs", (a as i64).wrapping_abs() as u64),
+            ("clz", a.leading_zeros() as u64),
+            ("ctz", a.trailing_zeros() as u64),
+            ("popcnt", a.count_ones() as u64),
+            ("bswap", a.swap_bytes()),
+            ("bitrev", a.reverse_bits()),
+        ] {
+            let e = run(&format!("{op}64"), a, 0)?;
+            assert_eq!(value(&e, 16), expected, "{op} {a:#x}");
+        }
+        for count in [0u32, 1, 31, 32, 33, 63, 64, 65, 127] {
+            for (op, expected) in [
+                ("ishl", a.wrapping_shl(count)),
+                ("ushr", a.wrapping_shr(count)),
+                ("sshr", (a as i64).wrapping_shr(count) as u64),
+                ("rotl", a.rotate_left(count)),
+                ("rotr", a.rotate_right(count)),
+            ] {
+                let e = run(&format!("{op}64"), a, count as u64)?;
+                assert_eq!(value(&e, 16), expected, "{op} {a:#x} {count}");
+            }
+        }
+        let e = run("conversions64", a, a)?;
+        assert_eq!(value(&e, 16), a as i16 as i64 as u64);
+        assert_eq!(value(&e, 24), a as u16 as u64);
+        assert_eq!(value(&e, 32), a.rotate_left(32));
+        assert_eq!(e.read16(BASE + 40), a as u16);
+    }
+    Ok(())
+}
+
+#[test]
+fn rust_u64_memory_add_lowers_and_executes() -> Result<()> {
+    let source = harness::root().join("examples/u64.rs");
+    let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
+        .args(["clif", source.to_str().unwrap(), "-"])
+        .output()?;
+    ensure!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let directory = sangoku_test_support::tempfile::tempdir()?;
+    let path = directory.path().join("rust-u64.clif");
+    std::fs::write(&path, output.stdout)?;
+    let program = lower_program(path.to_str().unwrap())?;
+    let stop = program.symbols["done"];
+    for (a, b) in [
+        (0xffff_ffffu64, 1u64),
+        (u64::MAX, 1),
+        (0x0123_4567_89ab_cdef, 0x7654_3210_fedc_ba98),
+    ] {
+        let mut e = program.emulator("__rust_sum_to_memory")?;
+        e.memory[BASE as usize..BASE as usize + 8].copy_from_slice(&a.to_le_bytes());
+        e.memory[BASE as usize + 8..BASE as usize + 16].copy_from_slice(&b.to_le_bytes());
+        e.b = BASE as u8;
+        e.c = (BASE >> 8) as u8;
+        e.a = (BASE + 8) as u8;
+        e.memory[STACK as usize] = ((BASE + 8) >> 8) as u8;
+        e.write16(STACK + 1, BASE + 16);
+        e.set_sp(STACK - 2);
+        e.write16(STACK - 2, stop);
+        e.run_until(stop, 65536)?;
+        let result = u64::from_le_bytes(
+            e.memory[BASE as usize + 16..BASE as usize + 24]
+                .try_into()
+                .unwrap(),
+        );
+        assert_eq!(result, a.wrapping_add(b));
     }
     Ok(())
 }

@@ -95,16 +95,16 @@ is returned whole in a caller-allocated return area. That case adds a hidden
 `enable_multi_ret_implicit_sret`). All registers are caller-saved.
 
 The backend supports a limited set of LR35902 operations and does not yet
-support the full Rust ABI, indirect or tail calls, i64 and wider values, or
-Rust data objects.
+support the full Rust ABI, indirect or tail calls, i64 and wider values, or Rust
+data objects.
 
 f32 is a soft-float type held in four byte registers. `runtime/softfloat32.asm`
 implements correctly rounded add, sub, mul, div, sqrt, compare, min and max,
 fma, trunc, floor, ceil and nearest, i8/i16/i32 conversions to and from f32
-(trapping and saturating), and f16 promote/demote. f16 arithmetic, compares
-and rounding promote to f32, operate and demote, which is correctly rounded.
-f64, f128 and i64 conversions are not supported. The fork's ASCII-only changes to `core` are being reverted
-(sangoku-30k).
+(trapping and saturating), and f16 promote/demote. f16 arithmetic, compares and
+rounding promote to f32, operate and demote, which is correctly rounded. f64,
+f128 and i64 conversions are not supported. The fork's ASCII-only changes to
+`core` are being reverted (sangoku-30k).
 
 ## Testing
 
@@ -122,9 +122,21 @@ a fixture for the phase where it fails.
 
 ## Preserve Rust string behavior
 
-Restore UTF-8 decoding and consistent `str`/`char` behavior in the Rust fork.
-The current target-specific `next_code_point` reads one byte per character
-without rejecting non-ASCII input, so valid non-ASCII strings can be decoded
-incorrectly. Add regression fixtures for multibyte strings, character
-boundaries, and forward/reverse iteration. Tracked by sangoku-30k, which also
+The Rust fork now uses upstream UTF-8 decoding and full Unicode tables for `str`
+and `char`, including reverse iteration and escaping. A focused `alloctests`
+regression covers forward and reverse iteration at each UTF-8 width boundary.
+Target-side MIR/CLIF/emulator coverage remains blocked until the target `core`
+build can run through the Cranelift backend. Tracked by sangoku-30k, which also
 covers compact Unicode tables and wider integer support.
+
+## Lower 64-bit integers
+
+The LR35902 Cranelift pass splits each `i64` into low/high `i32` values before
+machine lowering. Arithmetic, comparisons, bitwise operations, shifts, rotates,
+conversions, memory access, and calls use the existing narrower backend. Run
+`cargo run -- build examples/u64.rs build/u64.gb` for a Rust-to-ROM example.
+
+Division, remainder, multiply-high, and checked multiplication remain
+unsupported. See the
+[legalization note](wiki/concepts/64-bit-integer-legalization.md) and
+[operation coverage](tests/coverage/lower.md). Tracked by `sangoku-7qz.9`.
