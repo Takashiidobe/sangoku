@@ -123,3 +123,48 @@ fn target_core_and_alloc_respect_16_bit_size_limits() -> Result<()> {
     }
     Ok(())
 }
+
+#[test]
+fn wide_integer_libcall_returns_lower_through_the_backend() -> Result<()> {
+    let root = harness::root();
+    success(
+        Command::new("cargo")
+            .current_dir(&root)
+            .args([
+                "+gbc-lr35902",
+                "build",
+                "--release",
+                "--locked",
+                "--manifest-path",
+            ])
+            .arg(root.join("third_party/rustc_codegen_cranelift/Cargo.toml"))
+            .output()?,
+    )?;
+    let directory = sangoku_test_support::tempfile::tempdir()?;
+    let output = Command::new("rustup")
+        .current_dir(&root)
+        .args([
+            "run",
+            "gbc-lr35902",
+            "rustc",
+            "--edition=2024",
+            "--crate-type=lib",
+        ])
+        .args([
+            "--target",
+            "targets/lr35902.json",
+            "-Zunstable-options",
+            "-Cpanic=abort",
+        ])
+        .arg(format!(
+            "-Zcodegen-backend={}",
+            root.join(
+                "third_party/rustc_codegen_cranelift/target/release/librustc_codegen_cranelift.so"
+            )
+            .display()
+        ))
+        .args(["--emit=asm", "tests/fixtures/core/wide-return.rs", "-o"])
+        .arg(directory.path().join("wide-return.s"))
+        .output()?;
+    success(output)
+}
