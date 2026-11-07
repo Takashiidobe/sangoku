@@ -74,20 +74,8 @@ fn frontend_optimization() -> Result<()> {
 }
 
 #[test]
-fn half_float_reports_missing_runtime_conversions() -> Result<()> {
-    let (_directory, _rom, output) = build_fixture("wide-float16")?;
-    ensure!(
-        !output.status.success(),
-        "f16 support changed; enable execution check"
-    );
-    let report = String::from_utf8(output.stderr)?;
-    for symbol in ["__rust___extendhfsf2", "__rust___truncsfhf2"] {
-        ensure!(
-            report.contains(&format!("Undefined symbol `{symbol}`")),
-            "{report}"
-        );
-    }
-    Ok(())
+fn wide_float16() -> Result<()> {
+    run_fixture("wide-float16")
 }
 
 #[test]

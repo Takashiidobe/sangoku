@@ -53,5 +53,5 @@ cargo nextest run --no-fail-fast
 See the [wiki](wiki/index.md) for backend details and
 [practical limits](wiki/concepts/practical-limits.md) for ROM constraints.
 
-Frontend regression coverage and current gaps are described in
-[frontend fixtures](wiki/concepts/frontend-fixtures.md).
+Frontend regression coverage, including f16 arithmetic, and remaining gaps are
+described in [frontend fixtures](wiki/concepts/frontend-fixtures.md).
