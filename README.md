@@ -129,14 +129,15 @@ Target-side MIR/CLIF/emulator coverage remains blocked until the target `core`
 build can run through the Cranelift backend. Tracked by sangoku-30k, which also
 covers compact Unicode tables and wider integer support.
 
-## Lower 64-bit integers
+## Lower wide integers
 
-The LR35902 Cranelift pass splits each `i64` into low/high `i32` values before
-machine lowering. Arithmetic, comparisons, bitwise operations, shifts, rotates,
-conversions, memory access, and calls use the existing narrower backend. Run
-`cargo run -- build examples/u64.rs build/u64.gb` for a Rust-to-ROM example.
+The LR35902 Cranelift pass splits `i64` into two `i32` limbs and `i128` into
+four `i32` limbs before machine lowering. Arithmetic, comparisons, bitwise
+operations, shifts, rotates, conversions, memory access, and calls use the
+existing narrower backend. Build `examples/u64.rs`, `examples/u128.rs`, or
+`examples/u128-mul.rs` with `cargo run -- build` for Rust-to-ROM examples.
 
 Division, remainder, multiply-high, and checked multiplication remain
-unsupported. See the
-[legalization note](wiki/concepts/64-bit-integer-legalization.md) and
+unsupported. The remaining 128-bit operations are tracked by `sangoku-7qz.9.3`.
+See the [legalization note](wiki/concepts/64-bit-integer-legalization.md) and
 [operation coverage](tests/coverage/lower.md). Tracked by `sangoku-7qz.9`.

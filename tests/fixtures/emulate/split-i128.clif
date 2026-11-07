@@ -1,0 +1,429 @@
+set enable_multi_ret_implicit_sret=true
+target z80
+
+function %iadd128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = iadd v1, v2
+    store v3, v0+32
+    return
+}
+
+function %isub128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = isub v1, v2
+    store v3, v0+32
+    return
+}
+
+function %imul128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = imul v1, v2
+    store v3, v0+32
+    return
+}
+
+function %band128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = band v1, v2
+    store v3, v0+32
+    return
+}
+
+function %bor128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = bor v1, v2
+    store v3, v0+32
+    return
+}
+
+function %bxor128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = bxor v1, v2
+    store v3, v0+32
+    return
+}
+
+function %ishl128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = ishl v1, v2
+    store v3, v0+32
+    return
+}
+
+function %ushr128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = ushr v1, v2
+    store v3, v0+32
+    return
+}
+
+function %sshr128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = sshr v1, v2
+    store v3, v0+32
+    return
+}
+
+function %rotl128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = rotl v1, v2
+    store v3, v0+32
+    return
+}
+
+function %rotr128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = rotr v1, v2
+    store v3, v0+32
+    return
+}
+
+function %umin128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = umin v1, v2
+    store v3, v0+32
+    return
+}
+
+function %umax128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = umax v1, v2
+    store v3, v0+32
+    return
+}
+
+function %smin128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = smin v1, v2
+    store v3, v0+32
+    return
+}
+
+function %smax128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = smax v1, v2
+    store v3, v0+32
+    return
+}
+
+function %bnot128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = bnot v1
+    store v2, v0+32
+    return
+}
+
+function %ineg128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = ineg v1
+    store v2, v0+32
+    return
+}
+
+function %iabs128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = iabs v1
+    store v2, v0+32
+    return
+}
+
+function %clz128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = clz v1
+    store v2, v0+32
+    return
+}
+
+function %ctz128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = ctz v1
+    store v2, v0+32
+    return
+}
+
+function %popcnt128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = popcnt v1
+    store v2, v0+32
+    return
+}
+
+function %bswap128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = bswap v1
+    store v2, v0+32
+    return
+}
+
+function %bitrev128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = bitrev v1
+    store v2, v0+32
+    return
+}
+
+function %cmp_eq128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = icmp eq v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_ne128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = icmp ne v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_ult128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = icmp ult v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_ule128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = icmp ule v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_ugt128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = icmp ugt v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_uge128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = icmp uge v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_slt128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = icmp slt v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_sle128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = icmp sle v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_sgt128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = icmp sgt v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_sge128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = icmp sge v1, v2
+    store v3, v0+48
+    return
+}
+
+function %uadd_overflow128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3, v4 = uadd_overflow v1, v2
+    store v3, v0+32
+    store v4, v0+48
+    return
+}
+
+function %usub_overflow128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3, v4 = usub_overflow v1, v2
+    store v3, v0+32
+    store v4, v0+48
+    return
+}
+
+function %sadd_overflow128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3, v4 = sadd_overflow v1, v2
+    store v3, v0+32
+    store v4, v0+48
+    return
+}
+
+function %ssub_overflow128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3, v4 = ssub_overflow v1, v2
+    store v3, v0+32
+    store v4, v0+48
+    return
+}
+
+function %sum128(i128, i128) -> i128 system_v {
+block0(v0: i128, v1: i128):
+    v2 = iadd v0, v1
+    return v2
+}
+
+function %call_sum128(i16) system_v {
+    sig0 = (i128, i128) -> i128 system_v
+    fn0 = colocated %sum128 sig0
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = call fn0(v1, v2)
+    store v3, v0+32
+    return
+}
+
+function %flow128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    brif v1, block1(v1), block1(v2)
+block1(v3: i128):
+    v4 = iconst.i64 -1
+    v6 = iconcat v4, v4
+    v5 = iadd v3, v6
+    store v5, v0+32
+    return
+}
+
+function %call_indirect_twice128(i16) system_v {
+    sig0 = (i128, i128) -> i128 system_v
+    fn0 = colocated %sum128 sig0
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = func_addr.i16 fn0
+    v4 = call_indirect sig0, v3(v1, v2)
+    v5 = call_indirect sig0, v3(v4, v2)
+    store v5, v0+32
+    return
+}
+
+function %select128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i128 v0+16
+    v3 = select v1, v1, v2
+    store v3, v0+32
+    return
+}
+
+function %loop128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = load.i8 v0+16
+    v3 = iconst.i8 3
+    v4 = band v2, v3
+    jump block1(v1, v4)
+block1(v5: i128, v6: i8):
+    brif v6, block2, block3(v5)
+block2:
+    v7 = iconst.i64 1
+    v8 = uextend.i128 v7
+    v9 = iadd v5, v8
+    v10 = iconst.i8 1
+    v11 = isub v6, v10
+    jump block1(v9, v11)
+block3(v12: i128):
+    store v12, v0+32
+    return
+}
+
+function %big_endian128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 big v0
+    store v1, v0+32
+    v2 = load.i128 v0+16
+    store big v2, v0+48
+    return
+}
+
+function %conversions128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i64 v0
+    v2 = sextend.i128 v1
+    store v2, v0+32
+    v3 = uextend.i128 v1
+    store v3, v0+48
+    v4 = load.i128 v0+16
+    v5, v6 = isplit v4
+    v7 = iconcat v6, v5
+    store v7, v0+64
+    v8 = ireduce.i64 v4
+    store v8, v0+80
+    return
+}

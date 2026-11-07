@@ -1,41 +1,41 @@
-band	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+band	i128	ok	
 band	i16	ok	
 band	i32	ok	
 band	i64	ok	
 band	i8	ok	
 bitcast	f16->i16	ok	
 bitcast	f32->i32	ok	
-bitcast	f64->i64	unsupported	Unsupported feature: LR35902 i64 legalization for bitcast
+bitcast	f64->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for bitcast
 bitcast	i16->f16	ok	
 bitcast	i32->f32	ok	
-bitcast	i64->f64	unsupported	Unsupported feature: LR35902 i64 legalization for bitcast
-bitrev	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+bitcast	i64->f64	unsupported	Unsupported feature: LR35902 wide integer legalization for bitcast
+bitrev	i128	ok	
 bitrev	i16	ok	
 bitrev	i32	ok	
 bitrev	i64	ok	
 bitrev	i8	ok	
-bnot	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+bnot	i128	ok	
 bnot	i16	ok	
 bnot	i32	ok	
 bnot	i64	ok	
 bnot	i8	ok	
-bor	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+bor	i128	ok	
 bor	i16	ok	
 bor	i32	ok	
 bor	i64	ok	
 bor	i8	ok	
 br_table	i32	ok	
-brif	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+brif	i128	ok	
 brif	i16	ok	
 brif	i32	ok	
 brif	i64	ok	
 brif	i8	ok	
-bswap	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+bswap	i128	ok	
 bswap	i16	ok	
 bswap	i32	ok	
 bswap	i64	ok	
 bswap	i8	inexpressible	
-bxor	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+bxor	i128	ok	
 bxor	i16	ok	
 bxor	i32	ok	
 bxor	i64	ok	
@@ -44,12 +44,12 @@ call	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 call	f16	ok	
 call	f32	ok	
 call	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-call	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+call	i128	ok	
 call	i16	ok	
 call	i32	ok	
 call	i64	ok	
 call	i8	ok	
-call.arg	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+call.arg	i128	ok	
 call.arg	i16	ok	
 call.arg	i32	ok	
 call.arg	i64	ok	
@@ -59,17 +59,17 @@ ceil	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 ceil	f16	ok	
 ceil	f32	ok	
 ceil	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-cls	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+cls	i128	unsupported	Unsupported feature: LR35902 i128 legalization for cls
 cls	i16	ok	
 cls	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = cls.i32 v0`, type = `Some(types::I32)`
-cls	i64	unsupported	Unsupported feature: LR35902 i64 legalization for cls
+cls	i64	unsupported	Unsupported feature: LR35902 wide integer legalization for cls
 cls	i8	ok	
-clz	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+clz	i128	ok	
 clz	i16	ok	
 clz	i32	ok	
 clz	i64	ok	
 clz	i8	ok	
-ctz	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+ctz	i128	ok	
 ctz	i16	ok	
 ctz	i32	ok	
 ctz	i64	ok	
@@ -130,10 +130,10 @@ fcvt_from_sint	i32->f128	unsupported	Unsupported feature: Unsupported type for L
 fcvt_from_sint	i32->f16	ok	
 fcvt_from_sint	i32->f32	ok	
 fcvt_from_sint	i32->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-fcvt_from_sint	i64->f128	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_from_sint
-fcvt_from_sint	i64->f16	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_from_sint
-fcvt_from_sint	i64->f32	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_from_sint
-fcvt_from_sint	i64->f64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_from_sint
+fcvt_from_sint	i64->f128	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_from_sint
+fcvt_from_sint	i64->f16	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_from_sint
+fcvt_from_sint	i64->f32	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_from_sint
+fcvt_from_sint	i64->f64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_from_sint
 fcvt_from_sint	i8->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_from_sint	i8->f16	ok	
 fcvt_from_sint	i8->f32	ok	
@@ -146,77 +146,77 @@ fcvt_from_uint	i32->f128	unsupported	Unsupported feature: Unsupported type for L
 fcvt_from_uint	i32->f16	ok	
 fcvt_from_uint	i32->f32	ok	
 fcvt_from_uint	i32->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-fcvt_from_uint	i64->f128	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_from_uint
-fcvt_from_uint	i64->f16	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_from_uint
-fcvt_from_uint	i64->f32	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_from_uint
-fcvt_from_uint	i64->f64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_from_uint
+fcvt_from_uint	i64->f128	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_from_uint
+fcvt_from_uint	i64->f16	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_from_uint
+fcvt_from_uint	i64->f32	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_from_uint
+fcvt_from_uint	i64->f64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_from_uint
 fcvt_from_uint	i8->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_from_uint	i8->f16	ok	
 fcvt_from_uint	i8->f32	ok	
 fcvt_from_uint	i8->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_sint	f128->i16	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_sint	f128->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_to_sint	f128->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_sint
+fcvt_to_sint	f128->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_sint
 fcvt_to_sint	f128->i8	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_sint	f16->i16	ok	
 fcvt_to_sint	f16->i32	ok	
-fcvt_to_sint	f16->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_sint
+fcvt_to_sint	f16->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_sint
 fcvt_to_sint	f16->i8	ok	
 fcvt_to_sint	f32->i16	ok	
 fcvt_to_sint	f32->i32	ok	
-fcvt_to_sint	f32->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_sint
+fcvt_to_sint	f32->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_sint
 fcvt_to_sint	f32->i8	ok	
 fcvt_to_sint	f64->i16	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_sint	f64->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-fcvt_to_sint	f64->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_sint
+fcvt_to_sint	f64->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_sint
 fcvt_to_sint	f64->i8	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_sint_sat	f128->i16	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_sint_sat	f128->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_to_sint_sat	f128->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_sint_sat
+fcvt_to_sint_sat	f128->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_sint_sat
 fcvt_to_sint_sat	f128->i8	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_sint_sat	f16->i16	ok	
 fcvt_to_sint_sat	f16->i32	ok	
-fcvt_to_sint_sat	f16->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_sint_sat
+fcvt_to_sint_sat	f16->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_sint_sat
 fcvt_to_sint_sat	f16->i8	ok	
 fcvt_to_sint_sat	f32->i16	ok	
 fcvt_to_sint_sat	f32->i32	ok	
-fcvt_to_sint_sat	f32->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_sint_sat
+fcvt_to_sint_sat	f32->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_sint_sat
 fcvt_to_sint_sat	f32->i8	ok	
 fcvt_to_sint_sat	f64->i16	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_sint_sat	f64->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-fcvt_to_sint_sat	f64->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_sint_sat
+fcvt_to_sint_sat	f64->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_sint_sat
 fcvt_to_sint_sat	f64->i8	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_uint	f128->i16	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_uint	f128->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_to_uint	f128->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_uint
+fcvt_to_uint	f128->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_uint
 fcvt_to_uint	f128->i8	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_uint	f16->i16	ok	
 fcvt_to_uint	f16->i32	ok	
-fcvt_to_uint	f16->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_uint
+fcvt_to_uint	f16->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_uint
 fcvt_to_uint	f16->i8	ok	
 fcvt_to_uint	f32->i16	ok	
 fcvt_to_uint	f32->i32	ok	
-fcvt_to_uint	f32->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_uint
+fcvt_to_uint	f32->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_uint
 fcvt_to_uint	f32->i8	ok	
 fcvt_to_uint	f64->i16	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_uint	f64->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-fcvt_to_uint	f64->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_uint
+fcvt_to_uint	f64->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_uint
 fcvt_to_uint	f64->i8	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_uint_sat	f128->i16	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_uint_sat	f128->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_to_uint_sat	f128->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_uint_sat
+fcvt_to_uint_sat	f128->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_uint_sat
 fcvt_to_uint_sat	f128->i8	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_uint_sat	f16->i16	ok	
 fcvt_to_uint_sat	f16->i32	ok	
-fcvt_to_uint_sat	f16->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_uint_sat
+fcvt_to_uint_sat	f16->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_uint_sat
 fcvt_to_uint_sat	f16->i8	ok	
 fcvt_to_uint_sat	f32->i16	ok	
 fcvt_to_uint_sat	f32->i32	ok	
-fcvt_to_uint_sat	f32->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_uint_sat
+fcvt_to_uint_sat	f32->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_uint_sat
 fcvt_to_uint_sat	f32->i8	ok	
 fcvt_to_uint_sat	f64->i16	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_uint_sat	f64->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-fcvt_to_uint_sat	f64->i64	unsupported	Unsupported feature: LR35902 i64 legalization for fcvt_to_uint_sat
+fcvt_to_uint_sat	f64->i64	unsupported	Unsupported feature: LR35902 wide integer legalization for fcvt_to_uint_sat
 fcvt_to_uint_sat	f64->i8	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fdemote	f128->f16	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fdemote	f128->f32	unsupported	Unsupported feature: Unsupported type for LR35902: f128
@@ -263,104 +263,104 @@ fsub	f16	ok
 fsub	f32	ok	
 fsub	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 func_addr	-	ok	
-iabs	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+iabs	i128	ok	
 iabs	i16	ok	
 iabs	i32	ok	
 iabs	i64	ok	
 iabs	i8	ok	
-iadd	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+iadd	i128	ok	
 iadd	i16	ok	
 iadd	i32	ok	
 iadd	i64	ok	
 iadd	i8	ok	
-icmp.eq	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+icmp.eq	i128	ok	
 icmp.eq	i16	ok	
 icmp.eq	i32	ok	
 icmp.eq	i64	ok	
 icmp.eq	i8	ok	
-icmp.ne	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+icmp.ne	i128	ok	
 icmp.ne	i16	ok	
 icmp.ne	i32	ok	
 icmp.ne	i64	ok	
 icmp.ne	i8	ok	
-icmp.sge	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+icmp.sge	i128	ok	
 icmp.sge	i16	ok	
 icmp.sge	i32	ok	
 icmp.sge	i64	ok	
 icmp.sge	i8	ok	
-icmp.sgt	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+icmp.sgt	i128	ok	
 icmp.sgt	i16	ok	
 icmp.sgt	i32	ok	
 icmp.sgt	i64	ok	
 icmp.sgt	i8	ok	
-icmp.sle	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+icmp.sle	i128	ok	
 icmp.sle	i16	ok	
 icmp.sle	i32	ok	
 icmp.sle	i64	ok	
 icmp.sle	i8	ok	
-icmp.slt	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+icmp.slt	i128	ok	
 icmp.slt	i16	ok	
 icmp.slt	i32	ok	
 icmp.slt	i64	ok	
 icmp.slt	i8	ok	
-icmp.uge	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+icmp.uge	i128	ok	
 icmp.uge	i16	ok	
 icmp.uge	i32	ok	
 icmp.uge	i64	ok	
 icmp.uge	i8	ok	
-icmp.ugt	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+icmp.ugt	i128	ok	
 icmp.ugt	i16	ok	
 icmp.ugt	i32	ok	
 icmp.ugt	i64	ok	
 icmp.ugt	i8	ok	
-icmp.ule	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+icmp.ule	i128	ok	
 icmp.ule	i16	ok	
 icmp.ule	i32	ok	
 icmp.ule	i64	ok	
 icmp.ule	i8	ok	
-icmp.ult	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+icmp.ult	i128	ok	
 icmp.ult	i16	ok	
 icmp.ult	i32	ok	
 icmp.ult	i64	ok	
 icmp.ult	i8	ok	
-iconst	i128	unsupported	Unsupported feature: LR35902 i64 legalization result mismatch for uextend
+iconst	i128	ok	
 iconst	i16	ok	
 iconst	i32	ok	
 iconst	i64	ok	
 iconst	i8	ok	
-imul	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+imul	i128	ok	
 imul	i16	ok	
 imul	i32	ok	
 imul	i64	ok	
 imul	i8	ok	
-ineg	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+ineg	i128	ok	
 ineg	i16	ok	
 ineg	i32	ok	
 ineg	i64	ok	
 ineg	i8	ok	
-ireduce	i128->i16	unsupported	Unsupported feature: Unsupported type for LR35902: i128
-ireduce	i128->i32	unsupported	Unsupported feature: Unsupported type for LR35902: i128
-ireduce	i128->i64	unsupported	Unsupported feature: LR35902 i64 legalization result mismatch for ireduce
-ireduce	i128->i8	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+ireduce	i128->i16	ok	
+ireduce	i128->i32	ok	
+ireduce	i128->i64	ok	
+ireduce	i128->i8	ok	
 ireduce	i16->i8	ok	
 ireduce	i32->i16	ok	
 ireduce	i32->i8	ok	
 ireduce	i64->i16	ok	
 ireduce	i64->i32	ok	
 ireduce	i64->i8	ok	
-ishl.const	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+ishl.const	i128	ok	
 ishl.const	i16	ok	
 ishl.const	i32	ok	
 ishl.const	i64	ok	
 ishl.const	i8	ok	
-ishl.var	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+ishl.var	i128	ok	
 ishl.var	i16	ok	
 ishl.var	i32	ok	
 ishl.var	i64	ok	
 ishl.var	i8	ok	
 istore16	i32	ok	
 istore8	i16	ok	
-isub	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+isub	i128	ok	
 isub	i16	ok	
 isub	i32	ok	
 isub	i64	ok	
@@ -369,12 +369,12 @@ load	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 load	f16	ok	
 load	f32	ok	
 load	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-load	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+load	i128	ok	
 load	i16	ok	
 load	i32	ok	
 load	i64	ok	
 load	i8	ok	
-load.offset	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+load.offset	i128	ok	
 load.offset	i16	ok	
 load.offset	i32	ok	
 load.offset	i64	ok	
@@ -383,69 +383,69 @@ nearest	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 nearest	f16	ok	
 nearest	f32	ok	
 nearest	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-popcnt	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+popcnt	i128	ok	
 popcnt	i16	ok	
 popcnt	i32	ok	
 popcnt	i64	ok	
 popcnt	i8	ok	
-rotl.const	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+rotl.const	i128	ok	
 rotl.const	i16	ok	
 rotl.const	i32	ok	
 rotl.const	i64	ok	
 rotl.const	i8	ok	
-rotl.var	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+rotl.var	i128	ok	
 rotl.var	i16	ok	
 rotl.var	i32	ok	
 rotl.var	i64	ok	
 rotl.var	i8	ok	
-rotr.const	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+rotr.const	i128	ok	
 rotr.const	i16	ok	
 rotr.const	i32	ok	
 rotr.const	i64	ok	
 rotr.const	i8	ok	
-rotr.var	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+rotr.var	i128	ok	
 rotr.var	i16	ok	
 rotr.var	i32	ok	
 rotr.var	i64	ok	
 rotr.var	i8	ok	
-sadd_overflow	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+sadd_overflow	i128	ok	
 sadd_overflow	i16	ok	
 sadd_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = sadd_overflow.i32 v0, v1`, type = `Some(types::I32)`
 sadd_overflow	i64	ok	
 sadd_overflow	i8	ok	
-sdiv	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+sdiv	i128	unsupported	Unsupported feature: LR35902 i128 legalization for sdiv
 sdiv	i16	ok	
 sdiv	i32	ok	
-sdiv	i64	unsupported	Unsupported feature: LR35902 i64 legalization for sdiv
+sdiv	i64	unsupported	Unsupported feature: LR35902 wide integer legalization for sdiv
 sdiv	i8	ok	
 select	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 select	f16	ok	
 select	f32	ok	
 select	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-select	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+select	i128	ok	
 select	i16	ok	
 select	i32	ok	
 select	i64	ok	
 select	i8	ok	
-sextend	i16->i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+sextend	i16->i128	ok	
 sextend	i16->i32	ok	
 sextend	i16->i64	ok	
-sextend	i32->i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+sextend	i32->i128	ok	
 sextend	i32->i64	ok	
-sextend	i64->i128	unsupported	Unsupported feature: LR35902 i64 legalization result mismatch for sextend
-sextend	i8->i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+sextend	i64->i128	ok	
+sextend	i8->i128	ok	
 sextend	i8->i16	ok	
 sextend	i8->i32	ok	
 sextend	i8->i64	ok	
 sload16	i16->i32	ok	
 sload8	i8->i16	ok	
 sload8	i8->i32	ok	
-smax	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+smax	i128	ok	
 smax	i16	ok	
 smax	i32	ok	
 smax	i64	ok	
 smax	i8	ok	
-smin	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+smin	i128	ok	
 smin	i16	ok	
 smin	i32	ok	
 smin	i64	ok	
@@ -453,33 +453,33 @@ smin	i8	ok
 smul_overflow	i128	inexpressible	
 smul_overflow	i16	ok	
 smul_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = smul_overflow.i32 v0, v1`, type = `Some(types::I32)`
-smul_overflow	i64	unsupported	Unsupported feature: LR35902 i64 legalization for smul_overflow
+smul_overflow	i64	unsupported	Unsupported feature: LR35902 wide integer legalization for smul_overflow
 smul_overflow	i8	ok	
-smulhi	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+smulhi	i128	unsupported	Unsupported feature: LR35902 i128 legalization for smulhi
 smulhi	i16	ok	
 smulhi	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smulhi.i32 v0, v1`, type = `Some(types::I32)`
-smulhi	i64	unsupported	Unsupported feature: LR35902 i64 legalization for smulhi
+smulhi	i64	unsupported	Unsupported feature: LR35902 wide integer legalization for smulhi
 smulhi	i8	ok	
 sqrt	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 sqrt	f16	ok	
 sqrt	f32	ok	
 sqrt	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-srem	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+srem	i128	unsupported	Unsupported feature: LR35902 i128 legalization for srem
 srem	i16	ok	
 srem	i32	ok	
-srem	i64	unsupported	Unsupported feature: LR35902 i64 legalization for srem
+srem	i64	unsupported	Unsupported feature: LR35902 wide integer legalization for srem
 srem	i8	ok	
-sshr.const	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+sshr.const	i128	ok	
 sshr.const	i16	ok	
 sshr.const	i32	ok	
 sshr.const	i64	ok	
 sshr.const	i8	ok	
-sshr.var	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+sshr.var	i128	ok	
 sshr.var	i16	ok	
 sshr.var	i32	ok	
 sshr.var	i64	ok	
 sshr.var	i8	ok	
-ssub_overflow	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+ssub_overflow	i128	ok	
 ssub_overflow	i16	ok	
 ssub_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = ssub_overflow.i32 v0, v1`, type = `Some(types::I32)`
 ssub_overflow	i64	ok	
@@ -489,7 +489,7 @@ store	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 store	f16	ok	
 store	f32	ok	
 store	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-store	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+store	i128	ok	
 store	i16	ok	
 store	i32	ok	
 store	i64	ok	
@@ -502,35 +502,35 @@ trunc	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 trunc	f16	ok	
 trunc	f32	ok	
 trunc	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-uadd_overflow	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+uadd_overflow	i128	ok	
 uadd_overflow	i16	ok	
 uadd_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = uadd_overflow.i32 v0, v1`, type = `Some(types::I32)`
 uadd_overflow	i64	ok	
 uadd_overflow	i8	ok	
-udiv	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+udiv	i128	unsupported	Unsupported feature: LR35902 i128 legalization for udiv
 udiv	i16	ok	
 udiv	i32	ok	
-udiv	i64	unsupported	Unsupported feature: LR35902 i64 legalization for udiv
+udiv	i64	unsupported	Unsupported feature: LR35902 wide integer legalization for udiv
 udiv	i8	ok	
-uextend	i16->i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+uextend	i16->i128	ok	
 uextend	i16->i32	ok	
 uextend	i16->i64	ok	
-uextend	i32->i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+uextend	i32->i128	ok	
 uextend	i32->i64	ok	
-uextend	i64->i128	unsupported	Unsupported feature: LR35902 i64 legalization result mismatch for uextend
-uextend	i8->i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+uextend	i64->i128	ok	
+uextend	i8->i128	ok	
 uextend	i8->i16	ok	
 uextend	i8->i32	ok	
 uextend	i8->i64	ok	
 uload16	i16->i32	ok	
 uload8	i8->i16	ok	
 uload8	i8->i32	ok	
-umax	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+umax	i128	ok	
 umax	i16	ok	
 umax	i32	ok	
 umax	i64	ok	
 umax	i8	ok	
-umin	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+umin	i128	ok	
 umin	i16	ok	
 umin	i32	ok	
 umin	i64	ok	
@@ -538,29 +538,29 @@ umin	i8	ok
 umul_overflow	i128	inexpressible	
 umul_overflow	i16	ok	
 umul_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = umul_overflow.i32 v0, v1`, type = `Some(types::I32)`
-umul_overflow	i64	unsupported	Unsupported feature: LR35902 i64 legalization for umul_overflow
+umul_overflow	i64	unsupported	Unsupported feature: LR35902 wide integer legalization for umul_overflow
 umul_overflow	i8	ok	
-umulhi	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+umulhi	i128	unsupported	Unsupported feature: LR35902 i128 legalization for umulhi
 umulhi	i16	ok	
 umulhi	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = umulhi.i32 v0, v1`, type = `Some(types::I32)`
-umulhi	i64	unsupported	Unsupported feature: LR35902 i64 legalization for umulhi
+umulhi	i64	unsupported	Unsupported feature: LR35902 wide integer legalization for umulhi
 umulhi	i8	ok	
-urem	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+urem	i128	unsupported	Unsupported feature: LR35902 i128 legalization for urem
 urem	i16	ok	
 urem	i32	ok	
-urem	i64	unsupported	Unsupported feature: LR35902 i64 legalization for urem
+urem	i64	unsupported	Unsupported feature: LR35902 wide integer legalization for urem
 urem	i8	ok	
-ushr.const	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+ushr.const	i128	ok	
 ushr.const	i16	ok	
 ushr.const	i32	ok	
 ushr.const	i64	ok	
 ushr.const	i8	ok	
-ushr.var	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+ushr.var	i128	ok	
 ushr.var	i16	ok	
 ushr.var	i32	ok	
 ushr.var	i64	ok	
 ushr.var	i8	ok	
-usub_overflow	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
+usub_overflow	i128	ok	
 usub_overflow	i16	ok	
 usub_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = usub_overflow.i32 v0, v1`, type = `Some(types::I32)`
 usub_overflow	i64	ok	

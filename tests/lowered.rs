@@ -21,20 +21,22 @@ fn lower_program(path: &str) -> Result<harness::Program> {
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
-    harness::assemble(
-        &[
-            ("lowered.s", String::from_utf8(output.stdout)?),
-            ("udiv16.asm", harness::read("runtime/udiv16.asm")?),
-            ("mul16.asm", harness::read("runtime/mul16.asm")?),
-            ("wide32.asm", harness::read("runtime/wide32.asm")?),
-            ("softfloat32.asm", harness::read("runtime/softfloat32.asm")?),
-            (
-                "stop.s",
-                "SECTION \"done\", ROM0\nEXPORT done\ndone::\n  nop\n".into(),
-            ),
-        ],
-        None,
-    )
+    let assembly = String::from_utf8(output.stdout)?;
+    let needs_float = assembly.contains("__gbc_f");
+    let mut sources = vec![
+        ("lowered.s", assembly),
+        ("udiv16.asm", harness::read("runtime/udiv16.asm")?),
+        ("mul16.asm", harness::read("runtime/mul16.asm")?),
+        ("wide32.asm", harness::read("runtime/wide32.asm")?),
+        (
+            "stop.s",
+            "SECTION \"done\", ROM0\nEXPORT done\ndone::\n  nop\n".into(),
+        ),
+    ];
+    if needs_float {
+        sources.push(("softfloat32.asm", harness::read("runtime/softfloat32.asm")?));
+    }
+    harness::assemble(&sources, None)
 }
 
 #[test]
@@ -1680,6 +1682,225 @@ fn rust_u64_memory_add_lowers_and_executes() -> Result<()> {
         e.run_until(stop, 65536)?;
         let result = u64::from_le_bytes(
             e.memory[BASE as usize + 16..BASE as usize + 24]
+                .try_into()
+                .unwrap(),
+        );
+        assert_eq!(result, a.wrapping_add(b));
+    }
+    Ok(())
+}
+
+#[test]
+fn split_i128_values_match_host() -> Result<()> {
+    for level in ["none", "speed"] {
+        check_split_i128(level)?;
+    }
+    Ok(())
+}
+
+fn check_split_i128(level: &str) -> Result<()> {
+    let source = include_str!("fixtures/emulate/split-i128.clif");
+    let functions: Vec<_> = source.split("\nfunction ").skip(1).collect();
+    let mut programs = std::collections::BTreeMap::new();
+    for function in &functions {
+        let name = function
+            .strip_prefix('%')
+            .unwrap()
+            .split('(')
+            .next()
+            .unwrap();
+        if name == "sum128" {
+            continue;
+        }
+        let mut text = format!(
+            "set enable_multi_ret_implicit_sret=true\nset opt_level={level}\ntarget z80\nfunction {function}"
+        );
+        if name.starts_with("call_") {
+            let callee = functions
+                .iter()
+                .find(|f| f.starts_with("%sum128("))
+                .unwrap();
+            text.push_str(&format!("\nfunction {callee}"));
+        }
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let path = directory.path().join(format!("{level}-{name}.clif"));
+        std::fs::write(&path, text)?;
+        programs.insert(name.to_owned(), lower_program(path.to_str().unwrap())?);
+    }
+    let run = |name: &str, a: u128, b: u128| -> Result<_> {
+        let bytes: Vec<_> = a
+            .to_le_bytes()
+            .into_iter()
+            .chain(b.to_le_bytes())
+            .enumerate()
+            .map(|(i, v)| (BASE + i as u16, v))
+            .collect();
+        call(&programs[name], &format!("__rust_{name}"), &bytes)
+    };
+    let value = |e: &sangoku_test_support::emu::Emulator, offset: usize| {
+        u128::from_le_bytes(
+            e.memory[BASE as usize + offset..BASE as usize + offset + 16]
+                .try_into()
+                .unwrap(),
+        )
+    };
+    for (a, b) in [
+        (0u128, 0u128),
+        (0, 1),
+        (1 << 127, 1),
+        (u128::MAX, 1),
+        ((1 << 32) - 1, 1),
+        ((1 << 64) - 1, 1),
+        ((1 << 96) - 1, 1),
+        (i128::MAX as u128, 1),
+        (1 << 127, u128::MAX),
+        (
+            0x0123456789abcdef_fedcba9876543210,
+            0xfedcba9876543210_0123456789abcdef,
+        ),
+    ] {
+        for (op, expected) in [
+            ("iadd", a.wrapping_add(b)),
+            ("isub", a.wrapping_sub(b)),
+            ("imul", a.wrapping_mul(b)),
+            ("band", a & b),
+            ("bor", a | b),
+            ("bxor", a ^ b),
+            ("umin", a.min(b)),
+            ("umax", a.max(b)),
+            ("smin", (a as i128).min(b as i128) as u128),
+            ("smax", (a as i128).max(b as i128) as u128),
+        ] {
+            let e = run(&format!("{op}128"), a, b)?;
+            assert_eq!(value(&e, 32), expected, "{level} {op} {a:#x} {b:#x}");
+        }
+        for (cc, expected) in [
+            ("eq", a == b),
+            ("ne", a != b),
+            ("ult", a < b),
+            ("ule", a <= b),
+            ("ugt", a > b),
+            ("uge", a >= b),
+            ("slt", (a as i128) < b as i128),
+            ("sle", (a as i128) <= b as i128),
+            ("sgt", (a as i128) > b as i128),
+            ("sge", (a as i128) >= b as i128),
+        ] {
+            let e = run(&format!("cmp_{cc}128"), a, b)?;
+            assert_eq!(
+                e.memory[BASE as usize + 48],
+                u8::from(expected),
+                "{level} {cc} {a:#x} {b:#x}"
+            );
+        }
+        for (op, (expected, flag)) in [
+            ("uadd_overflow", a.overflowing_add(b)),
+            ("usub_overflow", a.overflowing_sub(b)),
+            ("sadd_overflow", {
+                let (v, f) = (a as i128).overflowing_add(b as i128);
+                (v as u128, f)
+            }),
+            ("ssub_overflow", {
+                let (v, f) = (a as i128).overflowing_sub(b as i128);
+                (v as u128, f)
+            }),
+        ] {
+            let e = run(&format!("{op}128"), a, b)?;
+            assert_eq!(
+                (value(&e, 32), e.memory[BASE as usize + 48] != 0),
+                (expected, flag),
+                "{level} {op}"
+            );
+        }
+        let e = run("call_sum128", a, b)?;
+        assert_eq!(value(&e, 32), a.wrapping_add(b));
+        let e = run("call_indirect_twice128", a, b)?;
+        assert_eq!(value(&e, 32), a.wrapping_add(b).wrapping_add(b));
+        let e = run("select128", a, b)?;
+        assert_eq!(value(&e, 32), if a != 0 { a } else { b });
+        let e = run("loop128", a, b)?;
+        assert_eq!(value(&e, 32), a.wrapping_add(b & 3));
+        let e = run("big_endian128", a, b)?;
+        assert_eq!(value(&e, 32), a.swap_bytes());
+        assert_eq!(value(&e, 48), b.swap_bytes());
+        let e = run("conversions128", a, b)?;
+        assert_eq!(value(&e, 32), a as i64 as i128 as u128);
+        assert_eq!(value(&e, 48), a as u64 as u128);
+        assert_eq!(value(&e, 64), b.rotate_left(64));
+        assert_eq!(value(&e, 80) as u64, b as u64);
+        let e = run("flow128", a, b)?;
+        assert_eq!(value(&e, 32), (if a != 0 { a } else { b }).wrapping_sub(1));
+    }
+    for a in [
+        0u128,
+        1,
+        1 << 127,
+        u128::MAX,
+        0x0123456789abcdef_fedcba9876543210,
+    ] {
+        for (op, expected) in [
+            ("bnot", !a),
+            ("ineg", a.wrapping_neg()),
+            ("iabs", (a as i128).wrapping_abs() as u128),
+            ("clz", u128::from(a.leading_zeros())),
+            ("ctz", u128::from(a.trailing_zeros())),
+            ("popcnt", u128::from(a.count_ones())),
+            ("bswap", a.swap_bytes()),
+            ("bitrev", a.reverse_bits()),
+        ] {
+            let e = run(&format!("{op}128"), a, 0)?;
+            assert_eq!(value(&e, 32), expected, "{level} {op}");
+        }
+        for count in [0u32, 1, 31, 32, 33, 63, 64, 65, 95, 96, 97, 127, 128, 129] {
+            for (op, expected) in [
+                ("ishl", a.wrapping_shl(count)),
+                ("ushr", a.wrapping_shr(count)),
+                ("sshr", (a as i128).wrapping_shr(count) as u128),
+                ("rotl", a.rotate_left(count)),
+                ("rotr", a.rotate_right(count)),
+            ] {
+                let e = run(&format!("{op}128"), a, u128::from(count))?;
+                assert_eq!(value(&e, 32), expected, "{level} {op} {a:#x} {count}");
+            }
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn rust_u128_memory_add_lowers_and_executes() -> Result<()> {
+    let source = harness::root().join("examples/u128.rs");
+    let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
+        .args(["clif", source.to_str().unwrap(), "-"])
+        .output()?;
+    ensure!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let directory = sangoku_test_support::tempfile::tempdir()?;
+    let path = directory.path().join("rust-u128.clif");
+    std::fs::write(&path, output.stdout)?;
+    let program = lower_program(path.to_str().unwrap())?;
+    let stop = program.symbols["done"];
+    for (a, b) in [
+        (((1u128 << 96) - 1), 1u128),
+        (u128::MAX, 1),
+        (0x0123_4567_89ab_cdef, 0x7654_3210_fedc_ba98),
+    ] {
+        let mut e = program.emulator("__rust_sum_to_memory")?;
+        e.memory[BASE as usize..BASE as usize + 16].copy_from_slice(&a.to_le_bytes());
+        e.memory[BASE as usize + 16..BASE as usize + 32].copy_from_slice(&b.to_le_bytes());
+        e.b = BASE as u8;
+        e.c = (BASE >> 8) as u8;
+        e.a = (BASE + 16) as u8;
+        e.memory[STACK as usize] = ((BASE + 16) >> 8) as u8;
+        e.write16(STACK + 1, BASE + 32);
+        e.set_sp(STACK - 2);
+        e.write16(STACK - 2, stop);
+        e.run_until(stop, 65536)?;
+        let result = u128::from_le_bytes(
+            e.memory[BASE as usize + 32..BASE as usize + 48]
                 .try_into()
                 .unwrap(),
         );
