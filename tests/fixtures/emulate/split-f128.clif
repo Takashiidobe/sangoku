@@ -1,0 +1,95 @@
+set enable_multi_ret_implicit_sret=true
+target z80
+
+function %copy(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = load.i8 v0+48
+    store v1, v0+32
+    return
+}
+
+function %neg(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = load.i8 v0+48
+    v4 = fneg v1
+    store v4, v0+32
+    return
+}
+
+function %abs(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = load.i8 v0+48
+    v4 = fabs v1
+    store v4, v0+32
+    return
+}
+
+function %sign(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = load.i8 v0+48
+    v4 = fcopysign v1, v2
+    store v4, v0+32
+    return
+}
+
+function %select(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = load.i8 v0+48
+    v4 = select v3, v1, v2
+    store v4, v0+32
+    return
+}
+
+function %bits(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = load.i8 v0+48
+    v4 = bitcast.i128 v1
+    v5 = bitcast.f128 v4
+    store v5, v0+32
+    return
+}
+
+function %constant(i16) system_v {
+block0(v0: i16):
+    v1 = f128const -0x1.23456789abcdef0123456789abcdp20
+    store v1, v0+32
+    return
+}
+
+function %transport(i16) system_v {
+    sig0 = (f128) -> f128 system_v
+    fn0 = %identity sig0
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = call fn0(v1)
+    jump block1(v2)
+block1(v3: f128):
+    store v3, v0+32
+    return
+}
+
+function %identity(f128) -> f128 system_v {
+block0(v0: f128):
+    return v0
+}
+
+function %big_endian(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 big v0
+    store v1, v0+32
+    v2 = load.f128 v0+16
+    store big v2, v0+48
+    return
+}

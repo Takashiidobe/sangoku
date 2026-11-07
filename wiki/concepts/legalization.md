@@ -29,7 +29,28 @@ Arithmetic, comparisons, rounding and conversions still need f64 softfloat
 helpers (`sangoku-7qz.9.4.1`). Splitting the representation does not make f32
 arithmetic sufficient for f64 precision or range.
 
-`f128` and conversions between `i64` and floating point remain unsupported.
+`f128` uses four `i32` bit-pattern limbs, least significant first. It supports
+the same transport and sign operations as f64, with `i128` bitcasts. Constants
+retain all 128 bits; negation, absolute value and copysign modify only the sign
+bit in the highest limb. Rust f128 constants and memory access use this path
+without frontend representation changes. The LR35902 frontend float gate allows
+f128 through to legalization; its other float exclusions remain.
+
+f128 arithmetic, comparisons, rounding and numeric conversions still need
+binary128 softfloat helpers (`sangoku-7qz.9.6`). cg_clif emits compiler-builtins
+calls for several of these operations; basic legalization does not provide their
+runtime bodies. Conversions between `i64` and floating point also remain
+unsupported.
+
+Build `examples/f128.rs` with `cargo run -- build` for a Rust-to-ROM example.
+Run the bounded transport tests with:
+
+```sh
+cargo nextest run --no-fail-fast -E 'test(split_f128_preserves_bits) | test(rust_f128_memory_lowers_and_executes)'
+```
+
+The CLIF tests use separate operation ROMs to stay within ROM0 and cover both
+unoptimized and optimized lowering, including explicit big-endian memory access.
 
 ## Operation support
 

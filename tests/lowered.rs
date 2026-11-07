@@ -1958,3 +1958,133 @@ fn split_f64_preserves_bits() -> Result<()> {
     }
     Ok(())
 }
+
+#[test]
+fn split_f128_preserves_bits() -> Result<()> {
+    let source = include_str!("fixtures/emulate/split-f128.clif");
+    for level in ["none", "speed"] {
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let functions: Vec<_> = source.split("\nfunction ").skip(1).collect();
+        let mut programs = std::collections::BTreeMap::new();
+        for function in &functions {
+            let name = function
+                .strip_prefix('%')
+                .unwrap()
+                .split('(')
+                .next()
+                .unwrap();
+            if name == "identity" {
+                continue;
+            }
+            let mut text = format!(
+                "set enable_multi_ret_implicit_sret=true\nset opt_level={level}\ntarget z80\nfunction {function}"
+            );
+            if name == "transport" {
+                let callee = functions
+                    .iter()
+                    .find(|f| f.starts_with("%identity("))
+                    .unwrap();
+                text.push_str(&format!("\nfunction {callee}"));
+            }
+            let path = directory.path().join(format!("{name}.clif"));
+            std::fs::write(&path, text)?;
+            programs.insert(name, lower_program(path.to_str().unwrap())?);
+        }
+        for (a, b) in [
+            (0u128, 1u128 << 127),
+            (1u128 << 127, 0),
+            (
+                0x7fff_0000_0000_0000_0000_0000_0000_0000,
+                0xffff_0000_0000_0000_0000_0000_0000_0000,
+            ),
+            (
+                0xffff_8123_4567_89ab_cdef_0123_4567_89ab,
+                0x7fff_0000_0000_0000_0000_0000_0000_0001,
+            ),
+            (1, 0x8000_0000_0000_0000_0000_0000_0000_0001),
+            (
+                0x3fff_0000_0000_0000_0000_0000_0000_0001,
+                0xbfff_0000_0000_0000_0000_0000_0000_0001,
+            ),
+        ] {
+            for (name, expected) in [
+                ("copy", a),
+                ("bits", a),
+                ("neg", a ^ (1 << 127)),
+                ("abs", a & !(1 << 127)),
+                ("sign", (a & !(1 << 127)) | (b & (1 << 127))),
+                ("select", if a != 0 { a } else { b }),
+                ("constant", 0xc013_2345_6789_abcd_ef01_2345_6789_abcd),
+                ("transport", a),
+                ("big_endian", a.swap_bytes()),
+            ] {
+                let memory: Vec<_> = a
+                    .to_le_bytes()
+                    .into_iter()
+                    .chain(b.to_le_bytes())
+                    .enumerate()
+                    .map(|(i, byte)| (BASE + i as u16, byte))
+                    .chain([(BASE + 48, u8::from(a != 0))])
+                    .collect();
+                let e = call(&programs[name], &format!("__rust_{name}"), &memory)?;
+                let actual = u128::from_le_bytes(
+                    e.memory[BASE as usize + 32..BASE as usize + 48]
+                        .try_into()
+                        .unwrap(),
+                );
+                assert_eq!(actual, expected, "{level} {name} {a:032x}");
+                if name == "big_endian" {
+                    assert_eq!(
+                        &e.memory[BASE as usize + 48..BASE as usize + 64],
+                        &b.to_be_bytes()
+                    );
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn rust_f128_memory_lowers_and_executes() -> Result<()> {
+    let source = harness::root().join("examples/f128.rs");
+    let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
+        .args(["clif", source.to_str().unwrap(), "-"])
+        .output()?;
+    ensure!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let directory = sangoku_test_support::tempfile::tempdir()?;
+    let path = directory.path().join("rust-f128.clif");
+    std::fs::write(&path, output.stdout)?;
+    let program = lower_program(path.to_str().unwrap())?;
+    let stop = program.symbols["done"];
+    for bits in [
+        0u128,
+        1 << 127,
+        1,
+        0xffff_8123_4567_89ab_cdef_0123_4567_89ab,
+    ] {
+        let mut e = program.emulator("__rust_copy_to_memory")?;
+        e.memory[BASE as usize..BASE as usize + 16].copy_from_slice(&bits.to_le_bytes());
+        e.b = BASE as u8;
+        e.c = (BASE >> 8) as u8;
+        e.a = (BASE + 16) as u8;
+        e.memory[STACK as usize] = ((BASE + 16) >> 8) as u8;
+        e.set_sp(STACK - 2);
+        e.write16(STACK - 2, stop);
+        e.run_until(stop, 65536)?;
+        assert_eq!(
+            &e.memory[BASE as usize + 16..BASE as usize + 32],
+            &bits.to_le_bytes()
+        );
+    }
+    let e = call(&program, "__rust_constant_to_memory", &[])?;
+    assert_eq!(
+        &e.memory[BASE as usize..BASE as usize + 16],
+        &0x3fff_0000_0000_0000_0000_0000_0000_0000u128.to_le_bytes()
+    );
+    Ok(())
+}

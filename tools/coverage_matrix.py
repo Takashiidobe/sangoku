@@ -130,6 +130,9 @@ for ty in FLOATS:
             add("bitcast", f"{it}->{ty}", [it], ty, f"    v9 = bitcast.{ty} little v0\n    return v9")
             add("bitcast", f"{ty}->{it}", [ty], it, f"    v9 = bitcast.{it} little v0\n    return v9")
 
+add("bitcast", "i128->f128", ["i128"], "f128", "    v9 = bitcast.f128 little v0\n    return v9")
+add("bitcast", "f128->i128", ["f128"], "i128", "    v9 = bitcast.i128 little v0\n    return v9")
+
 add("trap", "-", [], None, "    trap user1")
 add("trapnz", "i8", ["i8"], None, "    trapnz v0, user1")
 add("trapz", "i8", ["i8"], None, "    trapz v0, user1")
