@@ -136,6 +136,12 @@ pub fn place(sections: &[&Section], sizes: &HashMap<String, usize>, budget: usiz
     output
 }
 
+pub fn panic_symbol(assembly: &str) -> Option<&str> {
+    identifiers(assembly)
+        .find(|name| name.contains("rust_begin_unwind"))
+        .filter(|name| !exported_labels(assembly).any(|label| label == *name))
+}
+
 pub fn runtime_objects(assembly: &str) -> Vec<&'static str> {
     let float32 = assembly
         .replace("__gbc_f64", "")
@@ -144,7 +150,7 @@ pub fn runtime_objects(assembly: &str) -> Vec<&'static str> {
     let memory = ["__gbc_mem", "memcpy", "memmove"]
         .iter()
         .any(|name| assembly.contains(name));
-    let panic = assembly.contains("rust_begin_unwind") && !assembly.contains("rust_begin_unwind::");
+    let panic = panic_symbol(assembly).is_some();
     [
         ("udiv16", true),
         ("mul16", true),
@@ -216,5 +222,9 @@ SECTION \"unused\", ROM0\nunused::\n  call other\n";
         assert!(runtime_objects("call memcpy").contains(&"memory"));
         assert!(runtime_objects("call __rust__Rx_rust_begin_unwind").contains(&"panic"));
         assert!(!runtime_objects("__rust_x_rust_begin_unwind::").contains(&"panic"));
+        assert_eq!(
+            panic_symbol("call __rust_Rx_rust_begin_unwind"),
+            Some("__rust_Rx_rust_begin_unwind")
+        );
     }
 }

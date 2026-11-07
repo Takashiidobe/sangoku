@@ -38,9 +38,9 @@ pub fn and_u16(a: u16, b: u16) -> u16 {
 
 // CHECK: target z80 optimize_for_size=0
 // CHECK-EMPTY:
-// CHECK-NEXT: ; symbol _RNvXs1_CskIxjbFAFN15_6bitandtNtB5_6BitAnd6bitand
+// CHECK-NEXT: ; symbol _RNvXs1_Cs4g5EzJwE5IM_6bitandtNtB5_6BitAnd6bitand
 // CHECK-NEXT: function u0:0(i16, i16) -> i16 system_v {
-// CHECK-NEXT: ; symbol _RNvXs1_CskIxjbFAFN15_6bitandtNtB5_6BitAnd6bitand
+// CHECK-NEXT: ; symbol _RNvXs1_Cs4g5EzJwE5IM_6bitandtNtB5_6BitAnd6bitand
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
 // CHECK-NEXT: ; ssa   _0    u16                               2b 2                var=1

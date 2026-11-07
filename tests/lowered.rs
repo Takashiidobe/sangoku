@@ -25,8 +25,6 @@ fn lower_program(path: &str) -> Result<harness::Program> {
     let needs_memory = assembly.contains("__gbc_mem")
         || assembly.contains("memcpy")
         || assembly.contains("memmove");
-    let needs_panic =
-        assembly.contains("rust_begin_unwind") && !assembly.contains("rust_begin_unwind::");
     let needs_convert = assembly.contains("__gbc_convert");
     let needs_float128 = assembly.contains("__gbc_f128");
     let needs_float64 = assembly.contains("__gbc_f64");
@@ -61,9 +59,6 @@ fn lower_program(path: &str) -> Result<harness::Program> {
     }
     if needs_memory {
         sources.push(("memory.asm", harness::read("runtime/memory.asm")?));
-    }
-    if needs_panic {
-        sources.push(("panic.asm", harness::read("runtime/panic.asm")?));
     }
     harness::assemble(&sources, None)
 }
@@ -1679,7 +1674,7 @@ fn check_split_i64(level: &str) -> Result<()> {
 
 #[test]
 fn rust_u64_memory_add_lowers_and_executes() -> Result<()> {
-    let source = harness::root().join("examples/u64.rs");
+    let source = harness::root().join("tests/fixtures/programs/u64.rs");
     let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
         .args(["clif", source.to_str().unwrap(), "-"])
         .output()?;
@@ -1898,7 +1893,7 @@ fn check_split_i128(level: &str) -> Result<()> {
 
 #[test]
 fn rust_u128_memory_add_lowers_and_executes() -> Result<()> {
-    let source = harness::root().join("examples/u128.rs");
+    let source = harness::root().join("tests/fixtures/programs/u128.rs");
     let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
         .args(["clif", source.to_str().unwrap(), "-"])
         .output()?;
@@ -2076,7 +2071,7 @@ fn split_f128_preserves_bits() -> Result<()> {
 
 #[test]
 fn rust_f128_memory_lowers_and_executes() -> Result<()> {
-    let source = harness::root().join("examples/f128.rs");
+    let source = harness::root().join("tests/fixtures/programs/f128.rs");
     let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
         .args(["clif", source.to_str().unwrap(), "-"])
         .output()?;
@@ -2712,7 +2707,7 @@ fn f64_shared_runtime_matches_host() -> Result<()> {
 
 #[test]
 fn rust_f64_memory_add_lowers_and_executes() -> Result<()> {
-    let source = harness::root().join("examples/f64.rs");
+    let source = harness::root().join("tests/fixtures/programs/f64.rs");
     let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
         .args(["clif", source.to_str().unwrap(), "-"])
         .output()?;
@@ -2871,7 +2866,9 @@ fn rust_f128_arithmetic_lowers_and_executes() -> Result<()> {
         ("f128-add.rs", "fadd", "sum_to_memory"),
         ("f128-fma.rs", "fma", "fma_to_memory"),
     ] {
-        let source = harness::root().join("examples").join(example);
+        let source = harness::root()
+            .join("tests/fixtures/programs")
+            .join(example);
         let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
             .args(["clif", source.to_str().unwrap(), "-"])
             .output()?;
@@ -3044,7 +3041,7 @@ fn rust_numeric_conversions_lower_and_execute() -> Result<()> {
     use sangoku_test_support::{Value, serde_json};
     let reference: Value =
         serde_json::from_str(include_str!("fixtures/emulate/wide-convert.json"))?;
-    let source = harness::root().join("examples/conversions.rs");
+    let source = harness::root().join("tests/fixtures/programs/conversions.rs");
     for opt in ["0", "2"] {
         let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
             .args(["clif", source.to_str().unwrap(), "-", "--opt-level", opt])
@@ -3236,7 +3233,7 @@ fn memset_runtime_obeys_split_abi_and_bounds() -> Result<()> {
 
 #[test]
 fn rust_usize_and_pointer_offsets_use_16_bits() -> Result<()> {
-    let source = harness::root().join("examples/usize.rs");
+    let source = harness::root().join("tests/fixtures/programs/usize.rs");
     for level in ["0", "2"] {
         let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
             .args(["clif", source.to_str().unwrap(), "-", "--opt-level", level])

@@ -1,4 +1,4 @@
-use crate::{Result, bail, ensure};
+use anyhow::{Result, bail, ensure};
 use std::collections::BTreeSet;
 
 pub const ZERO: u8 = 0x80;
@@ -23,6 +23,7 @@ pub struct Emulator {
     pub cycles: u64,
     pub peak_stack_bytes: i32,
     pub written_addresses: BTreeSet<u16>,
+    pub serial: Vec<u8>,
 }
 
 impl Emulator {
@@ -46,6 +47,7 @@ impl Emulator {
             cycles: 0,
             peak_stack_bytes: 0,
             written_addresses: BTreeSet::new(),
+            serial: Vec::new(),
         })
     }
     pub fn reset_metrics(&mut self) {
@@ -71,6 +73,10 @@ impl Emulator {
     pub fn write8(&mut self, address: u16, value: u8) {
         self.memory[address as usize] = value;
         self.written_addresses.insert(address);
+        if address == 0xFF02 && value & 0x81 == 0x81 {
+            self.serial.push(self.memory[0xFF01]);
+            self.memory[0xFF02] = value & 0x7F;
+        }
     }
     pub fn read16(&self, address: u16) -> u16 {
         u16::from_le_bytes([

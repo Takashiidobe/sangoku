@@ -20,7 +20,7 @@ cargo +gbc-lr35902 build --release --manifest-path third_party/rustc_codegen_cra
 ```
 
 Install RGBDS (`rgbasm`, `rgblink`, `rgbfix`) to assemble and link a ROM. Run
-`cargo run -- example` for the blank ROM or `cargo run -- build game.rs game.gb`
+`cargo run -- example` for the hello ROM or `cargo run -- build game.rs game.gb`
 to compile a source file. Use the repository's documented build path when
 validating changes; core compilation is the target milestone.
 
@@ -30,7 +30,7 @@ Run tests with `cargo nextest run --no-fail-fast`, not `cargo test`.
 
 After backend or compiler changes, rebuild the affected toolchain component,
 then use the smallest reproducer for the feature being worked on. Use
-`cargo run -- build examples/blank.rs build/blank.gb` as the end-to-end smoke
+`cargo run -- build examples/hello.rs build/hello.gb` as the end-to-end smoke
 check; it rebuilds the backend, compiles Rust to assembly, and links a ROM. For
 core support work, test the failing phase directly (`cargo run -- frontend|clif`, FileCheck fixtures in `tests/fixtures/<phase>`, `tools/update_filecheck.py`) so failures
 in code generation are distinct from RGBDS or ROM-linking failures. Record newly

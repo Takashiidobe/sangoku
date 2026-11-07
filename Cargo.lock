@@ -419,6 +419,7 @@ dependencies = [
 name = "sangoku"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "sangoku-test-support",
 ]
 
@@ -436,6 +437,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "regex",
+ "sangoku",
  "serde_json",
  "sha2",
  "tempfile",

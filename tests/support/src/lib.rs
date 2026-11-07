@@ -1,7 +1,7 @@
 pub mod cli;
 pub mod compiler;
 pub mod division;
-pub mod emu;
+pub use sangoku::emu;
 pub mod harness;
 pub mod popcount;
 pub mod random;

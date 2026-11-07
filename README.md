@@ -19,7 +19,7 @@ Install RGBDS (`rgbasm`, `rgblink`, and `rgbfix`) to assemble and link ROMs.
 
 ## Build a ROM
 
-Build the blank example ROM:
+Build the example ROM:
 
 ```bash
 cargo run -- example
@@ -29,6 +29,14 @@ Build a Rust source file into a ROM:
 
 ```bash
 cargo run -- build game.rs game.gb
+```
+
+Build a source file and run it in the built-in emulator. Programs print by
+writing to the serial port (`$FF01`/`$FF02`), and `run` shows that output on
+stdout (`examples/` has `hello.rs`, `primes.rs` and `sort.rs`):
+
+```bash
+cargo run -- run examples/hello.rs
 ```
 
 Run only the Rust frontend, saving MIR to `build/game.mir`:
@@ -66,7 +74,7 @@ full Rust ABI and operation set are still incomplete.
 Numeric conversions involving i64/i128 and f64/f128 now lower through a shared
 conversion runtime, including trapping and saturating float-to-integer casts.
 Float-width conversions preserve source precision and round once at the
-destination width. Build `examples/conversions.rs` to exercise Rust casts;
+destination width. Build `tests/fixtures/programs/conversions.rs` to exercise Rust casts;
 compiling all of `core` remains the next milestone.
 
 Core compilation status (`tools/core_report.py`, also the nextest test
@@ -121,7 +129,7 @@ Run the Rust-to-ROM smoke check after rebuilding an affected toolchain
 component:
 
 ```bash
-cargo run -- build examples/blank.rs build/blank.gb
+cargo run -- build examples/hello.rs build/hello.gb
 ```
 
 FileCheck fixtures:

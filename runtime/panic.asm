@@ -1,7 +1,7 @@
 SECTION "panic", ROM0
 
-; core references the v0-mangled std-internal panic handler symbol
-__rust__RNvCsbOwsw4zHH1Z_7___rustc17rust_begin_unwind::
+; build replaces __gbc_panic with the mangled name core references
+__gbc_panic::
     di
 .halt:
     halt

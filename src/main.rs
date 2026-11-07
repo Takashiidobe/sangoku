@@ -6,6 +6,8 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode, Stdio};
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use sangoku::emu::Emulator;
+
 mod link;
 
 const TOOLCHAIN: &str = "gbc-lr35902";
@@ -33,11 +35,11 @@ fn run() -> Result<(), String> {
             let output = paths
                 .first()
                 .cloned()
-                .unwrap_or_else(|| PathBuf::from("build/blank.gb"));
+                .unwrap_or_else(|| PathBuf::from("build/hello.gb"));
             if paths.len() > 1 {
                 return Err(usage());
             }
-            build_rom(&root, &root.join("examples/blank.rs"), &output, &opt_level)
+            build_rom(&root, &root.join("examples/hello.rs"), &output, &opt_level)
         }
         Some("build") => {
             let Some(source) = paths.first() else {
@@ -51,6 +53,18 @@ fn run() -> Result<(), String> {
                 return Err(usage());
             }
             build_rom(&root, source, &output, &opt_level)
+        }
+        Some("run") => {
+            let Some(source) = paths.first() else {
+                return Err(usage());
+            };
+            if paths.len() > 1 {
+                return Err(usage());
+            }
+            let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
+            let output = PathBuf::from("build").join(name).with_extension("gb");
+            build_rom(&root, source, &output, &opt_level)?;
+            run_rom(&output)
         }
         Some("frontend") => {
             let Some(source) = paths.first() else {
@@ -95,8 +109,37 @@ fn run() -> Result<(), String> {
     }
 }
 
+const MAX_INSTRUCTIONS: u64 = 2_000_000_000;
+
+fn run_rom(rom: &Path) -> Result<(), String> {
+    let image =
+        fs::read(rom).map_err(|error| format!("could not read {}: {error}", rom.display()))?;
+    let mut emulator = Emulator::new(&image, 0x100).map_err(|error| error.to_string())?;
+    emulator.set_sp(0xFFFE);
+    let mut stdout = io::stdout().lock();
+    let mut printed = 0;
+    for _ in 0..MAX_INSTRUCTIONS {
+        let before = emulator.pc;
+        emulator.step().map_err(|error| error.to_string())?;
+        if emulator.serial.len() > printed {
+            stdout
+                .write_all(&emulator.serial[printed..])
+                .and_then(|()| stdout.flush())
+                .map_err(|error| format!("could not write stdout: {error}"))?;
+            printed = emulator.serial.len();
+        }
+        if emulator.pc == before {
+            eprintln!("halted with gbc_main returning {}", emulator.a);
+            return Ok(());
+        }
+    }
+    Err(format!(
+        "program did not halt within {MAX_INSTRUCTIONS} instructions"
+    ))
+}
+
 fn usage() -> String {
-    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku frontend <source.rs> [output.mir|-] [--opt-level 0|1|2|3|s|z] | sangoku clif <source.rs> [output.clif|-] [--opt-level 0|1|2|3|s|z] | sangoku lower <input.clif> [output.s|-]".into()
+    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku run <source.rs> [--opt-level 0|1|2|3|s|z] | sangoku frontend <source.rs> [output.mir|-] [--opt-level 0|1|2|3|s|z] | sangoku clif <source.rs> [output.clif|-] [--opt-level 0|1|2|3|s|z] | sangoku lower <input.clif> [output.s|-]".into()
 }
 
 fn parse_build_args(
@@ -294,7 +337,18 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
     let mut fixed_objects = vec![header_object];
     for name in link::runtime_objects(&linked) {
         let object = temp.path().join(format!("{name}.o"));
-        assemble(&root.join(format!("runtime/{name}.asm")), &object)?;
+        let mut source = root.join(format!("runtime/{name}.asm"));
+        if name == "panic"
+            && let Some(symbol) = link::panic_symbol(&linked)
+        {
+            source = temp.path().join("panic.asm");
+            fs::write(
+                &source,
+                read_text(&root.join("runtime/panic.asm"))?.replace("__gbc_panic", symbol),
+            )
+            .map_err(|error| format!("could not write {}: {error}", source.display()))?;
+        }
+        assemble(&source, &object)?;
         fixed_objects.push(object);
     }
 
