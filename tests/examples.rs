@@ -54,12 +54,12 @@ fn primes_prints_the_primes_below_fifty() -> Result<()> {
 }
 
 #[test]
-fn sort_reports_retained_formatting_and_rom_capacity() -> Result<()> {
+fn standard_sort_reports_retained_formatting_and_rom_capacity() -> Result<()> {
     let directory = sangoku_test_support::tempfile::tempdir()?;
     let rom = directory.path().join("sort.gb");
     let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
         .current_dir(env!("CARGO_MANIFEST_DIR"))
-        .args(["build", "examples/sort.rs"])
+        .args(["build", "tests/fixtures/programs/sort_formatting.rs"])
         .arg(&rom)
         .output()?;
     ensure!(
@@ -82,5 +82,16 @@ fn sort_reports_retained_formatting_and_rom_capacity() -> Result<()> {
         report.find("sangoku::retained_formatting") < report.find("sangoku::rom_capacity"),
         "formatting warning must precede capacity failure: {report}"
     );
+    Ok(())
+}
+
+#[test]
+fn sort_prints_before_and_after() -> Result<()> {
+    let (text, result) = run_example("sort")?;
+    ensure!(
+        text == "before: [42, 7, 1999, 3, 256, 88, 1024, 5]\nafter:  [3, 5, 7, 42, 88, 256, 1024, 1999]\nsum = 3424, max = Some(1999)\n",
+        "{text:?}"
+    );
+    ensure!(result == 0, "returned {result}");
     Ok(())
 }

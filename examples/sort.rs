@@ -24,7 +24,7 @@ impl Serial {
 
     fn write_u16(&mut self, mut value: u16) {
         let mut started = false;
-        for place in [10000, 1000, 100, 10, 1] {
+        for &place in &[10000, 1000, 100, 10, 1] {
             let mut digit = 0;
             while value >= place {
                 value -= place;
@@ -51,13 +51,33 @@ impl Serial {
     }
 }
 
+fn sort(values: &mut [u16]) {
+    let mut changed = true;
+    while changed {
+        changed = false;
+        let mut iter = values.iter_mut();
+        let Some(mut previous) = iter.next() else {
+            return;
+        };
+        for current in iter {
+            if *previous > *current {
+                let value = *previous;
+                *previous = *current;
+                *current = value;
+                changed = true;
+            }
+            previous = current;
+        }
+    }
+}
+
 #[unsafe(no_mangle)]
 pub fn gbc_main() -> u8 {
     let mut out = Serial;
     let mut values = [42u16, 7, 1999, 3, 256, 88, 1024, 5];
     out.write_str("before: ");
     out.write_values(&values);
-    values.sort_unstable();
+    sort(&mut values);
     out.write_str("after:  ");
     out.write_values(&values);
     let total: u16 = values.iter().sum();

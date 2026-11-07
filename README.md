@@ -107,7 +107,7 @@ need MBC banking with cross-bank calls, which is not built. See the
 
 Immediate abort removes the ordinary panic-reporting path, but unoptimized
 slice-range failure helpers can still retain formatting arguments. The sort
-example remains subject to the cartridge size limit.
+example uses a small bubble sort over mutable iterators to avoid these helpers.
 
 Compilation support does not guarantee a practical ROM footprint. General float
 and wide-integer formatting are currently too large for normal use in the
