@@ -82,6 +82,11 @@ limitations belong in backend work rather than disabled core APIs; see the
 [Rust fork audit](wiki/concepts/rust-fork.md) for the remaining compiler
 accommodation and validation limits.
 
+The [16-bit pointer audit](wiki/concepts/16-bit-pointers.md) verifies core/alloc
+frontend support and size boundaries without additional Rust-fork changes.
+`usize::MAX` is 65,535, while ordinary objects and allocations are limited to
+32,767 bytes before alignment; these limits do not promise available RAM.
+
 Rust lowers through Cranelift IR to LR35902 assembly. See
 [legalization](wiki/concepts/legalization.md),
 [lowering](wiki/concepts/lowering.md), and

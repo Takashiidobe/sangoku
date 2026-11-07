@@ -3226,3 +3226,62 @@ fn memset_runtime_obeys_split_abi_and_bounds() -> Result<()> {
     }
     Ok(())
 }
+
+#[test]
+fn rust_usize_and_pointer_offsets_use_16_bits() -> Result<()> {
+    let source = harness::root().join("examples/usize.rs");
+    for level in ["0", "2"] {
+        let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
+            .args(["clif", source.to_str().unwrap(), "-", "--opt-level", level])
+            .output()?;
+        ensure!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let path = directory.path().join("usize.clif");
+        std::fs::write(&path, output.stdout)?;
+        let program = lower_program(path.to_str().unwrap())?;
+        let stop = program.symbols["done"];
+        for (a, b) in [
+            (0u16, 0u16),
+            (32767, 1),
+            (32768, 32768),
+            (65535, 1),
+            (65535, 65535),
+        ] {
+            let mut e = program.emulator("__rust_sum_to_memory")?;
+            e.memory[BASE as usize..BASE as usize + 2].copy_from_slice(&a.to_le_bytes());
+            e.memory[BASE as usize + 2..BASE as usize + 4].copy_from_slice(&b.to_le_bytes());
+            e.b = BASE as u8;
+            e.c = (BASE >> 8) as u8;
+            e.a = (BASE + 2) as u8;
+            e.memory[STACK as usize] = ((BASE + 2) >> 8) as u8;
+            e.write16(STACK + 1, BASE + 16);
+            e.set_sp(STACK - 2);
+            e.write16(STACK - 2, stop);
+            e.run_until(stop, 4096)?;
+            ensure!(
+                e.read16(BASE + 16) == a.wrapping_add(b),
+                "level {level}: {a} + {b}"
+            );
+        }
+        for (base, offset) in [(0u16, 1i16), (65535, 1), (1, -2), (0x8000, i16::MIN)] {
+            let mut e = program.emulator("__rust_offset_to_memory")?;
+            e.b = base as u8;
+            e.c = (base >> 8) as u8;
+            e.a = offset as u8;
+            e.memory[STACK as usize] = ((offset as u16) >> 8) as u8;
+            e.write16(STACK + 1, BASE + 16);
+            e.set_sp(STACK - 2);
+            e.write16(STACK - 2, stop);
+            e.run_until(stop, 4096)?;
+            ensure!(
+                e.read16(BASE + 16) == base.wrapping_add(offset as u16),
+                "level {level}: pointer {base} offset {offset}"
+            );
+        }
+    }
+    Ok(())
+}
