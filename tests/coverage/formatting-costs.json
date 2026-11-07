@@ -1,0 +1,39 @@
+{
+  "measured_on": "2026-11-07",
+  "command": "python3 tools/audit_formatting.py",
+  "configuration": {
+    "target": "lr35902",
+    "optimization": "z",
+    "core_feature": "optimize_for_size",
+    "panic": "immediate-abort",
+    "image_limit_bytes": 32768,
+    "reserved_rom_bytes": 257
+  },
+  "probes": {
+    "u64": {
+      "rust_to_assembly": true,
+      "assembles": true,
+      "links_in_32k": true,
+      "map_summary": "ROM0: 32174 bytes used / 594 free",
+      "linked_rom_bytes": 32174
+    },
+    "u128": {
+      "rust_to_assembly": true,
+      "assembles": false,
+      "code_section_bytes": 190151,
+      "limitation": "code section alone exceeds the flat 32 KiB ROM limit; runtime execution is unvalidated"
+    },
+    "f32": {
+      "rust_to_assembly": true,
+      "assembles": false,
+      "code_section_bytes": 426247,
+      "limitation": "code section alone exceeds the flat 32 KiB ROM limit; runtime execution is unvalidated"
+    },
+    "f64": {
+      "rust_to_assembly": true,
+      "assembles": false,
+      "code_section_bytes": 437126,
+      "limitation": "code section alone exceeds the flat 32 KiB ROM limit; runtime execution is unvalidated"
+    }
+  }
+}

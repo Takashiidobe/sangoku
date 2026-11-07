@@ -69,6 +69,14 @@ Float-width conversions preserve source precision and round once at the
 destination width. Build `examples/conversions.rs` to exercise Rust casts;
 compiling all of `core` remains the next milestone.
 
+Compilation support does not guarantee a practical ROM footprint. General float
+and wide-integer formatting are currently too large for normal use in the
+nonbanked build; even the standalone u64 decimal probe nearly fills 32 KiB. This
+does not make all i64/i128 arithmetic unusable. `println!` also needs an output
+runtime that is not provided. See
+[practical limits](wiki/concepts/practical-limits.md) for measurements and the
+distinction between lowering, linking and execution.
+
 The Rust fork keeps `library/core` unchanged from its upstream base. Target
 limitations belong in backend work rather than disabled core APIs; see the
 [Rust fork audit](wiki/concepts/rust-fork.md) for the remaining compiler

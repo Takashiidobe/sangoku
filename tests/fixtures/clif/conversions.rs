@@ -84,7 +84,7 @@ pub unsafe fn f128_to_f32(memory: *mut f128) {
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  local ty                              size align (abi)
 // CHECK-NEXT: ; ssa   _1    *mut f128                         2b 2                var=1
-// CHECK-NEXT: ; ssa   _2    f128                             16b 16                var=2
+// CHECK-NEXT: ; ssa   _2    f128                             16b 2                var=2
 // CHECK-NEXT: ; ssa   _3    *mut f32                          2b 2                var=3
 // CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i16):
@@ -124,7 +124,7 @@ pub unsafe fn f128_to_f32(memory: *mut f128) {
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  local ty                              size align (abi)
 // CHECK-NEXT: ; ssa   _1    *mut f128                         2b 2                var=1
-// CHECK-NEXT: ; ssa   _2    f128                             16b 16                var=2
+// CHECK-NEXT: ; ssa   _2    f128                             16b 2                var=2
 // CHECK-NEXT: ; ssa   _3    *mut u128                         2b 2                var=3
 // CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i16):
@@ -204,7 +204,7 @@ pub unsafe fn f128_to_f32(memory: *mut f128) {
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  local ty                              size align (abi)
 // CHECK-NEXT: ; ssa   _1    *mut f64                          2b 2                var=1
-// CHECK-NEXT: ; ssa   _2    f64                               8b 8                var=2
+// CHECK-NEXT: ; ssa   _2    f64                               8b 2                var=2
 // CHECK-NEXT: ; ssa   _3    *mut f16                          2b 2                var=3
 // CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i16):
@@ -244,7 +244,7 @@ pub unsafe fn f128_to_f32(memory: *mut f128) {
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  local ty                              size align (abi)
 // CHECK-NEXT: ; ssa   _1    *mut f64                          2b 2                var=1
-// CHECK-NEXT: ; ssa   _2    f64                               8b 8                var=2
+// CHECK-NEXT: ; ssa   _2    f64                               8b 2                var=2
 // CHECK-NEXT: ; ssa   _3    *mut i8                           2b 2                var=3
 // CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i16):
@@ -310,7 +310,7 @@ pub unsafe fn f128_to_f32(memory: *mut f128) {
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  local ty                              size align (abi)
 // CHECK-NEXT: ; ssa   _1    *mut i128                         2b 2                var=1
-// CHECK-NEXT: ; ssa   _2    i128                             16b 4                var=2
+// CHECK-NEXT: ; ssa   _2    i128                             16b 2                var=2
 // CHECK-NEXT: ; ssa   _3    *mut f64                          2b 2                var=3
 // CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i16):
@@ -350,7 +350,7 @@ pub unsafe fn f128_to_f32(memory: *mut f128) {
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  local ty                              size align (abi)
 // CHECK-NEXT: ; ssa   _1    *mut i64                          2b 2                var=1
-// CHECK-NEXT: ; ssa   _2    i64                               8b 4                var=2
+// CHECK-NEXT: ; ssa   _2    i64                               8b 2                var=2
 // CHECK-NEXT: ; ssa   _3    *mut f16                          2b 2                var=3
 // CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i16):
@@ -390,7 +390,7 @@ pub unsafe fn f128_to_f32(memory: *mut f128) {
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  local ty                              size align (abi)
 // CHECK-NEXT: ; ssa   _1    *mut u128                         2b 2                var=1
-// CHECK-NEXT: ; ssa   _2    u128                             16b 4                var=2
+// CHECK-NEXT: ; ssa   _2    u128                             16b 2                var=2
 // CHECK-NEXT: ; ssa   _3    *mut f128                         2b 2                var=3
 // CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i16):
@@ -430,7 +430,7 @@ pub unsafe fn f128_to_f32(memory: *mut f128) {
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  local ty                              size align (abi)
 // CHECK-NEXT: ; ssa   _1    *mut u64                          2b 2                var=1
-// CHECK-NEXT: ; ssa   _2    u64                               8b 4                var=2
+// CHECK-NEXT: ; ssa   _2    u64                               8b 2                var=2
 // CHECK-NEXT: ; ssa   _3    *mut f32                          2b 2                var=3
 // CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i16):

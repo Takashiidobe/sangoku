@@ -45,3 +45,8 @@ pub fn random_source<T: core::random::Rng>(source: &mut T) {
 const _: [(); 81] = [(); 3u32.pow(4) as usize];
 const _: [(); 81] = [(); 3i128.pow(4) as usize];
 const _: [(); 81] = [(); 3u128.checked_pow(4).unwrap() as usize];
+
+const _: [(); 2] = [(); core::mem::align_of::<u64>()];
+const _: [(); 2] = [(); core::mem::align_of::<u128>()];
+const _: [(); 2] = [(); core::mem::align_of::<f32>()];
+const _: [(); 2] = [(); core::mem::align_of::<f64>()];

@@ -14,4 +14,5 @@ for file in "$build/stage1/$lib"/*; do
 done
 
 rustup toolchain link gbc-lr35902 "$build/stage2"
+cargo +gbc-lr35902 clean --manifest-path "$root/third_party/rustc_codegen_cranelift/Cargo.toml"
 cargo +gbc-lr35902 build --release --manifest-path "$root/third_party/rustc_codegen_cranelift/Cargo.toml"

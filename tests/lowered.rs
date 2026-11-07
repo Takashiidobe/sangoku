@@ -22,6 +22,7 @@ fn lower_program(path: &str) -> Result<harness::Program> {
         String::from_utf8_lossy(&output.stderr)
     );
     let assembly = String::from_utf8(output.stdout)?;
+    let needs_memory = assembly.contains("__gbc_mem");
     let needs_convert = assembly.contains("__gbc_convert");
     let needs_float128 = assembly.contains("__gbc_f128");
     let needs_float64 = assembly.contains("__gbc_f64");
@@ -53,6 +54,9 @@ fn lower_program(path: &str) -> Result<harness::Program> {
     }
     if needs_convert {
         sources.push(("convert.asm", harness::read("runtime/convert.asm")?));
+    }
+    if needs_memory {
+        sources.push(("memory.asm", harness::read("runtime/memory.asm")?));
     }
     harness::assemble(&sources, None)
 }
@@ -3150,6 +3154,75 @@ fn signed_division_overflow_and_remainder_follow_clif() -> Result<()> {
                 }
             }
         }
+    }
+    Ok(())
+}
+
+#[test]
+fn branch_tables_handle_full_width_indices() -> Result<()> {
+    for level in ["none", "speed"] {
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let path = directory.path().join("table.clif");
+        std::fs::write(
+            &path,
+            format!(
+                "set opt_level={level}\ntarget z80\nfunction %table(i16) -> i8 system_v {{\nblock0(v0: i16):\n v1 = load.i32 v0\n br_table v1, block3, [block1, block2]\nblock1:\n v2 = iconst.i8 11\n return v2\nblock2:\n v3 = iconst.i8 22\n return v3\nblock3:\n v4 = iconst.i8 33\n return v4\n}}\n"
+            ),
+        )?;
+        let program = lower_program(path.to_str().unwrap())?;
+        for (index, expected) in [
+            (0u32, 11),
+            (1, 22),
+            (2, 33),
+            (255, 33),
+            (256, 33),
+            (65536, 33),
+            (1 << 24, 33),
+            (u32::MAX, 33),
+        ] {
+            let got = invoke(&program, "__rust_table", &index.to_le_bytes())? & 255;
+            ensure!(got == expected, "{level} index {index}: got {got}");
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn memset_runtime_obeys_split_abi_and_bounds() -> Result<()> {
+    let program = harness::assemble(
+        &[
+            ("memory.asm", harness::read("runtime/memory.asm")?),
+            ("stop.asm", "SECTION \"done\", ROM0\ndone::\nnop\n".into()),
+        ],
+        None,
+    )?;
+    for len in [0u16, 1, 17, 257] {
+        let mut e = program.emulator("__gbc_memset")?;
+        e.memory[0xc100..0xc220].fill(0xa5);
+        e.b = 1;
+        e.c = 0xc1;
+        e.a = 0x37;
+        e.memory[0xd000..0xd003].copy_from_slice(&[0x12, 0x34, 0x56]);
+        e.write16(0xd003, len);
+        e.set_sp(0xcffe);
+        e.write16(0xcffe, program.symbols["done"]);
+        e.run_until(program.symbols["done"], 10000)?;
+        ensure!((e.a, e.b) == (1, 0xc1));
+        ensure!(e.memory[0xc100] == 0xa5);
+        ensure!(
+            e.memory[0xc101..0xc101 + usize::from(len)]
+                .iter()
+                .all(|&b| b == 0x37),
+            "len {len}: bytes {:?}, d={:x}",
+            &e.memory[0xc100..0xc108],
+            e.d
+        );
+        ensure!(
+            e.memory[0xc101 + usize::from(len)..0xc220]
+                .iter()
+                .all(|&b| b == 0xa5)
+        );
+        ensure!(e.sp() == 0xd000);
     }
     Ok(())
 }

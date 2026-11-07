@@ -88,6 +88,18 @@ pub fn command(args: &[String]) -> Result<String> {
     Ok(String::from_utf8(out.stdout)?)
 }
 pub fn assemble(sources: &[(&str, String)], artifacts: Option<&Path>) -> Result<Program> {
+    assemble_mode(sources, artifacts, false)
+}
+
+pub fn assemble_tiny(sources: &[(&str, String)], artifacts: Option<&Path>) -> Result<Program> {
+    assemble_mode(sources, artifacts, true)
+}
+
+fn assemble_mode(
+    sources: &[(&str, String)],
+    artifacts: Option<&Path>,
+    tiny: bool,
+) -> Result<Program> {
     let temp = if artifacts.is_none() {
         Some(tempfile::tempdir()?)
     } else {
@@ -147,6 +159,9 @@ pub fn assemble(sources: &[(&str, String)], artifacts: Option<&Path>) -> Result<
         "-m".into(),
         directory.join("runtime.map").display().to_string(),
     ];
+    if tiny {
+        cmd.push("-t".into());
+    }
     cmd.extend(objects);
     run(cmd)?;
     let sym_re = Regex::new(r"^([0-9a-fA-F]+):([0-9a-fA-F]+) (.+)$")?;

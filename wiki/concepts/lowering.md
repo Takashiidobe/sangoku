@@ -88,6 +88,22 @@ python3 tools/generate_conversion_cases.py
 Run `cargo nextest run --no-fail-fast -E 'test(numeric_conversions)'` to check
 both CLIF lowering and representative Rust casts at none/speed optimization.
 
+## Rust data and formatting
+
+RGBDS emission supports defined read-only data objects, including 16-bit
+function/data relocations and per-codegen-unit anonymous names. Writable data,
+TLS and custom data sections remain unsupported in this path. The target layout
+aligns ordinary wide scalars to two bytes, matching the backend stack ABI.
+
+The runtime supplies the split-ABI `memset` helper. Other standard memory
+libcalls are emitted as external symbols and still require runtime bodies.
+Branch-table assembly uses executable comparisons and jumps for full-width
+indices.
+
+Formatting APIs remain upstream implementations. See
+[practical limits](practical-limits.md) for why compilation support does not
+imply that general formatting fits a ROM.
+
 ## Calling convention
 
 Argument bytes go in B, C, A, then on the stack, low address first. The caller
