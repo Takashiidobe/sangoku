@@ -3,7 +3,19 @@
 Compile Rust into Game Boy and Game Boy Color ROMs. Rust `core` compiles; the
 next goal is compiling `alloc`.
 
-## Setup
+## Standalone compiler
+
+With the bundled Linux x86-64 executable and RGBDS installed on `PATH`:
+
+```bash
+./sangoku run game.rs
+./sangoku build game.rs game.gb --opt-level z
+```
+
+No Cargo or rustup is needed. The toolchain unpacks into a cache on first use.
+To build `build/dist/sangoku`, see [distribution](wiki/distribution.md).
+
+## Build from source
 
 Install RGBDS (`rgbasm`, `rgblink`, `rgbfix`), then build the pinned Rust fork
 and backend:
@@ -37,8 +49,6 @@ failure paths can consume substantial ROM space. Check the build warnings.
 ```bash
 cargo nextest run --no-fail-fast
 ```
-
-For a single-file compiler package, see [distribution](wiki/distribution.md).
 
 See the [wiki](wiki/index.md) for backend details and
 [practical limits](wiki/concepts/practical-limits.md) for ROM constraints.
