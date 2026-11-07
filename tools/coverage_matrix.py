@@ -3,7 +3,8 @@
 
 Usage: coverage_matrix.py [--check]
 
-Writes tests/coverage/lower.md and lower.tsv. With --check, fails when the
+Writes tests/coverage/lower.md and lower.tsv. Requires Prettier to format Markdown
+with 80-column prose wrapping. With --check, fails when the
 checked-in files differ from the current backend, or when any generated
 function is invalid CLIF (a generator bug, not a missing feature).
 """
@@ -271,7 +272,18 @@ def main():
     bad = [f"{op}.{ty}: {m}" for (op, ty), (s, m) in plain.items() if s in ("invalid",)]
     if bad:
         sys.exit("generated invalid CLIF:\n" + "\n".join(bad))
-    markdown = render(plain, verified)
+    try:
+        formatted = subprocess.run(
+            ["prettier", "--prose-wrap", "always", "--print-width", "80",
+             "--stdin-filepath", str(OUT / "lower.md")],
+            input=render(plain, verified), capture_output=True, text=True, check=True,
+            cwd=ROOT,
+        )
+    except FileNotFoundError:
+        sys.exit("prettier is required to format generated Markdown; install it and rerun")
+    except subprocess.CalledProcessError as error:
+        sys.exit(error.stderr or "prettier failed to format generated Markdown")
+    markdown = formatted.stdout
     tsv = "".join(f"{op}\t{ty}\t{s}\t{m}\n" for (op, ty), (s, m) in sorted(plain.items()))
     OUT.mkdir(parents=True, exist_ok=True)
     targets = {OUT / "lower.md": markdown, OUT / "lower.tsv": tsv}

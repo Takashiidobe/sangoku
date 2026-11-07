@@ -72,7 +72,7 @@ operations; [Beads](AGENTS.md) tracks remaining work.
 
 ## Testing
 
-Run the tests with RGBDS installed:
+Run the tests with RGBDS and Prettier installed:
 
 ```bash
 cargo nextest run --no-fail-fast
