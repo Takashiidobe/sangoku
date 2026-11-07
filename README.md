@@ -76,8 +76,8 @@ function at a time, 0 failures out of 3,235 `core` functions, the
 `tests/core_driver/driver.rs` (iterators, slices, `str`, `char`, formatting
 through `u128`, parsing, sorting, hashing, `dyn`). These are lowering counts at
 `opt-level=0`, with `compiler_builtins` built with its `unmangled-names` and
-`mem` features (2,009 functions). `tools/link_core.py PROGRAM.rs OUT.gb` links a
-program against real `core`: each function is its own RGBDS section, only
+`mem` features (2,009 functions). `cargo run -- build PROGRAM.rs OUT.gb` links every program against real `core`
+(built once into `build/core/opt-N`): each function is its own RGBDS section, only
 sections reachable from `gbc_main` are kept, and they fill ROM0 then spill into
 ROMX bank 1 of a 32 KiB cartridge (`tests/core_rom/rom.rs`, an iterator sum and
 max, links at about 16 KB and runs in the emulator). Programs larger than 32 KiB

@@ -6,6 +6,8 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode, Stdio};
 use std::time::{SystemTime, UNIX_EPOCH};
 
+mod link;
+
 const TOOLCHAIN: &str = "gbc-lr35902";
 
 fn main() -> ExitCode {
@@ -254,82 +256,77 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
     let backend = build_backend(root)?;
     let temp = TempDir::new()?;
     let rust_asm = temp.path().join("game.asm");
+    let libraries = core_libraries(root, &backend, opt_level)?;
 
-    run_command(
-        rustc_command(root, opt_level)
-            .arg(format!("-Zcodegen-backend={}", backend.display()))
-            .arg("--emit=asm")
-            .arg(source)
-            .arg("-o")
-            .arg(&rust_asm),
-    )?;
+    let mut command = rustc_command(root, opt_level);
+    command
+        .arg(format!("-Zcodegen-backend={}", backend.display()))
+        .arg("--emit=asm")
+        .args(libraries.externs(true))
+        .arg(source)
+        .arg("-o")
+        .arg(&rust_asm);
+    run_command(&mut command)?;
 
-    let assembly = fs::read_to_string(&rust_asm)
-        .map_err(|error| format!("could not read {}: {error}", rust_asm.display()))?;
-    let needs_memory = assembly.contains("__gbc_mem")
-        || assembly.contains("memcpy")
-        || assembly.contains("memmove");
-    let needs_panic =
-        assembly.contains("rust_begin_unwind") && !assembly.contains("rust_begin_unwind::");
-    let needs_convert = assembly.contains("__gbc_convert");
-    let needs_float128 = assembly.contains("__gbc_f128");
-    let needs_float64 = assembly.contains("__gbc_f64");
-    let needs_float32 = assembly
-        .replace("__gbc_f64", "")
-        .replace("__gbc_f128", "")
-        .contains("__gbc_f");
+    let texts = [
+        read_text(&rust_asm)?,
+        read_text(&libraries.core_asm())?,
+        read_text(&libraries.builtins_asm())?,
+    ];
+    let sections: Vec<_> = texts
+        .iter()
+        .flat_map(|text| link::split_sections(text))
+        .collect();
+    let kept: Vec<_> = link::reachable(&sections, &[link::ENTRY])
+        .into_iter()
+        .map(|index| &sections[index])
+        .collect();
+    if kept.is_empty() {
+        return Err(format!(
+            "{} is not defined by the program or core",
+            link::ENTRY
+        ));
+    }
+    let linked: String = kept.iter().map(|section| section.text).collect();
 
     let header_object = temp.path().join("header.o");
-    let game_object = temp.path().join("game.o");
-    run_command(
-        Command::new("rgbasm")
-            .arg("-o")
-            .arg(&header_object)
-            .arg(root.join("rom/header.asm")),
-    )?;
-    run_command(
-        Command::new("rgbasm")
-            .arg("-o")
-            .arg(&game_object)
-            .arg(rust_asm),
-    )?;
-    let mut runtime_objects = Vec::new();
-    for source in [
-        "udiv16",
-        "mul16",
-        "wide32",
-        "softfloat32",
-        "softfloat64",
-        "softfloat128",
-        "convert",
-        "memory",
-        "panic",
-    ] {
-        if (source == "softfloat32" && !needs_float32)
-            || (source == "softfloat64" && !needs_float64)
-            || (source == "softfloat128" && !needs_float128)
-            || (source == "convert" && !needs_convert)
-            || (source == "memory" && !needs_memory)
-            || (source == "panic" && !needs_panic)
-        {
-            continue;
-        }
-        let object = temp.path().join(format!("{source}.o"));
-        run_command(
-            Command::new("rgbasm")
-                .arg("-o")
-                .arg(&object)
-                .arg(root.join(format!("runtime/{source}.asm"))),
-        )?;
-        runtime_objects.push(object);
+    assemble(&root.join("rom/header.asm"), &header_object)?;
+    let mut fixed_objects = vec![header_object];
+    for name in link::runtime_objects(&linked) {
+        let object = temp.path().join(format!("{name}.o"));
+        assemble(&root.join(format!("runtime/{name}.asm")), &object)?;
+        fixed_objects.push(object);
     }
+
+    let probe_source = temp.path().join("probe.asm");
+    let probe_object = temp.path().join("probe.o");
+    let probe_map = temp.path().join("probe.map");
+    fs::write(&probe_source, link::bank_one(&linked))
+        .map_err(|error| format!("could not write {}: {error}", probe_source.display()))?;
+    assemble(&probe_source, &probe_object)?;
     run_command(
         Command::new("rgblink")
+            .arg("-m")
+            .arg(&probe_map)
+            .arg("-o")
+            .arg(temp.path().join("probe.gb"))
+            .args(&fixed_objects)
+            .arg(&probe_object),
+    )?;
+    let (sizes, rom0_free) = link::parse_map(&read_text(&probe_map)?);
+
+    let game_source = temp.path().join("game_placed.asm");
+    let game_object = temp.path().join("game.o");
+    fs::write(&game_source, link::place(&kept, &sizes, rom0_free))
+        .map_err(|error| format!("could not write {}: {error}", game_source.display()))?;
+    assemble(&game_source, &game_object)?;
+    run_command(
+        Command::new("rgblink")
+            .arg("-t")
             .arg("-o")
             .arg(&output)
-            .arg(header_object)
-            .arg(game_object)
-            .args(&runtime_objects),
+            .args(&fixed_objects)
+            .arg(&game_object),
     )?;
     run_command(
         Command::new("rgbfix")
@@ -339,6 +336,86 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
 
     println!("Wrote {}", output.display());
     Ok(())
+}
+
+struct CoreLibraries(PathBuf);
+
+impl CoreLibraries {
+    fn core_asm(&self) -> PathBuf {
+        self.0.join("core.s")
+    }
+
+    fn builtins_asm(&self) -> PathBuf {
+        self.0.join("compiler_builtins.s")
+    }
+
+    fn externs(&self, with_builtins: bool) -> Vec<OsString> {
+        let mut args = vec![
+            "-L".into(),
+            format!("dependency={}", self.0.display()).into(),
+        ];
+        let crates = [
+            ("core", "libcore.rmeta"),
+            ("compiler_builtins", "libcompiler_builtins.rmeta"),
+        ];
+        for (name, file) in crates.into_iter().take(if with_builtins { 2 } else { 1 }) {
+            args.push("--extern".into());
+            args.push(format!("{name}={}", self.0.join(file).display()).into());
+        }
+        args
+    }
+}
+
+fn modified(path: &Path) -> Option<SystemTime> {
+    fs::metadata(path)
+        .and_then(|metadata| metadata.modified())
+        .ok()
+}
+
+fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLibraries, String> {
+    let libraries = CoreLibraries(root.join("build/core").join(format!("opt-{opt_level}")));
+    let backend_time = modified(backend);
+    let fresh = [libraries.core_asm(), libraries.builtins_asm()]
+        .iter()
+        .all(|path| modified(path).is_some_and(|time| Some(time) >= backend_time));
+    if fresh {
+        return Ok(libraries);
+    }
+    fs::create_dir_all(&libraries.0)
+        .map_err(|error| format!("could not create {}: {error}", libraries.0.display()))?;
+    let library = root.join("third_party/rust/library");
+    let compile = |name: &str, source: PathBuf, extra: Vec<OsString>| {
+        run_command(
+            rustc_command(root, opt_level)
+                .args(["--edition=2024", "-Awarnings", "--emit=asm,metadata"])
+                .arg(format!("-Zcodegen-backend={}", backend.display()))
+                .args(["--crate-name", name])
+                .args(extra)
+                .arg(source)
+                .arg("-o")
+                .arg(libraries.0.join(format!("{name}.s"))),
+        )
+    };
+    compile("core", library.join("core/src/lib.rs"), Vec::new())?;
+    let mut extra = libraries.externs(false);
+    for cfg in ["compiler-builtins", "unmangled-names", "mem"] {
+        extra.push("--cfg".into());
+        extra.push(format!("feature=\"{cfg}\"").into());
+    }
+    compile(
+        "compiler_builtins",
+        library.join("compiler-builtins/compiler-builtins/src/lib.rs"),
+        extra,
+    )?;
+    Ok(libraries)
+}
+
+fn read_text(path: &Path) -> Result<String, String> {
+    fs::read_to_string(path).map_err(|error| format!("could not read {}: {error}", path.display()))
+}
+
+fn assemble(source: &Path, object: &Path) -> Result<(), String> {
+    run_command(Command::new("rgbasm").arg("-o").arg(object).arg(source))
 }
 
 fn absolute_path(path: &Path) -> Result<PathBuf, String> {
