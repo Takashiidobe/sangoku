@@ -60,6 +60,30 @@ SDCC is needed for regeneration only. Normal builds assemble the checked-in
 output with RGBDS. Emulator tests verify the source hash, arithmetic results,
 caller size and runtime size.
 
+## Numeric conversions
+
+[runtime/convert.c](../../runtime/convert.c) handles conversions involving wide
+integers or floats. A stack context holds 16 source bytes, 16 result bytes,
+source and destination byte widths, a mode byte and a status byte.
+`__gbc_convert` takes the context pointer through the split calling convention.
+The helper has no mutable global state.
+
+Its 17-byte significand holds a leading bit at bit 128, retaining every i128
+input bit and binary128 significand bit. Narrowing preserves guard and sticky
+bits and rounds once, to nearest with ties to even. Integer results truncate
+before range checking; the caller turns NaN or overflow status into a trap for
+trapping opcodes. Saturating opcodes use the clamped result directly.
+
+Regenerate the checked-in RGBDS output and bounded integer-only reference cases:
+
+```sh
+python3 tools/generate_convert.py
+python3 tools/generate_conversion_cases.py
+```
+
+Run `cargo nextest run --no-fail-fast -E 'test(numeric_conversions)'` to check
+both CLIF lowering and representative Rust casts at none/speed optimization.
+
 ## Calling convention
 
 Argument bytes go in B, C, A, then on the stack, low address first. The caller

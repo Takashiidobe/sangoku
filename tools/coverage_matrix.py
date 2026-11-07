@@ -99,7 +99,7 @@ for width in (8, 16, 32):
     for ty in INTS:
         add(f"istore{width}", ty, [ADDR, ty], None, f"    istore{width} v1, v0")
         for op in ("uload", "sload"):
-            if width == 32 and ty != "i64":
+            if BITS[ty] <= width:
                 continue
             add(f"{op}{width}", f"i{width}->{ty}", [ADDR], ty,
                 f"    v9 = {op}{width}.{ty} v0\n    return v9")
@@ -130,7 +130,7 @@ for ty in FLOATS:
         if ty != other and FLOATS.index(ty) < FLOATS.index(other):
             add("fpromote", f"{ty}->{other}", [ty], other, f"    v9 = fpromote.{other} v0\n    return v9")
             add("fdemote", f"{other}->{ty}", [other], ty, f"    v9 = fdemote.{ty} v0\n    return v9")
-    for it in ("i8", "i16", "i32", "i64"):
+    for it in INTS:
         for op in ("fcvt_to_sint", "fcvt_to_uint", "fcvt_to_sint_sat", "fcvt_to_uint_sat"):
             add(op, f"{ty}->{it}", [ty], it, f"    v9 = {op}.{it} v0\n    return v9")
         for op in ("fcvt_from_sint", "fcvt_from_uint"):
@@ -138,9 +138,6 @@ for ty in FLOATS:
         if BITS[it] == int(ty[1:]):
             add("bitcast", f"{it}->{ty}", [it], ty, f"    v9 = bitcast.{ty} little v0\n    return v9")
             add("bitcast", f"{ty}->{it}", [ty], it, f"    v9 = bitcast.{it} little v0\n    return v9")
-
-add("bitcast", "i128->f128", ["i128"], "f128", "    v9 = bitcast.f128 little v0\n    return v9")
-add("bitcast", "f128->i128", ["f128"], "i128", "    v9 = bitcast.i128 little v0\n    return v9")
 
 add("trap", "-", [], None, "    trap user1")
 add("func_addr", "-", [], ADDR, "    sig0 = () system_v\n    fn0 = %callee sig0\n    v9 = func_addr.i16 fn0\n    return v9")
@@ -239,8 +236,6 @@ def render(plain, verified):
                         applicable = src_bits > dst_bits
                     elif op in ("uextend", "sextend", "fpromote") or op.startswith(("sload", "uload")):
                         applicable = src_bits < dst_bits
-                        if op.startswith(("sload", "uload")):
-                            applicable = applicable and dst_bits <= 64
                     else:
                         applicable = True
                     entry = plain.get((op, f"{source}->{destination}"))

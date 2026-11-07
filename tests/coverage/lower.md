@@ -5,7 +5,7 @@ unsupported, `PANIC` is a backend crash, `n/e` cannot be written as textual CLIF
 for that type (the opcode's type set rejects it). Memory operations use `i16`
 addresses.
 
-Totals: inexpressible 26, ok 518, unsupported 70
+Totals: inexpressible 22, ok 612
 
 ## Integer operations
 
@@ -139,57 +139,57 @@ expressed in textual CLIF.
 
 | source \ destination | f16 | f32 | f64 | f128 |
 | -------------------- | --- | --- | --- | ---- |
-| i8                   | ok  | ok  | -   | -    |
-| i16                  | ok  | ok  | -   | -    |
-| i32                  | ok  | ok  | -   | -    |
-| i64                  | -   | -   | -   | -    |
-| i128                 | ?   | ?   | ?   | ?    |
+| i8                   | ok  | ok  | ok  | ok   |
+| i16                  | ok  | ok  | ok  | ok   |
+| i32                  | ok  | ok  | ok  | ok   |
+| i64                  | ok  | ok  | ok  | ok   |
+| i128                 | ok  | ok  | ok  | ok   |
 
 ### `fcvt_from_uint`
 
 | source \ destination | f16 | f32 | f64 | f128 |
 | -------------------- | --- | --- | --- | ---- |
-| i8                   | ok  | ok  | -   | -    |
-| i16                  | ok  | ok  | -   | -    |
-| i32                  | ok  | ok  | -   | -    |
-| i64                  | -   | -   | -   | -    |
-| i128                 | ?   | ?   | ?   | ?    |
+| i8                   | ok  | ok  | ok  | ok   |
+| i16                  | ok  | ok  | ok  | ok   |
+| i32                  | ok  | ok  | ok  | ok   |
+| i64                  | ok  | ok  | ok  | ok   |
+| i128                 | ok  | ok  | ok  | ok   |
 
 ### `fcvt_to_sint`
 
 | source \ destination | i8  | i16 | i32 | i64 | i128 |
 | -------------------- | --- | --- | --- | --- | ---- |
-| f16                  | ok  | ok  | ok  | -   | ?    |
-| f32                  | ok  | ok  | ok  | -   | ?    |
-| f64                  | -   | -   | -   | -   | ?    |
-| f128                 | -   | -   | -   | -   | ?    |
+| f16                  | ok  | ok  | ok  | ok  | ok   |
+| f32                  | ok  | ok  | ok  | ok  | ok   |
+| f64                  | ok  | ok  | ok  | ok  | ok   |
+| f128                 | ok  | ok  | ok  | ok  | ok   |
 
 ### `fcvt_to_sint_sat`
 
 | source \ destination | i8  | i16 | i32 | i64 | i128 |
 | -------------------- | --- | --- | --- | --- | ---- |
-| f16                  | ok  | ok  | ok  | -   | ?    |
-| f32                  | ok  | ok  | ok  | -   | ?    |
-| f64                  | -   | -   | -   | -   | ?    |
-| f128                 | -   | -   | -   | -   | ?    |
+| f16                  | ok  | ok  | ok  | ok  | ok   |
+| f32                  | ok  | ok  | ok  | ok  | ok   |
+| f64                  | ok  | ok  | ok  | ok  | ok   |
+| f128                 | ok  | ok  | ok  | ok  | ok   |
 
 ### `fcvt_to_uint`
 
 | source \ destination | i8  | i16 | i32 | i64 | i128 |
 | -------------------- | --- | --- | --- | --- | ---- |
-| f16                  | ok  | ok  | ok  | -   | ?    |
-| f32                  | ok  | ok  | ok  | -   | ?    |
-| f64                  | -   | -   | -   | -   | ?    |
-| f128                 | -   | -   | -   | -   | ?    |
+| f16                  | ok  | ok  | ok  | ok  | ok   |
+| f32                  | ok  | ok  | ok  | ok  | ok   |
+| f64                  | ok  | ok  | ok  | ok  | ok   |
+| f128                 | ok  | ok  | ok  | ok  | ok   |
 
 ### `fcvt_to_uint_sat`
 
 | source \ destination | i8  | i16 | i32 | i64 | i128 |
 | -------------------- | --- | --- | --- | --- | ---- |
-| f16                  | ok  | ok  | ok  | -   | ?    |
-| f32                  | ok  | ok  | ok  | -   | ?    |
-| f64                  | -   | -   | -   | -   | ?    |
-| f128                 | -   | -   | -   | -   | ?    |
+| f16                  | ok  | ok  | ok  | ok  | ok   |
+| f32                  | ok  | ok  | ok  | ok  | ok   |
+| f64                  | ok  | ok  | ok  | ok  | ok   |
+| f128                 | ok  | ok  | ok  | ok  | ok   |
 
 ### `fdemote`
 
@@ -197,16 +197,16 @@ expressed in textual CLIF.
 | -------------------- | --- | --- | --- | ---- |
 | f16                  | n/a | n/a | n/a | n/a  |
 | f32                  | ok  | n/a | n/a | n/a  |
-| f64                  | -   | -   | n/a | n/a  |
-| f128                 | -   | -   | -   | n/a  |
+| f64                  | ok  | ok  | n/a | n/a  |
+| f128                 | ok  | ok  | ok  | n/a  |
 
 ### `fpromote`
 
 | source \ destination | f16 | f32 | f64 | f128 |
 | -------------------- | --- | --- | --- | ---- |
-| f16                  | n/a | ok  | -   | -    |
-| f32                  | n/a | n/a | -   | -    |
-| f64                  | n/a | n/a | n/a | -    |
+| f16                  | n/a | ok  | ok  | ok   |
+| f32                  | n/a | n/a | ok  | ok   |
+| f64                  | n/a | n/a | n/a | ok   |
 | f128                 | n/a | n/a | n/a | n/a  |
 
 ### `ireduce`
@@ -233,19 +233,19 @@ expressed in textual CLIF.
 
 | source \ destination | i8  | i16 | i32 | i64 | i128 |
 | -------------------- | --- | --- | --- | --- | ---- |
-| i16                  | n/e | n/e | ok  | ok  | n/e  |
+| i16                  | n/a | n/a | ok  | ok  | n/e  |
 
 ### `sload32`
 
 | source \ destination | i8  | i16 | i32 | i64 | i128 |
 | -------------------- | --- | --- | --- | --- | ---- |
-| i32                  | n/a | n/a | n/a | ok  | n/a  |
+| i32                  | n/a | n/a | n/a | ok  | n/e  |
 
 ### `sload8`
 
 | source \ destination | i8  | i16 | i32 | i64 | i128 |
 | -------------------- | --- | --- | --- | --- | ---- |
-| i8                   | n/e | ok  | ok  | ok  | n/e  |
+| i8                   | n/a | ok  | ok  | ok  | n/e  |
 
 ### `uextend`
 
@@ -261,19 +261,19 @@ expressed in textual CLIF.
 
 | source \ destination | i8  | i16 | i32 | i64 | i128 |
 | -------------------- | --- | --- | --- | --- | ---- |
-| i16                  | n/e | n/e | ok  | ok  | n/e  |
+| i16                  | n/a | n/a | ok  | ok  | n/e  |
 
 ### `uload32`
 
 | source \ destination | i8  | i16 | i32 | i64 | i128 |
 | -------------------- | --- | --- | --- | --- | ---- |
-| i32                  | n/a | n/a | n/a | ok  | n/a  |
+| i32                  | n/a | n/a | n/a | ok  | n/e  |
 
 ### `uload8`
 
 | source \ destination | i8  | i16 | i32 | i64 | i128 |
 | -------------------- | --- | --- | --- | --- | ---- |
-| i8                   | n/e | ok  | ok  | ok  | n/e  |
+| i8                   | n/a | ok  | ok  | ok  | n/e  |
 
 ## Other operations
 

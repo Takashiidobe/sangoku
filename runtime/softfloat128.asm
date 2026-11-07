@@ -1,4 +1,4 @@
-; generated from softfloat128.c, sha256 2b959111c315ac61cf5a684b5f83b433ce14c601a67b0bff5aaee7ecd06e9071
+; generated from softfloat128.c, sha256 ffd66b2d9923632a4a38c172853da0216e0d6d0f46ab6b3f3e228134d56f9e5a
 SECTION "softfloat128", ROM0
 _sf128_clear:
 ld c, a
@@ -1802,50 +1802,50 @@ ld [bc], a
 add sp, 21
 ret
 _sf128_sum:
-add sp, -39
-ld hl, sp + 37
+add sp, -23
+ld hl, sp + 21
 ld a, e
 ld [hli], a
 ld [hl], d
-ld hl, sp + 35
+ld hl, sp + 19
 ld a, c
 ld [hli], a
 ld a, b
 ld [hld], a
 ld a, [hl]
-ld hl, sp + 24
+ld hl, sp + 8
 ld [hl], a
-ld hl, sp + 36
+ld hl, sp + 20
 ld a, [hl]
-ld hl, sp + 25
+ld hl, sp + 9
 ld [hl], a
-ld hl, sp + 35
+ld hl, sp + 19
 ld a, [hli]
 ld c, a
 ld b, [hl]
 inc bc
 ld a, [bc]
-ld hl, sp + 26
+ld hl, sp + 10
 ld [hl], a
-ld hl, sp + 37
+ld hl, sp + 21
 ld a, [hl]
 add a, 0x01
 push af
-ld hl, sp + 29
+ld hl, sp + 13
 pop af
 ld [hl], a
 push af
-ld hl, sp + 40
+ld hl, sp + 24
 pop af
 ld a, [hl]
 adc a, 0x00
-ld hl, sp + 28
+ld hl, sp + 12
 ld [hld], a
 dec hl
 ld a, [hl]
 sub a, 0x03
 jr z, .L00101
-ld hl, sp + 41
+ld hl, sp + 25
 ld a, [hli]
 ld h, [hl]
 ld l, a
@@ -1854,14 +1854,14 @@ ld c, [hl]
 ld a, c
 sub a, 0x03
 jr z, .L00101
-ld hl, sp + 26
+ld hl, sp + 10
 ld a, [hl]
 sub a, 0x02
 ld a, 0x01
 jr z, .L00244
 xor a, a
 .L00244:
-ld hl, sp + 29
+ld hl, sp + 13
 ld [hl], a
 ld a, c
 sub a, 0x02
@@ -1869,25 +1869,25 @@ ld a, 0x01
 jr z, .L00246
 xor a, a
 .L00246:
-ld hl, sp + 30
+ld hl, sp + 14
 ld [hl], a
-ld hl, sp + 35
+ld hl, sp + 19
 ld a, [hl]
-ld hl, sp + 31
+ld hl, sp + 15
 ld [hl], a
-ld hl, sp + 36
+ld hl, sp + 20
 ld a, [hl]
-ld hl, sp + 32
+ld hl, sp + 16
 ld [hl], a
-ld hl, sp + 41
+ld hl, sp + 25
 ld a, [hl]
-ld hl, sp + 33
+ld hl, sp + 17
 ld [hl], a
-ld hl, sp + 42
+ld hl, sp + 26
 ld a, [hl]
-ld hl, sp + 34
+ld hl, sp + 18
 ld [hl], a
-ld hl, sp + 29
+ld hl, sp + 13
 ld a, [hl]
 or a, a
 jr z, .L00102
@@ -1911,18 +1911,18 @@ pop af
 sub a, b
 jr z, .L00102
 .L00101:
-ld hl, sp + 27
+ld hl, sp + 11
 ld a, [hli]
 ld h, [hl]
 ld l, a
 ld [hl], 0x03
 jp .L00127
 .L00102:
-ld hl, sp + 29
+ld hl, sp + 13
 ld a, [hl]
 or a, a
 jr z, .L00108
-ld hl, sp + 35
+ld hl, sp + 19
 ld a, [hli]
 ld c, a
 ld a, [hli]
@@ -1933,30 +1933,30 @@ ld d, [hl]
 call _sf128_copy_float
 jp .L00127
 .L00108:
-ld hl, sp + 30
+ld hl, sp + 14
 ld a, [hl]
 or a, a
 jr z, .L00110
-ld hl, sp + 41
+ld hl, sp + 25
 ld a, [hli]
 ld c, a
 ld b, [hl]
-ld hl, sp + 37
+ld hl, sp + 21
 ld a, [hli]
 ld e, a
 ld d, [hl]
 call _sf128_copy_float
 jp .L00127
 .L00110:
-ld hl, sp + 37
+ld hl, sp + 21
 ld a, [hl]
-ld hl, sp + 29
+ld hl, sp + 13
 ld [hl], a
-ld hl, sp + 38
+ld hl, sp + 22
 ld a, [hl]
-ld hl, sp + 30
+ld hl, sp + 14
 ld [hl], a
-ld hl, sp + 26
+ld hl, sp + 10
 ld a, [hl]
 or a, a
 jr nz, .L00112
@@ -1967,7 +1967,7 @@ ld a, [hli]
 ld h, [hl]
 ld l, a
 ld [hl], 0x00
-ld hl, sp + 31
+ld hl, sp + 15
 ld a, [hli]
 ld e, a
 ld d, [hl]
@@ -1984,24 +1984,24 @@ and a, [hl]
 inc hl
 inc hl
 ld [hl], a
-ld hl, sp + 29
+ld hl, sp + 13
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 34
+ld hl, sp + 18
 ld a, [hl]
 ld [de], a
 jp .L00127
 .L00112:
-ld hl, sp + 26
+ld hl, sp + 10
 ld a, [hl]
 or a, a
 jr nz, .L00115
-ld hl, sp + 41
+ld hl, sp + 25
 ld a, [hli]
 ld c, a
 ld b, [hl]
-ld hl, sp + 37
+ld hl, sp + 21
 ld a, [hli]
 ld e, a
 ld d, [hl]
@@ -2011,7 +2011,7 @@ jp .L00127
 ld a, c
 or a, a
 jr nz, .L00117
-ld hl, sp + 35
+ld hl, sp + 19
 ld a, [hli]
 ld c, a
 ld a, [hli]
@@ -2022,7 +2022,7 @@ ld d, [hl]
 call _sf128_copy_float
 jp .L00127
 .L00117:
-ld hl, sp + 35
+ld hl, sp + 19
 ld a, [hli]
 ld c, a
 ld b, [hl]
@@ -2042,7 +2042,7 @@ ld [hli], a
 inc de
 ld a, [de]
 ld [hl], a
-ld hl, sp + 41
+ld hl, sp + 25
 ld a, [hli]
 ld c, a
 ld b, [hl]
@@ -2051,7 +2051,7 @@ inc bc
 ld e, c
 ld d, b
 ld a, [de]
-ld hl, sp + 31
+ld hl, sp + 15
 ld [hli], a
 inc de
 ld a, [de]
@@ -2065,7 +2065,7 @@ ld [hl], a
 ld hl, sp + 4
 ld e, l
 ld d, h
-ld hl, sp + 31
+ld hl, sp + 15
 ld a, [de]
 inc de
 sub a, [hl]
@@ -2096,32 +2096,32 @@ scf
 jr c, .L00118
 ld hl, sp + 4
 ld a, [hl]
-ld hl, sp + 31
+ld hl, sp + 15
 sub a, [hl]
 jr nz, .L00119
 ld hl, sp + 5
 ld a, [hl]
-ld hl, sp + 32
+ld hl, sp + 16
 sub a, [hl]
 jr nz, .L00119
 ld hl, sp + 6
 ld a, [hl]
-ld hl, sp + 33
+ld hl, sp + 17
 sub a, [hl]
 jr nz, .L00119
 ld hl, sp + 7
 ld a, [hl]
-ld hl, sp + 34
+ld hl, sp + 18
 sub a, [hl]
 jr nz, .L00119
-ld hl, sp + 41
+ld hl, sp + 25
 ld a, [hli]
 add a, 0x06
 ld c, a
 ld a, [hl]
 adc a, 0x00
 ld b, a
-ld hl, sp + 35
+ld hl, sp + 19
 ld a, [hli]
 add a, 0x06
 ld e, a
@@ -2135,48 +2135,24 @@ call _sf128_cmp
 bit 7,a
 jr z, .L00119
 .L00118:
-ld hl, sp + 41
+ld hl, sp + 25
 ld a, [hl]
-ld hl, sp + 24
+ld hl, sp + 8
 ld [hl], a
-ld hl, sp + 42
+ld hl, sp + 26
+ld a, [hl]
+ld hl, sp + 9
+ld [hl], a
+ld hl, sp + 19
 ld a, [hl]
 ld hl, sp + 25
 ld [hl], a
-ld hl, sp + 35
+ld hl, sp + 20
 ld a, [hl]
-ld hl, sp + 41
-ld [hl], a
-ld hl, sp + 36
-ld a, [hl]
-ld hl, sp + 42
+ld hl, sp + 26
 ld [hl], a
 .L00119:
-ld hl, sp + 24
-ld a, [hli]
-ld c, a
-ld b, [hl]
-ld hl, sp + 37
-ld a, [hli]
-ld e, a
-ld d, [hl]
-call _sf128_copy_float
-ld hl, sp + 41
-ld a, [hli]
-add a, 0x06
-ld c, a
-ld a, [hl]
-adc a, 0x00
-ld b, a
-ld a, 0x10
-push af
-inc sp
-ld hl, 9
-add hl, sp
-ld e, l
-ld d, h
-call _sf128_copy
-ld hl, sp + 24
+ld hl, sp + 8
 ld a, [hli]
 ld c, a
 ld b, [hl]
@@ -2196,7 +2172,7 @@ ld [hli], a
 inc de
 ld a, [de]
 ld [hl], a
-ld hl, sp + 41
+ld hl, sp + 25
 ld a, [hli]
 ld c, a
 ld b, [hl]
@@ -2226,7 +2202,7 @@ ld e, a
 ld a, d
 sbc a, [hl]
 push af
-ld hl, sp + 34
+ld hl, sp + 18
 ld [hld], a
 ld [hl], e
 ld hl, sp + 4
@@ -2241,50 +2217,65 @@ inc hl
 ld e, a
 ld a, d
 sbc a, [hl]
-ld hl, sp + 34
+ld hl, sp + 18
 ld [hld], a
 ld [hl], e
-ld de, 0x1001
-push de
+ld hl, sp + 25
+ld a, [hl]
+add a, 0x06
+push af
+ld hl, sp + 8
+pop af
+ld [hl], a
+push af
+ld hl, sp + 28
+pop af
+ld a, [hl]
+adc a, 0x00
+ld hl, sp + 7
+ld [hl], a
+ld hl, 0x1001
+push hl
+ld hl, sp + 19
 ld a, [hli]
 ld e, a
 ld d, [hl]
 push de
-ld hl, sp + 35
+ld hl, sp + 19
 ld a, [hli]
 ld e, a
 ld d, [hl]
 push de
-ld hl, 14
-add hl, sp
-ld e, l
-ld d, h
+ld hl, sp + 12
+ld a, [hli]
+ld e, a
+ld d, [hl]
 call _sf128_shr
-ld hl, sp + 24
+ld hl, sp + 8
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
 ld c, a
-ld hl, sp + 41
+ld hl, sp + 25
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
 ld b, a
-ld hl, sp + 37
+ld hl, sp + 8
 ld a, [hl]
 add a, 0x06
 push af
-ld hl, sp + 34
+ld hl, sp + 18
 pop af
 ld [hl], a
 push af
-ld hl, sp + 40
+ld hl, sp + 11
 pop af
 ld a, [hl]
 adc a, 0x00
-ld hl, sp + 33
+ld hl, sp + 17
 ld [hl], a
 ld a, c
 sub a, b
@@ -2292,11 +2283,11 @@ jr nz, .L00125
 ld a, 0x10
 push af
 inc sp
-ld hl, 9
-add hl, sp
-ld c, l
-ld b, h
-ld hl, sp + 33
+ld hl, sp + 7
+ld a, [hli]
+ld c, a
+ld b, [hl]
+ld hl, sp + 17
 ld a, [hli]
 ld e, a
 ld d, [hl]
@@ -2306,25 +2297,25 @@ jr .L00126
 ld a, 0x10
 push af
 inc sp
-ld hl, 9
-add hl, sp
-ld c, l
-ld b, h
-ld hl, sp + 33
+ld hl, sp + 7
+ld a, [hli]
+ld c, a
+ld b, [hl]
+ld hl, sp + 17
 ld a, [hli]
 ld e, a
 ld d, [hl]
 call _sf128_cmp
-ld hl, sp + 34
+ld hl, sp + 18
 ld [hl], a
 or a, a
 jr nz, .L00123
-ld hl, sp + 27
+ld hl, sp + 11
 ld a, [hli]
 ld h, [hl]
 ld l, a
 ld [hl], 0x00
-ld hl, sp + 29
+ld hl, sp + 13
 ld a, [hli]
 ld h, [hl]
 ld l, a
@@ -2334,37 +2325,46 @@ jr .L00127
 ld a, 0x10
 push af
 inc sp
-ld hl, 9
-add hl, sp
-ld c, l
-ld b, h
-ld hl, sp + 33
+ld hl, sp + 7
+ld a, [hli]
+ld c, a
+ld b, [hl]
+ld hl, sp + 17
 ld a, [hli]
 ld e, a
 ld d, [hl]
 call _sf128_sub
 .L00126:
-ld hl, sp + 37
+ld hl, sp + 8
 ld a, [hli]
 ld e, a
 ld d, [hl]
 call _sf128_normalize
+ld hl, sp + 8
+ld a, [hli]
+ld c, a
+ld b, [hl]
+ld hl, sp + 21
+ld a, [hli]
+ld e, a
+ld d, [hl]
+call _sf128_copy_float
 .L00127:
-add sp, 39
+add sp, 23
 pop hl
 pop af
 jp hl
 _sf128_product:
-add sp, -51
-ld hl, sp + 48
+add sp, -19
+ld hl, sp + 16
 ld a, e
 ld [hli], a
 ld [hl], d
-ld hl, sp + 46
+ld hl, sp + 14
 ld a, c
 ld [hli], a
 ld [hl], b
-ld hl, sp + 50
+ld hl, sp + 18
 xor a, a
 ld [hld], a
 dec hl
@@ -2378,7 +2378,7 @@ ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
-ld hl, sp + 53
+ld hl, sp + 21
 ld e, [hl]
 inc hl
 ld d, [hl]
@@ -2388,19 +2388,19 @@ ld l, a
 pop af
 xor a, l
 ld [bc], a
-ld hl, sp + 48
+ld hl, sp + 16
 ld a, [hl]
 add a, 0x02
 push af
-ld hl, sp + 38
+ld hl, sp + 6
 pop af
 ld [hl], a
 push af
-ld hl, sp + 51
+ld hl, sp + 19
 pop af
 ld a, [hl]
 adc a, 0x00
-ld hl, sp + 37
+ld hl, sp + 5
 ld [hld], a
 ld a, [hli]
 ld h, [hl]
@@ -2410,26 +2410,26 @@ ld [hli], a
 ld [hli], a
 ld [hli], a
 ld [hl], a
-ld hl, sp + 48
+ld hl, sp + 16
 ld a, [hl]
 add a, 0x06
 push af
-ld hl, sp + 40
+ld hl, sp + 8
 pop af
 ld [hl], a
 push af
-ld hl, sp + 51
+ld hl, sp + 19
 pop af
 ld a, [hl]
 adc a, 0x00
-ld hl, sp + 39
+ld hl, sp + 7
 ld [hld], a
 ld a, 0x10
 ld e, [hl]
 inc hl
 ld d, [hl]
 call _sf128_clear
-ld hl, sp + 46
+ld hl, sp + 14
 ld a, [hld]
 dec hl
 add a, 0x01
@@ -2444,44 +2444,44 @@ ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
-ld hl, sp + 40
+ld hl, sp + 8
 ld [hl], a
-ld hl, sp + 48
+ld hl, sp + 16
 ld a, [hl]
 add a, 0x01
 push af
-ld hl, sp + 43
+ld hl, sp + 11
 pop af
 ld [hl], a
 push af
-ld hl, sp + 51
+ld hl, sp + 19
 pop af
 ld a, [hl]
 adc a, 0x00
-ld hl, sp + 42
+ld hl, sp + 10
 ld [hld], a
 dec hl
 ld a, [hl]
 sub a, 0x03
 jr z, .L00101
-ld hl, sp + 53
+ld hl, sp + 21
 ld a, [hli]
 ld c, a
 ld b, [hl]
 inc bc
 ld a, [bc]
-ld hl, sp + 43
+ld hl, sp + 11
 ld [hl], a
 sub a, 0x03
 jr z, .L00101
-ld hl, sp + 40
+ld hl, sp + 8
 ld a, [hl]
 sub a, 0x02
 ld a, 0x01
 jr z, .L00197
 xor a, a
 .L00197:
-ld hl, sp + 44
+ld hl, sp + 12
 ld [hl], a
 or a, a
 jr z, .L00107
@@ -2490,30 +2490,30 @@ ld a, [hl]
 or a, a
 jr z, .L00101
 .L00107:
-ld hl, sp + 43
+ld hl, sp + 11
 ld a, [hl]
 sub a, 0x02
 ld a, 0x01
 jr z, .L00199
 xor a, a
 .L00199:
-ld hl, sp + 45
+ld hl, sp + 13
 ld [hl], a
 or a, a
 jr z, .L00102
-ld hl, sp + 40
+ld hl, sp + 8
 ld a, [hl]
 or a, a
 jr nz, .L00102
 .L00101:
-ld hl, sp + 41
+ld hl, sp + 9
 ld a, [hli]
 ld h, [hl]
 ld l, a
 ld [hl], 0x03
 jp .L00119
 .L00102:
-ld hl, sp + 44
+ld hl, sp + 12
 ld a, [hl]
 or a, a
 jr nz, .L00108
@@ -2522,139 +2522,127 @@ ld a, [hl]
 or a, a
 jr z, .L00109
 .L00108:
-ld hl, sp + 41
+ld hl, sp + 9
 ld a, [hli]
 ld h, [hl]
 ld l, a
 ld [hl], 0x02
 jp .L00119
 .L00109:
-ld hl, sp + 40
+ld hl, sp + 8
 ld a, [hl]
 or a, a
 jr z, .L00111
-ld hl, sp + 43
+ld hl, sp + 11
 ld a, [hl]
 or a, a
 jr nz, .L00112
 .L00111:
-ld hl, sp + 41
+ld hl, sp + 9
 ld a, [hli]
 ld h, [hl]
 ld l, a
 ld [hl], 0x00
 jp .L00119
 .L00112:
-ld hl, sp + 46
-ld a, [hli]
+ld hl, sp + 14
+ld a, [hld]
+dec hl
+dec hl
 add a, 0x06
-ld c, a
+ld [hli], a
+inc hl
+inc hl
+inc hl
 ld a, [hl]
 adc a, 0x00
-ld b, a
-ld a, 0x10
-push af
-inc sp
-ld hl, 5
-add hl, sp
-ld e, l
-ld d, h
-call _sf128_copy
+ld hl, sp + 12
+ld [hld], a
 ld a, 0x10
 push af
 inc sp
 ld a, 0x01
-ld hl, 5
-add hl, sp
-ld e, l
-ld d, h
+ld e, [hl]
+inc hl
+ld d, [hl]
 call _sf128_shl
-ld hl, sp + 53
+ld hl, sp + 21
 ld a, [hli]
 add a, 0x06
-ld c, a
+ld e, a
 ld a, [hl]
 adc a, 0x00
-ld b, a
-ld a, 0x10
-push af
-inc sp
-ld hl, 21
-add hl, sp
-ld e, l
-ld d, h
-call _sf128_copy
+ld d, a
+push de
 ld hl, 0x1000
 push hl
 xor a, a
 rrca
 push af
-ld de, 0x0008
-push de
-ld hl, 26
-add hl, sp
-ld e, l
-ld d, h
+ld bc, 0x0008
+push bc
 call _sf128_shr
-ld hl, sp + 45
+pop de
+ld hl, sp + 13
 ld [hl], 0x00
 .L00117:
-ld hl, sp + 20
-ld a, [hl]
+ld a, [de]
 rrca
 jr nc, .L00115
+push de
 ld a, 0x10
 push af
 inc sp
-ld hl, 5
-add hl, sp
-ld c, l
-ld b, h
-ld hl, sp + 39
+ld hl, sp + 14
+ld a, [hli]
+ld c, a
+ld b, [hl]
+ld hl, sp + 9
 ld a, [hli]
 ld e, a
 ld d, [hl]
 call _sf128_add
+pop de
 .L00115:
+push de
 ld a, 0x10
-ld hl, sp + 38
+ld hl, sp + 8
 ld e, [hl]
 inc hl
 ld d, [hl]
 call _sf128_right
-ld hl, sp + 50
+pop de
+ld hl, sp + 18
 or a, [hl]
 ld [hl], a
+push de
 ld a, 0x10
-ld hl, 20
-add hl, sp
-ld e, l
-ld d, h
 call _sf128_right
-ld hl, sp + 45
+pop de
+ld hl, sp + 13
 inc [hl]
 ld a, [hl]
 sub a, 0x71
 jr c, .L00117
-ld hl, sp + 38
+ld hl, sp + 6
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
-ld hl, sp + 50
+ld hl, sp + 18
 or a, [hl]
-ld hl, sp + 38
+ld hl, sp + 6
 ld e, [hl]
 inc hl
 ld h, [hl]
 ld l, e
 ld [hl], a
-ld hl, sp + 41
+ld hl, sp + 9
 ld a, [hli]
 ld h, [hl]
 ld l, a
 ld [hl], 0x01
-ld hl, sp + 46
+ld hl, sp + 14
 ld a, [hli]
 ld c, a
 ld b, [hl]
@@ -2674,7 +2662,7 @@ ld [hli], a
 inc de
 ld a, [de]
 ld [hl], a
-ld hl, sp + 53
+ld hl, sp + 21
 ld a, [hli]
 ld c, a
 ld b, [hl]
@@ -2683,7 +2671,7 @@ inc bc
 ld e, c
 ld d, b
 ld a, [de]
-ld hl, sp + 38
+ld hl, sp + 6
 ld [hli], a
 inc de
 ld a, [de]
@@ -2697,21 +2685,21 @@ ld [hl], a
 pop de
 push de
 ld a, e
-ld hl, sp + 38
+ld hl, sp + 6
 add a, [hl]
 inc hl
 ld e, a
 ld a, d
 adc a, [hl]
 push af
-ld hl, sp + 45
+ld hl, sp + 13
 ld [hld], a
 ld [hl], e
 ld hl, sp + 4
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 42
+ld hl, sp + 10
 pop af
 ld a, e
 adc a, [hl]
@@ -2719,14 +2707,14 @@ inc hl
 ld e, a
 ld a, d
 adc a, [hl]
-ld hl, sp + 45
+ld hl, sp + 13
 ld [hld], a
 ld [hl], e
-ld hl, sp + 36
+ld hl, sp + 4
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 42
+ld hl, sp + 10
 ld a, [hli]
 ld [de], a
 inc de
@@ -2738,23 +2726,23 @@ ld [de], a
 inc de
 ld a, [hl]
 ld [de], a
-ld hl, sp + 48
+ld hl, sp + 16
 ld a, [hli]
 ld e, a
 ld d, [hl]
 call _sf128_normalize
 .L00119:
-add sp, 51
+add sp, 19
 pop hl
 pop af
 jp hl
 _sf128_quotient:
-add sp, -50
-ld hl, sp + 48
+add sp, -20
+ld hl, sp + 17
 ld a, e
 ld [hli], a
 ld [hl], d
-ld hl, sp + 46
+ld hl, sp + 15
 ld a, c
 ld [hli], a
 ld a, b
@@ -2769,7 +2757,7 @@ ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
-ld hl, sp + 52
+ld hl, sp + 22
 ld e, [hl]
 inc hl
 ld d, [hl]
@@ -2779,24 +2767,25 @@ ld l, a
 pop af
 xor a, l
 ld [bc], a
-ld hl, sp + 46
+ld hl, sp + 15
 ld a, [hli]
 ld c, a
-ld b, [hl]
+ld a, [hld]
+dec hl
+ld b, a
 inc bc
 ld a, [bc]
-ld hl, sp + 44
 ld [hl], a
-ld hl, sp + 48
+ld hl, sp + 17
 ld a, [hli]
 ld e, a
 ld d, [hl]
 inc de
-ld hl, sp + 44
+ld hl, sp + 14
 ld a, [hl]
 sub a, 0x03
 jr z, .L00101
-ld hl, sp + 52
+ld hl, sp + 22
 ld a, [hli]
 ld h, [hl]
 ld l, a
@@ -2805,14 +2794,14 @@ ld c, [hl]
 ld a, c
 sub a, 0x03
 jr z, .L00101
-ld hl, sp + 44
+ld hl, sp + 14
 ld a, [hl]
 sub a, 0x02
 ld a, 0x01
 jr z, .L00217
 xor a, a
 .L00217:
-ld hl, sp + 45
+ld hl, sp + 19
 ld [hl], a
 ld a, c
 sub a, 0x02
@@ -2821,7 +2810,7 @@ jr z, .L00219
 xor a, a
 .L00219:
 ld b, a
-ld hl, sp + 45
+ld hl, sp + 19
 ld a, [hl]
 or a, a
 jr z, .L00107
@@ -2829,7 +2818,7 @@ ld a, b
 or a, a
 jr nz, .L00101
 .L00107:
-ld hl, sp + 44
+ld hl, sp + 14
 ld a, [hl]
 or a, a
 jr nz, .L00102
@@ -2840,7 +2829,7 @@ ld a, 0x03
 ld [de], a
 jp .L00123
 .L00102:
-ld hl, sp + 45
+ld hl, sp + 19
 ld a, [hl]
 or a, a
 jr nz, .L00108
@@ -2851,7 +2840,7 @@ ld a, 0x02
 ld [de], a
 jp .L00123
 .L00109:
-ld hl, sp + 44
+ld hl, sp + 14
 ld a, [hl]
 or a, a
 jr z, .L00111
@@ -2865,21 +2854,20 @@ jp .L00123
 .L00112:
 ld a, 0x01
 ld [de], a
-ld hl, sp + 48
-ld a, [hl]
+ld hl, sp + 17
+ld a, [hld]
+dec hl
+dec hl
+dec hl
 add a, 0x02
-push af
-ld hl, sp + 34
-pop af
 ld [hl], a
 push af
-ld hl, sp + 51
+ld hl, sp + 20
 pop af
 ld a, [hl]
 adc a, 0x00
-ld hl, sp + 33
-ld [hl], a
-ld hl, sp + 46
+ld hl, sp + 14
+ld [hli], a
 ld a, [hli]
 ld c, a
 ld b, [hl]
@@ -2888,7 +2876,7 @@ inc bc
 ld e, c
 ld d, b
 ld a, [de]
-ld hl, sp + 34
+ld hl, sp + 1
 ld [hli], a
 inc de
 ld a, [de]
@@ -2899,7 +2887,7 @@ ld [hli], a
 inc de
 ld a, [de]
 ld [hl], a
-ld hl, sp + 52
+ld hl, sp + 22
 ld a, [hli]
 ld c, a
 ld b, [hl]
@@ -2908,7 +2896,7 @@ inc bc
 ld e, c
 ld d, b
 ld a, [de]
-ld hl, sp + 38
+ld hl, sp + 5
 ld [hli], a
 inc de
 ld a, [de]
@@ -2919,26 +2907,26 @@ ld [hli], a
 inc de
 ld a, [de]
 ld [hl], a
-ld hl, sp + 34
+ld hl, sp + 1
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, e
-ld hl, sp + 38
+ld hl, sp + 5
 sub a, [hl]
 inc hl
 ld e, a
 ld a, d
 sbc a, [hl]
 push af
-ld hl, sp + 45
+ld hl, sp + 12
 ld [hld], a
 ld [hl], e
-ld hl, sp + 38
+ld hl, sp + 5
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 42
+ld hl, sp + 9
 pop af
 ld a, e
 sbc a, [hl]
@@ -2946,14 +2934,15 @@ inc hl
 ld e, a
 ld a, d
 sbc a, [hl]
-ld hl, sp + 45
+ld hl, sp + 12
 ld [hld], a
-ld [hl], e
-ld hl, sp + 32
+ld a, e
+ld [hli], a
+inc hl
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 42
+ld hl, sp + 9
 ld a, [hli]
 ld [de], a
 inc de
@@ -2963,87 +2952,84 @@ inc de
 ld a, [hli]
 ld [de], a
 inc de
-ld a, [hli]
+ld a, [hl]
 ld [de], a
-ld a, [hli]
+ld hl, sp + 15
+ld a, [hl]
 add a, 0x06
-ld c, a
+push af
+ld hl, sp + 10
+pop af
+ld [hl], a
+push af
+ld hl, sp + 18
+pop af
 ld a, [hl]
 adc a, 0x00
-ld b, a
-ld a, 0x10
-push af
-inc sp
-ld hl, 1
-add hl, sp
-ld e, l
-ld d, h
-call _sf128_copy
-ld hl, 0x1000
-push hl
+ld hl, sp + 9
+ld [hld], a
+ld de, 0x1000
+push de
 xor a, a
 rrca
 push af
 ld de, 0x0008
 push de
-ld hl, 6
-add hl, sp
-ld e, l
-ld d, h
-call _sf128_shr
-ld hl, sp + 52
 ld a, [hli]
+ld e, a
+ld d, [hl]
+call _sf128_shr
+ld hl, sp + 22
+ld a, [hl]
 add a, 0x06
-ld c, a
+push af
+ld hl, sp + 12
+pop af
+ld [hl], a
+push af
+ld hl, sp + 25
+pop af
 ld a, [hl]
 adc a, 0x00
-ld b, a
-ld a, 0x10
-push af
-inc sp
-ld hl, 17
-add hl, sp
-ld e, l
-ld d, h
-call _sf128_copy
-ld hl, 0x1000
-push hl
+ld hl, sp + 11
+ld [hld], a
+ld de, 0x1000
+push de
 xor a, a
 rrca
 push af
 ld de, 0x0008
 push de
-ld hl, 22
-add hl, sp
-ld e, l
-ld d, h
+ld a, [hli]
+ld e, a
+ld d, [hl]
 call _sf128_shr
 ld a, 0x10
 push af
 inc sp
-ld hl, 17
-add hl, sp
-ld c, l
-ld b, h
-ld hl, 1
-add hl, sp
-ld e, l
-ld d, h
+ld hl, sp + 11
+ld a, [hli]
+ld c, a
+ld b, [hl]
+ld hl, sp + 9
+ld a, [hli]
+ld e, a
+ld d, [hl]
 call _sf128_cmp
 bit 7,a
 jr z, .L00115
 ld a, 0x10
-ld hl, 0
-add hl, sp
-ld e, l
-ld d, h
+ld hl, sp + 8
+ld e, [hl]
+inc hl
+ld d, [hl]
 call _sf128_left
-ld hl, sp + 32
+ld hl, sp + 13
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
-ld hl, sp + 38
+ld hl, sp + 0
 ld [hli], a
 inc de
 ld a, [de]
@@ -3053,19 +3039,16 @@ ld a, [de]
 ld [hli], a
 inc de
 ld a, [de]
-ld [hld], a
-dec hl
-dec hl
-ld a, [hli]
-ld e, a
-ld d, [hl]
+ld [hli], a
+inc hl
+pop de
+push de
 ld a, e
 sub a, 0x01
 ld e, a
 ld a, d
 sbc a, 0x00
 push af
-ld hl, sp + 45
 ld [hld], a
 ld a, e
 ld [hld], a
@@ -3079,14 +3062,14 @@ sbc a, 0x00
 ld e, a
 ld a, d
 sbc a, 0x00
-ld hl, sp + 45
+ld hl, sp + 7
 ld [hld], a
 ld [hl], e
-ld hl, sp + 32
+ld hl, sp + 13
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 42
+ld hl, sp + 4
 ld a, [hli]
 ld [de], a
 inc de
@@ -3099,30 +3082,30 @@ inc de
 ld a, [hl]
 ld [de], a
 .L00115:
-ld hl, sp + 48
+ld hl, sp + 17
 ld a, [hl]
 add a, 0x06
 push af
-ld hl, sp + 44
+ld hl, sp + 14
 pop af
 ld [hl], a
 push af
-ld hl, sp + 51
+ld hl, sp + 20
 pop af
 ld a, [hl]
 adc a, 0x00
-ld hl, sp + 43
+ld hl, sp + 13
 ld [hld], a
 ld a, 0x10
 ld e, [hl]
 inc hl
 ld d, [hl]
 call _sf128_clear
-ld hl, sp + 45
+ld hl, sp + 19
 ld [hl], 0x00
 .L00121:
 ld a, 0x10
-ld hl, sp + 42
+ld hl, sp + 12
 ld e, [hl]
 inc hl
 ld d, [hl]
@@ -3130,30 +3113,30 @@ call _sf128_left
 ld a, 0x10
 push af
 inc sp
-ld hl, 17
-add hl, sp
-ld c, l
-ld b, h
-ld hl, 1
-add hl, sp
-ld e, l
-ld d, h
+ld hl, sp + 11
+ld a, [hli]
+ld c, a
+ld b, [hl]
+ld hl, sp + 9
+ld a, [hli]
+ld e, a
+ld d, [hl]
 call _sf128_cmp
 bit 7,a
 jr nz, .L00117
 ld a, 0x10
 push af
 inc sp
-ld hl, 17
-add hl, sp
-ld c, l
-ld b, h
-ld hl, 1
-add hl, sp
-ld e, l
-ld d, h
+ld hl, sp + 11
+ld a, [hli]
+ld c, a
+ld b, [hl]
+ld hl, sp + 9
+ld a, [hli]
+ld e, a
+ld d, [hl]
 call _sf128_sub
-ld hl, sp + 42
+ld hl, sp + 12
 ld a, [hli]
 ld e, a
 ld a, [hli]
@@ -3170,25 +3153,25 @@ ld a, [hl]
 ld [de], a
 .L00117:
 ld a, 0x10
-ld hl, 0
-add hl, sp
-ld e, l
-ld d, h
+ld hl, sp + 8
+ld e, [hl]
+inc hl
+ld d, [hl]
 call _sf128_left
-ld hl, sp + 45
+ld hl, sp + 19
 inc [hl]
 ld a, [hl]
 sub a, 0x74
 jr c, .L00121
 ld a, 0x10
-ld hl, 0
-add hl, sp
-ld e, l
-ld d, h
+ld hl, sp + 8
+ld e, [hl]
+inc hl
+ld d, [hl]
 call _sf128_nonzero
 or a, a
 jr z, .L00120
-ld hl, sp + 42
+ld hl, sp + 12
 ld a, [hli]
 ld e, a
 ld a, [hld]
@@ -3205,19 +3188,19 @@ ld a, 0x10
 push af
 inc sp
 ld a, 0x05
-ld hl, sp + 43
+ld hl, sp + 13
 ld e, [hl]
 inc hl
 ld d, [hl]
 call _sf128_shl
 .L00123:
-add sp, 50
+add sp, 20
 pop hl
 pop af
 jp hl
 _sf128_root:
-add sp, -63
-ld hl, sp + 58
+add sp, -49
+ld hl, sp + 45
 ld a, e
 ld [hli], a
 ld a, d
@@ -3242,7 +3225,7 @@ ld a, e
 or a, a
 jr z, .L00102
 .L00101:
-ld hl, sp + 58
+ld hl, sp + 45
 ld a, [hli]
 ld h, [hl]
 ld l, a
@@ -3254,52 +3237,66 @@ dec e
 jp nz, .L00122
 ld hl, 0x0006
 add hl, bc
-ld c, l
-ld b, h
-ld a, 0x10
-push af
-inc sp
-ld hl, 9
-add hl, sp
-ld e, l
-ld d, h
-call _sf128_copy
-ld hl, 0x1000
 push hl
+ld a, l
+ld hl, sp + 49
+ld [hl], a
+pop hl
+ld a, h
+ld hl, sp + 48
+ld [hld], a
+push bc
+ld de, 0x1000
+push de
 xor a, a
 rrca
 push af
 ld de, 0x0008
 push de
-ld hl, 14
-add hl, sp
-ld e, l
-ld d, h
-call _sf128_shr
-ld hl, sp + 58
 ld a, [hli]
-inc hl
-inc hl
-add a, 0x02
-ld [hld], a
+ld e, a
+ld d, [hl]
+call _sf128_shr
+pop bc
+ld hl, sp + 45
+ld a, [hld]
 dec hl
-ld a, [hl]
+add a, 0x02
+ld [hli], a
+inc hl
+inc hl
+ld a, [hld]
+dec hl
 adc a, 0x00
-ld hl, sp + 62
 ld [hld], a
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
-bit 0,a
-jr z, .L00108
+ld hl, sp + 4
+ld [hli], a
+inc de
+ld a, [de]
+ld [hli], a
+inc de
+ld a, [de]
+ld [hli], a
+inc de
+ld a, [de]
+ld [hl], a
+ld hl, sp + 4
+ld a, [hl]
+rrca
+jr nc, .L00108
+push bc
 ld a, 0x10
-ld hl, 8
-add hl, sp
-ld e, l
-ld d, h
+ld hl, sp + 49
+ld e, [hl]
+inc hl
+ld d, [hl]
 call _sf128_left
-ld hl, sp + 61
+pop bc
+ld hl, sp + 43
 ld a, [hli]
 ld e, a
 ld d, [hl]
@@ -3340,7 +3337,7 @@ sbc a, 0x00
 ld hl, sp + 7
 ld [hld], a
 ld [hl], e
-ld hl, sp + 61
+ld hl, sp + 43
 ld a, [hli]
 ld e, a
 ld d, [hl]
@@ -3357,11 +3354,15 @@ inc de
 ld a, [hl]
 ld [de], a
 .L00108:
-ld hl, sp + 61
-ld a, [hli]
-ld c, a
-ld a, [hld]
-ld b, a
+ld hl, sp + 43
+ld a, [hl]
+ld hl, sp + 47
+ld [hl], a
+ld hl, sp + 44
+ld a, [hl]
+ld hl, sp + 48
+ld [hl], a
+ld hl, sp + 43
 ld a, [hli]
 ld e, a
 ld d, [hl]
@@ -3380,7 +3381,7 @@ ld [hl], a
 ld hl, sp + 4
 ld d, h
 ld e, l
-ld hl, sp + 0
+ld hl, sp + 41
 ld a, [de]
 ld [hli], a
 inc de
@@ -3407,7 +3408,7 @@ ld e, a
 ld a, d
 adc a, 0x00
 push af
-ld hl, sp + 3
+ld hl, sp + 44
 ld [hld], a
 ld [hl], e
 ld hl, sp + 8
@@ -3420,26 +3421,11 @@ adc a, 0x00
 ld e, a
 ld a, d
 adc a, 0x00
-ld hl, sp + 3
+ld hl, sp + 44
 ld [hld], a
 ld [hl], e
 .L00124:
-ld hl, sp + 0
-ld a, [hl]
-ld hl, sp + 4
-ld [hl], a
-ld hl, sp + 1
-ld a, [hl]
-ld hl, sp + 5
-ld [hl], a
-ld hl, sp + 2
-ld a, [hl]
-ld hl, sp + 6
-ld [hl], a
-ld hl, sp + 3
-ld a, [hl]
-ld hl, sp + 7
-ld [hl], a
+ld hl, sp + 44
 sra [hl]
 dec hl
 rr [hl]
@@ -3447,109 +3433,144 @@ dec hl
 rr [hl]
 dec hl
 rr [hl]
+ld hl, sp + 47
 ld a, [hli]
-ld [bc], a
-inc bc
+ld e, a
+ld d, [hl]
+ld hl, sp + 41
 ld a, [hli]
-ld [bc], a
-inc bc
+ld [de], a
+inc de
 ld a, [hli]
-ld [bc], a
-inc bc
+ld [de], a
+inc de
+ld a, [hli]
+ld [de], a
+inc de
 ld a, [hl]
-ld [bc], a
+ld [de], a
+push bc
 ld a, 0x10
-ld hl, 24
+ld hl, 10
 add hl, sp
 ld e, l
 ld d, h
 call _sf128_clear
-ld hl, sp + 58
-ld a, [hld]
-dec hl
+pop bc
+ld hl, sp + 45
+ld a, [hl]
 add a, 0x06
-ld [hli], a
-inc hl
-inc hl
-ld a, [hld]
-dec hl
+push af
+ld hl, sp + 42
+pop af
+ld [hl], a
+push af
+ld hl, sp + 48
+pop af
+ld a, [hl]
 adc a, 0x00
+ld hl, sp + 41
 ld [hld], a
+push bc
 ld a, 0x10
 ld e, [hl]
 inc hl
 ld d, [hl]
 call _sf128_clear
-ld hl, sp + 62
-ld a, 0xe7
-ld [hld], a
-dec hl
+pop bc
+ld hl, sp + 42
+ld [hl], 0xe7
+ld hl, 0x0006
+add hl, bc
+push hl
+ld a, l
+ld hl, sp + 45
+ld [hl], a
+pop hl
+ld a, h
+ld hl, sp + 44
+ld [hl], a
+ld hl, sp + 47
 ld [hl], 0x00
 .L00120:
-ld hl, sp + 61
+ld hl, sp + 48
 ld [hl], 0x00
-ld c, 0x02
+ld hl, sp + 42
+ld c, [hl]
+ld b, 0x02
 .L00119:
-ld hl, sp + 61
+ld hl, sp + 48
 sla [hl]
-inc hl
-ld a, [hl]
+ld a, c
 cp a, 0x76
 jr c, .L00110
 add a, 0x8a
-ld b, a
-ld e, b
-srl e
-srl e
-srl e
-ld d, 0x00
-ld hl, 8
-add hl, sp
-add hl, de
-ld e, [hl]
-ld a, b
+ld e, a
+swap a
+rlca
+and a, 0x1f
+ld hl, sp + 43
+add a, [hl]
+push af
+ld hl, sp + 8
+pop af
+ld [hl], a
+ld a, 0x00
+push af
+ld hl, sp + 46
+pop af
+adc a, [hl]
+ld hl, sp + 7
+ld [hld], a
+ld a, e
 and a, 0x07
+ld e, [hl]
+inc hl
+ld d, [hl]
+push af
+ld a, [de]
+ld l, a
+pop af
 inc a
 jr .L00229
 .L00228:
-srl e
+srl l
 .L00229:
 dec a
 jr nz, .L00228
-ld a, e
+ld a, l
 and a, 0x01
-ld hl, sp + 61
+ld hl, sp + 48
 or a, [hl]
 ld [hl], a
 .L00110:
-ld hl, sp + 62
-ld a, [hl]
-add a, 0xff
-ld [hl], a
 dec c
+dec b
 jr nz, .L00119
+ld hl, sp + 42
+ld [hl], c
 ld a, 0x10
 push af
 inc sp
 ld a, 0x02
-ld hl, 25
+ld hl, 9
 add hl, sp
 ld e, l
 ld d, h
 call _sf128_shl
-ld hl, sp + 24
+ld hl, sp + 8
 ld a, [hl]
-ld hl, sp + 61
+ld hl, sp + 48
 or a, [hl]
-ld hl, sp + 24
+ld hl, sp + 8
 ld [hl], a
 ld a, 0x10
-ld hl, sp + 56
+ld hl, sp + 40
 ld e, [hl]
 inc hl
 ld d, [hl]
 call _sf128_left
-ld hl, sp + 40
+ld hl, sp + 24
 ld e,l
 ld d,h
 push hl
@@ -3558,9 +3579,9 @@ ld a, 0x10
 push af
 inc sp
 push hl
-ld hl, sp + 63
+ld hl, sp + 47
 ld c, [hl]
-ld hl, sp + 64
+ld hl, sp + 48
 ld b, [hl]
 pop de
 call _sf128_copy
@@ -3584,7 +3605,7 @@ inc sp
 ld c, l
 ld b, h
 push hl
-ld hl, 29
+ld hl, 13
 add hl, sp
 ld e, l
 ld d, h
@@ -3599,41 +3620,41 @@ push af
 inc sp
 ld c, l
 ld b, h
-ld hl, 25
+ld hl, 9
 add hl, sp
 ld e, l
 ld d, h
 call _sf128_sub
-ld hl, sp + 56
+ld hl, sp + 40
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
 or a, 0x01
-ld hl, sp + 61
+ld hl, sp + 48
 ld [hl], a
-ld hl, sp + 56
+ld hl, sp + 40
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 61
+ld hl, sp + 48
 ld a, [hl]
 ld [de], a
 .L00121:
-ld hl, sp + 60
+ld hl, sp + 47
 inc [hl]
 ld a, [hl]
 sub a, 0x74
 jp c, .L00120
 ld a, 0x10
-ld hl, 24
+ld hl, 8
 add hl, sp
 ld e, l
 ld d, h
 call _sf128_nonzero
 or a, a
 jr z, .L00116
-ld hl, sp + 56
+ld hl, sp + 40
 ld a, [hli]
 ld e, a
 ld a, [hld]
@@ -3650,13 +3671,13 @@ ld a, 0x10
 push af
 inc sp
 ld a, 0x05
-ld hl, sp + 57
+ld hl, sp + 41
 ld e, [hl]
 inc hl
 ld d, [hl]
 call _sf128_shl
 .L00122:
-add sp, 63
+add sp, 49
 ret
 _sf128_raw_kind:
 add sp, -4
@@ -3870,22 +3891,35 @@ ld a, [hl]
 add sp, 8
 ret
 _sf128_round:
-add sp, -36
-ld hl, sp + 33
+add sp, -20
+ld hl, sp + 17
 ld a, e
 ld [hli], a
 ld [hl], d
-ld hl, sp + 31
+ld hl, sp + 15
 ld a, c
 ld [hli], a
-ld [hl], b
-ld hl, sp + 16
+ld a, b
+ld [hld], a
+ld a, [hl]
+add a, 0x06
+push af
+ld hl, sp + 7
+pop af
+ld [hl], a
+push af
+ld hl, sp + 18
+pop af
+ld a, [hl]
+adc a, 0x00
+ld hl, sp + 6
+ld [hli], a
 ld [hl], 0x00
-ld hl, sp + 35
+ld hl, sp + 19
 ld [hl], 0x00
-ld hl, sp + 17
-ld [hl], 0x00
-ld hl, sp + 31
+ld hl, sp + 14
+xor a, a
+ld [hli], a
 ld a, [hli]
 ld h, [hl]
 ld l, a
@@ -3893,25 +3927,16 @@ inc hl
 ld c, [hl]
 dec c
 jr nz, .L00101
-ld hl, sp + 31
-ld a, [hl]
-add a, 0x02
-push af
-ld hl, sp + 20
-pop af
-ld [hl], a
-push af
-ld hl, sp + 34
-pop af
-ld a, [hl]
-adc a, 0x00
-ld hl, sp + 19
-ld [hld], a
+ld hl, sp + 15
 ld a, [hli]
-ld e, a
-ld a, [hli]
-ld d, a
+ld c, a
+ld b, [hl]
+inc bc
+inc bc
+ld e, c
+ld d, b
 ld a, [de]
+ld hl, sp + 0
 ld [hli], a
 inc de
 ld a, [de]
@@ -3922,7 +3947,7 @@ ld [hli], a
 inc de
 ld a, [de]
 ld [hl], a
-ld hl, sp + 20
+ld hl, sp + 0
 ld a, [hli]
 sub a, 0x70
 ld a, [hli]
@@ -3946,7 +3971,7 @@ scf
 .L00317:
 jr c, .L00102
 .L00101:
-ld hl, sp + 31
+ld hl, sp + 15
 ld a, [hli]
 ld c, a
 ld a, [hli]
@@ -3957,68 +3982,57 @@ ld d, [hl]
 call _sf128_pack
 jp .L00130
 .L00102:
-ld hl, sp + 38
+ld hl, sp + 22
 ld a, [hl]
 dec a
 ld a, 0x01
 jr z, .L00319
 xor a, a
 .L00319:
-ld hl, sp + 24
+ld hl, sp + 4
 ld [hl], a
-ld hl, sp + 31
+ld hl, sp + 15
 ld a, [hl]
-ld hl, sp + 25
+ld hl, sp + 8
 ld [hl], a
-ld hl, sp + 32
+ld hl, sp + 16
 ld a, [hl]
-ld hl, sp + 26
+ld hl, sp + 9
 ld [hl], a
-ld hl, sp + 38
+ld hl, sp + 22
 ld a, [hl]
 sub a, 0x02
 ld a, 0x01
 jr z, .L00321
 xor a, a
 .L00321:
-ld hl, sp + 27
+ld hl, sp + 10
 ld [hl], a
-ld hl, sp + 38
+ld hl, sp + 22
 ld a, [hl]
 sub a, 0x03
 ld a, 0x01
 jr z, .L00323
 xor a, a
 .L00323:
-ld hl, sp + 28
+ld hl, sp + 11
 ld [hl], a
-ld hl, sp + 31
-ld a, [hld]
-dec hl
-add a, 0x06
-ld [hli], a
-inc hl
-inc hl
-ld a, [hld]
-dec hl
-adc a, 0x00
-ld [hl], a
-ld hl, sp + 23
+ld hl, sp + 3
 bit 7, [hl]
 jp z, .L00114
 inc hl
 ld a, [hl]
 or a, a
 jr z, .L00105
-inc hl
+ld hl, sp + 8
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
-ld hl, sp + 17
+ld hl, sp + 14
 ld [hl], a
 .L00105:
-ld hl, sp + 27
+ld hl, sp + 10
 ld a, [hl]
 or a, a
 jr z, .L00107
@@ -4031,14 +4045,16 @@ ld a, [de]
 sub a, 0x01
 ld a, 0x00
 rla
-ld hl, sp + 17
+ld hl, sp + 19
+ld [hl], a
+ld hl, sp + 14
 ld [hl], a
 .L00107:
-ld hl, sp + 28
+ld hl, sp + 11
 ld a, [hl]
 or a, a
 jr z, .L00109
-ld hl, sp + 20
+ld hl, sp + 0
 ld a, [hl]
 inc a
 jr nz, .L00109
@@ -4054,30 +4070,41 @@ inc hl
 ld a, [hl]
 inc a
 jr nz, .L00109
-ld a, 0x10
+ld hl, sp + 5
+ld a, [hl]
+add a, 0x0f
 push af
-inc sp
-ld hl, sp + 30
-ld a, [hli]
-ld c, a
-ld b, [hl]
-ld hl, 1
-add hl, sp
-ld e, l
-ld d, h
-call _sf128_copy
 ld hl, sp + 15
-res 0, [hl]
+pop af
+ld [hl], a
+push af
+ld hl, sp + 8
+pop af
+ld a, [hl]
+adc a, 0x00
+ld hl, sp + 14
+ld [hld], a
+ld a, [hli]
+ld e, a
+ld a, [hld]
+ld d, a
+ld a, [de]
+res 0, a
+ld e, [hl]
+inc hl
+ld h, [hl]
+ld l, e
+ld [hl], a
 ld a, 0x10
-ld hl, 0
-add hl, sp
-ld e, l
-ld d, h
+ld hl, sp + 5
+ld e, [hl]
+inc hl
+ld d, [hl]
 call _sf128_nonzero
-ld hl, sp + 17
+ld hl, sp + 14
 ld [hl], a
 .L00109:
-ld hl, sp + 25
+ld hl, sp + 8
 ld a, [hli]
 ld e, a
 ld d, [hl]
@@ -4085,16 +4112,16 @@ ld a, [de]
 ld h, 0x00
 push hl
 inc sp
-ld hl, sp + 34
+ld hl, sp + 18
 ld e, [hl]
 inc hl
 ld d, [hl]
 call _sf128_special
-ld hl, sp + 17
+ld hl, sp + 14
 ld a, [hl]
 or a, a
 jp z, .L00130
-ld hl, sp + 33
+ld hl, sp + 17
 ld a, [hli]
 add a, 0x0e
 ld c, a
@@ -4103,7 +4130,7 @@ adc a, 0x00
 ld l, c
 ld h, a
 ld [hl], 0xff
-ld hl, sp + 33
+ld hl, sp + 17
 ld a, [hli]
 add a, 0x0f
 ld c, a
@@ -4115,39 +4142,19 @@ or a, 0x3f
 ld [bc], a
 jp .L00130
 .L00114:
-ld a, 0x10
-push af
-inc sp
-ld hl, sp + 30
-ld a, [hli]
-ld c, a
-ld b, [hl]
-ld hl, 1
-add hl, sp
-ld e, l
-ld d, h
-call _sf128_copy
-ld hl, sp + 18
-ld a, [hli]
-ld e, a
-ld a, [hli]
-inc hl
-inc hl
-ld d, a
-ld a, [de]
-ld c, a
-inc de
-ld a, [de]
-ld b, a
+pop bc
+push bc
 ld a, 0x78
 sub a, c
+push af
+ld hl, sp + 14
+pop af
 ld [hli], a
 sbc a, a
-sub a, b
 ld [hl], a
 ld bc, 0x0000
 .L00128:
-ld hl, sp + 22
+ld hl, sp + 12
 ld a, c
 sub a, [hl]
 inc hl
@@ -4168,10 +4175,10 @@ scf
 jr nc, .L00118
 push bc
 ld a, 0x10
-ld hl, 2
-add hl, sp
-ld e, l
-ld d, h
+ld hl, sp + 7
+ld e, [hl]
+inc hl
+ld d, [hl]
 call _sf128_right
 ld e, a
 pop bc
@@ -4180,18 +4187,16 @@ ld h, b
 inc hl
 ld d, h
 ld a, l
-ld hl, sp + 22
+ld hl, sp + 12
 sub a, [hl]
 jr nz, .L00116
-inc hl
-ld a, d
-sub a, [hl]
+or a, d
 jr nz, .L00116
-ld hl, sp + 16
+ld hl, sp + 7
 ld [hl], e
 jr .L00129
 .L00116:
-ld hl, sp + 35
+ld hl, sp + 19
 ld a, [hl]
 or a, e
 ld [hl], a
@@ -4199,39 +4204,36 @@ ld [hl], a
 inc bc
 jr .L00128
 .L00118:
-ld hl, sp + 24
+ld hl, sp + 4
 ld a, [hl]
 or a, a
 jr z, .L00120
-inc hl
+ld hl, sp + 8
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
 or a, a
 jr z, .L00132
-ld hl, sp + 16
+dec hl
+dec hl
 ld a, [hl]
 or a, a
 jr nz, .L00133
-ld hl, sp + 35
+ld hl, sp + 19
 ld a, [hl]
 or a, a
 jr nz, .L00133
 .L00132:
-ld hl, sp + 24
+ld hl, sp + 14
 ld [hl], 0x00
 jr .L00134
 .L00133:
-ld hl, sp + 24
+ld hl, sp + 14
 ld [hl], 0x01
 .L00134:
-ld hl, sp + 24
-ld a, [hl]
-ld hl, sp + 17
-ld [hl], a
 .L00120:
-ld hl, sp + 27
+ld hl, sp + 10
 ld a, [hl]
 or a, a
 jr z, .L00122
@@ -4243,93 +4245,78 @@ ld d, [hl]
 ld a, [de]
 or a, a
 jr nz, .L00138
-ld hl, sp + 16
+dec hl
+dec hl
 ld a, [hl]
 or a, a
 jr nz, .L00139
-ld hl, sp + 35
+ld hl, sp + 19
 ld a, [hl]
 or a, a
 jr nz, .L00139
 .L00138:
-ld hl, sp + 27
+ld hl, sp + 14
 ld [hl], 0x00
 jr .L00140
 .L00139:
-ld hl, sp + 27
+ld hl, sp + 14
 ld [hl], 0x01
 .L00140:
-ld hl, sp + 27
-ld a, [hl]
-ld hl, sp + 17
-ld [hl], a
 .L00122:
-ld hl, sp + 28
+ld hl, sp + 11
 ld a, [hl]
 or a, a
 jr z, .L00124
-ld hl, sp + 16
+ld hl, sp + 7
 ld a, [hl]
 or a, a
 jr z, .L00144
-ld hl, sp + 35
+ld hl, sp + 19
 ld a, [hl]
 or a, a
 jr nz, .L00145
-ld hl, sp + 0
-ld a, [hl]
+ld hl, sp + 5
+ld a, [hli]
+ld e, a
+ld d, [hl]
+ld a, [de]
 and a, 0x01
-ld hl, sp + 35
-ld [hl], a
-or a, a
 jr nz, .L00145
 .L00144:
-ld hl, sp + 35
+ld hl, sp + 19
 ld [hl], 0x00
 jr .L00146
 .L00145:
-ld hl, sp + 35
+ld hl, sp + 19
 ld [hl], 0x01
 .L00146:
-ld hl, sp + 35
+ld hl, sp + 19
 ld a, [hl]
-ld hl, sp + 17
+ld hl, sp + 14
 ld [hl], a
 .L00124:
-ld hl, sp + 17
+ld hl, sp + 14
 ld a, [hl]
 or a, a
 jr z, .L00126
 ld a, 0x10
-ld hl, 0
-add hl, sp
-ld e, l
-ld d, h
+ld hl, sp + 5
+ld e, [hl]
+inc hl
+ld d, [hl]
 call _sf128_increment
 .L00126:
-ld hl, sp + 22
+ld hl, sp + 12
 ld a, [hl]
 ld h, 0x10
 push hl
 inc sp
-ld hl, 1
-add hl, sp
-ld e, l
-ld d, h
-call _sf128_shl
-ld a, 0x10
-push af
-inc sp
-ld hl, 1
-add hl, sp
-ld c, l
-ld b, h
-ld hl, sp + 30
-ld a, [hli]
-ld e, a
+ld hl, sp + 6
+ld e, [hl]
+inc hl
 ld d, [hl]
-call _sf128_copy
-ld hl, sp + 31
+call _sf128_shl
+ld hl, sp + 15
 ld a, [hli]
 ld c, a
 ld a, [hli]
@@ -4339,13 +4326,13 @@ ld e, a
 ld d, [hl]
 call _sf128_pack
 .L00130:
-add sp, 36
+add sp, 20
 pop hl
 inc sp
 jp hl
 _sf128_fused_finite:
-add sp, -94
-ld hl, sp + 87
+add sp, -78
+ld hl, sp + 71
 ld a, e
 ld [hli], a
 ld [hl], d
@@ -4356,7 +4343,7 @@ inc hl
 ld e, l
 ld d, h
 ld a, [de]
-ld hl, sp + 79
+ld hl, sp + 63
 ld [hli], a
 inc de
 ld a, [de]
@@ -4367,7 +4354,7 @@ ld [hli], a
 inc de
 ld a, [de]
 ld [hl], a
-ld hl, sp + 96
+ld hl, sp + 80
 ld a, [hli]
 ld h, [hl]
 ld l, a
@@ -4376,7 +4363,7 @@ inc hl
 ld e, l
 ld d, h
 ld a, [de]
-ld hl, sp + 83
+ld hl, sp + 67
 ld [hli], a
 inc de
 ld a, [de]
@@ -4387,26 +4374,26 @@ ld [hli], a
 inc de
 ld a, [de]
 ld [hl], a
-ld hl, sp + 79
+ld hl, sp + 63
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, e
-ld hl, sp + 83
+ld hl, sp + 67
 add a, [hl]
 inc hl
 ld e, a
 ld a, d
 adc a, [hl]
 push af
-ld hl, sp + 92
+ld hl, sp + 76
 ld [hld], a
 ld [hl], e
-ld hl, sp + 83
+ld hl, sp + 67
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 87
+ld hl, sp + 71
 pop af
 ld a, e
 adc a, [hl]
@@ -4414,16 +4401,16 @@ inc hl
 ld e, a
 ld a, d
 adc a, [hl]
-ld hl, sp + 92
+ld hl, sp + 76
 ld [hld], a
 ld [hl], e
-ld hl, sp + 98
+ld hl, sp + 82
 ld a, [hl]
-ld hl, sp + 74
+ld hl, sp + 58
 ld [hl], a
-ld hl, sp + 99
+ld hl, sp + 83
 ld a, [hl]
-ld hl, sp + 75
+ld hl, sp + 59
 ld [hld], a
 ld a, [hli]
 ld h, [hl]
@@ -4433,7 +4420,7 @@ inc hl
 ld e, l
 ld d, h
 ld a, [de]
-ld hl, sp + 76
+ld hl, sp + 60
 ld [hli], a
 inc de
 ld a, [de]
@@ -4445,7 +4432,7 @@ inc de
 ld a, [de]
 ld [hl], a
 ld a, [bc]
-ld hl, sp + 96
+ld hl, sp + 80
 ld e, [hl]
 inc hl
 ld d, [hl]
@@ -4454,7 +4441,7 @@ ld a, [de]
 ld l, a
 pop af
 xor a, l
-ld hl, sp + 80
+ld hl, sp + 64
 ld [hl], a
 push bc
 ld a, 0x1d
@@ -4474,16 +4461,16 @@ ld hl, 0x0006
 add hl, bc
 push hl
 ld a, l
-ld hl, sp + 87
+ld hl, sp + 71
 ld [hl], a
 pop hl
 ld a, h
-ld hl, sp + 86
+ld hl, sp + 70
 ld [hl], a
-ld hl, sp + 93
+ld hl, sp + 77
 ld [hl], 0x00
 .L00126:
-ld hl, sp + 93
+ld hl, sp + 77
 ld e, [hl]
 ld d, 0x00
 ld hl, 29
@@ -4491,20 +4478,20 @@ add hl, sp
 add hl, de
 ld c, l
 ld b, h
-ld hl, sp + 85
+ld hl, sp + 69
 ld a, [hl]
-ld hl, sp + 93
+ld hl, sp + 77
 add a, [hl]
 ld e, a
 push af
-ld hl, sp + 88
+ld hl, sp + 72
 pop af
 ld a, [hl]
 adc a, 0x00
 ld d, a
 ld a, [de]
 ld [bc], a
-ld hl, sp + 93
+ld hl, sp + 77
 inc [hl]
 ld a, [hl]
 sub a, 0x10
@@ -4521,66 +4508,57 @@ add hl, sp
 ld e, l
 ld d, h
 call _sf128_shr
-ld hl, sp + 96
+ld hl, sp + 80
 ld a, [hli]
 add a, 0x06
-ld c, a
+ld e, a
 ld a, [hl]
 adc a, 0x00
-ld b, a
-ld a, 0x10
-push af
-inc sp
-ld hl, 59
-add hl, sp
-ld e, l
-ld d, h
-call _sf128_copy
+ld d, a
+push de
 ld hl, 0x1000
 push hl
 xor a, a
 rrca
 push af
-ld de, 0x0008
-push de
-ld hl, 64
-add hl, sp
-ld e, l
-ld d, h
+ld bc, 0x0008
+push bc
 call _sf128_shr
-ld hl, sp + 93
+pop de
+ld hl, sp + 77
 ld [hl], 0x00
 .L00128:
-ld hl, sp + 58
-ld a, [hl]
+ld a, [de]
 rrca
 jr nc, .L00103
+push de
 ld a, 0x1d
 push af
 inc sp
-ld hl, 30
+ld hl, 32
 add hl, sp
 ld c, l
 ld b, h
-ld hl, 1
+ld hl, 3
 add hl, sp
 ld e, l
 ld d, h
 call _sf128_add
+pop de
 .L00103:
+push de
 ld a, 0x1d
-ld hl, 29
+ld hl, 31
 add hl, sp
 ld e, l
 ld d, h
 call _sf128_left
+pop de
+push de
 ld a, 0x10
-ld hl, 58
-add hl, sp
-ld e, l
-ld d, h
 call _sf128_right
-ld hl, sp + 93
+pop de
+ld hl, sp + 77
 inc [hl]
 ld a, [hl]
 sub a, 0x71
@@ -4609,7 +4587,7 @@ add hl, sp
 ld e, l
 ld d, h
 call _sf128_shr
-ld hl, sp + 89
+ld hl, sp + 73
 inc [hl]
 jr nz, .L00267
 inc hl
@@ -4628,24 +4606,24 @@ add hl, sp
 ld e, l
 ld d, h
 call _sf128_clear
-ld hl, sp + 74
+ld hl, sp + 58
 ld a, [hl]
 add a, 0x06
 push af
-ld hl, sp + 83
+ld hl, sp + 67
 pop af
 ld [hl], a
 push af
-ld hl, sp + 77
+ld hl, sp + 61
 pop af
 ld a, [hl]
 adc a, 0x00
-ld hl, sp + 82
+ld hl, sp + 66
 ld [hl], a
-ld hl, sp + 93
+ld hl, sp + 77
 ld [hl], 0x00
 .L00130:
-ld hl, sp + 93
+ld hl, sp + 77
 ld e, [hl]
 ld d, 0x00
 ld hl, 29
@@ -4653,32 +4631,32 @@ add hl, sp
 add hl, de
 push hl
 ld a, l
-ld hl, sp + 85
+ld hl, sp + 69
 ld [hl], a
 pop hl
 ld a, h
-ld hl, sp + 84
+ld hl, sp + 68
 ld [hl], a
-ld hl, sp + 81
+ld hl, sp + 65
 ld a, [hl]
-ld hl, sp + 93
+ld hl, sp + 77
 add a, [hl]
 push af
-ld hl, sp + 87
+ld hl, sp + 71
 pop af
 ld [hld], a
 dec hl
 dec hl
 ld a, [hl]
 adc a, 0x00
-ld hl, sp + 86
+ld hl, sp + 70
 ld [hld], a
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
 ld [hl], a
-ld hl, sp + 83
+ld hl, sp + 67
 ld a, [hli]
 ld e, a
 ld a, [hli]
@@ -4686,7 +4664,7 @@ inc hl
 ld d, a
 ld a, [hl]
 ld [de], a
-ld hl, sp + 93
+ld hl, sp + 77
 inc [hl]
 ld a, [hl]
 sub a, 0x10
@@ -4700,10 +4678,10 @@ add hl, sp
 ld e, l
 ld d, h
 call _sf128_shl
-ld hl, sp + 76
+ld hl, sp + 60
 ld e, l
 ld d, h
-ld hl, sp + 89
+ld hl, sp + 73
 ld a, [de]
 inc de
 sub a, [hl]
@@ -4732,26 +4710,26 @@ jr z, .L00269
 scf
 .L00269:
 jr nc, .L00111
-ld hl, sp + 89
+ld hl, sp + 73
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, e
-ld hl, sp + 76
+ld hl, sp + 60
 sub a, [hl]
 inc hl
 ld e, a
 ld a, d
 sbc a, [hl]
 push af
-ld hl, sp + 86
+ld hl, sp + 70
 ld [hld], a
 ld [hl], e
-ld hl, sp + 93
+ld hl, sp + 77
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 80
+ld hl, sp + 64
 pop af
 ld a, e
 sbc a, [hl]
@@ -4759,7 +4737,7 @@ inc hl
 ld e, a
 ld a, d
 sbc a, [hl]
-ld hl, sp + 86
+ld hl, sp + 70
 ld [hld], a
 ld [hl], e
 ld de, 0x1d01
@@ -4768,7 +4746,7 @@ ld a, [hli]
 ld e, a
 ld d, [hl]
 push de
-ld hl, sp + 87
+ld hl, sp + 71
 ld a, [hli]
 ld e, a
 ld d, [hl]
@@ -4780,10 +4758,10 @@ ld d, h
 call _sf128_shr
 jr .L00112
 .L00111:
-ld hl, sp + 89
+ld hl, sp + 73
 ld e, l
 ld d, h
-ld hl, sp + 76
+ld hl, sp + 60
 ld a, [de]
 inc de
 sub a, [hl]
@@ -4812,26 +4790,26 @@ jr z, .L00271
 scf
 .L00271:
 jr nc, .L00112
-ld hl, sp + 76
+ld hl, sp + 60
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, e
-ld hl, sp + 89
+ld hl, sp + 73
 sub a, [hl]
 inc hl
 ld e, a
 ld a, d
 sbc a, [hl]
 push af
-ld hl, sp + 86
+ld hl, sp + 70
 ld [hld], a
 ld [hl], e
-ld hl, sp + 80
+ld hl, sp + 64
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 93
+ld hl, sp + 77
 pop af
 ld a, e
 sbc a, [hl]
@@ -4839,7 +4817,7 @@ inc hl
 ld e, a
 ld a, d
 sbc a, [hl]
-ld hl, sp + 86
+ld hl, sp + 70
 ld [hld], a
 ld [hl], e
 ld de, 0x1d01
@@ -4848,7 +4826,7 @@ ld a, [hli]
 ld e, a
 ld d, [hl]
 push de
-ld hl, sp + 87
+ld hl, sp + 71
 ld a, [hli]
 ld e, a
 ld d, [hl]
@@ -4858,10 +4836,10 @@ add hl, sp
 ld e, l
 ld d, h
 call _sf128_shr
-ld hl, sp + 76
+ld hl, sp + 60
 ld d, h
 ld e, l
-ld hl, sp + 89
+ld hl, sp + 73
 ld a, [de]
 ld [hli], a
 inc de
@@ -4874,7 +4852,7 @@ inc de
 ld a, [de]
 ld [hl], a
 .L00112:
-ld hl, sp + 87
+ld hl, sp + 71
 ld a, [hld]
 dec hl
 dec hl
@@ -4882,17 +4860,17 @@ dec hl
 add a, 0x01
 ld [hl], a
 push af
-ld hl, sp + 90
+ld hl, sp + 74
 pop af
 ld a, [hl]
 adc a, 0x00
-ld hl, sp + 84
+ld hl, sp + 68
 ld [hld], a
 ld a, [hli]
 ld h, [hl]
 ld l, a
 ld [hl], 0x01
-ld hl, sp + 87
+ld hl, sp + 71
 ld a, [hld]
 dec hl
 add a, 0x02
@@ -4906,7 +4884,7 @@ ld [hld], a
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 89
+ld hl, sp + 73
 ld a, [hli]
 ld [de], a
 inc de
@@ -4918,28 +4896,28 @@ ld [de], a
 inc de
 ld a, [hl]
 ld [de], a
-ld hl, sp + 74
+ld hl, sp + 58
 ld a, [hl]
-ld hl, sp + 92
+ld hl, sp + 76
 ld [hl], a
-ld hl, sp + 75
+ld hl, sp + 59
 ld a, [hl]
-ld hl, sp + 93
+ld hl, sp + 77
 ld [hld], a
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
 ld c, a
-ld hl, sp + 87
+ld hl, sp + 71
 ld a, [hl]
-ld hl, sp + 90
+ld hl, sp + 74
 ld [hld], a
 dec hl
 ld a, [hl]
-ld hl, sp + 91
+ld hl, sp + 75
 ld [hl], a
-ld hl, sp + 80
+ld hl, sp + 64
 ld a, [hl]
 sub a, c
 jr nz, .L00117
@@ -4955,11 +4933,11 @@ add hl, sp
 ld e, l
 ld d, h
 call _sf128_add
-ld hl, sp + 90
+ld hl, sp + 74
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 80
+ld hl, sp + 64
 ld a, [hl]
 ld [de], a
 jr .L00118
@@ -4990,11 +4968,11 @@ add hl, sp
 ld e, l
 ld d, h
 call _sf128_sub
-ld hl, sp + 90
+ld hl, sp + 74
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 80
+ld hl, sp + 64
 ld a, [hl]
 ld [de], a
 jr .L00118
@@ -5023,12 +5001,12 @@ add hl, sp
 ld e, l
 ld d, h
 call _sf128_copy
-ld hl, sp + 92
+ld hl, sp + 76
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
-ld hl, sp + 90
+ld hl, sp + 74
 ld e, [hl]
 inc hl
 ld h, [hl]
@@ -5043,12 +5021,12 @@ ld d, h
 call _sf128_nonzero
 or a, a
 jr nz, .L00120
-ld hl, sp + 83
+ld hl, sp + 67
 ld a, [hli]
 ld h, [hl]
 ld l, a
 ld [hl], 0x00
-ld hl, sp + 90
+ld hl, sp + 74
 ld a, [hli]
 ld h, [hl]
 ld l, a
@@ -5070,12 +5048,12 @@ add hl, sp
 ld e, l
 ld d, h
 call _sf128_shr
-ld hl, sp + 85
+ld hl, sp + 69
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
-ld hl, sp + 81
+ld hl, sp + 65
 ld [hli], a
 inc de
 ld a, [de]
@@ -5097,10 +5075,10 @@ ld e, a
 ld a, d
 adc a, 0x00
 push af
-ld hl, sp + 93
+ld hl, sp + 77
 ld [hld], a
 ld [hl], e
-ld hl, sp + 85
+ld hl, sp + 69
 ld a, [hli]
 ld e, a
 ld d, [hl]
@@ -5110,14 +5088,14 @@ adc a, 0x00
 ld e, a
 ld a, d
 adc a, 0x00
-ld hl, sp + 93
+ld hl, sp + 77
 ld [hld], a
 ld [hl], e
-ld hl, sp + 85
+ld hl, sp + 69
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 90
+ld hl, sp + 74
 ld a, [hli]
 ld [de], a
 inc de
@@ -5139,12 +5117,12 @@ add hl, sp
 ld e, l
 ld d, h
 call _sf128_left
-ld hl, sp + 85
+ld hl, sp + 69
 ld a, [hli]
 ld e, a
 ld d, [hl]
 ld a, [de]
-ld hl, sp + 81
+ld hl, sp + 65
 ld [hli], a
 inc de
 ld a, [de]
@@ -5166,10 +5144,10 @@ ld e, a
 ld a, d
 sbc a, 0x00
 push af
-ld hl, sp + 93
+ld hl, sp + 77
 ld [hld], a
 ld [hl], e
-ld hl, sp + 85
+ld hl, sp + 69
 ld a, [hli]
 ld e, a
 ld d, [hl]
@@ -5179,14 +5157,14 @@ sbc a, 0x00
 ld e, a
 ld a, d
 sbc a, 0x00
-ld hl, sp + 93
+ld hl, sp + 77
 ld [hld], a
 ld [hl], e
-ld hl, sp + 85
+ld hl, sp + 69
 ld a, [hli]
 ld e, a
 ld d, [hl]
-ld hl, sp + 90
+ld hl, sp + 74
 ld a, [hli]
 ld [de], a
 inc de
@@ -5212,7 +5190,7 @@ add hl, sp
 ld e, l
 ld d, h
 call _sf128_shr
-ld hl, sp + 87
+ld hl, sp + 71
 ld a, [hli]
 add a, 0x06
 ld e, a
@@ -5228,7 +5206,7 @@ ld b, h
 ld d, a
 call _sf128_copy
 .L00132:
-add sp, 94
+add sp, 78
 pop hl
 add sp, 4
 jp hl

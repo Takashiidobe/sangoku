@@ -33,8 +33,7 @@ Arithmetic, comparisons, integral rounding, square root and fused multiply-add
 use a shared f64 softfloat helper with a stack-memory context. It preserves
 binary64 precision and rounds arithmetic to nearest, ties to even; fused
 multiply-add rounds only once. f64 comparisons handle unordered operands, and
-min/max propagate NaNs and distinguish signed zero. Numeric conversions remain
-in `sangoku-7qz.9.7`.
+min/max propagate NaNs and distinguish signed zero.
 
 Build `examples/f64.rs` with `cargo run -- build` to exercise Rust f64 addition.
 Splitting the representation does not make f32 arithmetic sufficient for f64
@@ -44,14 +43,25 @@ precision or range.
 the same transport and sign operations as f64, with `i128` bitcasts. Constants
 retain all 128 bits; negation, absolute value and copysign modify only the sign
 bit in the highest limb. Rust f128 constants and memory access use this path
-without frontend representation changes. The LR35902 frontend float gate allows
-f64 and f128 through to legalization; its f16/f32 exclusions remain.
+without frontend representation changes. The LR35902 frontend accepts all scalar
+float widths.
 
-f128 arithmetic, comparisons, rounding and numeric conversions still need
-binary128 softfloat helpers (`sangoku-7qz.9.6`). cg_clif emits compiler-builtins
-calls for several of these operations; basic legalization does not provide their
-runtime bodies. Conversions between `i64` and floating point also remain
-unsupported.
+f128 arithmetic, comparisons and rounding use the binary128 softfloat runtime
+(`sangoku-7qz.9.6`). Rust casts use CLIF conversion instructions directly,
+including i128 and f128, rather than compiler-builtins conversion calls.
+
+Numeric conversions involving wide values use a separate byte-array helper.
+Integer inputs retain all 128 bits until rounding. Float inputs retain their
+significands and exponent, so narrowing rounds directly to the destination
+format without an intermediate f32 or f64 result. Float-to-integer conversion
+truncates toward zero before checking range. Saturating casts clamp to the
+destination limits and map NaN to zero; trapping casts check the helper status
+before exposing a result. Signed zeros survive float-width conversions, while
+NaNs become quiet NaNs.
+
+Extending-load opcodes exclude i128 in their CLIF type sets. Use a narrow load
+followed by `sextend.i128` or `uextend.i128`; the coverage matrix marks the
+inexpressible opcode/type pairs as `n/e`.
 
 Build `examples/f128.rs` with `cargo run -- build` for a Rust-to-ROM example.
 Run the bounded transport tests with:

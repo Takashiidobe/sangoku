@@ -22,6 +22,7 @@ fn lower_program(path: &str) -> Result<harness::Program> {
         String::from_utf8_lossy(&output.stderr)
     );
     let assembly = String::from_utf8(output.stdout)?;
+    let needs_convert = assembly.contains("__gbc_convert");
     let needs_float128 = assembly.contains("__gbc_f128");
     let needs_float64 = assembly.contains("__gbc_f64");
     let needs_float32 = assembly
@@ -49,6 +50,9 @@ fn lower_program(path: &str) -> Result<harness::Program> {
             "softfloat128.asm",
             harness::read("runtime/softfloat128.asm")?,
         ));
+    }
+    if needs_convert {
+        sources.push(("convert.asm", harness::read("runtime/convert.asm")?));
     }
     harness::assemble(&sources, None)
 }
@@ -2917,6 +2921,168 @@ fn rust_f128_arithmetic_lowers_and_executes() -> Result<()> {
                 "{example}: stack grew to {}",
                 e.peak_stack_bytes + 2
             );
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn wide_numeric_conversions_match_reference() -> Result<()> {
+    use sangoku_test_support::{Value, serde_json};
+    let mut input = harness::read("runtime/convert.c")?.into_bytes();
+    input.extend(harness::read("tools/generate_convert.py")?.into_bytes());
+    let header = format!(
+        "; generated from convert.c, sha256 {}",
+        harness::hash(&input)
+    );
+    ensure!(
+        harness::read("runtime/convert.asm")?.lines().next() == Some(header.as_str()),
+        "stale conversion runtime; run tools/generate_convert.py"
+    );
+    let reference: Value =
+        serde_json::from_str(include_str!("fixtures/emulate/wide-convert.json"))?;
+    ensure!(
+        reference["generator_sha256"]
+            == harness::hash(harness::read("tools/generate_conversion_cases.py")?.as_bytes()),
+        "stale conversion reference cases"
+    );
+    let mut groups = std::collections::BTreeMap::<String, String>::new();
+    for function in include_str!("fixtures/emulate/wide-convert.clif")
+        .split("\nfunction ")
+        .skip(1)
+    {
+        let name = function
+            .strip_prefix('%')
+            .unwrap()
+            .split('(')
+            .next()
+            .unwrap();
+        let group = name.rsplit_once('_').unwrap().0;
+        groups
+            .entry(group.into())
+            .or_default()
+            .push_str(&format!("\nfunction {function}"));
+    }
+    for level in ["none", "speed"] {
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        for (group, functions) in &groups {
+            let path = directory.path().join(format!("{group}.clif"));
+            std::fs::write(
+                &path,
+                format!(
+                    "set enable_multi_ret_implicit_sret=true\nset opt_level={level}\ntarget z80\n{functions}"
+                ),
+            )?;
+            let program = lower_program(path.to_str().unwrap())?;
+            ensure!(
+                program.sections["convert"].size <= 8192,
+                "conversion runtime exceeds half a ROM bank"
+            );
+            for case in reference["cases"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|case| case["name"].as_str().unwrap().rsplit_once('_').unwrap().0 == group)
+            {
+                let name = case["name"].as_str().unwrap();
+                let destination = name.rsplit('_').next().unwrap();
+                let bytes: usize = destination[1..].parse::<usize>()? / 8;
+                let parse =
+                    |key: &str| u128::from_str_radix(case[key].as_str().unwrap(), 16).unwrap();
+                let mut e = program.emulator(&format!("__rust_{name}"))?;
+                e.memory[BASE as usize..BASE as usize + 16]
+                    .copy_from_slice(&parse("source").to_le_bytes());
+                e.memory[BASE as usize + 16..BASE as usize + 32].fill(0xA5);
+                e.b = BASE as u8;
+                e.c = (BASE >> 8) as u8;
+                e.set_sp(STACK - 2);
+                e.write16(STACK - 2, program.symbols["done"]);
+                let trap = case["trap"].as_bool().unwrap();
+                let stop = if trap {
+                    0x0010
+                } else {
+                    program.symbols["done"]
+                };
+                e.run_until(stop, 1_000_000)?;
+                let output = &e.memory[BASE as usize + 16..BASE as usize + 16 + bytes];
+                if trap {
+                    ensure!(
+                        output.iter().all(|&b| b == 0xA5),
+                        "{level} {case}: wrote result before trapping"
+                    );
+                } else {
+                    let mut raw = [0u8; 16];
+                    raw[..bytes].copy_from_slice(output);
+                    let got = u128::from_le_bytes(raw);
+                    ensure!(got == parse("result"), "{level} {case}: got {got:x}");
+                }
+                ensure!(
+                    e.memory[BASE as usize + 16 + bytes..BASE as usize + 32]
+                        .iter()
+                        .all(|&b| b == 0xA5),
+                    "{level} {case}: overwrote destination"
+                );
+            }
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn rust_numeric_conversions_lower_and_execute() -> Result<()> {
+    use sangoku_test_support::{Value, serde_json};
+    let reference: Value =
+        serde_json::from_str(include_str!("fixtures/emulate/wide-convert.json"))?;
+    let source = harness::root().join("examples/conversions.rs");
+    for opt in ["0", "2"] {
+        let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
+            .args(["clif", source.to_str().unwrap(), "-", "--opt-level", opt])
+            .output()?;
+        ensure!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let path = directory.path().join("rust-conversions.clif");
+        std::fs::write(&path, output.stdout)?;
+        let program = lower_program(path.to_str().unwrap())?;
+        ensure!(program.sections.contains_key("convert"));
+        for (entry, name, bytes) in [
+            ("i64_to_f16", "fcvt_from_sint_i64_f16", 2),
+            ("u64_to_f32", "fcvt_from_uint_i64_f32", 4),
+            ("i128_to_f64", "fcvt_from_sint_i128_f64", 8),
+            ("u128_to_f128", "fcvt_from_uint_i128_f128", 16),
+            ("f64_to_i8", "fcvt_to_sint_sat_f64_i8", 1),
+            ("f128_to_u128", "fcvt_to_uint_sat_f128_i128", 16),
+            ("f64_to_f16", "fdemote_f64_f16", 2),
+            ("f16_to_f128", "fpromote_f16_f128", 16),
+            ("f128_to_f32", "fdemote_f128_f32", 4),
+        ] {
+            for case in reference["cases"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|case| case["name"] == name)
+                .take(12)
+            {
+                let parse =
+                    |key: &str| u128::from_str_radix(case[key].as_str().unwrap(), 16).unwrap();
+                let data = parse("source").to_le_bytes();
+                let memory: Vec<_> = data
+                    .iter()
+                    .enumerate()
+                    .map(|(i, &byte)| (BASE + i as u16, byte))
+                    .collect();
+                let e = call(&program, &format!("__rust_{entry}"), &memory)?;
+                let mut raw = [0u8; 16];
+                raw[..bytes].copy_from_slice(&e.memory[BASE as usize..BASE as usize + bytes]);
+                let got = u128::from_le_bytes(raw);
+                ensure!(
+                    got == parse("result"),
+                    "opt {opt} {entry} {case}: got {got:x}"
+                );
+            }
         }
     }
     Ok(())

@@ -1,0 +1,754 @@
+set enable_multi_ret_implicit_sret=true
+target z80
+
+function %fcvt_from_uint_i64_f16(i16) system_v {
+block0(v0: i16):
+    v1 = load.i64 v0
+    v2 = fcvt_from_uint.f16 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f16_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = fcvt_to_uint.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f16_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = fcvt_to_uint_sat.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i64_f16(i16) system_v {
+block0(v0: i16):
+    v1 = load.i64 v0
+    v2 = fcvt_from_sint.f16 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f16_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = fcvt_to_sint.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f16_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = fcvt_to_sint_sat.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_uint_i128_f16(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = fcvt_from_uint.f16 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f16_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = fcvt_to_uint.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f16_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = fcvt_to_uint_sat.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i128_f16(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = fcvt_from_sint.f16 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f16_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = fcvt_to_sint.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f16_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = fcvt_to_sint_sat.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fpromote_f16_f64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = fpromote.f64 v1
+    store v2, v0+16
+    return
+}
+
+function %fpromote_f16_f128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = fpromote.f128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_uint_i64_f32(i16) system_v {
+block0(v0: i16):
+    v1 = load.i64 v0
+    v2 = fcvt_from_uint.f32 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f32_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = fcvt_to_uint.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f32_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = fcvt_to_uint_sat.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i64_f32(i16) system_v {
+block0(v0: i16):
+    v1 = load.i64 v0
+    v2 = fcvt_from_sint.f32 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f32_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = fcvt_to_sint.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f32_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = fcvt_to_sint_sat.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_uint_i128_f32(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = fcvt_from_uint.f32 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f32_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = fcvt_to_uint.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f32_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = fcvt_to_uint_sat.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i128_f32(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = fcvt_from_sint.f32 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f32_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = fcvt_to_sint.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f32_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = fcvt_to_sint_sat.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fpromote_f32_f64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = fpromote.f64 v1
+    store v2, v0+16
+    return
+}
+
+function %fpromote_f32_f128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = fpromote.f128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_uint_i8_f64(i16) system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = fcvt_from_uint.f64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f64_i8(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_uint.i8 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f64_i8(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_uint_sat.i8 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i8_f64(i16) system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = fcvt_from_sint.f64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f64_i8(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_sint.i8 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f64_i8(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_sint_sat.i8 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_uint_i16_f64(i16) system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = fcvt_from_uint.f64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f64_i16(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_uint.i16 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f64_i16(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_uint_sat.i16 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i16_f64(i16) system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = fcvt_from_sint.f64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f64_i16(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_sint.i16 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f64_i16(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_sint_sat.i16 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_uint_i32_f64(i16) system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = fcvt_from_uint.f64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f64_i32(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_uint.i32 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f64_i32(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_uint_sat.i32 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i32_f64(i16) system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = fcvt_from_sint.f64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f64_i32(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_sint.i32 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f64_i32(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_sint_sat.i32 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_uint_i64_f64(i16) system_v {
+block0(v0: i16):
+    v1 = load.i64 v0
+    v2 = fcvt_from_uint.f64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f64_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_uint.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f64_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_uint_sat.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i64_f64(i16) system_v {
+block0(v0: i16):
+    v1 = load.i64 v0
+    v2 = fcvt_from_sint.f64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f64_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_sint.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f64_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_sint_sat.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_uint_i128_f64(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = fcvt_from_uint.f64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f64_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_uint.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f64_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_uint_sat.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i128_f64(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = fcvt_from_sint.f64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f64_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_sint.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f64_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fcvt_to_sint_sat.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fdemote_f64_f16(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fdemote.f16 v1
+    store v2, v0+16
+    return
+}
+
+function %fdemote_f64_f32(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fdemote.f32 v1
+    store v2, v0+16
+    return
+}
+
+function %fpromote_f64_f128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = fpromote.f128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_uint_i8_f128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = fcvt_from_uint.f128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f128_i8(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_uint.i8 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f128_i8(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_uint_sat.i8 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i8_f128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = fcvt_from_sint.f128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f128_i8(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_sint.i8 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f128_i8(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_sint_sat.i8 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_uint_i16_f128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = fcvt_from_uint.f128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f128_i16(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_uint.i16 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f128_i16(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_uint_sat.i16 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i16_f128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = fcvt_from_sint.f128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f128_i16(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_sint.i16 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f128_i16(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_sint_sat.i16 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_uint_i32_f128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = fcvt_from_uint.f128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f128_i32(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_uint.i32 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f128_i32(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_uint_sat.i32 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i32_f128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = fcvt_from_sint.f128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f128_i32(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_sint.i32 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f128_i32(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_sint_sat.i32 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_uint_i64_f128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i64 v0
+    v2 = fcvt_from_uint.f128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f128_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_uint.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f128_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_uint_sat.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i64_f128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i64 v0
+    v2 = fcvt_from_sint.f128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f128_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_sint.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f128_i64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_sint_sat.i64 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_uint_i128_f128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = fcvt_from_uint.f128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_f128_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_uint.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_uint_sat_f128_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_uint_sat.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_from_sint_i128_f128(i16) system_v {
+block0(v0: i16):
+    v1 = load.i128 v0
+    v2 = fcvt_from_sint.f128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_f128_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_sint.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fcvt_to_sint_sat_f128_i128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fcvt_to_sint_sat.i128 v1
+    store v2, v0+16
+    return
+}
+
+function %fdemote_f128_f16(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fdemote.f16 v1
+    store v2, v0+16
+    return
+}
+
+function %fdemote_f128_f32(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fdemote.f32 v1
+    store v2, v0+16
+    return
+}
+
+function %fdemote_f128_f64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = fdemote.f64 v1
+    store v2, v0+16
+    return
+}

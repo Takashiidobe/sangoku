@@ -63,6 +63,12 @@ The backend compiles small `no_core` functions and links minimal ROMs. The next
 milestone is compiling Rust `core`, before adding runtime and game features. The
 full Rust ABI and operation set are still incomplete.
 
+Numeric conversions involving i64/i128 and f64/f128 now lower through a shared
+conversion runtime, including trapping and saturating float-to-integer casts.
+Float-width conversions preserve source precision and round once at the
+destination width. Build `examples/conversions.rs` to exercise Rust casts;
+compiling all of `core` remains the next milestone.
+
 Rust lowers through Cranelift IR to LR35902 assembly. See
 [legalization](wiki/concepts/legalization.md),
 [lowering](wiki/concepts/lowering.md), and
