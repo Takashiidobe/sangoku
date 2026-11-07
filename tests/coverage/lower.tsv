@@ -69,7 +69,7 @@ ceil	f128	unsupported	Unsupported feature: LR35902 i128 legalization for ceil
 ceil	f16	ok	
 ceil	f32	ok	
 ceil	f64	unsupported	Unsupported feature: LR35902 wide value legalization for ceil
-cls	i128	unsupported	Unsupported feature: LR35902 i128 legalization for cls
+cls	i128	ok	
 cls	i16	ok	
 cls	i32	ok	
 cls	i64	ok	
@@ -436,7 +436,7 @@ sadd_overflow	i16	ok
 sadd_overflow	i32	ok	
 sadd_overflow	i64	ok	
 sadd_overflow	i8	ok	
-sdiv	i128	unsupported	Unsupported feature: LR35902 i128 legalization for sdiv
+sdiv	i128	ok	
 sdiv	i16	ok	
 sdiv	i32	ok	
 sdiv	i64	ok	
@@ -486,7 +486,7 @@ smul_overflow	i16	ok
 smul_overflow	i32	ok	
 smul_overflow	i64	ok	
 smul_overflow	i8	ok	
-smulhi	i128	unsupported	Unsupported feature: LR35902 i128 legalization for smulhi
+smulhi	i128	ok	
 smulhi	i16	ok	
 smulhi	i32	ok	
 smulhi	i64	ok	
@@ -495,7 +495,7 @@ sqrt	f128	unsupported	Unsupported feature: LR35902 i128 legalization for sqrt
 sqrt	f16	ok	
 sqrt	f32	ok	
 sqrt	f64	unsupported	Unsupported feature: LR35902 wide value legalization for sqrt
-srem	i128	unsupported	Unsupported feature: LR35902 i128 legalization for srem
+srem	i128	ok	
 srem	i16	ok	
 srem	i32	ok	
 srem	i64	ok	
@@ -546,7 +546,7 @@ uadd_overflow	i16	ok
 uadd_overflow	i32	ok	
 uadd_overflow	i64	ok	
 uadd_overflow	i8	ok	
-udiv	i128	unsupported	Unsupported feature: LR35902 i128 legalization for udiv
+udiv	i128	ok	
 udiv	i16	ok	
 udiv	i32	ok	
 udiv	i64	ok	
@@ -587,12 +587,12 @@ umul_overflow	i16	ok
 umul_overflow	i32	ok	
 umul_overflow	i64	ok	
 umul_overflow	i8	ok	
-umulhi	i128	unsupported	Unsupported feature: LR35902 i128 legalization for umulhi
+umulhi	i128	ok	
 umulhi	i16	ok	
 umulhi	i32	ok	
 umulhi	i64	ok	
 umulhi	i8	ok	
-urem	i128	unsupported	Unsupported feature: LR35902 i128 legalization for urem
+urem	i128	ok	
 urem	i16	ok	
 urem	i32	ok	
 urem	i64	ok	

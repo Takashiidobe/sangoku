@@ -5,7 +5,7 @@ unsupported, `PANIC` is a backend crash, `n/e` cannot be written as textual CLIF
 for that type (the opcode's type set rejects it). Memory operations use `i16`
 addresses.
 
-Totals: inexpressible 26, ok 471, unsupported 117
+Totals: inexpressible 26, ok 478, unsupported 110
 
 ## Integer operations
 
@@ -22,7 +22,7 @@ Totals: inexpressible 26, ok 471, unsupported 117
 | call          | ok  | ok  | ok  | ok  | ok   |
 | call.arg      | ok  | ok  | ok  | ok  | ok   |
 | call_indirect | ok  | ok  | ok  | ok  | ok   |
-| cls           | ok  | ok  | ok  | ok  | -    |
+| cls           | ok  | ok  | ok  | ok  | ok   |
 | clz           | ok  | ok  | ok  | ok  | ok   |
 | ctz           | ok  | ok  | ok  | ok  | ok   |
 | iabs          | ok  | ok  | ok  | ok  | ok   |
@@ -54,13 +54,13 @@ Totals: inexpressible 26, ok 471, unsupported 117
 | rotr.const    | ok  | ok  | ok  | ok  | ok   |
 | rotr.var      | ok  | ok  | ok  | ok  | ok   |
 | sadd_overflow | ok  | ok  | ok  | ok  | ok   |
-| sdiv          | ok  | ok  | ok  | ok  | -    |
+| sdiv          | ok  | ok  | ok  | ok  | ok   |
 | select        | ok  | ok  | ok  | ok  | ok   |
 | smax          | ok  | ok  | ok  | ok  | ok   |
 | smin          | ok  | ok  | ok  | ok  | ok   |
 | smul_overflow | ok  | ok  | ok  | ok  | n/e  |
-| smulhi        | ok  | ok  | ok  | ok  | -    |
-| srem          | ok  | ok  | ok  | ok  | -    |
+| smulhi        | ok  | ok  | ok  | ok  | ok   |
+| srem          | ok  | ok  | ok  | ok  | ok   |
 | sshr.const    | ok  | ok  | ok  | ok  | ok   |
 | sshr.var      | ok  | ok  | ok  | ok  | ok   |
 | ssub_overflow | ok  | ok  | ok  | ok  | ok   |
@@ -68,12 +68,12 @@ Totals: inexpressible 26, ok 471, unsupported 117
 | trapnz        | ok  | ok  | ok  | ok  | ok   |
 | trapz         | ok  | ok  | ok  | ok  | ok   |
 | uadd_overflow | ok  | ok  | ok  | ok  | ok   |
-| udiv          | ok  | ok  | ok  | ok  | -    |
+| udiv          | ok  | ok  | ok  | ok  | ok   |
 | umax          | ok  | ok  | ok  | ok  | ok   |
 | umin          | ok  | ok  | ok  | ok  | ok   |
 | umul_overflow | ok  | ok  | ok  | ok  | n/e  |
-| umulhi        | ok  | ok  | ok  | ok  | -    |
-| urem          | ok  | ok  | ok  | ok  | -    |
+| umulhi        | ok  | ok  | ok  | ok  | ok   |
+| urem          | ok  | ok  | ok  | ok  | ok   |
 | ushr.const    | ok  | ok  | ok  | ok  | ok   |
 | ushr.var      | ok  | ok  | ok  | ok  | ok   |
 | usub_overflow | ok  | ok  | ok  | ok  | ok   |

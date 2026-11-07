@@ -16,8 +16,10 @@ low limb from the loaded value and fill the high limb with zero or its sign.
 See [wide integer legalization](64-bit-integer-legalization.md) for operation
 expansion, examples and focused tests. i64 division, remainder, multiply-high,
 checked multiplication and leading-sign-bit counts use narrower CLIF operations.
-The corresponding i128 operations still need legalization. Checked Rust `i128`
-multiplication uses compiler-builtins rather than CLIF overflow opcodes.
+i128 division/remainder, multiply-high and sign counts use byte loops over
+stack-memory arrays to bound temporary register pressure and ROM use. Checked
+Rust `i128` multiplication uses compiler-builtins rather than CLIF overflow
+opcodes.
 
 ## Floating point
 

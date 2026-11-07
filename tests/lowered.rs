@@ -2362,3 +2362,126 @@ fn scalar_integer_gaps_match_host() -> Result<()> {
     }
     Ok(())
 }
+
+#[test]
+fn split_i128_remaining_arithmetic_matches_host() -> Result<()> {
+    let source = include_str!("fixtures/emulate/split-i128-arithmetic.clif");
+    let high_product = |a: u128, b: u128| {
+        let al = a as u64 as u128;
+        let ah = a >> 64;
+        let bl = b as u64 as u128;
+        let bh = b >> 64;
+        let ll = al * bl;
+        let lh = al * bh;
+        let hl = ah * bl;
+        let hh = ah * bh;
+        let middle = (ll >> 64) + (lh as u64 as u128) + (hl as u64 as u128);
+        hh + (lh >> 64) + (hl >> 64) + (middle >> 64)
+    };
+    for level in ["none", "speed"] {
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let mut programs = std::collections::BTreeMap::new();
+        for function in source.split("\nfunction ").skip(1) {
+            let name = function
+                .strip_prefix('%')
+                .unwrap()
+                .split('(')
+                .next()
+                .unwrap();
+            let path = directory.path().join(format!("{name}.clif"));
+            std::fs::write(
+                &path,
+                format!(
+                    "set enable_multi_ret_implicit_sret=true\nset opt_level={level}\ntarget z80\nfunction {function}"
+                ),
+            )?;
+            let program = lower_program(path.to_str().unwrap())?;
+            let code_size: usize = program
+                .sections
+                .values()
+                .filter(|s| s.name.starts_with("__rust_cgu_"))
+                .map(|s| s.size)
+                .sum();
+            ensure!(
+                code_size <= 8192,
+                "{level} {name} uses {code_size} bytes; wide arithmetic must leave at least half a ROM bank for callers"
+            );
+            programs.insert(name, program);
+        }
+        for (a, b) in [
+            (0u128, 1u128),
+            (1, 1),
+            (u128::MAX, 1),
+            (u128::MAX, u128::MAX),
+            (1 << 127, u128::MAX),
+            (1 << 127, 1),
+            (1 << 127, 2),
+            (i128::MAX as u128, 2),
+            (1 << 64, 1 << 64),
+            ((1 << 96) - 1, (1 << 32) + 1),
+            (0x8000_0000_0000_0000_0000_0000_0000_0001, 1 << 127),
+            (
+                0x0123_4567_89ab_cdef_fedc_ba98_7654_3210,
+                0xfedc_ba98_7654_3210_0123_4567_89ab_cdef,
+            ),
+            ((-17i128) as u128, 5),
+            (17, (-5i128) as u128),
+            ((-17i128) as u128, (-5i128) as u128),
+        ] {
+            let am = if (a as i128) < 0 { a.wrapping_neg() } else { a };
+            let bm = if (b as i128) < 0 { b.wrapping_neg() } else { b };
+            let magnitude_high = high_product(am, bm);
+            let signed_high = if ((a as i128) < 0) != ((b as i128) < 0) {
+                (!magnitude_high).wrapping_add(u128::from(am.wrapping_mul(bm) == 0))
+            } else {
+                magnitude_high
+            };
+            let normalized = if (a as i128) < 0 { !a } else { a };
+            let memory: Vec<_> = a
+                .to_le_bytes()
+                .into_iter()
+                .chain(b.to_le_bytes())
+                .enumerate()
+                .map(|(i, v)| (BASE + i as u16, v))
+                .collect();
+            let mut cases = vec![
+                ("udiv128", a / b),
+                ("urem128", a % b),
+                ("srem128", (a as i128).wrapping_rem(b as i128) as u128),
+                ("umulhi128", high_product(a, b)),
+                ("smulhi128", signed_high),
+                ("cls128", u128::from(normalized.leading_zeros() - 1)),
+            ];
+            if (a, b) != (1 << 127, u128::MAX) {
+                cases.push(("sdiv128", ((a as i128) / (b as i128)) as u128));
+            }
+            for (name, expected) in cases {
+                let e = call(&programs[name], &format!("__rust_{name}"), &memory)?;
+                let actual = u128::from_le_bytes(
+                    e.memory[BASE as usize + 32..BASE as usize + 48]
+                        .try_into()
+                        .unwrap(),
+                );
+                assert_eq!(actual, expected, "{level} {name} {a:032x} {b:032x}");
+            }
+        }
+        for (name, a, b) in [
+            ("udiv128", 1u128, 0u128),
+            ("urem128", 1, 0),
+            ("sdiv128", 1, 0),
+            ("srem128", 1, 0),
+            ("sdiv128", 1 << 127, u128::MAX),
+        ] {
+            let program = &programs[name];
+            let mut e = program.emulator(&format!("__rust_{name}"))?;
+            e.memory[BASE as usize..BASE as usize + 16].copy_from_slice(&a.to_le_bytes());
+            e.memory[BASE as usize + 16..BASE as usize + 32].copy_from_slice(&b.to_le_bytes());
+            e.b = BASE as u8;
+            e.c = (BASE >> 8) as u8;
+            e.set_sp(STACK - 2);
+            e.write16(STACK - 2, program.symbols["done"]);
+            e.run_until(0x0010, 2_000_000)?;
+        }
+    }
+    Ok(())
+}

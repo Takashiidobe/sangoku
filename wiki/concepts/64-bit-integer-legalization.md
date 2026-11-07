@@ -16,11 +16,14 @@ purpose.
 Use the [coverage matrix](../../tests/coverage/lower.md) for supported
 operations. Unsupported wide operations report an error.
 
-For i64, signed and unsigned division/remainder, multiply-high, checked
-multiplication and leading-sign-bit counts also lower through the split pass.
-Division by zero traps; signed division traps on `MIN / -1`, while signed
-remainder returns zero for `MIN % -1`. Checked multiplication returns the low 64
-bits and an overflow flag. These operations remain unsupported for i128.
+Signed and unsigned division/remainder, multiply-high and leading-sign-bit
+counts lower at both widths. Division by zero traps; signed division traps on
+`MIN / -1`, while signed remainder returns zero for `MIN % -1`. Checked i64
+multiplication returns the low 64 bits and an overflow flag.
+
+i128 division, multiply-high and sign counts keep their working state in
+stack-memory byte arrays. Byte loops limit temporary register pressure and ROM
+size; the four-i32 representation remains at instruction and ABI boundaries.
 
 See [optimizations](optimizations.md) for wide-operation loop costs and runtime
 inclusion, and [lowering](lowering.md) for the calling convention.
@@ -28,7 +31,7 @@ inclusion, and [lowering](lowering.md) for the calling convention.
 Run the bounded emulator checks with:
 
 ```sh
-cargo nextest run --no-fail-fast -E 'test(split_i64_values_match_host) | test(split_i64_remaining_arithmetic_matches_host) | test(split_i128_values_match_host) | test(rust_u64_memory_add_lowers_and_executes) | test(rust_u128_memory_add_lowers_and_executes)'
+cargo nextest run --no-fail-fast -E 'test(split_i64_values_match_host) | test(split_i64_remaining_arithmetic_matches_host) | test(split_i128_values_match_host) | test(split_i128_remaining_arithmetic_matches_host) | test(rust_u64_memory_add_lowers_and_executes) | test(rust_u128_memory_add_lowers_and_executes)'
 ```
 
 The checks compile separate operation ROMs to stay within the current ROM0
@@ -41,5 +44,8 @@ cargo run -- build examples/u128.rs build/u128.gb
 cargo run -- build examples/u128-mul.rs build/u128-mul.gb
 ```
 
-Remaining native 128-bit arithmetic is tracked by `sangoku-7qz.9.3`. Checked
-128-bit multiplication uses compiler-builtins rather than CLIF overflow opcodes.
+The remaining-arithmetic fixture checks trap behavior and host-reference results
+at both optimization levels, and limits each generated operation function to
+half a ROM bank. Checked 128-bit multiplication uses compiler-builtins rather
+than native CLIF overflow opcodes; its runtime support is tracked by
+`sangoku-57q.5`.

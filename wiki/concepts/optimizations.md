@@ -21,10 +21,19 @@ to form a full 128-bit product. Signed products correct the upper half for
 negative operands; overflow compares that half with the low half's required sign
 extension (or zero for unsigned multiplication).
 
-The i128 multiplier uses a 128-step shift/add loop. Its shifts and rotates
-iterate at most 127 times. These loops bound ROM use at the cost of execution
-time. Generated i32 variable shifts use narrower operations and helpers, which
-can produce large functions; code-size optimization remains separate work.
+i128 division/remainder and multiply-high use 128-step outer loops over
+stack-memory byte arrays. Inner loops process one byte at a time for shifts,
+carry/borrow propagation and sign correction. Division reuses the subtraction
+borrow to decide whether to keep or restore the remainder. Sign counts scan
+sixteen normalized bytes. These paths avoid keeping full-width intermediate
+values live in registers, which otherwise causes excessive spill code. They
+still expand inline rather than calling a shared runtime helper.
+
+The i128 low-product multiplier uses a 128-step shift/add loop. Its shifts and
+rotates iterate at most 127 times. These loops bound ROM use at the cost of
+execution time. Generated i32 variable shifts use narrower operations and
+helpers, which can produce large functions; code-size optimization remains
+separate work.
 
 See [wide integer legalization](64-bit-integer-legalization.md) for the
 representation and [lowering](lowering.md) for runtime helpers.
