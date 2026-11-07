@@ -90,7 +90,7 @@ impl Runner {
             "targets/lr35902.json",
             "--emit=asm",
             "--crate-type=lib",
-            "-Cpanic=abort",
+            "-Cpanic=immediate-abort",
         ]);
         args.extend([
             format!("-Copt-level={level}"),

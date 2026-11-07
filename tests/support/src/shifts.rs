@@ -898,7 +898,7 @@ fn prepare(
             "targets/lr35902.json",
             "--emit=asm",
             "--crate-type=lib",
-            "-Cpanic=abort",
+            "-Cpanic=immediate-abort",
             "-Copt-level=2",
             "tests/fixtures/shifts/rust.rs",
             "-o",

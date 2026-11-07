@@ -63,6 +63,9 @@ Select optimization with `--opt-level 2` for speed or `--opt-level z` for size:
 cargo run -- build game.rs game.gb --opt-level 2
 ```
 
+Target builds always use `panic=immediate-abort`, including `core` and compiler
+builtins. A failed safety check traps without calling a panic handler.
+
 The default is `0` (unoptimized). Levels `1`, `2`, and `3` prefer speed; `s` and
 `z` prefer smaller code.
 
@@ -90,12 +93,16 @@ function at a time, 0 failures out of 3,235 `core` functions, the
 through `u128`, parsing, sorting, hashing, `dyn`). These are lowering counts at
 `opt-level=0`, with `compiler_builtins` built with its `unmangled-names` and
 `mem` features (2,009 functions). `cargo run -- build PROGRAM.rs OUT.gb` links every program against real `core`
-(built once into `build/core/opt-N`): each function is its own RGBDS section, only
+(built once into `build/core/immediate-abort/opt-N`): each function is its own RGBDS section, only
 sections reachable from `gbc_main` are kept, and they fill ROM0 then spill into
 ROMX bank 1 of a 32 KiB cartridge (`tests/core_rom/rom.rs`, an iterator sum and
 max, links at about 16 KB and runs in the emulator). Programs larger than 32 KiB
 need MBC banking with cross-bank calls, which is not built. See the
 `sangoku-30k.9.1` children.
+
+Immediate abort removes the ordinary panic-reporting path, but unoptimized
+slice-range failure helpers can still retain formatting arguments. The sort
+example remains subject to the cartridge size limit.
 
 Compilation support does not guarantee a practical ROM footprint. General float
 and wide-integer formatting are currently too large for normal use in the

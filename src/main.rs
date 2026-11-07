@@ -186,7 +186,7 @@ fn rustc_command(root: &Path, opt_level: &str) -> Command {
         .arg(root.join("targets/lr35902.json"))
         .args([
             "--crate-type=lib",
-            "-Cpanic=abort",
+            "-Cpanic=immediate-abort",
             "-Cdebug-assertions=off",
         ])
         .arg(format!("--remap-path-prefix={}=.", root.display()))
@@ -435,7 +435,10 @@ fn modified(path: &Path) -> Option<SystemTime> {
 }
 
 fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLibraries, String> {
-    let libraries = CoreLibraries(root.join("build/core").join(format!("opt-{opt_level}")));
+    let libraries = CoreLibraries(
+        root.join("build/core/immediate-abort")
+            .join(format!("opt-{opt_level}")),
+    );
     let backend_time = modified(backend);
     let fresh = [libraries.core_asm(), libraries.builtins_asm()]
         .iter()

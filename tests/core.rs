@@ -21,7 +21,7 @@ fn compile(
             "--target",
             "targets/lr35902.json",
             "-Zunstable-options",
-            "-Cpanic=abort",
+            "-Cpanic=immediate-abort",
             "--emit=metadata",
             "--crate-name",
             name,
@@ -153,7 +153,7 @@ fn backend_lowers_fixture(source: &str) -> Result<()> {
             "--target",
             "targets/lr35902.json",
             "-Zunstable-options",
-            "-Cpanic=abort",
+            "-Cpanic=immediate-abort",
         ])
         .arg(format!(
             "-Zcodegen-backend={}",

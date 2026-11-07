@@ -10,7 +10,7 @@
   "target-c-int-width": 16,
   "linker-flavor": "gnu-lld",
   "executables": false,
-  "panic-strategy": "abort",
+  "panic-strategy": "immediate-abort",
   "disable-redzone": true,
   "max-atomic-width": 0
 }

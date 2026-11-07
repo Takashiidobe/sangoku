@@ -60,7 +60,7 @@ core() {
     local out
     out=$(mktemp -d)
     rustup run gbc-lr35902 rustc --edition=2024 --crate-type=rlib --crate-name core \
-        --target "$root/targets/lr35902.json" -Zunstable-options -Cpanic=abort \
+        --target "$root/targets/lr35902.json" -Zunstable-options -Cpanic=immediate-abort \
         --emit=metadata -o "$out/libcore.rmeta" "$fork/library/core/src/lib.rs" \
         -Awarnings
     rm -rf "$out"

@@ -37,7 +37,7 @@ def rustc(extra, source, output, env):
     cmd = [
         "rustc", f"+{TOOLCHAIN}", "--edition=2024", "--crate-type=rlib",
         "--target", str(ROOT / "targets/lr35902.json"), "-Zunstable-options",
-        "-Cpanic=abort", "-Copt-level=0", "-Awarnings",
+        "-Cpanic=immediate-abort", "-Copt-level=0", "-Awarnings",
         f"-Zcodegen-backend={BACKEND}", "--emit=asm,llvm-ir,metadata",
         *extra, str(source), "-o", str(output),
     ]
