@@ -63,7 +63,8 @@ The default is `0` (unoptimized). Levels `1`, `2`, and `3` prefer speed; `s` and
 `z` prefer smaller code.
 
 The example ROM calls `gbc_main` and then idles. It does not provide graphics,
-input, or audio yet.
+input, or audio yet. Startup places the stack at `$E000`, growing downward into
+work RAM; high RAM is too small for unoptimized `core` iterator call chains.
 
 ## Goals and status
 

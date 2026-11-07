@@ -16,7 +16,7 @@ fn program_using_core_links_and_runs() -> Result<()> {
         String::from_utf8_lossy(&output.stderr)
     );
     let mut emulator = Emulator::new(&fs::read(&rom)?, 0x100)?;
-    emulator.set_sp(0xfffe);
+    emulator.set_sp(0xe000);
     for _ in 0..2_000_000 {
         let before = emulator.pc;
         emulator.step()?;

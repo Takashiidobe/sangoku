@@ -115,7 +115,7 @@ fn run_rom(rom: &Path) -> Result<(), String> {
     let image =
         fs::read(rom).map_err(|error| format!("could not read {}: {error}", rom.display()))?;
     let mut emulator = Emulator::new(&image, 0x100).map_err(|error| error.to_string())?;
-    emulator.set_sp(0xFFFE);
+    emulator.set_sp(0xE000);
     let mut stdout = io::stdout().lock();
     let mut printed = 0;
     for _ in 0..MAX_INSTRUCTIONS {

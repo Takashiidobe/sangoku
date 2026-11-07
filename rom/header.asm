@@ -10,7 +10,7 @@ SECTION "Cartridge entry", ROM0[$100]
 
 SECTION "Startup", ROM0
 Start:
-    ld sp, $FFFE
+    ld sp, $E000
     call __rust_gbc_main
 .idle
     halt

@@ -15,10 +15,15 @@ fn run_example(name: &str) -> Result<(String, u8)> {
         String::from_utf8_lossy(&output.stderr)
     );
     let mut emulator = Emulator::new(&fs::read(&rom)?, 0x100)?;
-    emulator.set_sp(0xfffe);
+    emulator.set_sp(0xe000);
     for _ in 0..200_000_000u64 {
         let before = emulator.pc;
         emulator.step()?;
+        ensure!(
+            (0xc000..=0xe000).contains(&emulator.sp()),
+            "{name} stack left work RAM: SP={:#06x}",
+            emulator.sp()
+        );
         if emulator.pc == before {
             return Ok((String::from_utf8(emulator.serial.clone())?, emulator.a));
         }
