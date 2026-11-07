@@ -1264,3 +1264,38 @@ fn i8_constant_shifts_and_rotates_match_host() -> Result<()> {
     }
     Ok(())
 }
+
+#[test]
+fn i8_overflow_ops_match_host() -> Result<()> {
+    let program = program("overflow-i8")?;
+    let edges = [0u8, 1, 2, 0x0f, 0x10, 0x7e, 0x7f, 0x80, 0x81, 0xfe, 0xff];
+    let run = |op: &str, a: u8, b: u8| -> Result<(u8, bool)> {
+        let r = invoke(&program, &format!("__rust_{op}_overflow_i8"), &[a, b])?;
+        Ok((r as u8, (r >> 8) as u8 != 0))
+    };
+    for a in edges {
+        for b in edges {
+            let (sa, sb) = (a as i8, b as i8);
+            assert_eq!(run("uadd", a, b)?, a.overflowing_add(b), "uadd {a} {b}");
+            assert_eq!(run("usub", a, b)?, a.overflowing_sub(b), "usub {a} {b}");
+            assert_eq!(run("umul", a, b)?, a.overflowing_mul(b), "umul {a} {b}");
+            let signed = |(v, o): (i8, bool)| (v as u8, o);
+            assert_eq!(
+                run("sadd", a, b)?,
+                signed(sa.overflowing_add(sb)),
+                "sadd {sa} {sb}"
+            );
+            assert_eq!(
+                run("ssub", a, b)?,
+                signed(sa.overflowing_sub(sb)),
+                "ssub {sa} {sb}"
+            );
+            assert_eq!(
+                run("smul", a, b)?,
+                signed(sa.overflowing_mul(sb)),
+                "smul {sa} {sb}"
+            );
+        }
+    }
+    Ok(())
+}
