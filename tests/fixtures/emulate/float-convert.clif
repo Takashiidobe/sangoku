@@ -1,0 +1,345 @@
+set enable_verifier=false
+target z80
+
+function %from_sint_i8(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = fcvt_from_sint.f32 v1
+    v9 = bitcast.i32 v2
+    return v9
+}
+
+function %to_sint_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v9 = fcvt_to_sint.i8 v1
+    return v9
+}
+
+function %to_sint_sat_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v9 = fcvt_to_sint_sat.i8 v1
+    return v9
+}
+
+function %from_uint_i8(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = fcvt_from_uint.f32 v1
+    v9 = bitcast.i32 v2
+    return v9
+}
+
+function %to_uint_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v9 = fcvt_to_uint.i8 v1
+    return v9
+}
+
+function %to_uint_sat_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v9 = fcvt_to_uint_sat.i8 v1
+    return v9
+}
+
+function %from_sint_i16(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = fcvt_from_sint.f32 v1
+    v9 = bitcast.i32 v2
+    return v9
+}
+
+function %to_sint_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v9 = fcvt_to_sint.i16 v1
+    return v9
+}
+
+function %to_sint_sat_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v9 = fcvt_to_sint_sat.i16 v1
+    return v9
+}
+
+function %from_uint_i16(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = fcvt_from_uint.f32 v1
+    v9 = bitcast.i32 v2
+    return v9
+}
+
+function %to_uint_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v9 = fcvt_to_uint.i16 v1
+    return v9
+}
+
+function %to_uint_sat_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v9 = fcvt_to_uint_sat.i16 v1
+    return v9
+}
+
+function %from_sint_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = fcvt_from_sint.f32 v1
+    v9 = bitcast.i32 v2
+    return v9
+}
+
+function %to_sint_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v9 = fcvt_to_sint.i32 v1
+    return v9
+}
+
+function %to_sint_sat_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v9 = fcvt_to_sint_sat.i32 v1
+    return v9
+}
+
+function %from_uint_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = fcvt_from_uint.f32 v1
+    v9 = bitcast.i32 v2
+    return v9
+}
+
+function %to_uint_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v9 = fcvt_to_uint.i32 v1
+    return v9
+}
+
+function %to_uint_sat_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v9 = fcvt_to_uint_sat.i32 v1
+    return v9
+}
+
+function %h_fadd(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = load.f16 v0+4
+    v3 = fadd v1, v2
+    v9 = bitcast.i16 v3
+    return v9
+}
+
+function %h_fsub(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = load.f16 v0+4
+    v3 = fsub v1, v2
+    v9 = bitcast.i16 v3
+    return v9
+}
+
+function %h_fmul(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = load.f16 v0+4
+    v3 = fmul v1, v2
+    v9 = bitcast.i16 v3
+    return v9
+}
+
+function %h_fdiv(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = load.f16 v0+4
+    v3 = fdiv v1, v2
+    v9 = bitcast.i16 v3
+    return v9
+}
+
+function %h_fmin(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = load.f16 v0+4
+    v3 = fmin v1, v2
+    v9 = bitcast.i16 v3
+    return v9
+}
+
+function %h_fmax(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = load.f16 v0+4
+    v3 = fmax v1, v2
+    v9 = bitcast.i16 v3
+    return v9
+}
+
+function %h_sqrt(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v3 = sqrt v1
+    v9 = bitcast.i16 v3
+    return v9
+}
+
+function %h_trunc(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v3 = trunc v1
+    v9 = bitcast.i16 v3
+    return v9
+}
+
+function %h_floor(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v3 = floor v1
+    v9 = bitcast.i16 v3
+    return v9
+}
+
+function %h_ceil(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v3 = ceil v1
+    v9 = bitcast.i16 v3
+    return v9
+}
+
+function %h_nearest(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v3 = nearest v1
+    v9 = bitcast.i16 v3
+    return v9
+}
+
+function %h_fcmp_eq(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = load.f16 v0+4
+    v9 = fcmp eq v1, v2
+    return v9
+}
+
+function %h_fcmp_ne(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = load.f16 v0+4
+    v9 = fcmp ne v1, v2
+    return v9
+}
+
+function %h_fcmp_lt(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = load.f16 v0+4
+    v9 = fcmp lt v1, v2
+    return v9
+}
+
+function %h_fcmp_le(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = load.f16 v0+4
+    v9 = fcmp le v1, v2
+    return v9
+}
+
+function %h_fcmp_gt(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = load.f16 v0+4
+    v9 = fcmp gt v1, v2
+    return v9
+}
+
+function %h_fcmp_ge(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = load.f16 v0+4
+    v9 = fcmp ge v1, v2
+    return v9
+}
+
+function %h_fcmp_uno(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = load.f16 v0+4
+    v9 = fcmp uno v1, v2
+    return v9
+}
+
+function %h_promote(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v2 = fpromote.f32 v1
+    v9 = bitcast.i32 v2
+    return v9
+}
+
+function %h_demote(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = fdemote.f16 v1
+    v9 = bitcast.i16 v2
+    return v9
+}
+
+function %h_from_sint_i8(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0
+    v2 = fcvt_from_sint.f16 v1
+    v9 = bitcast.i16 v2
+    return v9
+}
+
+function %h_to_sint_sat_i8(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v9 = fcvt_to_sint_sat.i8 v1
+    return v9
+}
+
+function %h_from_sint_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = fcvt_from_sint.f16 v1
+    v9 = bitcast.i16 v2
+    return v9
+}
+
+function %h_to_sint_sat_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v9 = fcvt_to_sint_sat.i16 v1
+    return v9
+}
+
+function %h_from_sint_i32(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = fcvt_from_sint.f16 v1
+    v9 = bitcast.i16 v2
+    return v9
+}
+
+function %h_to_sint_sat_i32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f16 v0
+    v9 = fcvt_to_sint_sat.i32 v1
+    return v9
+}

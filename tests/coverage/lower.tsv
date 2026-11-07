@@ -56,7 +56,7 @@ call.arg	i64	unsupported	Unsupported feature: value type i64 requires 8 register
 call.arg	i8	ok	
 call_indirect	i8	ok	
 ceil	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-ceil	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = ceil.f16 v0`, type = `Some(types::F16)`
+ceil	f16	ok	
 ceil	f32	ok	
 ceil	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 cls	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
@@ -83,39 +83,39 @@ fabs	f16	ok
 fabs	f32	ok	
 fabs	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fadd	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fadd	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fadd.f16 v0, v1`, type = `Some(types::F16)`
+fadd	f16	ok	
 fadd	f32	ok	
 fadd	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.eq	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcmp.eq	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 eq v0, v1`, type = `Some(types::I8)`
+fcmp.eq	f16	ok	
 fcmp.eq	f32	ok	
 fcmp.eq	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.ge	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcmp.ge	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 ge v0, v1`, type = `Some(types::I8)`
+fcmp.ge	f16	ok	
 fcmp.ge	f32	ok	
 fcmp.ge	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.gt	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcmp.gt	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 gt v0, v1`, type = `Some(types::I8)`
+fcmp.gt	f16	ok	
 fcmp.gt	f32	ok	
 fcmp.gt	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.le	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcmp.le	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 le v0, v1`, type = `Some(types::I8)`
+fcmp.le	f16	ok	
 fcmp.le	f32	ok	
 fcmp.le	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.lt	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcmp.lt	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 lt v0, v1`, type = `Some(types::I8)`
+fcmp.lt	f16	ok	
 fcmp.lt	f32	ok	
 fcmp.lt	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.ne	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcmp.ne	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 ne v0, v1`, type = `Some(types::I8)`
+fcmp.ne	f16	ok	
 fcmp.ne	f32	ok	
 fcmp.ne	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.ord	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcmp.ord	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 ord v0, v1`, type = `Some(types::I8)`
+fcmp.ord	f16	ok	
 fcmp.ord	f32	ok	
 fcmp.ord	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcmp.uno	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcmp.uno	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcmp.f16 uno v0, v1`, type = `Some(types::I8)`
+fcmp.uno	f16	ok	
 fcmp.uno	f32	ok	
 fcmp.uno	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcopysign	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
@@ -123,49 +123,49 @@ fcopysign	f16	ok
 fcopysign	f32	ok	
 fcopysign	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_from_sint	i16->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_from_sint	i16->f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_from_sint.f16 v0`, type = `Some(types::F16)`
-fcvt_from_sint	i16->f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_from_sint.f32 v0`, type = `Some(types::F32)`
+fcvt_from_sint	i16->f16	ok	
+fcvt_from_sint	i16->f32	ok	
 fcvt_from_sint	i16->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_from_sint	i32->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_from_sint	i32->f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_from_sint.f16 v0`, type = `Some(types::F16)`
-fcvt_from_sint	i32->f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_from_sint.f32 v0`, type = `Some(types::F32)`
+fcvt_from_sint	i32->f16	ok	
+fcvt_from_sint	i32->f32	ok	
 fcvt_from_sint	i32->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_from_sint	i64->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_from_sint	i64->f16	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
 fcvt_from_sint	i64->f32	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
 fcvt_from_sint	i64->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_from_sint	i8->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_from_sint	i8->f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_from_sint.f16 v0`, type = `Some(types::F16)`
-fcvt_from_sint	i8->f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_from_sint.f32 v0`, type = `Some(types::F32)`
+fcvt_from_sint	i8->f16	ok	
+fcvt_from_sint	i8->f32	ok	
 fcvt_from_sint	i8->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_from_uint	i16->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_from_uint	i16->f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_from_uint.f16 v0`, type = `Some(types::F16)`
-fcvt_from_uint	i16->f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_from_uint.f32 v0`, type = `Some(types::F32)`
+fcvt_from_uint	i16->f16	ok	
+fcvt_from_uint	i16->f32	ok	
 fcvt_from_uint	i16->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_from_uint	i32->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_from_uint	i32->f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_from_uint.f16 v0`, type = `Some(types::F16)`
-fcvt_from_uint	i32->f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_from_uint.f32 v0`, type = `Some(types::F32)`
+fcvt_from_uint	i32->f16	ok	
+fcvt_from_uint	i32->f32	ok	
 fcvt_from_uint	i32->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_from_uint	i64->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_from_uint	i64->f16	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
 fcvt_from_uint	i64->f32	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
 fcvt_from_uint	i64->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_from_uint	i8->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_from_uint	i8->f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_from_uint.f16 v0`, type = `Some(types::F16)`
-fcvt_from_uint	i8->f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_from_uint.f32 v0`, type = `Some(types::F32)`
+fcvt_from_uint	i8->f16	ok	
+fcvt_from_uint	i8->f32	ok	
 fcvt_from_uint	i8->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_sint	f128->i16	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_sint	f128->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_sint	f128->i64	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_sint	f128->i8	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_to_sint	f16->i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_sint.i16 v0`, type = `Some(types::I16)`
-fcvt_to_sint	f16->i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_sint.i32 v0`, type = `Some(types::I32)`
+fcvt_to_sint	f16->i16	ok	
+fcvt_to_sint	f16->i32	ok	
 fcvt_to_sint	f16->i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-fcvt_to_sint	f16->i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_sint.i8 v0`, type = `Some(types::I8)`
-fcvt_to_sint	f32->i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_sint.i16 v0`, type = `Some(types::I16)`
-fcvt_to_sint	f32->i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_sint.i32 v0`, type = `Some(types::I32)`
+fcvt_to_sint	f16->i8	ok	
+fcvt_to_sint	f32->i16	ok	
+fcvt_to_sint	f32->i32	ok	
 fcvt_to_sint	f32->i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-fcvt_to_sint	f32->i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_sint.i8 v0`, type = `Some(types::I8)`
+fcvt_to_sint	f32->i8	ok	
 fcvt_to_sint	f64->i16	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_sint	f64->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_sint	f64->i64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
@@ -174,14 +174,14 @@ fcvt_to_sint_sat	f128->i16	unsupported	Unsupported feature: Unsupported type for
 fcvt_to_sint_sat	f128->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_sint_sat	f128->i64	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_sint_sat	f128->i8	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_to_sint_sat	f16->i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_sint_sat.i16 v0`, type = `Some(types::I16)`
-fcvt_to_sint_sat	f16->i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_sint_sat.i32 v0`, type = `Some(types::I32)`
+fcvt_to_sint_sat	f16->i16	ok	
+fcvt_to_sint_sat	f16->i32	ok	
 fcvt_to_sint_sat	f16->i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-fcvt_to_sint_sat	f16->i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_sint_sat.i8 v0`, type = `Some(types::I8)`
-fcvt_to_sint_sat	f32->i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_sint_sat.i16 v0`, type = `Some(types::I16)`
-fcvt_to_sint_sat	f32->i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_sint_sat.i32 v0`, type = `Some(types::I32)`
+fcvt_to_sint_sat	f16->i8	ok	
+fcvt_to_sint_sat	f32->i16	ok	
+fcvt_to_sint_sat	f32->i32	ok	
 fcvt_to_sint_sat	f32->i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-fcvt_to_sint_sat	f32->i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_sint_sat.i8 v0`, type = `Some(types::I8)`
+fcvt_to_sint_sat	f32->i8	ok	
 fcvt_to_sint_sat	f64->i16	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_sint_sat	f64->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_sint_sat	f64->i64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
@@ -190,14 +190,14 @@ fcvt_to_uint	f128->i16	unsupported	Unsupported feature: Unsupported type for LR3
 fcvt_to_uint	f128->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_uint	f128->i64	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_uint	f128->i8	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_to_uint	f16->i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_uint.i16 v0`, type = `Some(types::I16)`
-fcvt_to_uint	f16->i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_uint.i32 v0`, type = `Some(types::I32)`
+fcvt_to_uint	f16->i16	ok	
+fcvt_to_uint	f16->i32	ok	
 fcvt_to_uint	f16->i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-fcvt_to_uint	f16->i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_uint.i8 v0`, type = `Some(types::I8)`
-fcvt_to_uint	f32->i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_uint.i16 v0`, type = `Some(types::I16)`
-fcvt_to_uint	f32->i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_uint.i32 v0`, type = `Some(types::I32)`
+fcvt_to_uint	f16->i8	ok	
+fcvt_to_uint	f32->i16	ok	
+fcvt_to_uint	f32->i32	ok	
 fcvt_to_uint	f32->i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-fcvt_to_uint	f32->i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_uint.i8 v0`, type = `Some(types::I8)`
+fcvt_to_uint	f32->i8	ok	
 fcvt_to_uint	f64->i16	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_uint	f64->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_uint	f64->i64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
@@ -206,14 +206,14 @@ fcvt_to_uint_sat	f128->i16	unsupported	Unsupported feature: Unsupported type for
 fcvt_to_uint_sat	f128->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_uint_sat	f128->i64	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fcvt_to_uint_sat	f128->i8	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fcvt_to_uint_sat	f16->i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_uint_sat.i16 v0`, type = `Some(types::I16)`
-fcvt_to_uint_sat	f16->i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_uint_sat.i32 v0`, type = `Some(types::I32)`
+fcvt_to_uint_sat	f16->i16	ok	
+fcvt_to_uint_sat	f16->i32	ok	
 fcvt_to_uint_sat	f16->i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-fcvt_to_uint_sat	f16->i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_uint_sat.i8 v0`, type = `Some(types::I8)`
-fcvt_to_uint_sat	f32->i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_uint_sat.i16 v0`, type = `Some(types::I16)`
-fcvt_to_uint_sat	f32->i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_uint_sat.i32 v0`, type = `Some(types::I32)`
+fcvt_to_uint_sat	f16->i8	ok	
+fcvt_to_uint_sat	f32->i16	ok	
+fcvt_to_uint_sat	f32->i32	ok	
 fcvt_to_uint_sat	f32->i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-fcvt_to_uint_sat	f32->i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fcvt_to_uint_sat.i8 v0`, type = `Some(types::I8)`
+fcvt_to_uint_sat	f32->i8	ok	
 fcvt_to_uint_sat	f64->i16	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_uint_sat	f64->i32	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fcvt_to_uint_sat	f64->i64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
@@ -221,15 +221,15 @@ fcvt_to_uint_sat	f64->i8	unsupported	Unsupported feature: Unsupported type for L
 fdemote	f128->f16	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fdemote	f128->f32	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fdemote	f128->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
-fdemote	f32->f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fdemote.f16 v0`, type = `Some(types::F16)`
+fdemote	f32->f16	ok	
 fdemote	f64->f16	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fdemote	f64->f32	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fdiv	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fdiv	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fdiv.f16 v0, v1`, type = `Some(types::F16)`
+fdiv	f16	ok	
 fdiv	f32	ok	
 fdiv	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 floor	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-floor	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = floor.f16 v0`, type = `Some(types::F16)`
+floor	f16	ok	
 floor	f32	ok	
 floor	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fma	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
@@ -237,15 +237,15 @@ fma	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `
 fma	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fma.f32 v0, v1, v2`, type = `Some(types::F32)`
 fma	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fmax	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fmax	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fmax.f16 v0, v1`, type = `Some(types::F16)`
+fmax	f16	ok	
 fmax	f32	ok	
 fmax	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fmin	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fmin	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fmin.f16 v0, v1`, type = `Some(types::F16)`
+fmin	f16	ok	
 fmin	f32	ok	
 fmin	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fmul	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fmul	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fmul.f16 v0, v1`, type = `Some(types::F16)`
+fmul	f16	ok	
 fmul	f32	ok	
 fmul	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fneg	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
@@ -253,13 +253,13 @@ fneg	f16	ok
 fneg	f32	ok	
 fneg	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fpromote	f16->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fpromote	f16->f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fpromote.f32 v0`, type = `Some(types::F32)`
+fpromote	f16->f32	ok	
 fpromote	f16->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fpromote	f32->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fpromote	f32->f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fpromote	f64->f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fsub	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-fsub	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fsub.f16 v0, v1`, type = `Some(types::F16)`
+fsub	f16	ok	
 fsub	f32	ok	
 fsub	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 func_addr	-	ok	
@@ -380,7 +380,7 @@ load.offset	i32	ok
 load.offset	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
 load.offset	i8	ok	
 nearest	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-nearest	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = nearest.f16 v0`, type = `Some(types::F16)`
+nearest	f16	ok	
 nearest	f32	ok	
 nearest	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 popcnt	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
@@ -461,7 +461,7 @@ smulhi	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst 
 smulhi	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
 smulhi	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smulhi.i8 v0, v1`, type = `Some(types::I8)`
 sqrt	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-sqrt	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sqrt.f16 v0`, type = `Some(types::F16)`
+sqrt	f16	ok	
 sqrt	f32	ok	
 sqrt	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 srem	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
@@ -499,7 +499,7 @@ trap	-	ok
 trapnz	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `trapnz.i8 v0, user1`, type = `None`
 trapz	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `trapz.i8 v0, user1`, type = `None`
 trunc	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
-trunc	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = trunc.f16 v0`, type = `Some(types::F16)`
+trunc	f16	ok	
 trunc	f32	ok	
 trunc	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 uadd_overflow	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128

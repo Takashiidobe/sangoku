@@ -161,6 +161,20 @@ sf_shr1s:
     set 0, [hl]
     ret
 
+; hl -> 32-bit value; shift right one bit
+sf_shr1:
+    inc hl
+    inc hl
+    inc hl
+    srl [hl]
+    dec hl
+    rr [hl]
+    dec hl
+    rr [hl]
+    dec hl
+    rr [hl]
+    ret
+
 ; hl -> 32-bit value; shift left one bit
 sf_shl1:
     sla [hl]
@@ -1293,3 +1307,453 @@ __gbc_fround32::
     or a
     jr z, .one
     jp sf_ret_zero
+
+; i32 argument, then a byte: 1 when the integer is signed
+EXPORT __gbc_fcvtfromint32
+__gbc_fcvtfromint32::
+    LOAD_A
+    ld hl, sp + 3
+    ld a, [hl]
+    ld [wMask], a
+    xor a
+    ld [wS], a
+    ld a, [wMask]
+    or a
+    jr z, .magnitude
+    ld a, [wA + 3]
+    bit 7, a
+    jr z, .magnitude
+    ld a, $80
+    ld [wS], a
+    ld a, [wA]
+    cpl
+    add 1
+    ld [wA], a
+    FOR i, 1, 4
+    ld a, [wA + i]
+    cpl
+    adc 0
+    ld [wA + i], a
+    ENDR
+.magnitude
+    ld hl, wA
+    call sf_is_zero32
+    jp z, sf_ret_zero
+    FOR i, 4
+    ld a, [wA + i]
+    ld [wM + i], a
+    ENDR
+    ld a, 158
+    ld [wE], a
+    xor a
+    ld [wE + 1], a
+.normalize
+    ld a, [wM + 3]
+    bit 7, a
+    jr nz, .normalized
+    ld hl, wM
+    call sf_shl1
+    call sf_dec_e
+    jr .normalize
+.normalized
+    ld hl, wM
+    call sf_shr1s
+    jp sf_roundpack
+
+; f32 argument, then a mode byte: bit 0 unsigned, bit 1 saturating,
+; bits 2-3 result width code (0 = 8, 1 = 16, 2 = 32 bits). Out of range or
+; NaN traps unless saturating; the result is a sign-extended i32.
+EXPORT __gbc_fcvttoint32
+__gbc_fcvttoint32::
+    LOAD_A
+    ld hl, sp + 3
+    ld a, [hl]
+    ld [wMask], a
+    CLASSIFY wA
+    cp 2
+    jp z, .nan
+    ld d, a
+    ld a, [wA + 3]
+    and $80
+    ld [wS], a
+    ld a, [wMask]
+    rrca
+    rrca
+    and 3
+    ld b, a
+    xor a
+    ld [wMk + 1], a
+    ld [wMk + 2], a
+    ld [wMk + 3], a
+    ld a, $ff
+    ld [wMk], a
+    ld a, b
+    or a
+    jr z, .mask_done
+    ld a, $ff
+    ld [wMk + 1], a
+    ld a, b
+    cp 2
+    jr c, .mask_done
+    ld a, $ff
+    ld [wMk + 2], a
+    ld [wMk + 3], a
+.mask_done
+    ld a, [wMask]
+    bit 0, a
+    jr nz, .unsigned_limit
+    ld hl, wMk + 3
+    srl [hl]
+    dec hl
+    rr [hl]
+    dec hl
+    rr [hl]
+    dec hl
+    rr [hl]
+    ld a, [wS]
+    or a
+    jr z, .have_limit
+    ld hl, wMk
+    inc [hl]
+    jr nz, .have_limit
+    inc hl
+    inc [hl]
+    jr nz, .have_limit
+    inc hl
+    inc [hl]
+    jr nz, .have_limit
+    inc hl
+    inc [hl]
+    jr .have_limit
+.unsigned_limit
+    ld a, [wS]
+    or a
+    jr z, .have_limit
+    xor a
+    FOR i, 4
+    ld [wMk + i], a
+    ENDR
+.have_limit
+    ld a, d
+    or a
+    jr nz, .overflow
+    ld a, [wA + 3]
+    add a
+    ld b, a
+    ld a, [wA + 2]
+    rlca
+    ld a, b
+    adc 0
+    ld d, a
+    cp 127
+    jr c, .zero
+    cp 159
+    jr nc, .overflow
+    ld a, [wA]
+    ld [wM], a
+    ld a, [wA + 1]
+    ld [wM + 1], a
+    ld a, [wA + 2]
+    and $7f
+    or $80
+    ld [wM + 2], a
+    xor a
+    ld [wM + 3], a
+    ld a, d
+    sub 127
+    cp 23
+    jr c, .shift_right
+    sub 23
+    jr z, .have_magnitude
+    ld c, a
+.shift_left
+    ld hl, wM
+    call sf_shl1
+    dec c
+    jr nz, .shift_left
+    jr .have_magnitude
+.shift_right
+    ld c, a
+    ld a, 23
+    sub c
+    ld c, a
+.shift_right_loop
+    ld hl, wM
+    call sf_shr1
+    dec c
+    jr nz, .shift_right_loop
+.have_magnitude
+    ld hl, wM
+    ld de, wMk
+    call sf_cmp32
+    jr c, .emit
+    jr z, .emit
+.overflow
+    ld a, [wMask]
+    bit 1, a
+    jr nz, .saturate
+    rst $10
+.saturate
+    FOR i, 4
+    ld a, [wMk + i]
+    ld [wM + i], a
+    ENDR
+    jr .emit
+.zero
+    xor a
+    FOR i, 4
+    ld [wM + i], a
+    ENDR
+.emit
+    ld a, [wS]
+    or a
+    jr z, .return
+    ld a, [wM]
+    cpl
+    add 1
+    ld [wM], a
+    FOR i, 1, 4
+    ld a, [wM + i]
+    cpl
+    adc 0
+    ld [wM + i], a
+    ENDR
+.return
+    ld hl, wM
+    jp sf_ret_hl
+.nan
+    ld a, [wMask]
+    bit 1, a
+    jr nz, .nan_zero
+    rst $10
+.nan_zero
+    xor a
+    ld b, a
+    ld c, a
+    ld d, a
+    ret
+
+; f16 bits zero-extended to i32 in, f32 bits out
+EXPORT __gbc_f16tof32
+__gbc_f16tof32::
+    LOAD_A
+    ld a, [wA + 1]
+    and $80
+    ld [wS], a
+    ld a, [wA + 1]
+    and $7c
+    rrca
+    rrca
+    ld d, a
+    ld a, [wA]
+    ld [wM], a
+    ld a, [wA + 1]
+    and 3
+    ld [wM + 1], a
+    ld a, d
+    cp 31
+    jr z, .special
+    or a
+    jr nz, .normal
+    ld a, [wM]
+    ld b, a
+    ld a, [wM + 1]
+    or b
+    jp z, sf_ret_zero
+    ld a, 113
+    ld [wE], a
+.subnormal
+    ld a, [wM + 1]
+    bit 2, a
+    jr nz, .subnormal_done
+    ld hl, wM
+    sla [hl]
+    inc hl
+    rl [hl]
+    ld hl, wE
+    dec [hl]
+    jr .subnormal
+.subnormal_done
+    ld a, [wM + 1]
+    and 3
+    ld [wM + 1], a
+    ld a, [wE]
+    ld d, a
+    jr .pack
+.normal
+    ld a, d
+    add 112
+    ld d, a
+.pack
+    ld a, [wM]
+    and 7
+    swap a
+    sla a
+    ld [wR + 1], a
+    ld a, [wM + 1]
+    rrca
+    rrca
+    rrca
+    ld b, a
+    ld a, [wM]
+    rrca
+    rrca
+    rrca
+    and $1f
+    or b
+    ld b, a
+    ld a, d
+    srl a
+    ld c, a
+    ld a, b
+    jr nc, .store_high
+    or $80
+.store_high
+    ld [wR + 2], a
+    ld a, [wS]
+    or c
+    ld [wR + 3], a
+    xor a
+    ld [wR], a
+    jp sf_return
+.special
+    ld a, [wM]
+    ld b, a
+    ld a, [wM + 1]
+    or b
+    jp nz, sf_ret_nan
+    jp sf_ret_inf
+
+; f32 in, f16 bits out in A, B (C and D are zero), round to nearest even
+EXPORT __gbc_f32tof16
+__gbc_f32tof16::
+    LOAD_A
+    CLASSIFY wA
+    ld d, a
+    ld a, [wA + 3]
+    and $80
+    ld [wS], a
+    ld a, d
+    cp 2
+    jp z, .nan
+    or a
+    jp nz, .inf
+    ld hl, wA
+    call sf_is_zero_mag
+    jp z, .zero
+    UNPACK wA, wXa
+    NORMALIZE wXa
+    ld a, [wXa + X_E]
+    sub 112
+    ld [wE], a
+    ld a, [wXa + X_E + 1]
+    sbc 0
+    ld [wE + 1], a
+    FOR i, 4
+    ld a, [wXa + X_M + i]
+    ld [wM + i], a
+    ENDR
+    ld a, [wE + 1]
+    bit 7, a
+    jr nz, .low_exponent
+    or a
+    jp nz, .inf
+    ld a, [wE]
+    cp 31
+    jp nc, .inf
+    or a
+    jr nz, .extract
+.low_exponent
+    ld a, [wE]
+    cpl
+    add 2
+    ld l, a
+    ld a, [wE + 1]
+    cpl
+    adc 0
+    or a
+    jp nz, .zero
+    ld a, l
+    cp 12
+    jp nc, .zero
+    ld b, a
+.denormalize
+    ld hl, wM
+    call sf_shr1s
+    dec b
+    jr nz, .denormalize
+    ld a, 1
+    ld [wE], a
+.extract
+    ld a, [wM + 3]
+    swap a
+    ld b, a
+    and $0f
+    ld h, a
+    ld a, b
+    and $f0
+    ld b, a
+    ld a, [wM + 2]
+    swap a
+    and $0f
+    or b
+    ld l, a
+    ld a, [wE]
+    dec a
+    sla a
+    sla a
+    add h
+    ld h, a
+    ld a, [wM + 2]
+    bit 3, a
+    jr z, .pack
+    and 7
+    ld b, a
+    ld a, [wM + 1]
+    or b
+    ld b, a
+    ld a, [wM]
+    or b
+    jr nz, .round_up
+    ld a, l
+    bit 0, a
+    jr z, .pack
+.round_up
+    inc l
+    jr nz, .pack
+    inc h
+.pack
+    ld a, h
+    cp $7c
+    jr c, .out
+    ld h, $7c
+    ld l, 0
+.out
+    ld a, [wS]
+    or h
+    ld b, a
+    ld a, l
+    ld c, 0
+    ld d, 0
+    ret
+.nan
+    xor a
+    ld b, $7e
+    ld c, a
+    ld d, a
+    ret
+.inf
+    ld a, [wS]
+    or $7c
+    ld b, a
+    xor a
+    ld c, a
+    ld d, a
+    ret
+.zero
+    ld a, [wS]
+    ld b, a
+    xor a
+    ld c, a
+    ld d, a
+    ret

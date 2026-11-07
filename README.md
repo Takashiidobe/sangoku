@@ -97,8 +97,10 @@ Rust data objects.
 
 f32 is a soft-float type held in four byte registers. `runtime/softfloat32.asm`
 implements correctly rounded add, sub, mul, div, sqrt, compare, min and max,
-plus trunc, floor, ceil and nearest; int/float conversions are still missing,
-and f16 only has bit-level ops. The fork's ASCII-only changes to `core` are being reverted
+trunc, floor, ceil and nearest, i8/i16/i32 conversions to and from f32
+(trapping and saturating), and f16 promote/demote. f16 arithmetic, compares
+and rounding promote to f32, operate and demote, which is correctly rounded.
+f64, f128 and i64 conversions are not supported. The fork's ASCII-only changes to `core` are being reverted
 (sangoku-30k).
 
 ## Testing

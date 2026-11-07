@@ -701,6 +701,397 @@ fn f32_rounding_ops_match_host() -> Result<()> {
     Ok(())
 }
 
+fn int_float_samples() -> Vec<f32> {
+    let mut values = unary_samples();
+    values.extend([
+        127.9,
+        -128.9,
+        128.0,
+        -129.0,
+        255.9,
+        256.0,
+        -0.9,
+        32767.9,
+        -32768.5,
+        32768.0,
+        65535.9,
+        65536.0,
+        2147483520.0,
+        2147483648.0,
+        -2147483648.0,
+        -2147483904.0,
+        4294967040.0,
+        4294967296.0,
+        -1.0,
+        0.99999994,
+    ]);
+    values
+}
+
+fn int_samples() -> Vec<i32> {
+    vec![
+        0,
+        1,
+        -1,
+        2,
+        127,
+        -128,
+        255,
+        256,
+        32767,
+        -32768,
+        65535,
+        65536,
+        16777216,
+        16777217,
+        16777219,
+        0x7FFF_FFFF,
+        i32::MIN,
+        0x7FFF_FF80,
+        0x7FFF_FFC0,
+        123456789,
+        -123456789,
+        0x0100_0001,
+    ]
+}
+
+#[test]
+fn int_to_f32_matches_host() -> Result<()> {
+    let program = program("float-convert")?;
+    for v in int_samples() {
+        let bytes = v.to_le_bytes();
+        let cases: [(&str, f32); 6] = [
+            ("from_sint_i8", f32::from(v as i8)),
+            ("from_uint_i8", f32::from(v as u8)),
+            ("from_sint_i16", f32::from(v as i16)),
+            ("from_uint_i16", f32::from(v as u16)),
+            ("from_sint_i32", v as f32),
+            ("from_uint_i32", (v as u32) as f32),
+        ];
+        for (name, expected) in cases {
+            let got = invoke(&program, &format!("__rust_{name}"), &bytes)?;
+            same_float(got, expected, &format!("{name} {v:#x}"));
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn f32_to_int_matches_host() -> Result<()> {
+    let program = program("float-convert")?;
+    for a in int_float_samples() {
+        let data = a.to_bits().to_le_bytes();
+        let run = |name: &str| invoke(&program, &format!("__rust_{name}"), &data);
+        let ctx = |name: &str| format!("{name} {:08x}", a.to_bits());
+        let t = a.trunc();
+        assert_eq!(
+            run("to_sint_sat_i8")? & 0xFF,
+            u32::from(a as i8 as u8),
+            "{}",
+            ctx("sat s8")
+        );
+        assert_eq!(
+            run("to_uint_sat_i8")? & 0xFF,
+            u32::from(a as u8),
+            "{}",
+            ctx("sat u8")
+        );
+        assert_eq!(
+            run("to_sint_sat_i16")? & 0xFFFF,
+            u32::from(a as i16 as u16),
+            "{}",
+            ctx("sat s16")
+        );
+        assert_eq!(
+            run("to_uint_sat_i16")? & 0xFFFF,
+            u32::from(a as u16),
+            "{}",
+            ctx("sat u16")
+        );
+        assert_eq!(
+            run("to_sint_sat_i32")?,
+            a as i32 as u32,
+            "{}",
+            ctx("sat s32")
+        );
+        assert_eq!(run("to_uint_sat_i32")?, a as u32, "{}", ctx("sat u32"));
+        if a.is_nan() {
+            continue;
+        }
+        if (-129.0..128.0).contains(&t) && t > -129.0 {
+            assert_eq!(
+                run("to_sint_i8")? & 0xFF,
+                u32::from(a as i8 as u8),
+                "{}",
+                ctx("s8")
+            );
+        }
+        if t > -1.0 && t < 256.0 {
+            assert_eq!(
+                run("to_uint_i8")? & 0xFF,
+                u32::from(a as u8),
+                "{}",
+                ctx("u8")
+            );
+        }
+        if t >= -32768.0 && t < 32768.0 {
+            assert_eq!(
+                run("to_sint_i16")? & 0xFFFF,
+                u32::from(a as i16 as u16),
+                "{}",
+                ctx("s16")
+            );
+        }
+        if t > -1.0 && t < 65536.0 {
+            assert_eq!(
+                run("to_uint_i16")? & 0xFFFF,
+                u32::from(a as u16),
+                "{}",
+                ctx("u16")
+            );
+        }
+        if t >= -2147483648.0 && t < 2147483648.0 {
+            assert_eq!(run("to_sint_i32")?, a as i32 as u32, "{}", ctx("s32"));
+        }
+        if t > -1.0 && t < 4294967296.0 {
+            assert_eq!(run("to_uint_i32")?, a as u32, "{}", ctx("u32"));
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn f32_to_int_traps_out_of_range() -> Result<()> {
+    let program = program("float-convert")?;
+    let cases: [(&str, f32); 8] = [
+        ("to_sint_i8", 128.0),
+        ("to_sint_i8", f32::NAN),
+        ("to_uint_i8", -1.0),
+        ("to_sint_i16", -32769.0),
+        ("to_uint_i16", 65536.0),
+        ("to_sint_i32", 2147483648.0),
+        ("to_uint_i32", f32::INFINITY),
+        ("to_uint_i32", -2.0),
+    ];
+    for (name, value) in cases {
+        let mut emulator = program.emulator(&format!("__rust_{name}"))?;
+        for (i, byte) in value.to_bits().to_le_bytes().iter().enumerate() {
+            emulator.memory[BASE as usize + i] = *byte;
+        }
+        emulator.b = BASE as u8;
+        emulator.c = (BASE >> 8) as u8;
+        emulator.set_sp(STACK - 2);
+        emulator.write16(STACK - 2, program.symbols["done"]);
+        emulator.run_until(0x0010, 2_000_000)?;
+    }
+    Ok(())
+}
+
+fn f16_to_f32_ref(bits: u16) -> f32 {
+    let sign = if bits & 0x8000 != 0 { -1.0f32 } else { 1.0 };
+    let exponent = i32::from((bits >> 10) & 0x1F);
+    let mantissa = f32::from(bits & 0x3FF);
+    match exponent {
+        0 => sign * mantissa * 2f32.powi(-24),
+        31 if mantissa == 0.0 => sign * f32::INFINITY,
+        31 => f32::NAN,
+        _ => sign * (1024.0 + mantissa) * 2f32.powi(exponent - 25),
+    }
+}
+
+fn f32_to_f16_ref(value: f32) -> u16 {
+    if value.is_nan() {
+        return 0x7E00;
+    }
+    let sign = if value.is_sign_negative() { 0x8000 } else { 0 };
+    let magnitude = f64::from(value.abs());
+    if magnitude >= 65520.0 {
+        return sign | 0x7C00;
+    }
+    let at = |bits: u16| f64::from(f16_to_f32_ref(bits));
+    let (mut lo, mut hi) = (0u16, 0x7BFFu16);
+    while lo < hi {
+        let mid = (lo + hi).div_ceil(2);
+        if at(mid) <= magnitude {
+            lo = mid;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    let below = at(lo);
+    if below == magnitude || lo == 0x7BFF {
+        return sign | lo;
+    }
+    let above = at(lo + 1);
+    let pick_up = match (magnitude - below).partial_cmp(&(above - magnitude)) {
+        Some(std::cmp::Ordering::Less) => false,
+        Some(std::cmp::Ordering::Greater) => true,
+        _ => lo & 1 == 1,
+    };
+    sign | if pick_up { lo + 1 } else { lo }
+}
+
+fn same_half(got: u32, expected: u16, context: &str) {
+    let got = got as u16;
+    let is_nan = |bits: u16| bits & 0x7C00 == 0x7C00 && bits & 0x3FF != 0;
+    if is_nan(expected) {
+        assert!(is_nan(got), "{context}: got {got:04x}");
+    } else {
+        assert_eq!(got, expected, "{context}");
+    }
+}
+
+fn half_samples() -> Vec<u16> {
+    let mut values = vec![
+        0x0000, 0x8000, 0x0001, 0x8001, 0x03FF, 0x0400, 0x3555, 0x3C00, 0xBC00, 0x3E00, 0x4000,
+        0x4248, 0x5640, 0x7BFF, 0xFBFF, 0x7C00, 0xFC00, 0x7E00, 0x7C01, 0x1234, 0xA5A5,
+    ];
+    let mut state = 0xC0FF_EE11u32;
+    for _ in 0..6 {
+        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
+        values.push((state >> 12) as u16);
+    }
+    values
+}
+
+fn half_operands(a: u16, b: u16) -> Vec<u8> {
+    let mut data = a.to_le_bytes().to_vec();
+    data.resize(4, 0);
+    data.extend(b.to_le_bytes());
+    data.resize(8, 0);
+    data
+}
+
+#[test]
+fn f16_promote_and_demote_match_reference() -> Result<()> {
+    let program = program("float-convert")?;
+    for bits in half_samples() {
+        let data = half_operands(bits, 0);
+        let got = invoke(&program, "__rust_h_promote", &data[..4])?;
+        same_float(got, f16_to_f32_ref(bits), &format!("promote {bits:04x}"));
+    }
+    let mut values = float_samples();
+    values.extend([
+        65519.99,
+        65520.0,
+        65504.0,
+        6.1035156e-5,
+        6.1e-5,
+        5.9604645e-8,
+        2.9802322e-8,
+        2.9802325e-8,
+        8.940697e-8,
+        1.0009766,
+        1.0004883,
+        1.0004884,
+        2049.0,
+        2050.0,
+        2051.0,
+        -65520.0,
+        6.0975552e-5,
+        6.1005354e-5,
+    ]);
+    let mut state = 0x5151_7777u32;
+    for _ in 0..300 {
+        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
+        let exponent = 96 + (state >> 8) % 55;
+        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
+        values.push(f32::from_bits(
+            (state & 1) << 31 | exponent << 23 | (state >> 8) & 0x7F_FFFF,
+        ));
+    }
+    for v in values {
+        let got = invoke(&program, "__rust_h_demote", &v.to_bits().to_le_bytes())?;
+        same_half(
+            got,
+            f32_to_f16_ref(v),
+            &format!("demote {:08x}", v.to_bits()),
+        );
+    }
+    Ok(())
+}
+
+#[test]
+fn f16_operations_match_reference() -> Result<()> {
+    let program = program("float-convert")?;
+    let values = half_samples();
+    let demote = f32_to_f16_ref;
+    for a in values.iter().copied() {
+        let fa = f16_to_f32_ref(a);
+        for b in values.iter().copied() {
+            let fb = f16_to_f32_ref(b);
+            let data = half_operands(a, b);
+            let run = |name: &str| invoke(&program, &format!("__rust_h_{name}"), &data);
+            let ctx = |op: &str| format!("{op} {a:04x} {b:04x}");
+            same_half(run("fadd")?, demote(fa + fb), &ctx("fadd"));
+            same_half(run("fsub")?, demote(fa - fb), &ctx("fsub"));
+            same_half(run("fmul")?, demote(fa * fb), &ctx("fmul"));
+            same_half(run("fdiv")?, demote(fa / fb), &ctx("fdiv"));
+            same_half(run("fmin")?, demote(host_min(fa, fb)), &ctx("fmin"));
+            same_half(run("fmax")?, demote(host_max(fa, fb)), &ctx("fmax"));
+            let unordered = fa.is_nan() || fb.is_nan();
+            let checks: [(&str, bool); 7] = [
+                ("eq", fa == fb),
+                ("ne", fa != fb),
+                ("lt", fa < fb),
+                ("le", fa <= fb),
+                ("gt", fa > fb),
+                ("ge", fa >= fb),
+                ("uno", unordered),
+            ];
+            for (cond, expected) in checks {
+                let got = run(&format!("fcmp_{cond}"))? & 0xFF;
+                assert_eq!(got, u32::from(expected), "{}", ctx(cond));
+            }
+        }
+        let data = half_operands(a, 0);
+        let run = |name: &str| invoke(&program, &format!("__rust_h_{name}"), &data[..4]);
+        let ctx = |op: &str| format!("{op} {a:04x}");
+        same_half(run("sqrt")?, demote(fa.sqrt()), &ctx("sqrt"));
+        same_half(run("trunc")?, demote(fa.trunc()), &ctx("trunc"));
+        same_half(run("floor")?, demote(fa.floor()), &ctx("floor"));
+        same_half(run("ceil")?, demote(fa.ceil()), &ctx("ceil"));
+        same_half(
+            run("nearest")?,
+            demote(fa.round_ties_even()),
+            &ctx("nearest"),
+        );
+        assert_eq!(
+            run("to_sint_sat_i8")? & 0xFF,
+            u32::from(fa as i8 as u8),
+            "{}",
+            ctx("s8")
+        );
+        assert_eq!(
+            run("to_sint_sat_i16")? & 0xFFFF,
+            u32::from(fa as i16 as u16),
+            "{}",
+            ctx("s16")
+        );
+        assert_eq!(run("to_sint_sat_i32")?, fa as i32 as u32, "{}", ctx("s32"));
+    }
+    for v in int_samples() {
+        let bytes = v.to_le_bytes();
+        let run = |name: &str| invoke(&program, &format!("__rust_h_{name}"), &bytes);
+        same_half(
+            run("from_sint_i8")?,
+            demote(f32::from(v as i8)),
+            &format!("i8 {v:#x}"),
+        );
+        same_half(
+            run("from_sint_i16")?,
+            demote(f32::from(v as i16)),
+            &format!("i16 {v:#x}"),
+        );
+        same_half(
+            run("from_sint_i32")?,
+            demote(v as f32),
+            &format!("i32 {v:#x}"),
+        );
+    }
+    Ok(())
+}
+
 #[test]
 fn division_traps_reach_the_rst_vector() -> Result<()> {
     let program = program("wide-ops")?;
