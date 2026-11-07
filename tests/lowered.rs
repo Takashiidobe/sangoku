@@ -1349,3 +1349,118 @@ fn i8_trapnz_and_trapz_trap_only_on_their_condition() -> Result<()> {
     }
     Ok(())
 }
+
+const EDGES16: [u16; 12] = [
+    0, 1, 2, 0xff, 0x100, 0x1234, 0x7fff, 0x8000, 0x8001, 0xa5c3, 0xfeff, 0xffff,
+];
+
+#[test]
+fn i16_shifts_and_rotates_match_host() -> Result<()> {
+    let program = program("ops-i16")?;
+    for value in EDGES16 {
+        let bytes = value.to_le_bytes();
+        for n in [0u32, 1, 3, 8, 9, 15] {
+            let run = |op: &str| -> Result<u16> {
+                Ok(invoke(&program, &format!("__rust_{op}{n}_i16"), &bytes)? as u16)
+            };
+            assert_eq!(run("ishl")?, value << n, "ishl {value:#x} {n}");
+            assert_eq!(run("ushr")?, value >> n, "ushr {value:#x} {n}");
+            assert_eq!(
+                run("sshr")?,
+                ((value as i16) >> n) as u16,
+                "sshr {value:#x} {n}"
+            );
+            assert_eq!(run("rotl")?, value.rotate_left(n), "rotl {value:#x} {n}");
+            assert_eq!(run("rotr")?, value.rotate_right(n), "rotr {value:#x} {n}");
+        }
+        for n in [0u8, 1, 7, 8, 15, 16, 17, 255] {
+            let m = u32::from(n & 15);
+            let data = [bytes[0], bytes[1], n];
+            let run = |op: &str| -> Result<u16> {
+                Ok(invoke(&program, &format!("__rust_{op}var_i16"), &data)? as u16)
+            };
+            assert_eq!(run("ishl")?, value << m, "ishl var {value:#x} {n}");
+            assert_eq!(run("ushr")?, value >> m, "ushr var {value:#x} {n}");
+            assert_eq!(
+                run("sshr")?,
+                ((value as i16) >> m) as u16,
+                "sshr var {value:#x} {n}"
+            );
+            assert_eq!(
+                run("rotl")?,
+                value.rotate_left(m),
+                "rotl var {value:#x} {n}"
+            );
+            assert_eq!(
+                run("rotr")?,
+                value.rotate_right(m),
+                "rotr var {value:#x} {n}"
+            );
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn i16_cls_mulhi_and_overflow_match_host() -> Result<()> {
+    let program = program("ops-i16")?;
+    for a in EDGES16 {
+        let got = invoke(&program, "__rust_cls_i16", &a.to_le_bytes())? as u16;
+        let expected = (a ^ ((a as i16) >> 1) as u16).leading_zeros() as u16 - 1;
+        assert_eq!(got, expected, "cls {a:#x}");
+        for b in EDGES16 {
+            let data = operands::<2>(u32::from(a), u32::from(b));
+            let data = [&data[..2], &data[4..6]].concat();
+            let run = |op: &str| -> Result<(u16, bool)> {
+                let r = invoke(&program, &format!("__rust_{op}_i16"), &data)?;
+                Ok((r as u16, (r >> 16) as u8 != 0))
+            };
+            let mulhi = |op: &str| -> Result<u16> {
+                Ok(invoke(&program, &format!("__rust_{op}_i16"), &data)? as u16)
+            };
+            assert_eq!(
+                mulhi("umulhi")?,
+                (u32::from(a) * u32::from(b) >> 16) as u16,
+                "umulhi {a:#x} {b:#x}"
+            );
+            assert_eq!(
+                mulhi("smulhi")?,
+                ((i32::from(a as i16) * i32::from(b as i16)) >> 16) as u16,
+                "smulhi {a:#x} {b:#x}"
+            );
+            let (sa, sb) = (a as i16, b as i16);
+            let signed = |(v, o): (i16, bool)| (v as u16, o);
+            assert_eq!(
+                run("uadd_overflow")?,
+                a.overflowing_add(b),
+                "uadd {a:#x} {b:#x}"
+            );
+            assert_eq!(
+                run("usub_overflow")?,
+                a.overflowing_sub(b),
+                "usub {a:#x} {b:#x}"
+            );
+            assert_eq!(
+                run("umul_overflow")?,
+                a.overflowing_mul(b),
+                "umul {a:#x} {b:#x}"
+            );
+            assert_eq!(
+                run("sadd_overflow")?,
+                signed(sa.overflowing_add(sb)),
+                "sadd {a:#x} {b:#x}"
+            );
+            assert_eq!(
+                run("ssub_overflow")?,
+                signed(sa.overflowing_sub(sb)),
+                "ssub {a:#x} {b:#x}"
+            );
+            assert_eq!(
+                run("smul_overflow")?,
+                signed(sa.overflowing_mul(sb)),
+                "smul {a:#x} {b:#x}"
+            );
+        }
+    }
+    Ok(())
+}

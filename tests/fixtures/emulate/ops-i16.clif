@@ -1,0 +1,353 @@
+set enable_verifier=false
+target z80
+
+function %ishl0_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 0
+    v3 = ishl v1, v2
+    return v3
+}
+
+function %ishl1_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 1
+    v3 = ishl v1, v2
+    return v3
+}
+
+function %ishl3_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 3
+    v3 = ishl v1, v2
+    return v3
+}
+
+function %ishl8_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 8
+    v3 = ishl v1, v2
+    return v3
+}
+
+function %ishl9_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 9
+    v3 = ishl v1, v2
+    return v3
+}
+
+function %ishl15_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 15
+    v3 = ishl v1, v2
+    return v3
+}
+
+function %ishlvar_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i8 v0+2
+    v3 = ishl v1, v2
+    return v3
+}
+
+function %ushr0_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 0
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr1_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 1
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr3_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 3
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr8_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 8
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr9_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 9
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr15_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 15
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushrvar_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i8 v0+2
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %sshr0_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 0
+    v3 = sshr v1, v2
+    return v3
+}
+
+function %sshr1_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 1
+    v3 = sshr v1, v2
+    return v3
+}
+
+function %sshr3_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 3
+    v3 = sshr v1, v2
+    return v3
+}
+
+function %sshr8_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 8
+    v3 = sshr v1, v2
+    return v3
+}
+
+function %sshr9_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 9
+    v3 = sshr v1, v2
+    return v3
+}
+
+function %sshr15_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 15
+    v3 = sshr v1, v2
+    return v3
+}
+
+function %sshrvar_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i8 v0+2
+    v3 = sshr v1, v2
+    return v3
+}
+
+function %rotl0_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 0
+    v3 = rotl v1, v2
+    return v3
+}
+
+function %rotl1_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 1
+    v3 = rotl v1, v2
+    return v3
+}
+
+function %rotl3_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 3
+    v3 = rotl v1, v2
+    return v3
+}
+
+function %rotl8_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 8
+    v3 = rotl v1, v2
+    return v3
+}
+
+function %rotl9_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 9
+    v3 = rotl v1, v2
+    return v3
+}
+
+function %rotl15_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 15
+    v3 = rotl v1, v2
+    return v3
+}
+
+function %rotlvar_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i8 v0+2
+    v3 = rotl v1, v2
+    return v3
+}
+
+function %rotr0_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 0
+    v3 = rotr v1, v2
+    return v3
+}
+
+function %rotr1_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 1
+    v3 = rotr v1, v2
+    return v3
+}
+
+function %rotr3_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 3
+    v3 = rotr v1, v2
+    return v3
+}
+
+function %rotr8_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 8
+    v3 = rotr v1, v2
+    return v3
+}
+
+function %rotr9_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 9
+    v3 = rotr v1, v2
+    return v3
+}
+
+function %rotr15_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = iconst.i8 15
+    v3 = rotr v1, v2
+    return v3
+}
+
+function %rotrvar_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i8 v0+2
+    v3 = rotr v1, v2
+    return v3
+}
+
+function %cls_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = cls v1
+    return v2
+}
+
+function %umulhi_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+2
+    v3 = umulhi v1, v2
+    return v3
+}
+
+function %smulhi_i16(i16) -> i16 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+2
+    v3 = smulhi v1, v2
+    return v3
+}
+
+function %uadd_overflow_i16(i16) -> i16, i8 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+2
+    v3, v4 = uadd_overflow v1, v2
+    return v3, v4
+}
+
+function %sadd_overflow_i16(i16) -> i16, i8 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+2
+    v3, v4 = sadd_overflow v1, v2
+    return v3, v4
+}
+
+function %usub_overflow_i16(i16) -> i16, i8 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+2
+    v3, v4 = usub_overflow v1, v2
+    return v3, v4
+}
+
+function %ssub_overflow_i16(i16) -> i16, i8 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+2
+    v3, v4 = ssub_overflow v1, v2
+    return v3, v4
+}
+
+function %umul_overflow_i16(i16) -> i16, i8 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+2
+    v3, v4 = umul_overflow v1, v2
+    return v3, v4
+}
+
+function %smul_overflow_i16(i16) -> i16, i8 system_v {
+block0(v0: i16):
+    v1 = load.i16 v0
+    v2 = load.i16 v0+2
+    v3, v4 = smul_overflow v1, v2
+    return v3, v4
+}
