@@ -16,6 +16,17 @@ operands, and unsigned 16-bit division/remainder. Division and remainder share
 an SM83 core and reach the trap vector for a zero divisor. Spills and reloads
 preserve live registers and flags.
 
+Truncating stores accept a wider input and write only its low bits. `istore8`,
+`istore16` and `istore32` lower for every CLIF-expressible input width through
+i64. Extending loads read 8, 16 or 32 bits and sign- or zero-extend to the
+requested wider type, including i64. The split path preserves explicit memory
+byte order.
+
+i32 checked arithmetic, multiply-high and leading-sign-bit counts expand to
+narrower operations before machine lowering. Checked arithmetic uses a full
+64-bit intermediate and compares its upper half with the required extension of
+the low half.
+
 Use the [coverage matrix](../../tests/coverage/lower.md) for current operation
 support rather than assuming every width supports the same opcodes.
 

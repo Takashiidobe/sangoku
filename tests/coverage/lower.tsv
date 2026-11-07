@@ -26,7 +26,11 @@ bor	i16	ok
 bor	i32	ok	
 bor	i64	ok	
 bor	i8	ok	
+br_table	i128	inexpressible	
+br_table	i16	inexpressible	
 br_table	i32	ok	
+br_table	i64	inexpressible	
+br_table	i8	inexpressible	
 brif	i128	ok	
 brif	i16	ok	
 brif	i32	ok	
@@ -56,6 +60,10 @@ call.arg	i16	ok
 call.arg	i32	ok	
 call.arg	i64	ok	
 call.arg	i8	ok	
+call_indirect	i128	ok	
+call_indirect	i16	ok	
+call_indirect	i32	ok	
+call_indirect	i64	ok	
 call_indirect	i8	ok	
 ceil	f128	unsupported	Unsupported feature: LR35902 i128 legalization for ceil
 ceil	f16	ok	
@@ -63,7 +71,7 @@ ceil	f32	ok
 ceil	f64	unsupported	Unsupported feature: LR35902 wide value legalization for ceil
 cls	i128	unsupported	Unsupported feature: LR35902 i128 legalization for cls
 cls	i16	ok	
-cls	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = cls.i32 v0`, type = `Some(types::I32)`
+cls	i32	ok	
 cls	i64	ok	
 cls	i8	ok	
 clz	i128	ok	
@@ -360,8 +368,21 @@ ishl.var	i16	ok
 ishl.var	i32	ok	
 ishl.var	i64	ok	
 ishl.var	i8	ok	
+istore16	i128	inexpressible	
+istore16	i16	inexpressible	
 istore16	i32	ok	
+istore16	i64	ok	
+istore16	i8	inexpressible	
+istore32	i128	inexpressible	
+istore32	i16	inexpressible	
+istore32	i32	inexpressible	
+istore32	i64	ok	
+istore32	i8	inexpressible	
+istore8	i128	inexpressible	
 istore8	i16	ok	
+istore8	i32	ok	
+istore8	i64	ok	
+istore8	i8	inexpressible	
 isub	i128	ok	
 isub	i16	ok	
 isub	i32	ok	
@@ -412,7 +433,7 @@ rotr.var	i64	ok
 rotr.var	i8	ok	
 sadd_overflow	i128	ok	
 sadd_overflow	i16	ok	
-sadd_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = sadd_overflow.i32 v0, v1`, type = `Some(types::I32)`
+sadd_overflow	i32	ok	
 sadd_overflow	i64	ok	
 sadd_overflow	i8	ok	
 sdiv	i128	unsupported	Unsupported feature: LR35902 i128 legalization for sdiv
@@ -439,9 +460,17 @@ sextend	i8->i128	ok
 sextend	i8->i16	ok	
 sextend	i8->i32	ok	
 sextend	i8->i64	ok	
+sload16	i16->i128	inexpressible	
+sload16	i16->i16	inexpressible	
 sload16	i16->i32	ok	
+sload16	i16->i64	ok	
+sload16	i16->i8	inexpressible	
+sload32	i32->i64	ok	
+sload8	i8->i128	inexpressible	
 sload8	i8->i16	ok	
 sload8	i8->i32	ok	
+sload8	i8->i64	ok	
+sload8	i8->i8	inexpressible	
 smax	i128	ok	
 smax	i16	ok	
 smax	i32	ok	
@@ -454,12 +483,12 @@ smin	i64	ok
 smin	i8	ok	
 smul_overflow	i128	inexpressible	
 smul_overflow	i16	ok	
-smul_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = smul_overflow.i32 v0, v1`, type = `Some(types::I32)`
+smul_overflow	i32	ok	
 smul_overflow	i64	ok	
 smul_overflow	i8	ok	
 smulhi	i128	unsupported	Unsupported feature: LR35902 i128 legalization for smulhi
 smulhi	i16	ok	
-smulhi	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smulhi.i32 v0, v1`, type = `Some(types::I32)`
+smulhi	i32	ok	
 smulhi	i64	ok	
 smulhi	i8	ok	
 sqrt	f128	unsupported	Unsupported feature: LR35902 i128 legalization for sqrt
@@ -483,7 +512,7 @@ sshr.var	i64	ok
 sshr.var	i8	ok	
 ssub_overflow	i128	ok	
 ssub_overflow	i16	ok	
-ssub_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = ssub_overflow.i32 v0, v1`, type = `Some(types::I32)`
+ssub_overflow	i32	ok	
 ssub_overflow	i64	ok	
 ssub_overflow	i8	ok	
 stack_addr	-	ok	
@@ -498,7 +527,15 @@ store	i64	ok
 store	i8	ok	
 symbol_value	-	ok	
 trap	-	ok	
+trapnz	i128	ok	
+trapnz	i16	ok	
+trapnz	i32	ok	
+trapnz	i64	ok	
 trapnz	i8	ok	
+trapz	i128	ok	
+trapz	i16	ok	
+trapz	i32	ok	
+trapz	i64	ok	
 trapz	i8	ok	
 trunc	f128	unsupported	Unsupported feature: LR35902 i128 legalization for trunc
 trunc	f16	ok	
@@ -506,7 +543,7 @@ trunc	f32	ok
 trunc	f64	unsupported	Unsupported feature: LR35902 wide value legalization for trunc
 uadd_overflow	i128	ok	
 uadd_overflow	i16	ok	
-uadd_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = uadd_overflow.i32 v0, v1`, type = `Some(types::I32)`
+uadd_overflow	i32	ok	
 uadd_overflow	i64	ok	
 uadd_overflow	i8	ok	
 udiv	i128	unsupported	Unsupported feature: LR35902 i128 legalization for udiv
@@ -524,9 +561,17 @@ uextend	i8->i128	ok
 uextend	i8->i16	ok	
 uextend	i8->i32	ok	
 uextend	i8->i64	ok	
+uload16	i16->i128	inexpressible	
+uload16	i16->i16	inexpressible	
 uload16	i16->i32	ok	
+uload16	i16->i64	ok	
+uload16	i16->i8	inexpressible	
+uload32	i32->i64	ok	
+uload8	i8->i128	inexpressible	
 uload8	i8->i16	ok	
 uload8	i8->i32	ok	
+uload8	i8->i64	ok	
+uload8	i8->i8	inexpressible	
 umax	i128	ok	
 umax	i16	ok	
 umax	i32	ok	
@@ -539,12 +584,12 @@ umin	i64	ok
 umin	i8	ok	
 umul_overflow	i128	inexpressible	
 umul_overflow	i16	ok	
-umul_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = umul_overflow.i32 v0, v1`, type = `Some(types::I32)`
+umul_overflow	i32	ok	
 umul_overflow	i64	ok	
 umul_overflow	i8	ok	
 umulhi	i128	unsupported	Unsupported feature: LR35902 i128 legalization for umulhi
 umulhi	i16	ok	
-umulhi	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = umulhi.i32 v0, v1`, type = `Some(types::I32)`
+umulhi	i32	ok	
 umulhi	i64	ok	
 umulhi	i8	ok	
 urem	i128	unsupported	Unsupported feature: LR35902 i128 legalization for urem
@@ -564,6 +609,6 @@ ushr.var	i64	ok
 ushr.var	i8	ok	
 usub_overflow	i128	ok	
 usub_overflow	i16	ok	
-usub_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = usub_overflow.i32 v0, v1`, type = `Some(types::I32)`
+usub_overflow	i32	ok	
 usub_overflow	i64	ok	
 usub_overflow	i8	ok	

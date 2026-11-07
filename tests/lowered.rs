@@ -2194,3 +2194,171 @@ fn split_i64_remaining_arithmetic_matches_host() -> Result<()> {
     }
     Ok(())
 }
+
+#[test]
+fn scalar_integer_gaps_match_host() -> Result<()> {
+    let source = include_str!("fixtures/emulate/scalar-integer-gaps.clif");
+    for level in ["none", "speed"] {
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let mut programs = std::collections::BTreeMap::new();
+        for function in source.split("\nfunction ").skip(1) {
+            let name = function
+                .strip_prefix('%')
+                .unwrap()
+                .split('(')
+                .next()
+                .unwrap();
+            let path = directory.path().join(format!("{name}.clif"));
+            std::fs::write(
+                &path,
+                format!(
+                    "set enable_multi_ret_implicit_sret=true\nset opt_level={level}\ntarget z80\nfunction {function}"
+                ),
+            )?;
+            programs.insert(name, lower_program(path.to_str().unwrap())?);
+        }
+        for (a, b) in [
+            (0u32, 0u32),
+            (u32::MAX, 1),
+            (0x8000_0000, u32::MAX),
+            (i32::MAX as u32, 1),
+            (0x10000, 0x10000),
+            (0xffff, 0x10001),
+            (0x8000_0000, 1),
+            (17, (-5i32) as u32),
+            (u32::MAX, u32::MAX),
+        ] {
+            let product = u64::from(a) * u64::from(b);
+            let signed_product = i64::from(a as i32) * i64::from(b as i32);
+            let memory: Vec<_> = a
+                .to_le_bytes()
+                .into_iter()
+                .chain(b.to_le_bytes())
+                .enumerate()
+                .map(|(i, v)| (BASE + i as u16, v))
+                .collect();
+            for (op, value, overflow) in [
+                (
+                    "uadd_overflow",
+                    a.overflowing_add(b).0,
+                    Some(a.overflowing_add(b).1),
+                ),
+                (
+                    "usub_overflow",
+                    a.overflowing_sub(b).0,
+                    Some(a.overflowing_sub(b).1),
+                ),
+                (
+                    "sadd_overflow",
+                    (a as i32).overflowing_add(b as i32).0 as u32,
+                    Some((a as i32).overflowing_add(b as i32).1),
+                ),
+                (
+                    "ssub_overflow",
+                    (a as i32).overflowing_sub(b as i32).0 as u32,
+                    Some((a as i32).overflowing_sub(b as i32).1),
+                ),
+                (
+                    "umul_overflow",
+                    product as u32,
+                    Some(product > u64::from(u32::MAX)),
+                ),
+                (
+                    "smul_overflow",
+                    signed_product as u32,
+                    Some(i32::try_from(signed_product).is_err()),
+                ),
+                ("umulhi", (product >> 32) as u32, None),
+                ("smulhi", (signed_product >> 32) as u32, None),
+                (
+                    "cls",
+                    (if (a as i32) < 0 { !a } else { a }).leading_zeros() - 1,
+                    None,
+                ),
+            ] {
+                let name = format!("{op}32");
+                let e = call(&programs[name.as_str()], &format!("__rust_{name}"), &memory)?;
+                assert_eq!(
+                    u32::from_le_bytes(
+                        e.memory[BASE as usize + 8..BASE as usize + 12]
+                            .try_into()
+                            .unwrap()
+                    ),
+                    value,
+                    "{level} {name} {a:x} {b:x}"
+                );
+                if let Some(flag) = overflow {
+                    assert_eq!(
+                        e.memory[BASE as usize + 12] != 0,
+                        flag,
+                        "{level} {name} {a:x} {b:x}"
+                    );
+                }
+            }
+        }
+        for bits in [
+            0u64,
+            u64::MAX,
+            0x0123_4567_89ab_cdef,
+            0x8000_0000,
+            0x8000,
+            0x80,
+        ] {
+            for width in [8u32, 16, 32] {
+                for big in [false, true] {
+                    if width == 8 && big {
+                        continue;
+                    }
+                    let suffix = format!("{width}{}", if big { "_big" } else { "" });
+                    let memory: Vec<_> = bits
+                        .to_le_bytes()
+                        .into_iter()
+                        .enumerate()
+                        .map(|(i, b)| (BASE + i as u16, b))
+                        .chain((0..9).map(|i| (BASE + 16 + i, 0xa5)))
+                        .collect();
+                    for op in ["istore", "uload", "sload"] {
+                        let name = format!("{op}{suffix}");
+                        let e = call(&programs[name.as_str()], &format!("__rust_{name}"), &memory)?;
+                        let bytes = (width / 8) as usize;
+                        if op == "istore" {
+                            let little = bits.to_le_bytes();
+                            let mut expected = little[..bytes].to_vec();
+                            if big {
+                                expected.reverse();
+                            }
+                            assert_eq!(
+                                &e.memory[BASE as usize + 16..BASE as usize + 16 + bytes],
+                                &expected,
+                                "{level} {name}"
+                            );
+                            assert_eq!(e.memory[BASE as usize + 16 + bytes], 0xa5);
+                        } else {
+                            let mut input = bits.to_le_bytes()[..bytes].to_vec();
+                            if big {
+                                input.reverse();
+                            }
+                            let mut value = 0u64;
+                            for (i, b) in input.into_iter().enumerate() {
+                                value |= u64::from(b) << (i * 8);
+                            }
+                            if op == "sload" {
+                                value = ((value << (64 - width)) as i64 >> (64 - width)) as u64;
+                            }
+                            assert_eq!(
+                                u64::from_le_bytes(
+                                    e.memory[BASE as usize + 16..BASE as usize + 24]
+                                        .try_into()
+                                        .unwrap()
+                                ),
+                                value,
+                                "{level} {name} {bits:x}"
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+    Ok(())
+}

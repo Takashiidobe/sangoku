@@ -10,7 +10,8 @@ and returns together.
 `i64` becomes two `i32` limbs and `i128` becomes four, least significant first.
 CLIF integers are signless; the opcode determines signed behavior, so the same
 representation handles Rust's signed and unsigned integers. Each limb fits in
-four byte registers.
+four byte registers. Narrow stores use the low limb; extending loads form the
+low limb from the loaded value and fill the high limb with zero or its sign.
 
 See [wide integer legalization](64-bit-integer-legalization.md) for operation
 expansion, examples and focused tests. i64 division, remainder, multiply-high,

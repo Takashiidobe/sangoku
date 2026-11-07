@@ -23,6 +23,7 @@ FCCS = ["eq", "ne", "lt", "le", "gt", "ge", "ord", "uno"]
 BITS = {"i8": 8, "i16": 16, "i32": 32, "i64": 64, "i128": 128}
 
 cases = {}
+inexpressible = {("br_table", ty) for ty in INTS if ty != "i32"}
 
 
 def add(op, ty, params, ret, body):
@@ -93,15 +94,22 @@ for ty in INTS:
                 add(f"{op}", f"{ty}->{dst}", [ty], dst, f"    v9 = {op}.{dst} v0\n    return v9")
         elif BITS[dst] < BITS[ty]:
             add("ireduce", f"{ty}->{dst}", [ty], dst, f"    v9 = ireduce.{dst} v0\n    return v9")
-for ty in ("i8", "i16", "i32"):
-    for dst in ("i16", "i32"):
-        if BITS[dst] > BITS[ty]:
-            for op in ("uload", "sload"):
-                add(f"{op}{BITS[ty]}", f"{ty}->{dst}", [ADDR], dst,
-                    f"    v9 = {op}{BITS[ty]}.{dst} v0\n    return v9")
-    if ty != "i8":
-        add(f"istore{BITS[ty] // 2 if ty != 'i16' else 8}", ty, [ADDR, ty], None,
-            f"    istore{BITS[ty] // 2 if ty != 'i16' else 8} v1, v0")
+for width in (8, 16, 32):
+    for ty in INTS:
+        add(f"istore{width}", ty, [ADDR, ty], None, f"    istore{width} v1, v0")
+        for op in ("uload", "sload"):
+            if width == 32 and ty != "i64":
+                continue
+            add(f"{op}{width}", f"i{width}->{ty}", [ADDR], ty,
+                f"    v9 = {op}{width}.{ty} v0\n    return v9")
+
+for ty in INTS:
+    for op in ("trapnz", "trapz"):
+        add(op, ty, [ty], None, f"    {op} v0, user1")
+    add("br_table", ty, [ty], None,
+        "    br_table v0, block1, [block1, block2]\nblock1:\n    return\nblock2:\n    return")
+    add("call_indirect", ty, [ADDR, ty], ty,
+        f"    sig0 = ({ty}) -> {ty} system_v\n    v9 = call_indirect sig0, v0(v1)\n    return v9")
 
 for ty in FLOATS:
     for op in ["fadd", "fsub", "fmul", "fdiv", "fmin", "fmax", "fcopysign"]:
@@ -134,12 +142,6 @@ add("bitcast", "i128->f128", ["i128"], "f128", "    v9 = bitcast.f128 little v0\
 add("bitcast", "f128->i128", ["f128"], "i128", "    v9 = bitcast.i128 little v0\n    return v9")
 
 add("trap", "-", [], None, "    trap user1")
-add("trapnz", "i8", ["i8"], None, "    trapnz v0, user1")
-add("trapz", "i8", ["i8"], None, "    trapz v0, user1")
-add("br_table", "i32", ["i32"], None,
-    "    br_table v0, block1, [block1, block2]\nblock1:\n    return\nblock2:\n    return")
-add("call_indirect", "i8", [ADDR, "i8"], "i8",
-    "    sig0 = (i8) -> i8 system_v\n    v9 = call_indirect sig0, v0(v1)\n    return v9")
 add("func_addr", "-", [], ADDR, "    sig0 = () system_v\n    fn0 = %callee sig0\n    v9 = func_addr.i16 fn0\n    return v9")
 add("symbol_value", "-", [], ADDR,
     "    gv0 = symbol %data\n    v9 = symbol_value.i16 gv0\n    return v9")
@@ -156,6 +158,8 @@ def probe(binary, verify):
     names = {}
     text = header(verify)
     for index, ((op, ty), source) in enumerate(cases.items()):
+        if (op, ty) in inexpressible:
+            continue
         name = f"c{index}"
         names[name] = (op, ty)
         text += source.replace(source.split("(")[0], f"function %{name}", 1) + "\n"
@@ -165,7 +169,7 @@ def probe(binary, verify):
         run = subprocess.run([binary, "--probe", handle.name], capture_output=True, text=True)
     if run.returncode != 0:
         sys.exit(run.stderr or "sangoku-lower --probe failed")
-    results = {}
+    results = {key: ("inexpressible", "") for key in inexpressible}
     for line in run.stdout.splitlines():
         name, status, message = (line.split("\t") + ["", ""])[:3]
         results[names[name]] = (status, message)
@@ -234,6 +238,8 @@ def render(plain, verified):
                         applicable = src_bits > dst_bits
                     elif op in ("uextend", "sextend", "fpromote") or op.startswith(("sload", "uload")):
                         applicable = src_bits < dst_bits
+                        if op.startswith(("sload", "uload")):
+                            applicable = applicable and dst_bits <= 64
                     else:
                         applicable = True
                     entry = plain.get((op, f"{source}->{destination}"))
