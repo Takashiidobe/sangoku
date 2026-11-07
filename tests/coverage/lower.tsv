@@ -64,7 +64,7 @@ ceil	f64	unsupported	Unsupported feature: LR35902 wide value legalization for ce
 cls	i128	unsupported	Unsupported feature: LR35902 i128 legalization for cls
 cls	i16	ok	
 cls	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = cls.i32 v0`, type = `Some(types::I32)`
-cls	i64	unsupported	Unsupported feature: LR35902 wide value legalization for cls
+cls	i64	ok	
 cls	i8	ok	
 clz	i128	ok	
 clz	i16	ok	
@@ -418,7 +418,7 @@ sadd_overflow	i8	ok
 sdiv	i128	unsupported	Unsupported feature: LR35902 i128 legalization for sdiv
 sdiv	i16	ok	
 sdiv	i32	ok	
-sdiv	i64	unsupported	Unsupported feature: LR35902 wide value legalization for sdiv
+sdiv	i64	ok	
 sdiv	i8	ok	
 select	f128	ok	
 select	f16	ok	
@@ -455,12 +455,12 @@ smin	i8	ok
 smul_overflow	i128	inexpressible	
 smul_overflow	i16	ok	
 smul_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = smul_overflow.i32 v0, v1`, type = `Some(types::I32)`
-smul_overflow	i64	unsupported	Unsupported feature: LR35902 wide value legalization for smul_overflow
+smul_overflow	i64	ok	
 smul_overflow	i8	ok	
 smulhi	i128	unsupported	Unsupported feature: LR35902 i128 legalization for smulhi
 smulhi	i16	ok	
 smulhi	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smulhi.i32 v0, v1`, type = `Some(types::I32)`
-smulhi	i64	unsupported	Unsupported feature: LR35902 wide value legalization for smulhi
+smulhi	i64	ok	
 smulhi	i8	ok	
 sqrt	f128	unsupported	Unsupported feature: LR35902 i128 legalization for sqrt
 sqrt	f16	ok	
@@ -469,7 +469,7 @@ sqrt	f64	unsupported	Unsupported feature: LR35902 wide value legalization for sq
 srem	i128	unsupported	Unsupported feature: LR35902 i128 legalization for srem
 srem	i16	ok	
 srem	i32	ok	
-srem	i64	unsupported	Unsupported feature: LR35902 wide value legalization for srem
+srem	i64	ok	
 srem	i8	ok	
 sshr.const	i128	ok	
 sshr.const	i16	ok	
@@ -512,7 +512,7 @@ uadd_overflow	i8	ok
 udiv	i128	unsupported	Unsupported feature: LR35902 i128 legalization for udiv
 udiv	i16	ok	
 udiv	i32	ok	
-udiv	i64	unsupported	Unsupported feature: LR35902 wide value legalization for udiv
+udiv	i64	ok	
 udiv	i8	ok	
 uextend	i16->i128	ok	
 uextend	i16->i32	ok	
@@ -540,17 +540,17 @@ umin	i8	ok
 umul_overflow	i128	inexpressible	
 umul_overflow	i16	ok	
 umul_overflow	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = umul_overflow.i32 v0, v1`, type = `Some(types::I32)`
-umul_overflow	i64	unsupported	Unsupported feature: LR35902 wide value legalization for umul_overflow
+umul_overflow	i64	ok	
 umul_overflow	i8	ok	
 umulhi	i128	unsupported	Unsupported feature: LR35902 i128 legalization for umulhi
 umulhi	i16	ok	
 umulhi	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = umulhi.i32 v0, v1`, type = `Some(types::I32)`
-umulhi	i64	unsupported	Unsupported feature: LR35902 wide value legalization for umulhi
+umulhi	i64	ok	
 umulhi	i8	ok	
 urem	i128	unsupported	Unsupported feature: LR35902 i128 legalization for urem
 urem	i16	ok	
 urem	i32	ok	
-urem	i64	unsupported	Unsupported feature: LR35902 wide value legalization for urem
+urem	i64	ok	
 urem	i8	ok	
 ushr.const	i128	ok	
 ushr.const	i16	ok	

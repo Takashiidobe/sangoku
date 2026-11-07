@@ -2088,3 +2088,109 @@ fn rust_f128_memory_lowers_and_executes() -> Result<()> {
     );
     Ok(())
 }
+
+#[test]
+fn split_i64_remaining_arithmetic_matches_host() -> Result<()> {
+    let source = include_str!("fixtures/emulate/split-i64-arithmetic.clif");
+    for level in ["none", "speed"] {
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let mut programs = std::collections::BTreeMap::new();
+        for function in source.split("\nfunction ").skip(1) {
+            let name = function
+                .strip_prefix('%')
+                .unwrap()
+                .split('(')
+                .next()
+                .unwrap();
+            let text = format!(
+                "set enable_multi_ret_implicit_sret=true\nset opt_level={level}\ntarget z80\nfunction {function}"
+            );
+            let path = directory.path().join(format!("{name}.clif"));
+            std::fs::write(&path, text)?;
+            programs.insert(name, lower_program(path.to_str().unwrap())?);
+        }
+        for (a, b) in [
+            (0u64, 1u64),
+            (1, 1),
+            (u64::MAX, 1),
+            (u64::MAX, u64::MAX),
+            (1 << 63, u64::MAX),
+            (1 << 63, 1),
+            (1 << 63, 2),
+            (i64::MAX as u64, 2),
+            (1 << 32, 1 << 32),
+            (0xffff_ffff, 0x1_0000_0001),
+            (0x8000_0000_0000_0001, 0x8000_0000_0000_0000),
+            (0x0123_4567_89ab_cdef, 0xfedc_ba98_7654_3210),
+            ((-17i64) as u64, 5),
+            (17, (-5i64) as u64),
+            ((-17i64) as u64, (-5i64) as u64),
+        ] {
+            let memory: Vec<_> = a
+                .to_le_bytes()
+                .into_iter()
+                .chain(b.to_le_bytes())
+                .enumerate()
+                .map(|(i, byte)| (BASE + i as u16, byte))
+                .collect();
+            let product = u128::from(a) * u128::from(b);
+            let signed_product = i128::from(a as i64) * i128::from(b as i64);
+            let normalized = if (a as i64) < 0 { !a } else { a };
+            let mut cases = vec![
+                ("udiv64", a / b, None),
+                ("urem64", a % b, None),
+                ("srem64", (a as i64).wrapping_rem(b as i64) as u64, None),
+                ("umulhi64", (product >> 64) as u64, None),
+                ("smulhi64", (signed_product >> 64) as u64, None),
+                (
+                    "umul_overflow64",
+                    product as u64,
+                    Some(product > u128::from(u64::MAX)),
+                ),
+                (
+                    "smul_overflow64",
+                    signed_product as u64,
+                    Some(i64::try_from(signed_product).is_err()),
+                ),
+                ("cls64", u64::from(normalized.leading_zeros() - 1), None),
+            ];
+            if (a, b) != (1 << 63, u64::MAX) {
+                cases.push(("sdiv64", ((a as i64) / (b as i64)) as u64, None));
+            }
+            for (name, expected, overflow) in cases {
+                let e = call(&programs[name], &format!("__rust_{name}"), &memory)?;
+                let actual = u64::from_le_bytes(
+                    e.memory[BASE as usize + 16..BASE as usize + 24]
+                        .try_into()
+                        .unwrap(),
+                );
+                assert_eq!(actual, expected, "{level} {name} {a:016x} {b:016x}");
+                if let Some(overflow) = overflow {
+                    assert_eq!(
+                        e.memory[BASE as usize + 24] != 0,
+                        overflow,
+                        "{level} {name} {a:016x} {b:016x}"
+                    );
+                }
+            }
+        }
+        for (name, a, b) in [
+            ("udiv64", 1u64, 0u64),
+            ("urem64", 1, 0),
+            ("sdiv64", 1, 0),
+            ("srem64", 1, 0),
+            ("sdiv64", 1 << 63, u64::MAX),
+        ] {
+            let program = &programs[name];
+            let mut e = program.emulator(&format!("__rust_{name}"))?;
+            e.memory[BASE as usize..BASE as usize + 8].copy_from_slice(&a.to_le_bytes());
+            e.memory[BASE as usize + 8..BASE as usize + 16].copy_from_slice(&b.to_le_bytes());
+            e.b = BASE as u8;
+            e.c = (BASE >> 8) as u8;
+            e.set_sp(STACK - 2);
+            e.write16(STACK - 2, program.symbols["done"]);
+            e.run_until(0x0010, 2_000_000)?;
+        }
+    }
+    Ok(())
+}

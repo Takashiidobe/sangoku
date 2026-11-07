@@ -14,8 +14,13 @@ return area; `cg_clif` enables `enable_multi_ret_implicit_sret` for this
 purpose.
 
 Use the [coverage matrix](../../tests/coverage/lower.md) for supported
-operations. Unsupported wide operations report an error. Division, remainder,
-multiply-high, and checked multiplication still need legalization.
+operations. Unsupported wide operations report an error.
+
+For i64, signed and unsigned division/remainder, multiply-high, checked
+multiplication and leading-sign-bit counts also lower through the split pass.
+Division by zero traps; signed division traps on `MIN / -1`, while signed
+remainder returns zero for `MIN % -1`. Checked multiplication returns the low 64
+bits and an overflow flag. These operations remain unsupported for i128.
 
 See [optimizations](optimizations.md) for wide-operation loop costs and runtime
 inclusion, and [lowering](lowering.md) for the calling convention.
@@ -23,7 +28,7 @@ inclusion, and [lowering](lowering.md) for the calling convention.
 Run the bounded emulator checks with:
 
 ```sh
-cargo nextest run --no-fail-fast -E 'test(split_i64_values_match_host) | test(split_i128_values_match_host) | test(rust_u64_memory_add_lowers_and_executes) | test(rust_u128_memory_add_lowers_and_executes)'
+cargo nextest run --no-fail-fast -E 'test(split_i64_values_match_host) | test(split_i64_remaining_arithmetic_matches_host) | test(split_i128_values_match_host) | test(rust_u64_memory_add_lowers_and_executes) | test(rust_u128_memory_add_lowers_and_executes)'
 ```
 
 The checks compile separate operation ROMs to stay within the current ROM0

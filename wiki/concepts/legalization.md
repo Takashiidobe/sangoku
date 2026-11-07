@@ -13,8 +13,9 @@ representation handles Rust's signed and unsigned integers. Each limb fits in
 four byte registers.
 
 See [wide integer legalization](64-bit-integer-legalization.md) for operation
-expansion, examples and focused tests. Division, remainder, multiply-high and
-checked multiplication still need legalization. Checked Rust `i128`
+expansion, examples and focused tests. i64 division, remainder, multiply-high,
+checked multiplication and leading-sign-bit counts use narrower CLIF operations.
+The corresponding i128 operations still need legalization. Checked Rust `i128`
 multiplication uses compiler-builtins rather than CLIF overflow opcodes.
 
 ## Floating point
