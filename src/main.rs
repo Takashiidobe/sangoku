@@ -264,9 +264,10 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
             .arg(&rust_asm),
     )?;
 
-    let needs_float = fs::read_to_string(&rust_asm)
-        .map_err(|error| format!("could not read {}: {error}", rust_asm.display()))?
-        .contains("__gbc_f");
+    let assembly = fs::read_to_string(&rust_asm)
+        .map_err(|error| format!("could not read {}: {error}", rust_asm.display()))?;
+    let needs_float64 = assembly.contains("__gbc_f64");
+    let needs_float32 = assembly.replace("__gbc_f64", "").contains("__gbc_f");
 
     let header_object = temp.path().join("header.o");
     let game_object = temp.path().join("game.o");
@@ -283,8 +284,10 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
             .arg(rust_asm),
     )?;
     let mut runtime_objects = Vec::new();
-    for source in ["udiv16", "mul16", "wide32", "softfloat32"] {
-        if source == "softfloat32" && !needs_float {
+    for source in ["udiv16", "mul16", "wide32", "softfloat32", "softfloat64"] {
+        if (source == "softfloat32" && !needs_float32)
+            || (source == "softfloat64" && !needs_float64)
+        {
             continue;
         }
         let object = temp.path().join(format!("{source}.o"));

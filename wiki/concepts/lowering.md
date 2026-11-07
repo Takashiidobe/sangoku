@@ -38,6 +38,28 @@ and nearest. It also supplies i8/i16/i32 conversions to and from f32 (trapping
 and saturating), and f16 promote/demote. See [legalization](legalization.md) for
 f64 support and remaining limits.
 
+The f64 helper uses a memory context containing operands, result, opcode and
+comparison mask. Its arithmetic state lives on the stack, so calls are
+reentrant. [runtime/softfloat64.c](../../runtime/softfloat64.c) implements the
+byte-array algorithms; [runtime/softfloat64.asm](../../runtime/softfloat64.asm)
+is the checked-in RGBDS output. Calls do not inline the algorithms.
+
+Working significands use 128-bit byte arrays with the leading bit at bit 120.
+This retains exact 106-bit products and room for guard, round and sticky bits.
+Fused multiply-add combines the unrounded product with its addend before the
+single rounding step.
+
+Regenerate it with SDCC's SM83 backend (generated with SDCC 4.6):
+
+```sh
+python3 tools/generate_softfloat64.py
+python3 tools/generate_softfloat64.py --check
+```
+
+SDCC is needed for regeneration only. Normal builds assemble the checked-in
+output with RGBDS. Emulator tests verify the source hash, arithmetic results,
+caller size and runtime size.
+
 ## Calling convention
 
 Argument bytes go in B, C, A, then on the stack, low address first. The caller

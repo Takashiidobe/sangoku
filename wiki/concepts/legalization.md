@@ -29,16 +29,23 @@ comparisons and rounding promote to `f32`, operate, and demote.
 `f64` uses two `i32` bit-pattern halves. Constants, loads/stores, `i64`
 bitcasts, select, block arguments, direct calls/returns, negation, absolute
 value and copysign preserve every bit, including NaN payloads and signed zero.
-Arithmetic, comparisons, rounding and conversions still need f64 softfloat
-helpers (`sangoku-7qz.9.4.1`). Splitting the representation does not make f32
-arithmetic sufficient for f64 precision or range.
+Arithmetic, comparisons, integral rounding, square root and fused multiply-add
+use a shared f64 softfloat helper with a stack-memory context. It preserves
+binary64 precision and rounds arithmetic to nearest, ties to even; fused
+multiply-add rounds only once. f64 comparisons handle unordered operands, and
+min/max propagate NaNs and distinguish signed zero. Numeric conversions remain
+in `sangoku-7qz.9.7`.
+
+Build `examples/f64.rs` with `cargo run -- build` to exercise Rust f64 addition.
+Splitting the representation does not make f32 arithmetic sufficient for f64
+precision or range.
 
 `f128` uses four `i32` bit-pattern limbs, least significant first. It supports
 the same transport and sign operations as f64, with `i128` bitcasts. Constants
 retain all 128 bits; negation, absolute value and copysign modify only the sign
 bit in the highest limb. Rust f128 constants and memory access use this path
 without frontend representation changes. The LR35902 frontend float gate allows
-f128 through to legalization; its other float exclusions remain.
+f64 and f128 through to legalization; its f16/f32 exclusions remain.
 
 f128 arithmetic, comparisons, rounding and numeric conversions still need
 binary128 softfloat helpers (`sangoku-7qz.9.6`). cg_clif emits compiler-builtins

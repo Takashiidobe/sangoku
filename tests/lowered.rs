@@ -22,7 +22,8 @@ fn lower_program(path: &str) -> Result<harness::Program> {
         String::from_utf8_lossy(&output.stderr)
     );
     let assembly = String::from_utf8(output.stdout)?;
-    let needs_float = assembly.contains("__gbc_f");
+    let needs_float64 = assembly.contains("__gbc_f64");
+    let needs_float32 = assembly.replace("__gbc_f64", "").contains("__gbc_f");
     let mut sources = vec![
         ("lowered.s", assembly),
         ("udiv16.asm", harness::read("runtime/udiv16.asm")?),
@@ -33,8 +34,11 @@ fn lower_program(path: &str) -> Result<harness::Program> {
             "SECTION \"done\", ROM0\nEXPORT done\ndone::\n  nop\n".into(),
         ),
     ];
-    if needs_float {
+    if needs_float32 {
         sources.push(("softfloat32.asm", harness::read("runtime/softfloat32.asm")?));
+    }
+    if needs_float64 {
+        sources.push(("softfloat64.asm", harness::read("runtime/softfloat64.asm")?));
     }
     harness::assemble(&sources, None)
 }
@@ -2481,6 +2485,251 @@ fn split_i128_remaining_arithmetic_matches_host() -> Result<()> {
             e.set_sp(STACK - 2);
             e.write16(STACK - 2, program.symbols["done"]);
             e.run_until(0x0010, 2_000_000)?;
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn f64_shared_runtime_matches_host() -> Result<()> {
+    let source = include_str!("fixtures/emulate/softfloat-f64.clif");
+    let mut input = harness::read("runtime/softfloat64.c")?.into_bytes();
+    input.extend(harness::read("tools/generate_softfloat64.py")?.into_bytes());
+    let header = format!(
+        "; generated from softfloat64.c, sha256 {}",
+        harness::hash(&input)
+    );
+    ensure!(
+        harness::read("runtime/softfloat64.asm")?.lines().next() == Some(header.as_str()),
+        "stale f64 runtime; run tools/generate_softfloat64.py"
+    );
+    for level in ["none", "speed"] {
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let mut programs = std::collections::BTreeMap::new();
+        for function in source.split("\nfunction ").skip(1) {
+            let name = function
+                .strip_prefix('%')
+                .unwrap()
+                .split('(')
+                .next()
+                .unwrap();
+            let path = directory.path().join(format!("{name}.clif"));
+            std::fs::write(
+                &path,
+                format!(
+                    "set enable_multi_ret_implicit_sret=true\nset opt_level={level}\ntarget z80\nfunction {function}"
+                ),
+            )?;
+            let program = lower_program(path.to_str().unwrap())?;
+            ensure!(
+                program.sections["softfloat64"].size <= 8192,
+                "f64 runtime exceeds half a ROM bank"
+            );
+            let caller: usize = program
+                .sections
+                .values()
+                .filter(|s| s.name.starts_with("__rust_cgu_"))
+                .map(|s| s.size)
+                .sum();
+            ensure!(
+                caller <= 4096,
+                "{level} {name}: f64 caller grew to {caller} bytes"
+            );
+            ensure!(
+                !program.sections.contains_key("softfloat32"),
+                "f64-only caller pulled in f32 runtime"
+            );
+            programs.insert(name, program);
+        }
+        let invoke = |name: &str, a: f64, b: f64, c: f64| -> Result<_> {
+            let memory: Vec<_> = a
+                .to_bits()
+                .to_le_bytes()
+                .into_iter()
+                .chain(b.to_bits().to_le_bytes())
+                .chain(c.to_bits().to_le_bytes())
+                .enumerate()
+                .map(|(i, v)| (BASE + i as u16, v))
+                .collect();
+            call(&programs[name], &format!("__rust_{name}"), &memory)
+        };
+        let check = |name: &str, a: f64, b: f64, c: f64, expected: f64| -> Result<()> {
+            let e = invoke(name, a, b, c)?;
+            let got = u64::from_le_bytes(
+                e.memory[BASE as usize + 24..BASE as usize + 32]
+                    .try_into()
+                    .unwrap(),
+            );
+            if expected.is_nan() {
+                assert!(
+                    f64::from_bits(got).is_nan(),
+                    "{level} {name} {a:?} {b:?} {c:?}: {got:016x}"
+                );
+            } else {
+                assert_eq!(got, expected.to_bits(), "{level} {name} {a:?} {b:?} {c:?}");
+            }
+            Ok(())
+        };
+        for (a, b) in [
+            (0.0, -0.0),
+            (1.0, 2.0),
+            (1.0, 2.0f64.powi(-53)),
+            (f64::from_bits(0x3ff0000000000001), 2.0f64.powi(-53)),
+            (f64::MIN_POSITIVE, -f64::from_bits(1)),
+            (f64::from_bits(1), f64::from_bits(1)),
+            (f64::MAX, 2.0),
+            (1e308, 1e-308),
+            (-17.0, 5.0),
+            (f64::INFINITY, f64::NEG_INFINITY),
+            (f64::NAN, 1.0),
+            (f64::from_bits(0x7ff0000000000001), 0.0),
+        ] {
+            for (name, expected) in [
+                ("fadd64", a + b),
+                ("fsub64", a - b),
+                ("fmul64", a * b),
+                ("fdiv64", a / b),
+                (
+                    "fmin64",
+                    if a.is_nan() || b.is_nan() {
+                        f64::NAN
+                    } else if a == b {
+                        if a.is_sign_negative() { a } else { b }
+                    } else {
+                        a.min(b)
+                    },
+                ),
+                (
+                    "fmax64",
+                    if a.is_nan() || b.is_nan() {
+                        f64::NAN
+                    } else if a == b {
+                        if a.is_sign_negative() { b } else { a }
+                    } else {
+                        a.max(b)
+                    },
+                ),
+            ] {
+                check(name, a, b, 0.0, expected)?;
+            }
+            let unordered = a.is_nan() || b.is_nan();
+            for (cc, expected) in [
+                ("eq", a == b),
+                ("ne", a != b),
+                ("one", !unordered && a != b),
+                ("ueq", unordered || a == b),
+                ("lt", a < b),
+                ("le", a <= b),
+                ("gt", a > b),
+                ("ge", a >= b),
+                ("ult", unordered || a < b),
+                ("ule", unordered || a <= b),
+                ("ugt", unordered || a > b),
+                ("uge", unordered || a >= b),
+                ("ord", !unordered),
+                ("uno", unordered),
+            ] {
+                let name = format!("cmp_{cc}64");
+                let e = invoke(&name, a, b, 0.0)?;
+                assert_eq!(
+                    e.memory[BASE as usize + 24] != 0,
+                    expected,
+                    "{level} {name} {a:?} {b:?}"
+                );
+            }
+        }
+        for a in [
+            0.0,
+            -0.0,
+            0.5,
+            -0.5,
+            f64::from_bits(0x3fe0000000000001),
+            1.5,
+            2.5,
+            -2.5,
+            f64::from_bits(1),
+            f64::MIN_POSITIVE,
+            2.0,
+            f64::MAX,
+            f64::INFINITY,
+            -1.0,
+            f64::NAN,
+        ] {
+            for (name, expected) in [
+                ("sqrt64", a.sqrt()),
+                ("trunc64", a.trunc()),
+                ("floor64", a.floor()),
+                ("ceil64", a.ceil()),
+                ("nearest64", a.round_ties_even()),
+            ] {
+                check(name, a, 0.0, 0.0, expected)?;
+            }
+        }
+        for (a, b, c) in [
+            (1.0, 2.0, 3.0),
+            (
+                f64::from_bits(0x3ff0000000000001),
+                f64::from_bits(0x3feffffffffffffe),
+                -1.0,
+            ),
+            (f64::MAX, 2.0, -f64::MAX),
+            (1e308, 1e-308, -1.0),
+            (f64::from_bits(1), 0.5, f64::from_bits(1)),
+            (f64::INFINITY, 0.0, 1.0),
+            (-0.0, 2.0, -0.0),
+            (f64::MAX, f64::MAX, f64::NEG_INFINITY),
+        ] {
+            check("fma64", a, b, c, a.mul_add(b, c))?;
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn rust_f64_memory_add_lowers_and_executes() -> Result<()> {
+    let source = harness::root().join("examples/f64.rs");
+    let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
+        .args(["clif", source.to_str().unwrap(), "-"])
+        .output()?;
+    ensure!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let directory = sangoku_test_support::tempfile::tempdir()?;
+    let path = directory.path().join("rust-f64.clif");
+    std::fs::write(&path, output.stdout)?;
+    let program = lower_program(path.to_str().unwrap())?;
+    ensure!(program.sections.contains_key("softfloat64"));
+    ensure!(!program.sections.contains_key("softfloat32"));
+    let stop = program.symbols["done"];
+    for (a, b) in [
+        (1.0, 2.0f64.powi(-52)),
+        (f64::from_bits(1), f64::from_bits(1)),
+        (f64::MAX, f64::MAX),
+        (f64::NAN, 1.0),
+    ] {
+        let mut e = program.emulator("__rust_sum_to_memory")?;
+        e.memory[BASE as usize..BASE as usize + 8].copy_from_slice(&a.to_bits().to_le_bytes());
+        e.memory[BASE as usize + 8..BASE as usize + 16].copy_from_slice(&b.to_bits().to_le_bytes());
+        e.b = BASE as u8;
+        e.c = (BASE >> 8) as u8;
+        e.a = (BASE + 8) as u8;
+        e.memory[STACK as usize] = ((BASE + 8) >> 8) as u8;
+        e.write16(STACK + 1, BASE + 16);
+        e.set_sp(STACK - 2);
+        e.write16(STACK - 2, stop);
+        e.run_until(stop, 2_000_000)?;
+        let got = u64::from_le_bytes(
+            e.memory[BASE as usize + 16..BASE as usize + 24]
+                .try_into()
+                .unwrap(),
+        );
+        let expected = a + b;
+        if expected.is_nan() {
+            assert!(f64::from_bits(got).is_nan());
+        } else {
+            assert_eq!(got, expected.to_bits(), "{a:?} + {b:?}");
         }
     }
     Ok(())

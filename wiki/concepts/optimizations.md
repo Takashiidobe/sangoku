@@ -40,6 +40,8 @@ representation and [lowering](lowering.md) for runtime helpers.
 
 ## Runtime inclusion
 
-Integer-only ROM builds omit the softfloat runtime. Floating helper references
-retain it. Keep large operation examples in separate ROMs while generated code
-is limited to ROM0.
+Integer-only ROM builds omit both softfloat runtimes. f32 and f64 helper
+references retain their respective runtimes; f64-only builds omit the f32
+runtime. The f64 helper shares its algorithms across call sites, though operand
+copies and stack addressing still add substantial caller code. Keep large
+operation examples in separate ROMs while generated code is limited to ROM0.

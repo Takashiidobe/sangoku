@@ -1,0 +1,232 @@
+set enable_multi_ret_implicit_sret=true
+target z80
+
+function %fadd64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v4 = fadd v1, v2
+    store v4, v0+24
+    return
+}
+
+function %fsub64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v4 = fsub v1, v2
+    store v4, v0+24
+    return
+}
+
+function %fmul64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v4 = fmul v1, v2
+    store v4, v0+24
+    return
+}
+
+function %fdiv64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v4 = fdiv v1, v2
+    store v4, v0+24
+    return
+}
+
+function %sqrt64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v4 = sqrt v1
+    store v4, v0+24
+    return
+}
+
+function %fma64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = load.f64 v0+16
+    v4 = fma v1, v2, v3
+    store v4, v0+24
+    return
+}
+
+function %fmin64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v4 = fmin v1, v2
+    store v4, v0+24
+    return
+}
+
+function %fmax64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v4 = fmax v1, v2
+    store v4, v0+24
+    return
+}
+
+function %trunc64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v4 = trunc v1
+    store v4, v0+24
+    return
+}
+
+function %floor64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v4 = floor v1
+    store v4, v0+24
+    return
+}
+
+function %ceil64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v4 = ceil v1
+    store v4, v0+24
+    return
+}
+
+function %nearest64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v4 = nearest v1
+    store v4, v0+24
+    return
+}
+
+function %cmp_eq64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp eq v1, v2
+    store v3, v0+24
+    return
+}
+
+function %cmp_ne64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp ne v1, v2
+    store v3, v0+24
+    return
+}
+
+function %cmp_one64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp one v1, v2
+    store v3, v0+24
+    return
+}
+
+function %cmp_ueq64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp ueq v1, v2
+    store v3, v0+24
+    return
+}
+
+function %cmp_lt64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp lt v1, v2
+    store v3, v0+24
+    return
+}
+
+function %cmp_le64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp le v1, v2
+    store v3, v0+24
+    return
+}
+
+function %cmp_gt64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp gt v1, v2
+    store v3, v0+24
+    return
+}
+
+function %cmp_ge64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp ge v1, v2
+    store v3, v0+24
+    return
+}
+
+function %cmp_ult64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp ult v1, v2
+    store v3, v0+24
+    return
+}
+
+function %cmp_ule64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp ule v1, v2
+    store v3, v0+24
+    return
+}
+
+function %cmp_ugt64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp ugt v1, v2
+    store v3, v0+24
+    return
+}
+
+function %cmp_uge64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp uge v1, v2
+    store v3, v0+24
+    return
+}
+
+function %cmp_ord64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp ord v1, v2
+    store v3, v0+24
+    return
+}
+
+function %cmp_uno64(i16) system_v {
+block0(v0: i16):
+    v1 = load.f64 v0
+    v2 = load.f64 v0+8
+    v3 = fcmp uno v1, v2
+    store v3, v0+24
+    return
+}

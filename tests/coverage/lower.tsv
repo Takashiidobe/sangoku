@@ -68,7 +68,7 @@ call_indirect	i8	ok
 ceil	f128	unsupported	Unsupported feature: LR35902 i128 legalization for ceil
 ceil	f16	ok	
 ceil	f32	ok	
-ceil	f64	unsupported	Unsupported feature: LR35902 wide value legalization for ceil
+ceil	f64	ok	
 cls	i128	ok	
 cls	i16	ok	
 cls	i32	ok	
@@ -95,39 +95,39 @@ fabs	f64	ok
 fadd	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fadd
 fadd	f16	ok	
 fadd	f32	ok	
-fadd	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fadd
+fadd	f64	ok	
 fcmp.eq	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fcmp
 fcmp.eq	f16	ok	
 fcmp.eq	f32	ok	
-fcmp.eq	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fcmp
+fcmp.eq	f64	ok	
 fcmp.ge	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fcmp
 fcmp.ge	f16	ok	
 fcmp.ge	f32	ok	
-fcmp.ge	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fcmp
+fcmp.ge	f64	ok	
 fcmp.gt	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fcmp
 fcmp.gt	f16	ok	
 fcmp.gt	f32	ok	
-fcmp.gt	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fcmp
+fcmp.gt	f64	ok	
 fcmp.le	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fcmp
 fcmp.le	f16	ok	
 fcmp.le	f32	ok	
-fcmp.le	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fcmp
+fcmp.le	f64	ok	
 fcmp.lt	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fcmp
 fcmp.lt	f16	ok	
 fcmp.lt	f32	ok	
-fcmp.lt	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fcmp
+fcmp.lt	f64	ok	
 fcmp.ne	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fcmp
 fcmp.ne	f16	ok	
 fcmp.ne	f32	ok	
-fcmp.ne	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fcmp
+fcmp.ne	f64	ok	
 fcmp.ord	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fcmp
 fcmp.ord	f16	ok	
 fcmp.ord	f32	ok	
-fcmp.ord	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fcmp
+fcmp.ord	f64	ok	
 fcmp.uno	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fcmp
 fcmp.uno	f16	ok	
 fcmp.uno	f32	ok	
-fcmp.uno	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fcmp
+fcmp.uno	f64	ok	
 fcopysign	f128	ok	
 fcopysign	f16	ok	
 fcopysign	f32	ok	
@@ -237,27 +237,27 @@ fdemote	f64->f32	unsupported	Unsupported feature: LR35902 wide value legalizatio
 fdiv	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fdiv
 fdiv	f16	ok	
 fdiv	f32	ok	
-fdiv	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fdiv
+fdiv	f64	ok	
 floor	f128	unsupported	Unsupported feature: LR35902 i128 legalization for floor
 floor	f16	ok	
 floor	f32	ok	
-floor	f64	unsupported	Unsupported feature: LR35902 wide value legalization for floor
+floor	f64	ok	
 fma	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fma
 fma	f16	ok	
 fma	f32	ok	
-fma	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fma
+fma	f64	ok	
 fmax	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fmax
 fmax	f16	ok	
 fmax	f32	ok	
-fmax	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fmax
+fmax	f64	ok	
 fmin	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fmin
 fmin	f16	ok	
 fmin	f32	ok	
-fmin	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fmin
+fmin	f64	ok	
 fmul	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fmul
 fmul	f16	ok	
 fmul	f32	ok	
-fmul	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fmul
+fmul	f64	ok	
 fneg	f128	ok	
 fneg	f16	ok	
 fneg	f32	ok	
@@ -271,7 +271,7 @@ fpromote	f64->f128	unsupported	Unsupported feature: LR35902 i128 legalization fo
 fsub	f128	unsupported	Unsupported feature: LR35902 i128 legalization for fsub
 fsub	f16	ok	
 fsub	f32	ok	
-fsub	f64	unsupported	Unsupported feature: LR35902 wide value legalization for fsub
+fsub	f64	ok	
 func_addr	-	ok	
 iabs	i128	ok	
 iabs	i16	ok	
@@ -405,7 +405,7 @@ load.offset	i8	ok
 nearest	f128	unsupported	Unsupported feature: LR35902 i128 legalization for nearest
 nearest	f16	ok	
 nearest	f32	ok	
-nearest	f64	unsupported	Unsupported feature: LR35902 wide value legalization for nearest
+nearest	f64	ok	
 popcnt	i128	ok	
 popcnt	i16	ok	
 popcnt	i32	ok	
@@ -494,7 +494,7 @@ smulhi	i8	ok
 sqrt	f128	unsupported	Unsupported feature: LR35902 i128 legalization for sqrt
 sqrt	f16	ok	
 sqrt	f32	ok	
-sqrt	f64	unsupported	Unsupported feature: LR35902 wide value legalization for sqrt
+sqrt	f64	ok	
 srem	i128	ok	
 srem	i16	ok	
 srem	i32	ok	
@@ -540,7 +540,7 @@ trapz	i8	ok
 trunc	f128	unsupported	Unsupported feature: LR35902 i128 legalization for trunc
 trunc	f16	ok	
 trunc	f32	ok	
-trunc	f64	unsupported	Unsupported feature: LR35902 wide value legalization for trunc
+trunc	f64	ok	
 uadd_overflow	i128	ok	
 uadd_overflow	i16	ok	
 uadd_overflow	i32	ok	
