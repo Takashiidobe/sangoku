@@ -73,8 +73,9 @@ Current lowering supports every i8 shift and rotate (constant counts inline,
 variable counts through `__gbc_shift8`), constant 16-bit logical shifts and
 32-bit logical right shifts; wider arithmetic shifts, rotations and variable
 counts still need the linked implementation work before core support. The
-remaining i8 gaps are cls (sangoku-7qz.23) and trapnz/trapz/umulhi/smulhi
-(sangoku-7qz.20). i8 overflow ops are done; i16/i32 remain in sangoku-7qz.19.
+i8 column of the coverage matrix is now complete (shifts, rotates, overflow ops,
+cls, trapnz/trapz, umulhi/smulhi). The wider types remain in sangoku-7qz.18
+(i16 gaps), .19 (overflow), .20 (trap/mulhi) and .23 (cls).
 
 Use `Emulator` from `sangoku_test_support::emu` for runtime tests. It executes a
 subset of SM83 instructions against flat 64 KiB memory. Set byte registers and

@@ -1299,3 +1299,53 @@ fn i8_overflow_ops_match_host() -> Result<()> {
     }
     Ok(())
 }
+
+#[test]
+fn i8_cls_and_mulhi_match_host() -> Result<()> {
+    let program = program("trap-cls-mulhi-i8")?;
+    let edges = [
+        0u8, 1, 2, 0x0f, 0x3f, 0x40, 0x7f, 0x80, 0x81, 0xc0, 0xfe, 0xff,
+    ];
+    for a in edges {
+        let got = invoke(&program, "__rust_cls_i8", &[a])? as u8;
+        let expected = ((a ^ ((a as i8) >> 1) as u8).leading_zeros() - 1) as u8;
+        assert_eq!(got, expected, "cls {a:#x}");
+        for b in edges {
+            let unsigned = (u16::from(a) * u16::from(b) >> 8) as u8;
+            let signed = ((i16::from(a as i8) * i16::from(b as i8)) >> 8) as u8;
+            let run = |op: &str| -> Result<u8> {
+                Ok(invoke(&program, &format!("__rust_{op}_i8"), &[a, b])? as u8)
+            };
+            assert_eq!(run("umulhi")?, unsigned, "umulhi {a:#x} {b:#x}");
+            assert_eq!(run("smulhi")?, signed, "smulhi {a:#x} {b:#x}");
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn i8_trapnz_and_trapz_trap_only_on_their_condition() -> Result<()> {
+    let program = program("trap-cls-mulhi-i8")?;
+    for (name, value, traps) in [
+        ("trapnz_i8", 0u8, false),
+        ("trapnz_i8", 1, true),
+        ("trapnz_i8", 0x80, true),
+        ("trapz_i8", 0, true),
+        ("trapz_i8", 1, false),
+        ("trapz_i8", 0x80, false),
+    ] {
+        let mut emulator = program.emulator(&format!("__rust_{name}"))?;
+        emulator.memory[BASE as usize] = value;
+        emulator.b = BASE as u8;
+        emulator.c = (BASE >> 8) as u8;
+        emulator.set_sp(STACK - 2);
+        let done = program.symbols["done"];
+        emulator.write16(STACK - 2, done);
+        let target = if traps { 0x0010 } else { done };
+        emulator.run_until(target, 2_000_000)?;
+        if !traps {
+            assert_eq!(emulator.a, value, "{name} {value:#x} result");
+        }
+    }
+    Ok(())
+}

@@ -63,7 +63,7 @@ cls	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 cls	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = cls.i16 v0`, type = `Some(types::I16)`
 cls	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = cls.i32 v0`, type = `Some(types::I32)`
 cls	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-cls	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = cls.i8 v0`, type = `Some(types::I8)`
+cls	i8	ok	
 clz	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 clz	i16	ok	
 clz	i32	ok	
@@ -459,7 +459,7 @@ smulhi	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 smulhi	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smulhi.i16 v0, v1`, type = `Some(types::I16)`
 smulhi	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smulhi.i32 v0, v1`, type = `Some(types::I32)`
 smulhi	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-smulhi	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smulhi.i8 v0, v1`, type = `Some(types::I8)`
+smulhi	i8	ok	
 sqrt	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 sqrt	f16	ok	
 sqrt	f32	ok	
@@ -496,8 +496,8 @@ store	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; 
 store	i8	ok	
 symbol_value	-	ok	
 trap	-	ok	
-trapnz	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `trapnz.i8 v0, user1`, type = `None`
-trapz	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `trapz.i8 v0, user1`, type = `None`
+trapnz	i8	ok	
+trapz	i8	ok	
 trunc	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 trunc	f16	ok	
 trunc	f32	ok	
@@ -544,7 +544,7 @@ umulhi	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 umulhi	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = umulhi.i16 v0, v1`, type = `Some(types::I16)`
 umulhi	i32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = umulhi.i32 v0, v1`, type = `Some(types::I32)`
 umulhi	i64	unsupported	Unsupported feature: value type i64 requires 8 registers; this backend supports at most 4
-umulhi	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = umulhi.i8 v0, v1`, type = `Some(types::I8)`
+umulhi	i8	ok	
 urem	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 urem	i16	ok	
 urem	i32	ok	
