@@ -33,6 +33,10 @@ check() {
     echo "upstream base: $(git_fork log -1 --format='%h %cs %s' "$base_sha")"
     echo "fork commits since base:"
     git_fork log --reverse --format='  %h %s' "$base_sha"..HEAD
+    if [ "$(git_fork rev-list --count "$base_sha"..HEAD)" != 1 ]; then
+        echo "fork must be exactly one commit on the base; squash with git reset --soft $base_sha" >&2
+        return 1
+    fi
     echo "fork diff against base:"
     git_fork diff --stat "$base_sha" HEAD | sed 's/^/  /'
     if [ -n "$(git_fork diff --name-only "$base_sha" HEAD -- library)" ]; then

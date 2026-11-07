@@ -53,8 +53,8 @@ of core can generate and link into a ROM.
 ## Patch series and rebasing
 
 The fork is `patches/rust/*.patch` applied on the upstream commit recorded in
-`patches/rust/BASE`. Fork history on `gbc-lr35902` contains earlier churn; only
-the net diff against the base matters, and it is two files in
+`patches/rust/BASE`. The `gbc-lr35902` branch is exactly one commit on that base (`check` enforces
+this), touching two files in
 `compiler/rustc_target/src/callconv/` (`library/` must stay identical).
 
 | Command                             | Effect                                                                     |
