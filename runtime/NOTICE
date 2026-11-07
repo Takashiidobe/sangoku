@@ -52,3 +52,13 @@ the stack, caller-popped arguments) onto it, and adds the backward copy that
 memmove needs when the destination overlaps the end of the source. SDCC has no
 SM83 memmove (its z80-common version uses LDIR and LDDR). The same GNU GPL
 version 2 notice and special exception as for divunsigned.s above apply.
+
+mulo128.asm adapts the bit-wise Horner multiplication algorithm in SDCC
+device/lib/_mullonglong.c (64-bit generic implementation) to a 128-bit SM83
+stack frame, with sticky carry tracking for unsigned overflow.
+Upstream SHA-256:
+46b474206ae0751ac28575ef5479be7ab5d96553f1902258105ec8507dec054b
+
+Copyright (C) 2012, Philipp Klaus Krause
+The same GNU GPL version 2-or-later notice and special exception reproduced
+above apply.

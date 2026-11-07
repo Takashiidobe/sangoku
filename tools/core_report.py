@@ -62,7 +62,11 @@ def undefined_symbols(clif_dirs):
             text = path.read_text()
             defined.update(re.findall(r"^; symbol (\S+)", text, re.M))
             imported.update(re.findall(r'^\s*fn\d+ = u0:\d+ sig\d+ ; "([^"]+)"', text, re.M))
-    return sorted(imported - defined)
+    runtime = set()
+    for path in (ROOT / "runtime").glob("*.asm"):
+        runtime.update(re.findall(r"^([A-Za-z_][A-Za-z0-9_]*)::", path.read_text(), re.M))
+    return sorted(name for name in imported - defined
+                  if name not in runtime and f"__rust_{name}" not in runtime)
 
 
 def probe(clif_path):

@@ -248,6 +248,7 @@ pub fn runtime_objects(assembly: &str) -> Vec<&'static str> {
         ("udiv16", true),
         ("mul16", true),
         ("wide32", true),
+        ("mulo128", assembly.contains("__gbc_u128_mulo")),
         ("softfloat32", float32),
         ("softfloat64", assembly.contains("__gbc_f64")),
         ("softfloat128", assembly.contains("__gbc_f128")),
@@ -351,6 +352,8 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
             ["udiv16", "mul16", "wide32", "softfloat64"]
         );
         assert!(runtime_objects("call memcpy").contains(&"memory"));
+        assert!(runtime_objects("call __rust___gbc_u128_mulo").contains(&"mulo128"));
+        assert!(!runtime_objects("ret").contains(&"mulo128"));
         assert!(runtime_objects("call __rust__Rx_rust_begin_unwind").contains(&"panic"));
         assert!(!runtime_objects("__rust_x_rust_begin_unwind::").contains(&"panic"));
         assert_eq!(

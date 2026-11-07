@@ -3,6 +3,7 @@ use std::{fs, process::Command};
 
 fn build_fixture(
     name: &str,
+    level: &str,
 ) -> Result<(
     sangoku_test_support::tempfile::TempDir,
     std::path::PathBuf,
@@ -14,12 +15,17 @@ fn build_fixture(
         .current_dir(env!("CARGO_MANIFEST_DIR"))
         .args(["build", &format!("tests/fixtures/clif/{name}.rs")])
         .arg(&rom)
+        .args(["--opt-level", level])
         .output()?;
     Ok((directory, rom, output))
 }
 
 fn run_fixture(name: &str) -> Result<()> {
-    let (_directory, rom, output) = build_fixture(name)?;
+    run_fixture_at_level(name, "0")
+}
+
+fn run_fixture_at_level(name: &str, level: &str) -> Result<()> {
+    let (_directory, rom, output) = build_fixture(name, level)?;
     ensure!(
         output.status.success(),
         "{name}: {}",
@@ -89,13 +95,9 @@ fn wide_float128() -> Result<()> {
 }
 
 #[test]
-fn wide_overflow_multiply_reports_rom_capacity() -> Result<()> {
-    let (_directory, _rom, output) = build_fixture("wide-overflow-mul")?;
-    ensure!(
-        !output.status.success(),
-        "u128 overflow multiply support changed; enable execution check"
-    );
-    let report = String::from_utf8(output.stderr)?;
-    ensure!(report.contains("sangoku::rom_capacity"), "{report}");
+fn wide_overflow_multiply() -> Result<()> {
+    for level in ["0", "z"] {
+        run_fixture_at_level("wide-overflow-mul", level)?;
+    }
     Ok(())
 }
