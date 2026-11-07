@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate the RGBDS f64 runtime with SDCC's SM83 backend."""
+"""Regenerate the RGBDS f64 or f128 runtime with SDCC's SM83 backend."""
 import argparse
 import hashlib
 import re
@@ -8,24 +8,23 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCE = ROOT / "runtime/softfloat64.c"
-OUTPUT = ROOT / "runtime/softfloat64.asm"
 
 
-def generate():
+def generate(width=64):
+    source = ROOT / f"runtime/softfloat{width}.c"
     with tempfile.TemporaryDirectory() as directory:
-        assembly = Path(directory) / "softfloat64.asm"
+        assembly = Path(directory) / f"softfloat{width}.asm"
         try:
             subprocess.run(
                 ["sdcc", "-msm83", "--opt-code-size", "--std-c11", "-S",
-                 str(SOURCE), "-o", str(assembly)], check=True, cwd=ROOT,
+                 str(source), "-o", str(assembly)], check=True, cwd=ROOT,
             )
         except FileNotFoundError:
-            raise SystemExit("sdcc is required to regenerate softfloat64.asm")
+            raise SystemExit(f"sdcc is required to regenerate softfloat{width}.asm")
         raw = assembly.read_text()
-    digest = hashlib.sha256(SOURCE.read_bytes() + Path(__file__).read_bytes()).hexdigest()
-    lines = [f"; generated from softfloat64.c, sha256 {digest}",
-             'SECTION "softfloat64", ROM0']
+    digest = hashlib.sha256(source.read_bytes() + Path(__file__).read_bytes()).hexdigest()
+    lines = [f"; generated from softfloat{width}.c, sha256 {digest}",
+             f'SECTION "softfloat{width}", ROM0']
     code = False
     for line in raw.splitlines():
         line = line.split(";", 1)[0].strip()
@@ -50,20 +49,22 @@ def generate():
         if line == "jp [hl]":
             line = "jp hl"
         lines.append(line)
-    lines += ["", "__gbc_f64::", "ld e, b", "ld d, c", "jp _sangoku_sf64", ""]
+    lines += ["", f"__gbc_f{width}::", "ld e, b", "ld d, c", f"jp _sangoku_sf{width}", ""]
     return "\n".join(lines)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--width", type=int, choices=[64, 128], default=64)
     args = parser.parse_args()
-    text = generate()
+    output = ROOT / f"runtime/softfloat{args.width}.asm"
+    text = generate(args.width)
     if args.check:
-        if not OUTPUT.exists() or OUTPUT.read_text() != text:
-            raise SystemExit("stale softfloat64.asm; run tools/generate_softfloat64.py")
+        if not output.exists() or output.read_text() != text:
+            raise SystemExit(f"stale {output.name}; run tools/generate_softfloat64.py --width {args.width}")
     else:
-        OUTPUT.write_text(text)
+        output.write_text(text)
 
 
 if __name__ == "__main__":

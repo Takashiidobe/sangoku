@@ -5,7 +5,7 @@ unsupported, `PANIC` is a backend crash, `n/e` cannot be written as textual CLIF
 for that type (the opcode's type set rejects it). Memory operations use `i16`
 addresses.
 
-Totals: inexpressible 26, ok 498, unsupported 90
+Totals: inexpressible 26, ok 518, unsupported 70
 
 ## Integer operations
 
@@ -83,33 +83,33 @@ Totals: inexpressible 26, ok 498, unsupported 90
 | op        | f16 | f32 | f64 | f128 |
 | --------- | --- | --- | --- | ---- |
 | call      | ok  | ok  | ok  | ok   |
-| ceil      | ok  | ok  | ok  | -    |
+| ceil      | ok  | ok  | ok  | ok   |
 | f.const   | ok  | ok  | ok  | ok   |
 | fabs      | ok  | ok  | ok  | ok   |
-| fadd      | ok  | ok  | ok  | -    |
-| fcmp.eq   | ok  | ok  | ok  | -    |
-| fcmp.ge   | ok  | ok  | ok  | -    |
-| fcmp.gt   | ok  | ok  | ok  | -    |
-| fcmp.le   | ok  | ok  | ok  | -    |
-| fcmp.lt   | ok  | ok  | ok  | -    |
-| fcmp.ne   | ok  | ok  | ok  | -    |
-| fcmp.ord  | ok  | ok  | ok  | -    |
-| fcmp.uno  | ok  | ok  | ok  | -    |
+| fadd      | ok  | ok  | ok  | ok   |
+| fcmp.eq   | ok  | ok  | ok  | ok   |
+| fcmp.ge   | ok  | ok  | ok  | ok   |
+| fcmp.gt   | ok  | ok  | ok  | ok   |
+| fcmp.le   | ok  | ok  | ok  | ok   |
+| fcmp.lt   | ok  | ok  | ok  | ok   |
+| fcmp.ne   | ok  | ok  | ok  | ok   |
+| fcmp.ord  | ok  | ok  | ok  | ok   |
+| fcmp.uno  | ok  | ok  | ok  | ok   |
 | fcopysign | ok  | ok  | ok  | ok   |
-| fdiv      | ok  | ok  | ok  | -    |
-| floor     | ok  | ok  | ok  | -    |
-| fma       | ok  | ok  | ok  | -    |
-| fmax      | ok  | ok  | ok  | -    |
-| fmin      | ok  | ok  | ok  | -    |
-| fmul      | ok  | ok  | ok  | -    |
+| fdiv      | ok  | ok  | ok  | ok   |
+| floor     | ok  | ok  | ok  | ok   |
+| fma       | ok  | ok  | ok  | ok   |
+| fmax      | ok  | ok  | ok  | ok   |
+| fmin      | ok  | ok  | ok  | ok   |
+| fmul      | ok  | ok  | ok  | ok   |
 | fneg      | ok  | ok  | ok  | ok   |
-| fsub      | ok  | ok  | ok  | -    |
+| fsub      | ok  | ok  | ok  | ok   |
 | load      | ok  | ok  | ok  | ok   |
-| nearest   | ok  | ok  | ok  | -    |
+| nearest   | ok  | ok  | ok  | ok   |
 | select    | ok  | ok  | ok  | ok   |
-| sqrt      | ok  | ok  | ok  | -    |
+| sqrt      | ok  | ok  | ok  | ok   |
 | store     | ok  | ok  | ok  | ok   |
-| trunc     | ok  | ok  | ok  | -    |
+| trunc     | ok  | ok  | ok  | ok   |
 
 ## Conversions
 

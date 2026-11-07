@@ -1,4 +1,4 @@
-; generated from softfloat64.c, sha256 79b3fa58351c7494b81d4aa1fc0e6bd9ba5d800fa8daa331f664b26ee80b8848
+; generated from softfloat64.c, sha256 ed2894797e0e775422dd68c6dee174508e0a366a513fc9993a56c5fd43db66ae
 SECTION "softfloat64", ROM0
 _sf64_clear:
 ld c, 0x00

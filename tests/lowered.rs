@@ -22,8 +22,12 @@ fn lower_program(path: &str) -> Result<harness::Program> {
         String::from_utf8_lossy(&output.stderr)
     );
     let assembly = String::from_utf8(output.stdout)?;
+    let needs_float128 = assembly.contains("__gbc_f128");
     let needs_float64 = assembly.contains("__gbc_f64");
-    let needs_float32 = assembly.replace("__gbc_f64", "").contains("__gbc_f");
+    let needs_float32 = assembly
+        .replace("__gbc_f64", "")
+        .replace("__gbc_f128", "")
+        .contains("__gbc_f");
     let mut sources = vec![
         ("lowered.s", assembly),
         ("udiv16.asm", harness::read("runtime/udiv16.asm")?),
@@ -39,6 +43,12 @@ fn lower_program(path: &str) -> Result<harness::Program> {
     }
     if needs_float64 {
         sources.push(("softfloat64.asm", harness::read("runtime/softfloat64.asm")?));
+    }
+    if needs_float128 {
+        sources.push((
+            "softfloat128.asm",
+            harness::read("runtime/softfloat128.asm")?,
+        ));
     }
     harness::assemble(&sources, None)
 }
@@ -2730,6 +2740,183 @@ fn rust_f64_memory_add_lowers_and_executes() -> Result<()> {
             assert!(f64::from_bits(got).is_nan());
         } else {
             assert_eq!(got, expected.to_bits(), "{a:?} + {b:?}");
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn f128_shared_runtime_matches_reference() -> Result<()> {
+    use sangoku_test_support::{Value, serde_json};
+    let mut input = harness::read("runtime/softfloat128.c")?.into_bytes();
+    input.extend(harness::read("tools/generate_softfloat64.py")?.into_bytes());
+    let header = format!(
+        "; generated from softfloat128.c, sha256 {}",
+        harness::hash(&input)
+    );
+    ensure!(
+        harness::read("runtime/softfloat128.asm")?.lines().next() == Some(header.as_str()),
+        "stale f128 runtime; regenerate with --width 128"
+    );
+    let reference: Value =
+        serde_json::from_str(include_str!("fixtures/emulate/softfloat-f128.json"))?;
+    ensure!(
+        reference["generator_sha256"]
+            == harness::hash(harness::read("tools/generate_softfloat128_cases.py")?.as_bytes()),
+        "stale binary128 reference cases"
+    );
+    let source = include_str!("fixtures/emulate/softfloat-f128.clif");
+    for level in ["none", "speed"] {
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let mut programs = std::collections::BTreeMap::new();
+        let mut metrics = std::collections::BTreeMap::new();
+        for function in source.split("\nfunction ").skip(1) {
+            let name = function
+                .strip_prefix('%')
+                .unwrap()
+                .split('(')
+                .next()
+                .unwrap();
+            let path = directory.path().join(format!("{name}.clif"));
+            std::fs::write(
+                &path,
+                format!(
+                    "set enable_multi_ret_implicit_sret=true\nset opt_level={level}\ntarget z80\nfunction {function}"
+                ),
+            )?;
+            let program = lower_program(path.to_str().unwrap())?;
+            ensure!(
+                program.sections["softfloat128"].size <= 8192,
+                "f128 runtime exceeds half a ROM bank"
+            );
+            ensure!(
+                !program.sections.contains_key("softfloat64")
+                    && !program.sections.contains_key("softfloat32"),
+                "f128 caller pulled in another float runtime"
+            );
+            let caller: usize = program
+                .sections
+                .values()
+                .filter(|s| s.name.starts_with("__rust_cgu_"))
+                .map(|s| s.size)
+                .sum();
+            ensure!(caller <= 8192, "{level} {name}: caller uses {caller} bytes");
+            metrics.insert(name.to_owned(), (caller, 0i32));
+            programs.insert(name.to_owned(), program);
+        }
+        for case in reference["cases"].as_array().unwrap() {
+            let name = format!("{}128", case["op"].as_str().unwrap());
+            let parse = |key: &str| u128::from_str_radix(case[key].as_str().unwrap(), 16).unwrap();
+            let program = &programs[&name];
+            let mut e = program.emulator(&format!("__rust_{name}"))?;
+            for (i, key) in ["a", "b", "c"].iter().enumerate() {
+                e.memory[BASE as usize + 16 * i..BASE as usize + 16 * (i + 1)]
+                    .copy_from_slice(&parse(key).to_le_bytes());
+            }
+            e.b = BASE as u8;
+            e.c = (BASE >> 8) as u8;
+            e.set_sp(STACK - 2);
+            e.write16(STACK - 2, program.symbols["done"]);
+            e.reset_metrics();
+            e.run_until(program.symbols["done"], 12_000_000)?;
+            let got = if name.starts_with("cmp_") {
+                u128::from(e.memory[BASE as usize + 48])
+            } else {
+                u128::from_le_bytes(
+                    e.memory[BASE as usize + 48..BASE as usize + 64]
+                        .try_into()
+                        .unwrap(),
+                )
+            };
+            let expected = parse("result");
+            let nan = |v: u128| ((v >> 112) & 32767) == 32767 && v & ((1u128 << 112) - 1) != 0;
+            assert!(
+                got == expected || nan(expected) && nan(got),
+                "{level} {name} {case}: got {got:032x}"
+            );
+            let peak = e.peak_stack_bytes + 2;
+            ensure!(peak <= 512, "{level} {name} uses {peak} stack bytes");
+            metrics.get_mut(&name).unwrap().1 = metrics[&name].1.max(peak);
+        }
+        if std::env::var_os("SANGOKU_REPORT_SF128").is_some() {
+            for (name, (caller, stack)) in metrics {
+                eprintln!("f128-size {level} {name} caller={caller} stack={stack}");
+            }
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn rust_f128_arithmetic_lowers_and_executes() -> Result<()> {
+    let reference: sangoku_test_support::Value = sangoku_test_support::serde_json::from_str(
+        include_str!("fixtures/emulate/softfloat-f128.json"),
+    )?;
+    for (example, op, entry) in [
+        ("f128-add.rs", "fadd", "sum_to_memory"),
+        ("f128-fma.rs", "fma", "fma_to_memory"),
+    ] {
+        let source = harness::root().join("examples").join(example);
+        let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
+            .args(["clif", source.to_str().unwrap(), "-"])
+            .output()?;
+        ensure!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let directory = sangoku_test_support::tempfile::tempdir()?;
+        let path = directory.path().join("rust-f128.clif");
+        std::fs::write(&path, output.stdout)?;
+        let program = lower_program(path.to_str().unwrap())?;
+        ensure!(program.sections.contains_key("softfloat128"));
+        ensure!(
+            !program.sections.contains_key("softfloat64")
+                && !program.sections.contains_key("softfloat32")
+        );
+        for case in reference["cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|c| c["op"] == op)
+            .take(8)
+        {
+            let parse = |key: &str| u128::from_str_radix(case[key].as_str().unwrap(), 16).unwrap();
+            let mut e = program.emulator(&format!("__rust_{entry}"))?;
+            for (i, key) in ["a", "b", "c"].iter().enumerate() {
+                e.memory[BASE as usize + 16 * i..BASE as usize + 16 * (i + 1)]
+                    .copy_from_slice(&parse(key).to_le_bytes());
+            }
+            e.b = BASE as u8;
+            e.c = (BASE >> 8) as u8;
+            e.a = (BASE + 16) as u8;
+            e.memory[STACK as usize] = ((BASE + 16) >> 8) as u8;
+            if op == "fma" {
+                e.write16(STACK + 1, BASE + 32);
+                e.write16(STACK + 3, BASE + 48);
+            } else {
+                e.write16(STACK + 1, BASE + 48);
+            }
+            e.set_sp(STACK - 2);
+            e.write16(STACK - 2, program.symbols["done"]);
+            e.reset_metrics();
+            e.run_until(program.symbols["done"], 12_000_000)?;
+            let got = u128::from_le_bytes(
+                e.memory[BASE as usize + 48..BASE as usize + 64]
+                    .try_into()
+                    .unwrap(),
+            );
+            let expected = parse("result");
+            let nan = |v: u128| ((v >> 112) & 32767) == 32767 && v & ((1u128 << 112) - 1) != 0;
+            assert!(
+                got == expected || nan(expected) && nan(got),
+                "{example} {case}: {got:032x}"
+            );
+            ensure!(
+                e.peak_stack_bytes + 2 <= 512,
+                "{example}: stack grew to {}",
+                e.peak_stack_bytes + 2
+            );
         }
     }
     Ok(())

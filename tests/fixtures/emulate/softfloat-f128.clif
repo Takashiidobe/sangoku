@@ -1,0 +1,232 @@
+set enable_multi_ret_implicit_sret=true
+target z80
+
+function %fadd128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v4 = fadd v1, v2
+    store v4, v0+48
+    return
+}
+
+function %fsub128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v4 = fsub v1, v2
+    store v4, v0+48
+    return
+}
+
+function %fmul128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v4 = fmul v1, v2
+    store v4, v0+48
+    return
+}
+
+function %fdiv128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v4 = fdiv v1, v2
+    store v4, v0+48
+    return
+}
+
+function %sqrt128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v4 = sqrt v1
+    store v4, v0+48
+    return
+}
+
+function %fma128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = load.f128 v0+32
+    v4 = fma v1, v2, v3
+    store v4, v0+48
+    return
+}
+
+function %fmin128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v4 = fmin v1, v2
+    store v4, v0+48
+    return
+}
+
+function %fmax128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v4 = fmax v1, v2
+    store v4, v0+48
+    return
+}
+
+function %trunc128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v4 = trunc v1
+    store v4, v0+48
+    return
+}
+
+function %floor128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v4 = floor v1
+    store v4, v0+48
+    return
+}
+
+function %ceil128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v4 = ceil v1
+    store v4, v0+48
+    return
+}
+
+function %nearest128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v4 = nearest v1
+    store v4, v0+48
+    return
+}
+
+function %cmp_eq128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp eq v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_ne128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp ne v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_one128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp one v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_ueq128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp ueq v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_lt128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp lt v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_le128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp le v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_gt128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp gt v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_ge128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp ge v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_ult128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp ult v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_ule128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp ule v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_ugt128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp ugt v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_uge128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp uge v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_ord128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp ord v1, v2
+    store v3, v0+48
+    return
+}
+
+function %cmp_uno128(i16) system_v {
+block0(v0: i16):
+    v1 = load.f128 v0
+    v2 = load.f128 v0+16
+    v3 = fcmp uno v1, v2
+    store v3, v0+48
+    return
+}
