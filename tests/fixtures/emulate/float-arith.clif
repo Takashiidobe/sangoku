@@ -157,3 +157,52 @@ block0(v0: i16):
     v3 = fcmp uno v1, v2
     return v3
 }
+
+function %fdiv(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v2 = load.f32 v0+4
+    v3 = fdiv v1, v2
+    v4 = bitcast.i32 v3
+    return v4
+}
+
+function %fsqrt(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v3 = sqrt v1
+    v4 = bitcast.i32 v3
+    return v4
+}
+
+function %ftrunc(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v3 = trunc v1
+    v4 = bitcast.i32 v3
+    return v4
+}
+
+function %ffloor(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v3 = floor v1
+    v4 = bitcast.i32 v3
+    return v4
+}
+
+function %fceil(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v3 = ceil v1
+    v4 = bitcast.i32 v3
+    return v4
+}
+
+function %fnearest(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.f32 v0
+    v3 = nearest v1
+    v4 = bitcast.i32 v3
+    return v4
+}

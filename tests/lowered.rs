@@ -588,6 +588,120 @@ fn f32_rounding_matches_host_on_random_operands() -> Result<()> {
 }
 
 #[test]
+fn f32_division_matches_host() -> Result<()> {
+    let program = program("float-arith")?;
+    let values = float_samples();
+    let mut state = 0x2545_F491u32;
+    let mut pairs: Vec<(f32, f32)> = values
+        .iter()
+        .flat_map(|a| values.iter().map(move |b| (*a, *b)))
+        .collect();
+    for index in 0..300 {
+        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
+        let (ea, eb) = match index % 3 {
+            0 => (100 + (state >> 8) % 50, 100 + (state >> 12) % 50),
+            1 => (1 + (state >> 8) % 40, 100 + (state >> 12) % 40),
+            _ => (200 + (state >> 8) % 50, 1 + (state >> 12) % 30),
+        };
+        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
+        let a = f32::from_bits((state & 1) << 31 | ea << 23 | (state >> 8) & 0x7F_FFFF);
+        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
+        let b = f32::from_bits((state & 1) << 31 | eb << 23 | (state >> 8) & 0x7F_FFFF);
+        pairs.push((a, b));
+    }
+    for (a, b) in pairs {
+        let mut data = a.to_bits().to_le_bytes().to_vec();
+        data.extend(b.to_bits().to_le_bytes());
+        let got = invoke(&program, "__rust_fdiv", &data)?;
+        same_float(
+            got,
+            a / b,
+            &format!("fdiv {:08x} {:08x}", a.to_bits(), b.to_bits()),
+        );
+    }
+    Ok(())
+}
+
+fn unary_samples() -> Vec<f32> {
+    let mut values = float_samples();
+    values.extend([
+        0.5,
+        -0.5,
+        0.49999997,
+        0.50000006,
+        1.5,
+        2.5,
+        -2.5,
+        3.5,
+        0.75,
+        -0.75,
+        8388607.5,
+        8388608.0,
+        8388609.0,
+        -8388607.5,
+        123456.789,
+        -1234.5678,
+        2.0,
+        4.0,
+        9.0,
+        2.0000002,
+        1.0000001,
+        0.9999999,
+        f32::from_bits(0x0000_0400),
+        f32::from_bits(0x007F_FFFF),
+        1e30,
+        1e-30,
+    ]);
+    values
+}
+
+#[test]
+fn f32_sqrt_matches_host() -> Result<()> {
+    let program = program("float-arith")?;
+    let mut values = unary_samples();
+    let mut state = 0x6C07_8965u32;
+    for _ in 0..200 {
+        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
+        let exponent = 1 + (state >> 8) % 253;
+        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
+        values.push(f32::from_bits(exponent << 23 | (state >> 8) & 0x7F_FFFF));
+    }
+    for a in values {
+        let got = invoke(&program, "__rust_fsqrt", &a.to_bits().to_le_bytes())?;
+        same_float(got, a.sqrt(), &format!("fsqrt {:08x}", a.to_bits()));
+    }
+    Ok(())
+}
+
+#[test]
+fn f32_rounding_ops_match_host() -> Result<()> {
+    let program = program("float-arith")?;
+    let mut values = unary_samples();
+    let mut state = 0x0BAD_CAFEu32;
+    for _ in 0..200 {
+        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
+        let exponent = 110 + (state >> 8) % 50;
+        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
+        values.push(f32::from_bits(
+            (state & 1) << 31 | exponent << 23 | (state >> 8) & 0x7F_FFFF,
+        ));
+    }
+    for a in values {
+        let data = a.to_bits().to_le_bytes();
+        for (name, expected) in [
+            ("ftrunc", a.trunc()),
+            ("ffloor", a.floor()),
+            ("fceil", a.ceil()),
+            ("fnearest", a.round_ties_even()),
+        ] {
+            let got = invoke(&program, &format!("__rust_{name}"), &data)?;
+            same_float(got, expected, &format!("{name} {:08x}", a.to_bits()));
+        }
+    }
+    Ok(())
+}
+
+#[test]
 fn division_traps_reach_the_rst_vector() -> Result<()> {
     let program = program("wide-ops")?;
     let cases: [(&str, Vec<u8>); 5] = [

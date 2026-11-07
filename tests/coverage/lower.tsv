@@ -57,7 +57,7 @@ call.arg	i8	ok
 call_indirect	i8	ok	
 ceil	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 ceil	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = ceil.f16 v0`, type = `Some(types::F16)`
-ceil	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = ceil.f32 v0`, type = `Some(types::F32)`
+ceil	f32	ok	
 ceil	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 cls	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 cls	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = cls.i16 v0`, type = `Some(types::I16)`
@@ -226,11 +226,11 @@ fdemote	f64->f16	unsupported	Unsupported feature: Unsupported type for LR35902: 
 fdemote	f64->f32	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fdiv	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fdiv	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fdiv.f16 v0, v1`, type = `Some(types::F16)`
-fdiv	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fdiv.f32 v0, v1`, type = `Some(types::F32)`
+fdiv	f32	ok	
 fdiv	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 floor	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 floor	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = floor.f16 v0`, type = `Some(types::F16)`
-floor	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = floor.f32 v0`, type = `Some(types::F32)`
+floor	f32	ok	
 floor	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 fma	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 fma	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = fma.f16 v0, v1, v2`, type = `Some(types::F16)`
@@ -381,7 +381,7 @@ load.offset	i64	unsupported	Unsupported feature: value type i64 requires 8 regis
 load.offset	i8	ok	
 nearest	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 nearest	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = nearest.f16 v0`, type = `Some(types::F16)`
-nearest	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = nearest.f32 v0`, type = `Some(types::F32)`
+nearest	f32	ok	
 nearest	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 popcnt	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 popcnt	i16	ok	
@@ -462,7 +462,7 @@ smulhi	i64	unsupported	Unsupported feature: value type i64 requires 8 registers;
 smulhi	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = smulhi.i8 v0, v1`, type = `Some(types::I8)`
 sqrt	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 sqrt	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sqrt.f16 v0`, type = `Some(types::F16)`
-sqrt	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = sqrt.f32 v0`, type = `Some(types::F32)`
+sqrt	f32	ok	
 sqrt	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 srem	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 srem	i16	ok	
@@ -500,7 +500,7 @@ trapnz	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst =
 trapz	i8	unsupported	Unsupported feature: should be implemented in ISLE: inst = `trapz.i8 v0, user1`, type = `None`
 trunc	f128	unsupported	Unsupported feature: Unsupported type for LR35902: f128
 trunc	f16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = trunc.f16 v0`, type = `Some(types::F16)`
-trunc	f32	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9 = trunc.f32 v0`, type = `Some(types::F32)`
+trunc	f32	ok	
 trunc	f64	unsupported	Unsupported feature: Unsupported type for LR35902: f64
 uadd_overflow	i128	unsupported	Unsupported feature: Unsupported type for LR35902: i128
 uadd_overflow	i16	unsupported	Unsupported feature: should be implemented in ISLE: inst = `v9, v10 = uadd_overflow.i16 v0, v1`, type = `Some(types::I16)`
