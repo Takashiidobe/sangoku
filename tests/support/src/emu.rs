@@ -214,7 +214,10 @@ impl Emulator {
     pub fn step(&mut self) -> Result<u32> {
         let address = self.pc;
         let op = self.fetch();
-        let cost = if op == 0 {
+        let cost = if op == 0 || op == 0xF3 {
+            4
+        } else if op == 0x76 {
+            self.pc = address;
             4
         } else if op == 0xC9 {
             self.pc = self.pop();

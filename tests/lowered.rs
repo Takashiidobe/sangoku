@@ -25,6 +25,8 @@ fn lower_program(path: &str) -> Result<harness::Program> {
     let needs_memory = assembly.contains("__gbc_mem")
         || assembly.contains("memcpy")
         || assembly.contains("memmove");
+    let needs_panic =
+        assembly.contains("rust_begin_unwind") && !assembly.contains("rust_begin_unwind::");
     let needs_convert = assembly.contains("__gbc_convert");
     let needs_float128 = assembly.contains("__gbc_f128");
     let needs_float64 = assembly.contains("__gbc_f64");
@@ -59,6 +61,9 @@ fn lower_program(path: &str) -> Result<harness::Program> {
     }
     if needs_memory {
         sources.push(("memory.asm", harness::read("runtime/memory.asm")?));
+    }
+    if needs_panic {
+        sources.push(("panic.asm", harness::read("runtime/panic.asm")?));
     }
     harness::assemble(&sources, None)
 }
