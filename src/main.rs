@@ -234,7 +234,7 @@ fn emit_clif(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
     }
 
     let backend = build_backend(root)?;
-    let temp = TempDir::new()?;
+    let artifacts = ArtifactDir::new(root, &source)?;
     run_command(
         rustc_command(root, opt_level)
             .env("CG_CLIF_CLIF_ONLY", "1")
@@ -242,9 +242,9 @@ fn emit_clif(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
             .arg("--emit=asm,llvm-ir")
             .arg(&source)
             .arg("-o")
-            .arg(temp.path().join("game.s")),
+            .arg(artifacts.path().join("game.s")),
     )?;
-    let clif = fs::read(temp.path().join("game.ll"))
+    let clif = fs::read(artifacts.path().join("game.ll"))
         .map_err(|error| format!("backend did not write CLIF: {error}"))?;
     write_output(output, clif)
 }
@@ -301,8 +301,8 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
     }
 
     let backend = build_backend(root)?;
-    let temp = TempDir::new()?;
-    let rust_asm = temp.path().join("game.asm");
+    let artifacts = ArtifactDir::new(root, &source)?;
+    let rust_asm = artifacts.path().join("game.asm");
     let libraries = core_libraries(root, &backend, opt_level)?;
 
     let mut command = rustc_command(root, opt_level);
@@ -336,16 +336,16 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
     }
     let linked: String = kept.iter().map(|section| section.text).collect();
 
-    let header_object = temp.path().join("header.o");
+    let header_object = artifacts.path().join("header.o");
     assemble(&root.join("rom/header.asm"), &header_object)?;
     let mut fixed_objects = vec![header_object];
     for name in link::runtime_objects(&linked) {
-        let object = temp.path().join(format!("{name}.o"));
+        let object = artifacts.path().join(format!("{name}.o"));
         let mut source = root.join(format!("runtime/{name}.asm"));
         if name == "panic"
             && let Some(symbol) = link::panic_symbol(&linked)
         {
-            source = temp.path().join("panic.asm");
+            source = artifacts.path().join("panic.asm");
             fs::write(
                 &source,
                 read_text(&root.join("runtime/panic.asm"))?.replace("__gbc_panic", symbol),
@@ -356,9 +356,9 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
         fixed_objects.push(object);
     }
 
-    let probe_source = temp.path().join("probe.asm");
-    let probe_object = temp.path().join("probe.o");
-    let probe_map = temp.path().join("probe.map");
+    let probe_source = artifacts.path().join("probe.asm");
+    let probe_object = artifacts.path().join("probe.o");
+    let probe_map = artifacts.path().join("probe.map");
     fs::write(&probe_source, link::bank_one(&linked))
         .map_err(|error| format!("could not write {}: {error}", probe_source.display()))?;
     assemble(&probe_source, &probe_object)?;
@@ -367,19 +367,23 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
             .arg("-m")
             .arg(&probe_map)
             .arg("-o")
-            .arg(temp.path().join("probe.gb"))
+            .arg(artifacts.path().join("probe.gb"))
             .args(&fixed_objects)
             .arg(&probe_object),
     )?;
     let (sizes, rom0_free) = link::parse_map(&read_text(&probe_map)?);
 
-    let game_source = temp.path().join("game_placed.asm");
-    let game_object = temp.path().join("game.o");
+    let game_source = artifacts.path().join("game_placed.asm");
+    let game_object = artifacts.path().join("game.o");
     fs::write(&game_source, link::place(&kept, &sizes, rom0_free))
         .map_err(|error| format!("could not write {}: {error}", game_source.display()))?;
     assemble(&game_source, &game_object)?;
     run_command(
         Command::new("rgblink")
+            .arg("-m")
+            .arg(artifacts.path().join("game.map"))
+            .arg("-n")
+            .arg(artifacts.path().join("game.sym"))
             .arg("-t")
             .arg("-o")
             .arg(&output)
@@ -498,28 +502,28 @@ fn run_command(command: &mut Command) -> Result<(), String> {
     }
 }
 
-struct TempDir(PathBuf);
+struct ArtifactDir(PathBuf);
 
-impl TempDir {
-    fn new() -> Result<Self, String> {
+impl ArtifactDir {
+    fn new(root: &Path, source: &Path) -> Result<Self, String> {
         let timestamp = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .map_err(|error| format!("system clock error: {error}"))?
             .as_nanos();
-        let path = env::temp_dir().join(format!("sangoku-{}-{timestamp}", std::process::id()));
-        fs::create_dir(&path)
+        let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
+        let path = root.join("build/artifacts").join(format!(
+            "{}-{}-{timestamp}",
+            name.to_string_lossy(),
+            std::process::id()
+        ));
+        fs::create_dir_all(&path)
             .map_err(|error| format!("could not create {}: {error}", path.display()))?;
+        eprintln!("Build artifacts: {}", path.display());
         Ok(Self(path))
     }
 
     fn path(&self) -> &Path {
         &self.0
-    }
-}
-
-impl Drop for TempDir {
-    fn drop(&mut self) {
-        let _ = fs::remove_dir_all(&self.0);
     }
 }
 
