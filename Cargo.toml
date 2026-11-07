@@ -14,7 +14,9 @@ exclude = [
 resolver = "3"
 
 [dependencies]
-anyhow = "1"
+miette = { version = "7.6.0", features = ["fancy"] }
+rustc-demangle = "0.1.28"
+thiserror = "2.0.21"
 
 [dev-dependencies]
 sangoku-test-support = { path = "tests/support" }

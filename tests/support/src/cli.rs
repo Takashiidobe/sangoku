@@ -34,7 +34,7 @@ impl Args {
                 } else {
                     i += 1;
                     args.get(i)
-                        .ok_or_else(|| anyhow::anyhow!("missing value for --{key}"))?
+                        .ok_or_else(|| crate::error!("missing value for --{key}"))?
                         .clone()
                 };
                 result.values.entry(key.into()).or_default().push(value);

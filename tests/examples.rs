@@ -14,6 +14,10 @@ fn run_example(name: &str) -> Result<(String, u8)> {
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
+    ensure!(
+        !String::from_utf8_lossy(&output.stderr).contains("sangoku::retained_formatting"),
+        "unexpected formatting warning for {name}"
+    );
     let mut emulator = Emulator::new(&fs::read(&rom)?, 0x100)?;
     emulator.set_sp(0xe000);
     for _ in 0..200_000_000u64 {
@@ -50,11 +54,33 @@ fn primes_prints_the_primes_below_fifty() -> Result<()> {
 }
 
 #[test]
-fn sort_prints_before_and_after() -> Result<()> {
-    let (text, _) = run_example("sort")?;
+fn sort_reports_retained_formatting_and_rom_capacity() -> Result<()> {
+    let directory = sangoku_test_support::tempfile::tempdir()?;
+    let rom = directory.path().join("sort.gb");
+    let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args(["build", "examples/sort.rs"])
+        .arg(&rom)
+        .output()?;
     ensure!(
-        text == "before: [42, 7, 1999, 3, 256, 88, 1024, 5]\nafter:  [3, 5, 7, 42, 88, 256, 1024, 1999]\nsum = 3424, max = Some(1999)\n",
-        "{text:?}"
+        !output.status.success(),
+        "oversized sort unexpectedly linked"
+    );
+    let report = String::from_utf8(output.stderr)?;
+    for expected in [
+        "sangoku::retained_formatting",
+        "sangoku::rom_capacity",
+        "slice_index_fail",
+        "new_display",
+        "32768",
+        "Largest retained sections",
+        "probe.map",
+    ] {
+        ensure!(report.contains(expected), "missing {expected}: {report}");
+    }
+    ensure!(
+        report.find("sangoku::retained_formatting") < report.find("sangoku::rom_capacity"),
+        "formatting warning must precede capacity failure: {report}"
     );
     Ok(())
 }

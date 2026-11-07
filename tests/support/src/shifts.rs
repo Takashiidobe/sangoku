@@ -1,4 +1,4 @@
-use crate::{Result, Value, ensure, json};
+use crate::{Result, Value, json};
 use crate::{
     cli::Args,
     harness::{self, Program},
@@ -158,10 +158,8 @@ fn kernel(s: &Spec, variant: &str) -> Result<(String, bool)> {
     let mut out = String::new();
     let mut pair = false;
     if variant == "bits" || variant == "bytes" || variant == "pair" {
-        let n = u32::from(
-            s.count
-                .ok_or_else(|| anyhow::anyhow!("constant required"))?,
-        ) & (s.width - 1);
+        let n =
+            u32::from(s.count.ok_or_else(|| crate::error!("constant required"))?) & (s.width - 1);
         if variant == "pair" {
             ensure!(
                 s.width == 16 && s.op == "shl",
@@ -258,7 +256,7 @@ fn normalized_sdcc_body(s: &Spec, raw: &str) -> Result<String> {
     );
     let body = raw
         .split_once(&name)
-        .ok_or_else(|| anyhow::anyhow!("missing SDCC function {name}"))?
+        .ok_or_else(|| crate::error!("missing SDCC function {name}"))?
         .1;
     let body = body.split("\n_").next().unwrap();
     let label = regex::Regex::new(r"\b(\d+)\$")?;
@@ -340,7 +338,7 @@ pub fn build(
     let native_live = variant == "native-live";
     let is_native = variant.starts_with("native");
     let (mut source, inline) = if is_native {
-        let dir = native.ok_or_else(|| anyhow::anyhow!("native artifacts required"))?;
+        let dir = native.ok_or_else(|| crate::error!("native artifacts required"))?;
         let name = format!(
             "{}-{}",
             s.name(),
@@ -588,10 +586,7 @@ pub fn run_case(
 }
 
 fn lane_kernel(s: &Spec) -> Result<String> {
-    let n = u32::from(
-        s.count
-            .ok_or_else(|| anyhow::anyhow!("constant required"))?,
-    ) & (s.width - 1);
+    let n = u32::from(s.count.ok_or_else(|| crate::error!("constant required"))?) & (s.width - 1);
     let m = s.bytes();
     let regs = &["a", "b", "c", "d"][..m];
     let k = n as usize / 8;

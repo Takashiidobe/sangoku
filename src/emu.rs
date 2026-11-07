@@ -1,4 +1,24 @@
-use anyhow::{Result, bail, ensure};
+use miette::Diagnostic;
+use thiserror::Error;
+
+type Result<T> = std::result::Result<T, Error>;
+
+#[derive(Debug, Error, Diagnostic)]
+pub enum Error {
+    #[error("code exceeds the 16-bit address space ({bytes} bytes)")]
+    #[diagnostic(code(sangoku::emulator::image_size))]
+    ImageTooLarge { bytes: usize },
+    #[error("opcode {prefix}{opcode:02X} at {address:04X}")]
+    #[diagnostic(code(sangoku::emulator::opcode))]
+    UnsupportedOpcode {
+        prefix: &'static str,
+        opcode: u8,
+        address: u16,
+    },
+    #[error("did not reach {address:04X}; PC={pc:04X}")]
+    #[diagnostic(code(sangoku::emulator::instruction_limit))]
+    InstructionLimit { address: u16, pc: u16 },
+}
 use std::collections::BTreeSet;
 
 pub const ZERO: u8 = 0x80;
@@ -28,7 +48,9 @@ pub struct Emulator {
 
 impl Emulator {
     pub fn new(code: &[u8], pc: u16) -> Result<Self> {
-        ensure!(code.len() <= 65536, "code exceeds the 16-bit address space");
+        if code.len() > 65536 {
+            return Err(Error::ImageTooLarge { bytes: code.len() });
+        }
         let mut memory = Box::new([0; 65536]);
         memory[..code.len()].copy_from_slice(code);
         Ok(Self {
@@ -366,7 +388,13 @@ impl Emulator {
                     5 => ((v >> 1) | (v & 0x80), v & 1),
                     6 => (v.rotate_left(4), 0),
                     7 => (v >> 1, v & 1),
-                    _ => bail!("opcode CB {sub:02X} at {address:04X}"),
+                    _ => {
+                        return Err(Error::UnsupportedOpcode {
+                            prefix: "CB ",
+                            opcode: sub,
+                            address,
+                        });
+                    }
                 };
                 self.write_reg(r, result);
                 self.f = flag(result == 0, ZERO) | flag(carry != 0, CARRY);
@@ -433,7 +461,11 @@ impl Emulator {
             }
             if taken { 12 } else { 8 }
         } else {
-            bail!("opcode {op:02X} at {address:04X}")
+            return Err(Error::UnsupportedOpcode {
+                prefix: "",
+                opcode: op,
+                address,
+            });
         };
         self.cycles += u64::from(cost);
         Ok(cost)
@@ -446,11 +478,12 @@ impl Emulator {
             }
             self.step()?;
         }
-        ensure!(
-            self.pc == address,
-            "did not reach {address:04X}; PC={:04X}",
-            self.pc
-        );
+        if self.pc != address {
+            return Err(Error::InstructionLimit {
+                address,
+                pc: self.pc,
+            });
+        }
         Ok(self.cycles - start)
     }
 }

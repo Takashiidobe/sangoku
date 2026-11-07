@@ -55,7 +55,7 @@ pub fn execute(
     } else if emu.pc == 0x10 {
         "rst_10"
     } else {
-        anyhow::bail!("{entry} exceeded 1000 instructions at {:04X}", emu.pc)
+        crate::bail!("{entry} exceeded 1000 instructions at {:04X}", emu.pc)
     };
     let scratch_written = emu
         .written_addresses

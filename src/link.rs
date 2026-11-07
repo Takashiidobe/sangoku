@@ -1,7 +1,8 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet, VecDeque};
 
 pub const ENTRY: &str = "__rust_gbc_main";
 
+#[derive(Clone, Copy)]
 pub struct Section<'a> {
     pub name: &'a str,
     pub text: &'a str,
@@ -64,13 +65,39 @@ fn exported_labels(text: &str) -> impl Iterator<Item = &str> {
     })
 }
 
-pub fn reachable<'a>(sections: &[Section<'a>], roots: &[&str]) -> Vec<usize> {
+struct Dependencies<'a> {
+    defined: HashMap<&'a str, usize>,
+    edges: Vec<Vec<usize>>,
+}
+
+fn definitions<'a>(sections: &[Section<'a>]) -> HashMap<&'a str, usize> {
     let mut defined: HashMap<&str, usize> = HashMap::new();
     for (index, section) in sections.iter().enumerate() {
         for label in exported_labels(section.text) {
             defined.insert(label, index);
         }
     }
+    defined
+}
+
+fn dependencies<'a>(sections: &[Section<'a>]) -> Dependencies<'a> {
+    let defined = definitions(sections);
+    let edges = sections
+        .iter()
+        .map(|section| {
+            let mut targets: Vec<_> = identifiers(section.text)
+                .filter_map(|token| defined.get(token).copied())
+                .collect();
+            targets.sort_unstable();
+            targets.dedup();
+            targets
+        })
+        .collect();
+    Dependencies { defined, edges }
+}
+
+pub fn reachable<'a>(sections: &[Section<'a>], roots: &[&str]) -> Vec<usize> {
+    let defined = definitions(sections);
     let mut kept = HashSet::new();
     let mut pending: Vec<usize> = roots
         .iter()
@@ -91,12 +118,65 @@ pub fn reachable<'a>(sections: &[Section<'a>], roots: &[&str]) -> Vec<usize> {
     kept
 }
 
+pub struct FormattingDependency {
+    pub path: Vec<String>,
+    pub bytes: usize,
+}
+
+fn symbol_name(symbol: &str) -> String {
+    let symbol = symbol.strip_prefix("__rust_").unwrap_or(symbol);
+    format!("{:#}", rustc_demangle::demangle(symbol))
+}
+
+fn brings_formatting(name: &str) -> bool {
+    name.starts_with("core::fmt::write")
+        || name.contains("core::fmt::Formatter")
+        || name.contains("core::fmt::rt::Argument>::new_")
+        || (name.contains(" as core::fmt::") && name.ends_with(">::fmt"))
+}
+
+pub fn formatting_dependency(
+    sections: &[Section<'_>],
+    sizes: &HashMap<String, usize>,
+) -> Option<FormattingDependency> {
+    let graph = dependencies(sections);
+    let root = *graph.defined.get(ENTRY)?;
+    let names: Vec<_> = sections.iter().map(|s| symbol_name(s.name)).collect();
+    let mut previous = vec![None; sections.len()];
+    let mut seen = vec![false; sections.len()];
+    let mut queue = VecDeque::from([root]);
+    seen[root] = true;
+    let mut target = None;
+    let mut bytes = 0;
+    while let Some(index) = queue.pop_front() {
+        if brings_formatting(&names[index]) {
+            target.get_or_insert(index);
+            bytes += sizes.get(sections[index].name).copied().unwrap_or(0);
+        }
+        for &next in &graph.edges[index] {
+            if !seen[next] {
+                seen[next] = true;
+                previous[next] = Some(index);
+                queue.push_back(next);
+            }
+        }
+    }
+    let mut index = target?;
+    let mut path = vec![names[index].clone()];
+    while let Some(parent) = previous[index] {
+        path.push(names[parent].clone());
+        index = parent;
+    }
+    path.reverse();
+    Some(FormattingDependency { path, bytes })
+}
+
 pub fn parse_map(map: &str) -> (HashMap<String, usize>, usize) {
     let mut sizes = HashMap::new();
     let mut rom0_free = 0;
     for line in map.lines().map(str::trim) {
         if let Some(rest) = line.strip_prefix("SECTION: ")
-            && let (Some(open), Some(close)) = (rest.find("($"), rest.find(" bytes)"))
+            && let (Some(open), Some(close)) = (rest.find("($"), rest.find(" byte"))
             && let Ok(size) = usize::from_str_radix(&rest[open + 2..close], 16)
             && let (Some(first), Some(last)) = (rest.find("[\""), rest.rfind("\"]"))
         {
@@ -116,6 +196,19 @@ pub fn parse_map(map: &str) -> (HashMap<String, usize>, usize) {
 
 pub fn bank_one(text: &str) -> String {
     text.replace(", ROM0", ", ROMX")
+}
+
+pub fn largest_sections(sizes: &HashMap<String, usize>, limit: usize) -> String {
+    let mut sections: Vec<_> = sizes.iter().collect();
+    sections.sort_by(|(left_name, left_size), (right_name, right_size)| {
+        right_size.cmp(left_size).then(left_name.cmp(right_name))
+    });
+    sections
+        .into_iter()
+        .take(limit)
+        .map(|(name, size)| format!("{size} bytes: {}", symbol_name(name)))
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 pub fn place(sections: &[&Section], sizes: &HashMap<String, usize>, budget: usize) -> String {
@@ -196,10 +289,48 @@ SECTION \"unused\", ROM0\nunused::\n  call other\n";
 
     #[test]
     fn reads_section_sizes_and_free_rom0_from_a_map() {
-        let map = "ROM0: 1288 bytes used / 15096 free\n\tSECTION: $0000-$0008 ($0009 bytes) [\"Startup\"]\n";
+        let map = "ROM0: 1288 bytes used / 15096 free\n\tSECTION: $0000-$0008 ($0009 bytes) [\"Startup\"]\n\tSECTION: $0009-$0009 ($0001 byte) [\"data\"]\n";
         let (sizes, free) = parse_map(map);
         assert_eq!(sizes["Startup"], 9);
         assert_eq!(free, 15096);
+        assert_eq!(sizes["data"], 1);
+        assert_eq!(largest_sections(&sizes, 1), "9 bytes: Startup");
+    }
+
+    #[test]
+    fn reports_formatting_through_data_references_and_ignores_unreachable_code() {
+        let text = "SECTION \"entry\", ROM0\n__rust_gbc_main::\n call helper\n\
+SECTION \"helper\", ROM0\nhelper::\n ld hl, table\n call __rust_gbc_main\n\
+SECTION \"table\", ROM0\ntable::\n dw __rust__RNvNtC4core3fmt5write\n\
+SECTION \"__rust__RNvNtC4core3fmt5write\", ROM0\n__rust__RNvNtC4core3fmt5write::\n ret\n\
+SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9write_fmt::\n ret\n";
+        let sections = split_sections(text);
+        let sizes = HashMap::from([
+            ("__rust__RNvNtC4core3fmt5write".into(), 12),
+            ("__rust__RNvNtC4core3fmt9write_fmt".into(), 100),
+        ]);
+        let dependency = formatting_dependency(&sections, &sizes).unwrap();
+        assert_eq!(dependency.bytes, 12);
+        assert_eq!(
+            dependency.path,
+            ["entry", "helper", "table", "core::fmt::write"]
+        );
+    }
+
+    #[test]
+    fn literal_arguments_and_serial_write_trait_do_not_imply_general_formatting() {
+        for name in [
+            "<core::fmt::Arguments>::from_str",
+            "<primes::Serial as core::fmt::Write>::write_str",
+            "core::panicking::panic_fmt",
+        ] {
+            assert!(!brings_formatting(name), "{name}");
+        }
+        assert!(brings_formatting("<usize as core::fmt::Display>::fmt"));
+        assert!(brings_formatting(
+            "<core::fmt::rt::Argument>::new_display::<usize>"
+        ));
+        assert!(formatting_dependency(&split_sections(ASM), &HashMap::new()).is_none());
     }
 
     #[test]

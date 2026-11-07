@@ -643,7 +643,7 @@ pub fn run(tool: &str, args: &[String]) -> Result<()> {
         let a = Args::parse(args, &["output", "sdcc"], &[])?;
         let sdcc = a
             .get("sdcc")
-            .ok_or_else(|| anyhow::anyhow!("--sdcc is required"))?;
+            .ok_or_else(|| crate::error!("--sdcc is required"))?;
         return generate(
             a.path("output", "build/popcount-audit/regenerated"),
             PathBuf::from(sdcc),

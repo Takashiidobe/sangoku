@@ -35,6 +35,11 @@ Builds print an artifact directory under `build/artifacts/` and retain assembly,
 objects, and linker probes even on failure. Successful ROM links also write
 `game.map` and `game.sym` there. Remove old directories when no longer needed.
 
+`build` and `run` warn when retained code includes general or numeric formatting,
+showing a dependency path and assembled size. Oversized ROMs report the largest
+sections and the probe map location. The check inspects emitted dependencies;
+it does not prove whether a panic can occur.
+
 Build a source file and run it in the built-in emulator. Programs print by
 writing to the serial port (`$FF01`/`$FF02`), and `run` shows that output on
 stdout (`examples/` has `hello.rs`, `primes.rs` and `sort.rs`):

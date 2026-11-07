@@ -6,8 +6,12 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode, Stdio};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use sangoku::emu::Emulator;
+use sangoku::{
+    emu::Emulator,
+    error::{Error, Result},
+};
 
+mod diagnostics;
 mod link;
 
 const TOOLCHAIN: &str = "gbc-lr35902";
@@ -16,13 +20,13 @@ fn main() -> ExitCode {
     match run() {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
-            eprintln!("sangoku: {error}");
+            eprintln!("{:?}", miette::Report::new(error));
             ExitCode::FAILURE
         }
     }
 }
 
-fn run() -> Result<(), String> {
+fn run() -> Result<()> {
     let mut args = env::args_os().skip(1);
     let Some(command) = args.next() else {
         return Err(usage());
@@ -111,21 +115,21 @@ fn run() -> Result<(), String> {
 
 const MAX_INSTRUCTIONS: u64 = 2_000_000_000;
 
-fn run_rom(rom: &Path) -> Result<(), String> {
-    let image =
-        fs::read(rom).map_err(|error| format!("could not read {}: {error}", rom.display()))?;
-    let mut emulator = Emulator::new(&image, 0x100).map_err(|error| error.to_string())?;
+fn run_rom(rom: &Path) -> Result<()> {
+    let image = fs::read(rom)
+        .map_err(|error| Error::io(format!("could not read {}", rom.display()), error))?;
+    let mut emulator = Emulator::new(&image, 0x100)?;
     emulator.set_sp(0xE000);
     let mut stdout = io::stdout().lock();
     let mut printed = 0;
     for _ in 0..MAX_INSTRUCTIONS {
         let before = emulator.pc;
-        emulator.step().map_err(|error| error.to_string())?;
+        emulator.step()?;
         if emulator.serial.len() > printed {
             stdout
                 .write_all(&emulator.serial[printed..])
                 .and_then(|()| stdout.flush())
-                .map_err(|error| format!("could not write stdout: {error}"))?;
+                .map_err(|error| Error::io("could not write stdout".to_string(), error))?;
             printed = emulator.serial.len();
         }
         if emulator.pc == before {
@@ -133,18 +137,14 @@ fn run_rom(rom: &Path) -> Result<(), String> {
             return Ok(());
         }
     }
-    Err(format!(
-        "program did not halt within {MAX_INSTRUCTIONS} instructions"
-    ))
+    Err(format!("program did not halt within {MAX_INSTRUCTIONS} instructions").into())
 }
 
-fn usage() -> String {
+fn usage() -> Error {
     "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku run <source.rs> [--opt-level 0|1|2|3|s|z] | sangoku frontend <source.rs> [output.mir|-] [--opt-level 0|1|2|3|s|z] | sangoku clif <source.rs> [output.clif|-] [--opt-level 0|1|2|3|s|z] | sangoku lower <input.clif> [output.s|-]".into()
 }
 
-fn parse_build_args(
-    args: impl IntoIterator<Item = OsString>,
-) -> Result<(Vec<PathBuf>, String), String> {
+fn parse_build_args(args: impl IntoIterator<Item = OsString>) -> Result<(Vec<PathBuf>, String)> {
     let mut args = args.into_iter();
     let mut paths = Vec::new();
     let mut opt_level = "0".to_owned();
@@ -168,7 +168,7 @@ fn parse_build_args(
             .to_str()
             .is_some_and(|value| value.starts_with('-') && value != "-")
         {
-            return Err(format!("unknown build option: {}", arg.to_string_lossy()));
+            return Err(format!("unknown build option: {}", arg.to_string_lossy()).into());
         } else {
             paths.push(PathBuf::from(arg));
         }
@@ -194,7 +194,7 @@ fn rustc_command(root: &Path, opt_level: &str) -> Command {
     command
 }
 
-fn build_backend(root: &Path) -> Result<PathBuf, String> {
+fn build_backend(root: &Path) -> Result<PathBuf> {
     run_command(
         Command::new("cargo")
             .current_dir(root)
@@ -206,10 +206,10 @@ fn build_backend(root: &Path) -> Result<PathBuf, String> {
         .join("third_party/rustc_codegen_cranelift/target/release/librustc_codegen_cranelift.so"))
 }
 
-fn lower_clif(root: &Path, input: &Path, output: &Path) -> Result<(), String> {
+fn lower_clif(root: &Path, input: &Path, output: &Path) -> Result<()> {
     let input = absolute_path(input)?;
     if !input.is_file() {
-        return Err(format!("CLIF input does not exist: {}", input.display()));
+        return Err(format!("CLIF input does not exist: {}", input.display()).into());
     }
     let mut command = Command::new("cargo");
     command
@@ -220,17 +220,20 @@ fn lower_clif(root: &Path, input: &Path, output: &Path) -> Result<(), String> {
     let result = command
         .stderr(Stdio::inherit())
         .output()
-        .map_err(|error| format!("could not run {command:?}: {error}"))?;
+        .map_err(|error| Error::io(format!("could not run {command:?}"), error))?;
     if !result.status.success() {
-        return Err(format!("{command:?} exited with {}", result.status));
+        return Err(Error::CommandFailed {
+            command: format!("{command:?}"),
+            status: result.status,
+        });
     }
     write_output(output, result.stdout)
 }
 
-fn emit_clif(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<(), String> {
+fn emit_clif(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<()> {
     let source = absolute_path(source)?;
     if !source.is_file() {
-        return Err(format!("Rust source does not exist: {}", source.display()));
+        return Err(format!("Rust source does not exist: {}", source.display()).into());
     }
 
     let backend = build_backend(root)?;
@@ -245,31 +248,31 @@ fn emit_clif(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
             .arg(artifacts.path().join("game.s")),
     )?;
     let clif = fs::read(artifacts.path().join("game.ll"))
-        .map_err(|error| format!("backend did not write CLIF: {error}"))?;
+        .map_err(|error| Error::io("backend did not write CLIF".to_string(), error))?;
     write_output(output, clif)
 }
 
-fn write_output(output: &Path, contents: Vec<u8>) -> Result<(), String> {
+fn write_output(output: &Path, contents: Vec<u8>) -> Result<()> {
     if output == Path::new("-") {
         return io::stdout()
             .write_all(&contents)
-            .map_err(|error| format!("could not write stdout: {error}"));
+            .map_err(|error| Error::io("could not write stdout", error));
     }
     let output = absolute_path(output)?;
     if let Some(parent) = output.parent() {
         fs::create_dir_all(parent)
-            .map_err(|error| format!("could not create {}: {error}", parent.display()))?;
+            .map_err(|error| Error::io(format!("could not create {}", parent.display()), error))?;
     }
     fs::write(&output, contents)
-        .map_err(|error| format!("could not write {}: {error}", output.display()))?;
+        .map_err(|error| Error::io(format!("could not write {}", output.display()), error))?;
     println!("Wrote {}", output.display());
     Ok(())
 }
 
-fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<(), String> {
+fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<()> {
     let source = absolute_path(source)?;
     if !source.is_file() {
-        return Err(format!("Rust source does not exist: {}", source.display()));
+        return Err(format!("Rust source does not exist: {}", source.display()).into());
     }
 
     let mut command = rustc_command(root, opt_level);
@@ -281,23 +284,26 @@ fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resul
     let result = command
         .stderr(Stdio::inherit())
         .output()
-        .map_err(|error| format!("could not run {command:?}: {error}"))?;
+        .map_err(|error| Error::io(format!("could not run {command:?}"), error))?;
     if !result.status.success() {
-        return Err(format!("{command:?} exited with {}", result.status));
+        return Err(Error::CommandFailed {
+            command: format!("{command:?}"),
+            status: result.status,
+        });
     }
     write_output(output, result.stdout)
 }
 
-fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<(), String> {
+fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<()> {
     let source = absolute_path(source)?;
     if !source.is_file() {
-        return Err(format!("Rust source does not exist: {}", source.display()));
+        return Err(format!("Rust source does not exist: {}", source.display()).into());
     }
 
     let output = absolute_path(output)?;
     if let Some(parent) = output.parent() {
         fs::create_dir_all(parent)
-            .map_err(|error| format!("could not create {}: {error}", parent.display()))?;
+            .map_err(|error| Error::io(format!("could not create {}", parent.display()), error))?;
     }
 
     let backend = build_backend(root)?;
@@ -329,10 +335,7 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
         .map(|index| &sections[index])
         .collect();
     if kept.is_empty() {
-        return Err(format!(
-            "{} is not defined by the program or core",
-            link::ENTRY
-        ));
+        return Err(format!("{} is not defined by the program or core", link::ENTRY).into());
     }
     let linked: String = kept.iter().map(|section| section.text).collect();
 
@@ -350,7 +353,7 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
                 &source,
                 read_text(&root.join("runtime/panic.asm"))?.replace("__gbc_panic", symbol),
             )
-            .map_err(|error| format!("could not write {}: {error}", source.display()))?;
+            .map_err(|error| Error::io(format!("could not write {}", source.display()), error))?;
         }
         assemble(&source, &object)?;
         fixed_objects.push(object);
@@ -360,7 +363,7 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
     let probe_object = artifacts.path().join("probe.o");
     let probe_map = artifacts.path().join("probe.map");
     fs::write(&probe_source, link::bank_one(&linked))
-        .map_err(|error| format!("could not write {}: {error}", probe_source.display()))?;
+        .map_err(|error| Error::io(format!("could not write {}", probe_source.display()), error))?;
     assemble(&probe_source, &probe_object)?;
     run_command(
         Command::new("rgblink")
@@ -372,12 +375,32 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
             .arg(&probe_object),
     )?;
     let (sizes, rom0_free) = link::parse_map(&read_text(&probe_map)?);
+    let used: usize = sizes.values().sum();
+    let retained: Vec<_> = kept.iter().map(|section| **section).collect();
+    if let Some(dependency) = link::formatting_dependency(&retained, &sizes) {
+        let warning = diagnostics::RetainedFormatting::new(
+            dependency,
+            used,
+            &artifacts.path().display().to_string(),
+        );
+        eprintln!("{:?}", miette::Report::new(warning));
+    }
 
     let game_source = artifacts.path().join("game_placed.asm");
     let game_object = artifacts.path().join("game.o");
     fs::write(&game_source, link::place(&kept, &sizes, rom0_free))
-        .map_err(|error| format!("could not write {}: {error}", game_source.display()))?;
+        .map_err(|error| Error::io(format!("could not write {}", game_source.display()), error))?;
     assemble(&game_source, &game_object)?;
+    let capacity = 32768;
+    if used > capacity {
+        return Err(Error::RomCapacity {
+            used,
+            capacity,
+            excess: used - capacity,
+            artifacts: artifacts.path().display().to_string(),
+            largest: link::largest_sections(&sizes, 5),
+        });
+    }
     run_command(
         Command::new("rgblink")
             .arg("-m")
@@ -434,7 +457,7 @@ fn modified(path: &Path) -> Option<SystemTime> {
         .ok()
 }
 
-fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLibraries, String> {
+fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLibraries> {
     let libraries = CoreLibraries(
         root.join("build/core/immediate-abort")
             .join(format!("opt-{opt_level}")),
@@ -447,7 +470,7 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
         return Ok(libraries);
     }
     fs::create_dir_all(&libraries.0)
-        .map_err(|error| format!("could not create {}: {error}", libraries.0.display()))?;
+        .map_err(|error| Error::io(format!("could not create {}", libraries.0.display()), error))?;
     let library = root.join("third_party/rust/library");
     let compile = |name: &str, source: PathBuf, extra: Vec<OsString>| {
         run_command(
@@ -475,43 +498,47 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
     Ok(libraries)
 }
 
-fn read_text(path: &Path) -> Result<String, String> {
-    fs::read_to_string(path).map_err(|error| format!("could not read {}: {error}", path.display()))
+fn read_text(path: &Path) -> Result<String> {
+    fs::read_to_string(path)
+        .map_err(|error| Error::io(format!("could not read {}", path.display()), error))
 }
 
-fn assemble(source: &Path, object: &Path) -> Result<(), String> {
+fn assemble(source: &Path, object: &Path) -> Result<()> {
     run_command(Command::new("rgbasm").arg("-o").arg(object).arg(source))
 }
 
-fn absolute_path(path: &Path) -> Result<PathBuf, String> {
+fn absolute_path(path: &Path) -> Result<PathBuf> {
     if path.is_absolute() {
         Ok(path.to_path_buf())
     } else {
         env::current_dir()
             .map(|current_dir| current_dir.join(path))
-            .map_err(|error| format!("could not resolve path {}: {error}", path.display()))
+            .map_err(|error| Error::io(format!("could not resolve path {}", path.display()), error))
     }
 }
 
-fn run_command(command: &mut Command) -> Result<(), String> {
+fn run_command(command: &mut Command) -> Result<()> {
     let description = format!("{command:?}");
     let status = command
         .status()
-        .map_err(|error| format!("could not run {description}: {error}"))?;
+        .map_err(|error| Error::io(format!("could not run {description}"), error))?;
     if status.success() {
         Ok(())
     } else {
-        Err(format!("{description} exited with {status}"))
+        Err(Error::CommandFailed {
+            command: description,
+            status,
+        })
     }
 }
 
 struct ArtifactDir(PathBuf);
 
 impl ArtifactDir {
-    fn new(root: &Path, source: &Path) -> Result<Self, String> {
+    fn new(root: &Path, source: &Path) -> Result<Self> {
         let timestamp = SystemTime::now()
             .duration_since(UNIX_EPOCH)
-            .map_err(|error| format!("system clock error: {error}"))?
+            .map_err(Error::Clock)?
             .as_nanos();
         let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
         let path = root.join("build/artifacts").join(format!(
@@ -520,7 +547,7 @@ impl ArtifactDir {
             std::process::id()
         ));
         fs::create_dir_all(&path)
-            .map_err(|error| format!("could not create {}: {error}", path.display()))?;
+            .map_err(|error| Error::io(format!("could not create {}", path.display()), error))?;
         eprintln!("Build artifacts: {}", path.display());
         Ok(Self(path))
     }

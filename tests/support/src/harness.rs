@@ -40,8 +40,8 @@ impl Program {
         let pc = *self
             .symbols
             .get(entry)
-            .ok_or_else(|| anyhow::anyhow!("missing symbol {entry}"))?;
-        Emulator::new(&self.rom, pc)
+            .ok_or_else(|| crate::error!("missing symbol {entry}"))?;
+        Ok(Emulator::new(&self.rom, pc)?)
     }
     pub fn size(&self, area: &str, names: &[&str]) -> usize {
         self.sections
