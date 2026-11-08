@@ -19,6 +19,10 @@ pub fn gbc_main() -> u8 {
 
     let boxed = Box::new(7u8);
 
-    let sum = global.iter().chain(scoped.iter()).copied().fold(0, u8::wrapping_add);
+    let sum = global
+        .iter()
+        .chain(scoped.iter())
+        .copied()
+        .fold(0, u8::wrapping_add);
     sum.wrapping_add(*boxed)
 }

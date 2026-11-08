@@ -17,14 +17,13 @@ resolver = "3"
 flate2 = "1.1.11"
 miette = { version = "7.6.0", features = ["fancy"] }
 rustc-demangle = "0.1.28"
-sha2 = "0.10"
+sha2 = "0.11"
 tar = "0.4.46"
 tempfile = "3.27.0"
 thiserror = "2.0.21"
 
 [dev-dependencies]
 sangoku-test-support = { path = "tests/support" }
-ufmt = "0.2.0"
 
 [[example]]
 name = "audit-runtime"
