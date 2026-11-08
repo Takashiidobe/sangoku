@@ -95,6 +95,11 @@ The 2026-11-07 survey at opt-level 0 with immediate-abort panic reports:
 | alloc | 1,137 | 0 |
 | alloc collection driver | 1,238 | 0 |
 
+ROM builds include the 16-bit and 32-bit arithmetic runtime objects only when
+retained code references their helpers. `benchmarks/empty.rs` excludes these
+runtime objects; `tests/core_rom/runtime32.rs` checks dynamic 32-bit division
+and remainder in the emulator.
+
 SM83 stack-slot accesses now omit HL saves when physical-register liveness
 proves them unnecessary, including spills and reloads inserted by register
 allocation. Live HL values and any A scratch value remain preserved.

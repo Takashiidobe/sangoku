@@ -109,9 +109,72 @@ fn inlined_volatile_poll_rereads_the_register() -> Result<()> {
     Ok(())
 }
 
+fn build_runtime_rom(source: &str) -> Result<(Vec<u8>, String)> {
+    let directory = sangoku_test_support::tempfile::tempdir()?;
+    let rom = directory.path().join("runtime.gb");
+    let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args(["build", source])
+        .arg(&rom)
+        .output()?;
+    let report = String::from_utf8(output.stderr)?;
+    ensure!(output.status.success(), "{report}");
+    let artifacts = report
+        .lines()
+        .find_map(|line| line.strip_prefix("Build artifacts: "))
+        .ok_or("build did not report its artifact directory")?;
+    let map = fs::read_to_string(std::path::Path::new(artifacts).join("game.map"))?;
+    Ok((fs::read(rom)?, map))
+}
+
 #[test]
-fn core_sort_unstable_links_and_runs() -> Result<()> {
-    let (result, _) = run_core_rom("tests/core_rom/sort_unstable.rs", "z")?;
-    ensure!(result == 96, "gbc_main returned {result}");
+fn empty_rom_excludes_unreferenced_arithmetic_runtime() -> Result<()> {
+    let (_, map) = build_runtime_rom("benchmarks/empty.rs")?;
+    for section in [
+        "32-bit runtime",
+        "Unsigned 16-bit division",
+        "16-bit multiplication",
+    ] {
+        ensure!(
+            !map.contains(&format!("[\"{section}\"]")),
+            "retained {section}"
+        );
+    }
+    ensure!(map.contains("__rust_gbc_main"), "missing entry point");
+    Ok(())
+}
+
+#[test]
+fn referenced_32_bit_runtime_links_and_executes() -> Result<()> {
+    let (rom, map) = build_runtime_rom("tests/core_rom/runtime32.rs")?;
+    ensure!(
+        map.contains("[\"32-bit runtime\"]"),
+        "missing 32-bit runtime"
+    );
+    for (dividend, divisor) in [(0x12345678u32, 12345u32), (u32::MAX, 65537), (0, 7)] {
+        let mut emulator = Emulator::new(&rom, 0x100)?;
+        emulator.memory[0xc000..0xc004].copy_from_slice(&dividend.to_le_bytes());
+        emulator.memory[0xc004..0xc008].copy_from_slice(&divisor.to_le_bytes());
+        let mut halted = false;
+        for _ in 0..100_000 {
+            let before = emulator.pc;
+            emulator.step()?;
+            if emulator.pc == before {
+                halted = true;
+                break;
+            }
+        }
+        ensure!(halted, "32-bit division did not halt");
+        let quotient = u32::from_le_bytes(emulator.memory[0xc008..0xc00c].try_into()?);
+        let remainder = u32::from_le_bytes(emulator.memory[0xc00c..0xc010].try_into()?);
+        ensure!(
+            quotient == dividend / divisor,
+            "wrong quotient for {dividend}/{divisor}"
+        );
+        ensure!(
+            remainder == dividend % divisor,
+            "wrong remainder for {dividend}/{divisor}"
+        );
+    }
     Ok(())
 }

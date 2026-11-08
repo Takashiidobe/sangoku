@@ -236,6 +236,11 @@ pub fn panic_symbol(assembly: &str) -> Option<&str> {
 }
 
 pub fn runtime_objects(assembly: &str) -> Vec<&'static str> {
+    let mut referenced: HashSet<_> = identifiers(assembly).collect();
+    for defined in exported_labels(assembly) {
+        referenced.remove(defined);
+    }
+    let uses = |source| exported_labels(source).any(|name| referenced.contains(name));
     let float32 = assembly
         .replace("__gbc_f64", "")
         .replace("__gbc_f128", "")
@@ -245,9 +250,9 @@ pub fn runtime_objects(assembly: &str) -> Vec<&'static str> {
         .any(|name| assembly.contains(name));
     let panic = panic_symbol(assembly).is_some();
     [
-        ("udiv16", true),
-        ("mul16", true),
-        ("wide32", true),
+        ("udiv16", uses(include_str!("../runtime/udiv16.asm"))),
+        ("mul16", uses(include_str!("../runtime/mul16.asm"))),
+        ("wide32", uses(include_str!("../runtime/wide32.asm"))),
         (
             "mulo128",
             assembly.contains("__gbc_u128_mulo") || assembly.contains("__gbc_i128_mulo"),
@@ -383,10 +388,13 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
 
     #[test]
     fn selects_runtime_objects_from_the_assembly() {
-        assert_eq!(
-            runtime_objects("call __gbc_f64_add"),
-            ["udiv16", "mul16", "wide32", "softfloat64"]
-        );
+        assert_eq!(runtime_objects("call __gbc_f64_add"), ["softfloat64"]);
+        assert!(runtime_objects("ret").is_empty());
+        assert_eq!(runtime_objects("call __gbc_mul32"), ["wide32"]);
+        assert_eq!(runtime_objects("call __gbc_shift8"), ["wide32"]);
+        assert_eq!(runtime_objects("call __gbc_mul16"), ["mul16"]);
+        assert_eq!(runtime_objects("call __gbc_udiv16"), ["udiv16"]);
+        assert!(runtime_objects("__gbc_mul32::\nret").is_empty());
         assert!(runtime_objects("call memcpy").contains(&"memory"));
         assert!(runtime_objects("call __rust___gbc_u128_mulo").contains(&"mulo128"));
         assert!(!runtime_objects("ret").contains(&"mulo128"));
