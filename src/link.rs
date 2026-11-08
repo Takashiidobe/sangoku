@@ -255,8 +255,10 @@ const RUNTIME_OBJECTS: &[(&str, &str)] = &[
     ("softfloat64", include_str!("../runtime/softfloat64.asm")),
     ("softfloat128", include_str!("../runtime/softfloat128.asm")),
     ("convert", include_str!("../runtime/convert.asm")),
-    ("memset", include_str!("../runtime/memset.asm")),
-    ("memmove", include_str!("../runtime/memmove.asm")),
+    ("memset_size", include_str!("../runtime/memset_size.asm")),
+    ("memset_opt", include_str!("../runtime/memset_opt.asm")),
+    ("memmove_size", include_str!("../runtime/memmove_size.asm")),
+    ("memmove_opt", include_str!("../runtime/memmove_opt.asm")),
     ("memcpy_size", include_str!("../runtime/memcpy_size.asm")),
     ("memcpy_opt", include_str!("../runtime/memcpy_opt.asm")),
     ("panic", include_str!("../runtime/panic.asm")),
@@ -277,7 +279,7 @@ pub fn runtime_objects(assembly: &str, opt_level: &str) -> Vec<&'static str> {
     loop {
         let mut changed = false;
         for (index, (object, source)) in RUNTIME_OBJECTS.iter().enumerate() {
-            if (*object == "memcpy_size" && !size) || (*object == "memcpy_opt" && size) {
+            if (object.ends_with("_size") && !size) || (object.ends_with("_opt") && size) {
                 continue;
             }
             if !selected[index]
@@ -408,7 +410,7 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
                     assert!(
                         runtime_objects(
                             &format!("call {name}"),
-                            if object == "memcpy_size" { "z" } else { "0" }
+                            if object.ends_with("_size") { "z" } else { "0" }
                         )
                         .contains(&object),
                         "{name} did not select {object}"
@@ -442,19 +444,30 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
         assert_eq!(runtime_objects("call __gbc_udiv16", "0"), ["udiv16"]);
         assert!(runtime_objects("__gbc_mul32::\nret", "0").is_empty());
         for level in ["0", "1", "2", "3", "s", "z"] {
-            let copy = if matches!(level, "s" | "z") {
-                "memcpy_size"
+            let suffix = if matches!(level, "s" | "z") {
+                "size"
             } else {
-                "memcpy_opt"
+                "opt"
             };
-            assert_eq!(runtime_objects("call memcpy", level), [copy]);
-            assert_eq!(runtime_objects("call memmove", level), ["memmove"]);
-            assert_eq!(runtime_objects("call __gbc_memset", level), ["memset"]);
+            for (symbol, helper) in [
+                ("memcpy", "memcpy"),
+                ("memmove", "memmove"),
+                ("__gbc_memset", "memset"),
+            ] {
+                assert_eq!(
+                    runtime_objects(&format!("call {symbol}"), level),
+                    [format!("{helper}_{suffix}")]
+                );
+            }
             let objects = runtime_objects("call memcpy\ncall memmove\ncall __gbc_memset", level);
             assert_eq!(objects.len(), 3);
-            assert!(objects.contains(&copy));
-            assert!(objects.contains(&"memmove"));
-            assert!(objects.contains(&"memset"));
+            for helper in ["memcpy", "memmove", "memset"] {
+                assert!(
+                    objects
+                        .iter()
+                        .any(|object| *object == format!("{helper}_{suffix}"))
+                );
+            }
         }
         assert!(runtime_objects("call __rust___gbc_u128_mulo", "0").contains(&"mulo128"));
         assert!(!runtime_objects("ret", "0").contains(&"mulo128"));

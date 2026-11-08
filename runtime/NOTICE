@@ -38,7 +38,7 @@ be covered by the GNU General Public License. This exception does
 not however invalidate any other reasons why the executable file
  might be covered by the GNU General Public License.
 
-memcpy_opt.asm and memmove.asm (forward loops) adapts SDCC device/lib/sm83/memcpy.s,
+memcpy_opt.asm, memmove_opt.asm and memset_opt.asm adapt SDCC device/lib/sm83/memcpy.s,
 SVN revision 17147 (SDCC source tree, same revision as above).
 Upstream SHA-256:
 cae459769bcd7122a87e0a844536730be5d9129fb9d5ee4bf158687cfbf2d00a
@@ -46,12 +46,15 @@ cae459769bcd7122a87e0a844536730be5d9129fb9d5ee4bf158687cfbf2d00a
 Copyright (c) 2021, Philipp Klaus Krause
 Copyright (c) 2022, Sebastian 'basxto' Riedel <sdcc@basxto.de>
 
-The four-bytes-per-iteration Duff's device loop is kept. The entry code maps
+The four-bytes-per-iteration Duff's device loop is kept for forward copying,
+and adapted to backward copying and constant-byte filling. The entry code maps
 the sangoku calling convention (destination in BC, source split between A and
 the stack, caller-popped arguments) onto it, and adds the backward copy that
 memmove needs when the destination overlaps the end of the source. SDCC has no
 SM83 memmove (its z80-common version uses LDIR and LDDR). The same GNU GPL
 version 2 notice and special exception as for divunsigned.s above apply.
+The compact memmove_size.asm shares the calling-convention adapter and uses
+byte loops in both directions.
 
 mulo128.asm adapts the bit-wise Horner multiplication algorithm in SDCC
 device/lib/_mullonglong.c (64-bit generic implementation) to a 128-bit SM83

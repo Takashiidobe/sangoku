@@ -38,38 +38,17 @@ memmove::
     dec bc
     jr .backward
 .forward:
-    srl b
-    rr c
-    jr nc, .skip_one
+    ld a, b
+    or c
+    jr z, .done
+.copy:
     ld a, [hli]
     ld [de], a
     inc de
-.skip_one:
-    srl b
-    rr c
-    inc b
-    inc c
-    jr nc, .test
-    jr .copy_two
-.copy_four:
-    ld a, [hli]
-    ld [de], a
-    inc de
-    ld a, [hli]
-    ld [de], a
-    inc de
-.copy_two:
-    ld a, [hli]
-    ld [de], a
-    inc de
-    ld a, [hli]
-    ld [de], a
-    inc de
-.test:
-    dec c
-    jr nz, .copy_four
-    dec b
-    jr nz, .copy_four
+    dec bc
+    ld a, b
+    or c
+    jr nz, .copy
 .done:
     pop bc
     ld a, b

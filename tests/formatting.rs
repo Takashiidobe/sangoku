@@ -76,8 +76,8 @@ fn upstream_u64_decimal_formatting_matches_host() -> Result<()> {
         "wide32",
         "udiv16",
         "mul16",
-        "memset",
-        "memmove",
+        "memset_opt",
+        "memmove_opt",
         "memcpy_opt",
     ] {
         sources.push((name, harness::read(format!("runtime/{name}.asm"))?));

@@ -97,8 +97,9 @@ aligns ordinary wide scalars to two bytes, matching the backend stack ABI.
 
 The runtime supplies independently linked `__gbc_memset`, `memcpy`, and
 `memmove` helpers. Build with `--opt-level s` or `--opt-level z` to select
-compact byte-loop `memcpy`; levels `0`, `1`, `2`, and `3` select the unrolled
-implementation. Only the selected copy implementation is linked. Both return the
+compact byte loops for all three helpers; levels `0`, `1`, `2`, and `3` select
+four-byte-unrolled implementations. `memmove` unrolls both copy directions. Only
+the selected variant of each referenced helper is linked. All three return the
 destination pointer and accept zero lengths; `memmove` also handles overlap.
 `memcmp` still requires an implementation when referenced. Branch-table assembly
 uses executable comparisons and jumps for full-width indices.

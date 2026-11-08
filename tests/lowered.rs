@@ -58,7 +58,7 @@ fn lower_program(path: &str) -> Result<harness::Program> {
         sources.push(("convert.asm", harness::read("runtime/convert.asm")?));
     }
     if needs_memory {
-        for name in ["memset", "memmove", "memcpy_opt"] {
+        for name in ["memset_opt", "memmove_opt", "memcpy_opt"] {
             sources.push((name, harness::read(format!("runtime/{name}.asm"))?));
         }
     }
@@ -3197,7 +3197,7 @@ fn branch_tables_handle_full_width_indices() -> Result<()> {
 fn memset_runtime_obeys_split_abi_and_bounds() -> Result<()> {
     let program = harness::assemble(
         &[
-            ("memset.asm", harness::read("runtime/memset.asm")?),
+            ("memset.asm", harness::read("runtime/memset_opt.asm")?),
             ("stop.asm", "SECTION \"done\", ROM0\ndone::\nnop\n".into()),
         ],
         None,
