@@ -258,6 +258,7 @@ pub fn runtime_objects(assembly: &str) -> Vec<&'static str> {
         ("convert", assembly.contains("__gbc_convert")),
         ("memory", memory),
         ("panic", panic),
+        ("heap", assembly.contains("___rust_alloc")),
     ]
     .into_iter()
     .filter_map(|(name, needed)| needed.then_some(name))

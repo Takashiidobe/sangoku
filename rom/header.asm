@@ -11,6 +11,9 @@ SECTION "Cartridge entry", ROM0[$100]
 SECTION "Startup", ROM0
 Start:
     ld sp, $E000
+IF DEF(HEAP)
+    call __gbc_heap_init
+ENDC
     call __rust_gbc_main
 .idle
     halt

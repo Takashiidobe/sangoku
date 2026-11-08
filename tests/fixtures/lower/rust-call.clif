@@ -130,7 +130,6 @@ block2:
 ; CHECK-NEXT: EXPORT __rust_callee
 ; CHECK-NEXT: __rust_callee::
 ; CHECK-NEXT: .block0:
-; CHECK-NEXT:   jp .block1
 ; CHECK-NEXT: .block1:
 ; CHECK-NEXT:   ld a, b
 ; CHECK-NEXT:   ret
@@ -139,9 +138,7 @@ block2:
 ; CHECK-NEXT: EXPORT __rust_caller
 ; CHECK-NEXT: __rust_caller::
 ; CHECK-NEXT: .block0:
-; CHECK-NEXT:   jp .block1
 ; CHECK-NEXT: .block1:
 ; CHECK-NEXT:   call __rust_callee
-; CHECK-NEXT:   jp .block2
 ; CHECK-NEXT: .block2:
 ; CHECK-NEXT:   ret

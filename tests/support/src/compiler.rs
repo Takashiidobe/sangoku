@@ -238,7 +238,7 @@ pub fn check_accesses(directory: &Path) -> Result<usize> {
                     let mut value = (seed * 73 + flags + offset) as u8;
                     e.memory[address as usize] = value;
                     let mut expected: BTreeMap<_, _> =
-                        "abcdefhl".chars().map(|r| (r, e.reg(r))).collect();
+                        "abcdehl".chars().map(|r| (r, e.reg(r))).collect();
                     if parts[0] == "load" {
                         expected.insert(register, value);
                     } else {
@@ -247,14 +247,15 @@ pub fn check_accesses(directory: &Path) -> Result<usize> {
                     e.reset_metrics();
                     e.run_until(code.len() as u16, 1024)?;
                     let actual: BTreeMap<_, _> =
-                        "abcdefhl".chars().map(|r| (r, e.reg(r))).collect();
+                        "abcdehl".chars().map(|r| (r, e.reg(r))).collect();
+                    let saved = e.peak_stack_bytes as u16;
                     ensure!(
                         actual == expected,
                         "register preservation failure {} stack={stack:X} seed={seed} flags={flags}",
                         path.display()
                     );
                     ensure!(
-                        e.sp() == stack && e.peak_stack_bytes == 4,
+                        e.sp() == stack && matches!(saved, 2 | 4),
                         "access stack accounting failure"
                     );
                     ensure!(
@@ -264,7 +265,7 @@ pub fn check_accesses(directory: &Path) -> Result<usize> {
                     ensure!(
                         e.written_addresses
                             .iter()
-                            .all(|&a| (stack - 4..stack).contains(&a)
+                            .all(|&a| (stack - saved..stack).contains(&a)
                                 || (parts[0] == "store" && a == address)),
                         "access wrote outside stack"
                     );

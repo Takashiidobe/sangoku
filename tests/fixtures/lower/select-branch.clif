@@ -19,7 +19,6 @@ block2:
 ; CHECK-NEXT:   ld a, b
 ; CHECK-NEXT: or a
 ; CHECK-NEXT: jp nz, .block2
-; CHECK-NEXT: jp .block1
 ; CHECK-NEXT: .block1:
 ; CHECK-NEXT:   ld a, l
 ; CHECK-NEXT:   ret

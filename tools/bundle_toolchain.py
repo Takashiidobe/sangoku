@@ -85,7 +85,7 @@ def main():
             shared_libraries(executable, staging / "toolchain/lib", compiler / "lib")
         for level in args.levels:
             source = ROOT / "build/core/immediate-abort" / f"opt-{level}"
-            for name in ["core.s", "compiler_builtins.s", "libcore.rmeta", "libcompiler_builtins.rmeta"]:
+            for name in ["core.s", "compiler_builtins.s", "alloc.s", "gbc_heap.s", "libcore.rmeta", "libcompiler_builtins.rmeta", "liballoc.rmeta", "libgbc_heap.rmeta"]:
                 copy(source / name, staging / "libraries" / f"opt-{level}" / name)
         for directory in ["runtime", "targets", "rom", "examples"]:
             for source in (ROOT / directory).iterdir():

@@ -256,7 +256,7 @@ fn emit_clif(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
         rustc_command(root, opt_level)
             .env("CG_CLIF_CLIF_ONLY", "1")
             .arg(format!("-Zcodegen-backend={}", backend.display()))
-            .args(libraries.externs(true))
+            .args(libraries.externs(4))
             .arg("--emit=asm,llvm-ir")
             .arg(&source)
             .arg("-o")
@@ -293,7 +293,7 @@ fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resul
     let backend = build_backend(root)?;
     let libraries = core_libraries(root, &backend, opt_level)?;
     let mut command = rustc_command(root, opt_level);
-    command.args(libraries.externs(true));
+    command.args(libraries.externs(4));
     command.arg("-Zunpretty=mir").arg(&source);
     if output == Path::new("-") {
         return run_command(&mut command);
@@ -333,7 +333,7 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
     command
         .arg(format!("-Zcodegen-backend={}", backend.display()))
         .arg("--emit=asm")
-        .args(libraries.externs(true))
+        .args(libraries.externs(4))
         .arg(source)
         .arg("-o")
         .arg(&rust_asm);
@@ -343,6 +343,8 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
         read_text(&rust_asm)?,
         read_text(&libraries.core_asm())?,
         read_text(&libraries.builtins_asm())?,
+        read_text(&libraries.alloc_asm())?,
+        read_text(&libraries.heap_asm())?,
     ];
     let sections: Vec<_> = texts
         .iter()
@@ -358,7 +360,16 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
     let linked: String = kept.iter().map(|section| section.text).collect();
 
     let header_object = artifacts.path().join("header.o");
-    assemble(&root.join("rom/header.asm"), &header_object)?;
+    let mut header = Command::new("rgbasm");
+    if linked.contains("___rust_alloc") {
+        header.arg("-DHEAP=1");
+    }
+    run_command(
+        header
+            .arg("-o")
+            .arg(&header_object)
+            .arg(root.join("rom/header.asm")),
+    )?;
     let mut fixed_objects = vec![header_object];
     for name in link::runtime_objects(&linked) {
         let object = artifacts.path().join(format!("{name}.o"));
@@ -452,7 +463,15 @@ impl CoreLibraries {
         self.0.join("compiler_builtins.s")
     }
 
-    fn externs(&self, with_builtins: bool) -> Vec<OsString> {
+    fn alloc_asm(&self) -> PathBuf {
+        self.0.join("alloc.s")
+    }
+
+    fn heap_asm(&self) -> PathBuf {
+        self.0.join("gbc_heap.s")
+    }
+
+    fn externs(&self, count: usize) -> Vec<OsString> {
         let mut args = vec![
             "-L".into(),
             format!("dependency={}", self.0.display()).into(),
@@ -460,8 +479,10 @@ impl CoreLibraries {
         let crates = [
             ("core", "libcore.rmeta"),
             ("compiler_builtins", "libcompiler_builtins.rmeta"),
+            ("alloc", "liballoc.rmeta"),
+            ("force:gbc_heap", "libgbc_heap.rmeta"),
         ];
-        for (name, file) in crates.into_iter().take(if with_builtins { 2 } else { 1 }) {
+        for (name, file) in crates.into_iter().take(count) {
             args.push("--extern".into());
             args.push(format!("{name}={}", self.0.join(file).display()).into());
         }
@@ -481,8 +502,12 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
         for name in [
             "core.s",
             "compiler_builtins.s",
+            "alloc.s",
+            "gbc_heap.s",
             "libcore.rmeta",
             "libcompiler_builtins.rmeta",
+            "liballoc.rmeta",
+            "libgbc_heap.rmeta",
         ] {
             if !directory.join(name).is_file() {
                 return Err(Error::Bundle(format!(
@@ -498,7 +523,12 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
             .join(format!("opt-{opt_level}")),
     );
     let backend_time = modified(backend);
-    let fresh = [libraries.core_asm(), libraries.builtins_asm()]
+    let fresh = [
+        libraries.core_asm(),
+        libraries.builtins_asm(),
+        libraries.alloc_asm(),
+        libraries.heap_asm(),
+    ]
         .iter()
         .all(|path| modified(path).is_some_and(|time| Some(time) >= backend_time));
     if fresh {
@@ -520,7 +550,7 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
         )
     };
     compile("core", library.join("core/src/lib.rs"), Vec::new())?;
-    let mut extra = libraries.externs(false);
+    let mut extra = libraries.externs(1);
     for cfg in ["compiler-builtins", "unmangled-names", "mem"] {
         extra.push("--cfg".into());
         extra.push(format!("feature=\"{cfg}\"").into());
@@ -529,6 +559,12 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
         "compiler_builtins",
         library.join("compiler-builtins/compiler-builtins/src/lib.rs"),
         extra,
+    )?;
+    compile("alloc", library.join("alloc/src/lib.rs"), libraries.externs(2))?;
+    compile(
+        "gbc_heap",
+        root.join("runtime/heap/lib.rs"),
+        libraries.externs(2),
     )?;
     Ok(libraries)
 }
