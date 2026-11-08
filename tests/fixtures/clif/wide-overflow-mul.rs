@@ -144,11 +144,11 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT:     v9 = stack_addr.i16 ss0
 // CHECK-NEXT: ; lib_call __gbc_u128_mulo
 // CHECK-NEXT:     call fn0(v9, v6, v8)
-// CHECK-NEXT: ; write_cvalue: VarPair(_5, var5, var6): (u128, bool) <- ByRef(Pointer { base: Stack(ss0), offset: Offset32(0) }, None): (u128, bool)
 // CHECK-NEXT:     v10 = stack_addr.i16 ss0
 // CHECK-NEXT:     v11 = load.i128 notrap v10
 // CHECK-NEXT:     v12 = stack_addr.i16 ss0+16
 // CHECK-NEXT:     v13 = load.i8 notrap v12
+// CHECK-NEXT: ; write_cvalue: VarPair(_5, var5, var6): (u128, bool) <- ByValPair(v11, v13): (u128, bool)
 // CHECK-NEXT: ; _3 = copy (_5.0: u128)
 // CHECK-NEXT: ; write_cvalue: Var(_3, var3): u128 <- ByVal(v11): u128
 // CHECK-NEXT: ; _4 = copy (_5.1: bool)

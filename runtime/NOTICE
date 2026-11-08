@@ -55,7 +55,9 @@ version 2 notice and special exception as for divunsigned.s above apply.
 
 mulo128.asm adapts the bit-wise Horner multiplication algorithm in SDCC
 device/lib/_mullonglong.c (64-bit generic implementation) to a 128-bit SM83
-stack frame, with sticky carry tracking for unsigned overflow.
+stack frame, with sticky carry tracking for unsigned overflow. The signed
+wrapper converts operands to magnitudes, reuses the unsigned core, checks the
+signed range, and applies the product sign.
 Upstream SHA-256:
 46b474206ae0751ac28575ef5479be7ab5d96553f1902258105ec8507dec054b
 

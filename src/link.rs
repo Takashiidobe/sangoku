@@ -248,7 +248,10 @@ pub fn runtime_objects(assembly: &str) -> Vec<&'static str> {
         ("udiv16", true),
         ("mul16", true),
         ("wide32", true),
-        ("mulo128", assembly.contains("__gbc_u128_mulo")),
+        (
+            "mulo128",
+            assembly.contains("__gbc_u128_mulo") || assembly.contains("__gbc_i128_mulo"),
+        ),
         ("softfloat32", float32),
         ("softfloat64", assembly.contains("__gbc_f64")),
         ("softfloat128", assembly.contains("__gbc_f128")),
@@ -343,6 +346,35 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
         assert!(placed.contains("SECTION \"main\", ROM0"));
         assert!(placed.contains("SECTION \"helper\", ROMX"));
         assert!(placed.contains("jr .loop"));
+    }
+
+    #[test]
+    fn exported_runtime_entries_select_their_objects() {
+        let directory = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("runtime");
+        for entry in std::fs::read_dir(directory).unwrap() {
+            let path = entry.unwrap().path();
+            if path.extension().and_then(|s| s.to_str()) != Some("asm") {
+                continue;
+            }
+            let object = path.file_stem().unwrap().to_str().unwrap();
+            if object == "panic" {
+                continue;
+            }
+            for line in std::fs::read_to_string(&path).unwrap().lines() {
+                let Some(name) = line.strip_suffix("::") else {
+                    continue;
+                };
+                if name.starts_with("__gbc_")
+                    || name.starts_with("__rust___gbc_")
+                    || ["memcpy", "memmove"].contains(&name)
+                {
+                    assert!(
+                        runtime_objects(&format!("call {name}")).contains(&object),
+                        "{name} did not select {object}"
+                    );
+                }
+            }
+        }
     }
 
     #[test]

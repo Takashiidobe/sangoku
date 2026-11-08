@@ -40,37 +40,105 @@ fn u128_overflow_multiply_matches_host() -> Result<()> {
         cases.push((next(), next()));
     }
     for (lhs, rhs) in cases {
-        let mut emulator = program.emulator("__rust___gbc_u128_mulo")?;
-        let (left, right, out, stack) = (0xc101u16, 0xc201u16, 0xc301u16, 0xdf00u16);
-        emulator.memory[left as usize..left as usize + 16].copy_from_slice(&lhs.to_le_bytes());
-        emulator.memory[right as usize..right as usize + 16].copy_from_slice(&rhs.to_le_bytes());
-        emulator.memory[out as usize - 1..out as usize + 18].fill(0xa5);
-        emulator.b = out as u8;
-        emulator.c = (out >> 8) as u8;
-        emulator.a = left as u8;
-        emulator.set_sp(stack);
-        emulator.write16(stack, program.symbols["done"]);
-        emulator.write8(stack + 2, (left >> 8) as u8);
-        emulator.write16(stack + 3, right);
-        emulator.run_until(program.symbols["done"], 200_000)?;
+        check(
+            &program,
+            "__rust___gbc_u128_mulo",
+            lhs,
+            rhs,
+            lhs.overflowing_mul(rhs),
+        )?;
+    }
+    Ok(())
+}
+
+fn check(
+    program: &harness::Program,
+    symbol: &str,
+    lhs: u128,
+    rhs: u128,
+    expected: (u128, bool),
+) -> Result<()> {
+    let mut emulator = program.emulator(symbol)?;
+    let (left, right, out, stack) = (0xc101u16, 0xc201u16, 0xc301u16, 0xdf00u16);
+    emulator.memory[left as usize..left as usize + 16].copy_from_slice(&lhs.to_le_bytes());
+    emulator.memory[right as usize..right as usize + 16].copy_from_slice(&rhs.to_le_bytes());
+    emulator.memory[out as usize - 1..out as usize + 18].fill(0xa5);
+    emulator.b = out as u8;
+    emulator.c = (out >> 8) as u8;
+    emulator.a = left as u8;
+    emulator.set_sp(stack);
+    emulator.write16(stack, program.symbols["done"]);
+    emulator.write8(stack + 2, (left >> 8) as u8);
+    emulator.write16(stack + 3, right);
+    emulator.run_until(program.symbols["done"], 200_000)?;
+    let actual = u128::from_le_bytes(
+        emulator.memory[out as usize..out as usize + 16]
+            .try_into()
+            .unwrap(),
+    );
+    ensure!(actual == expected.0, "{lhs:#x} * {rhs:#x}: {actual:#x}");
+    ensure!(
+        emulator.memory[out as usize + 16] == u8::from(expected.1),
+        "{lhs:#x} * {rhs:#x}: overflow"
+    );
+    ensure!(emulator.memory[out as usize - 1] == 0xa5);
+    ensure!(emulator.memory[out as usize + 17] == 0xa5);
+    ensure!(emulator.memory[left as usize..left as usize + 16] == lhs.to_le_bytes());
+    ensure!(emulator.memory[right as usize..right as usize + 16] == rhs.to_le_bytes());
+    ensure!(emulator.sp() == stack + 2);
+    ensure!(emulator.memory[usize::from(stack + 2)] == (left >> 8) as u8);
+    ensure!(emulator.read16(stack + 3) == right);
+    Ok(())
+}
+
+#[test]
+fn i128_overflow_multiply_matches_host() -> Result<()> {
+    let program = harness::assemble_tiny(
+        &[
+            (
+                "stop.asm",
+                "SECTION \"reserved\", ROM0[$0000]\nds $100, 0\ndone::\nnop\n".into(),
+            ),
+            ("mulo128.asm", harness::read("runtime/mulo128.asm")?),
+        ],
+        None,
+    )?;
+    ensure!(program.size("ROM0", &["i128 overflow multiply"]) <= 256);
+    let mut cases = vec![
+        (0, i128::MIN),
+        (i128::MIN, 1),
+        (i128::MIN, -1),
+        (i128::MAX, 1),
+        (i128::MAX, -1),
+        (i128::MAX, 2),
+        (i128::MIN, 2),
+        (1 << 126, -2),
+        (-(1 << 126), 2),
+        (-(1 << 126), -2),
+        (-3, 5),
+        (-3, -5),
+        (i128::MIN, i128::MIN),
+        (i128::MAX, i128::MAX),
+        (-1, -1),
+    ];
+    let mut random = Random::new(0x129);
+    for _ in 0..32 {
+        let mut next = || {
+            (0..4).fold(0u128, |value, _| {
+                (value << 32) | u128::from(random.bits(32))
+            }) as i128
+        };
+        cases.push((next(), next()));
+    }
+    for (lhs, rhs) in cases {
         let expected = lhs.overflowing_mul(rhs);
-        let actual = u128::from_le_bytes(
-            emulator.memory[out as usize..out as usize + 16]
-                .try_into()
-                .unwrap(),
-        );
-        ensure!(actual == expected.0, "{lhs:#x} * {rhs:#x}: {actual:#x}");
-        ensure!(
-            emulator.memory[out as usize + 16] == u8::from(expected.1),
-            "{lhs:#x} * {rhs:#x}: overflow"
-        );
-        ensure!(emulator.memory[out as usize - 1] == 0xa5);
-        ensure!(emulator.memory[out as usize + 17] == 0xa5);
-        ensure!(emulator.memory[left as usize..left as usize + 16] == lhs.to_le_bytes());
-        ensure!(emulator.memory[right as usize..right as usize + 16] == rhs.to_le_bytes());
-        ensure!(emulator.sp() == stack + 2);
-        ensure!(emulator.memory[usize::from(stack + 2)] == (left >> 8) as u8);
-        ensure!(emulator.read16(stack + 3) == right);
+        check(
+            &program,
+            "__rust___gbc_i128_mulo",
+            lhs as u128,
+            rhs as u128,
+            (expected.0 as u128, expected.1),
+        )?;
     }
     Ok(())
 }

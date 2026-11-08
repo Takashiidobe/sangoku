@@ -269,3 +269,28 @@ pub fn dyn_fmt_display(v: &dyn fmt::Display) -> u16 {
     let _ = write!(s, "{v}");
     s.0
 }
+
+macro_rules! integer_methods {
+    ($name:ident, $ty:ty) => {
+        #[unsafe(no_mangle)]
+        pub fn $name(a: $ty, b: $ty) -> (Option<$ty>, Option<$ty>, Option<$ty>, $ty, $ty, $ty, ($ty, bool), ($ty, bool), ($ty, bool), u32, u32, u32) {
+            (a.checked_add(b), a.checked_sub(b), a.checked_mul(b),
+             a.wrapping_add(b), a.wrapping_sub(b), a.wrapping_mul(b),
+             a.overflowing_add(b), a.overflowing_sub(b), a.overflowing_mul(b),
+             a.leading_zeros(), a.trailing_zeros(), a.count_ones())
+        }
+    };
+}
+
+integer_methods!(methods_i8, i8);
+integer_methods!(methods_u8, u8);
+integer_methods!(methods_i16, i16);
+integer_methods!(methods_u16, u16);
+integer_methods!(methods_i32, i32);
+integer_methods!(methods_u32, u32);
+integer_methods!(methods_i64, i64);
+integer_methods!(methods_u64, u64);
+integer_methods!(methods_i128, i128);
+integer_methods!(methods_u128, u128);
+integer_methods!(methods_isize, isize);
+integer_methods!(methods_usize, usize);

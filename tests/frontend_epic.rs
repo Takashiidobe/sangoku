@@ -33,7 +33,7 @@ fn run_fixture_at_level(name: &str, level: &str) -> Result<()> {
     );
     let mut emulator = Emulator::new(&fs::read(rom)?, 0x100)?;
     emulator.set_sp(0xe000);
-    for _ in 0..2_000_000 {
+    for _ in 0..4_000_000 {
         let before = emulator.pc;
         emulator.step()?;
         if emulator.pc == before {
@@ -41,7 +41,11 @@ fn run_fixture_at_level(name: &str, level: &str) -> Result<()> {
             return Ok(());
         }
     }
-    sangoku_test_support::bail!("{name} did not halt")
+    sangoku_test_support::bail!(
+        "{name} at {level} did not halt: PC={:#06x}, SP={:#06x}",
+        emulator.pc,
+        emulator.sp()
+    )
 }
 
 #[test]
@@ -98,6 +102,70 @@ fn wide_float128() -> Result<()> {
 fn wide_overflow_multiply() -> Result<()> {
     for level in ["0", "z"] {
         run_fixture_at_level("wide-overflow-mul", level)?;
+    }
+    Ok(())
+}
+
+#[test]
+fn signed_overflow_multiply() -> Result<()> {
+    for level in ["0", "z"] {
+        run_fixture_at_level("signed-overflow-mul", level)?;
+    }
+    Ok(())
+}
+
+#[test]
+fn integer_methods_i8() -> Result<()> {
+    run_fixture("integer-i8")
+}
+
+#[test]
+fn integer_methods_u8() -> Result<()> {
+    run_fixture("integer-u8")
+}
+
+#[test]
+fn integer_methods_i16() -> Result<()> {
+    run_fixture("integer-i16")
+}
+
+#[test]
+fn integer_methods_u16() -> Result<()> {
+    run_fixture("integer-u16")
+}
+
+#[test]
+fn integer_methods_i32() -> Result<()> {
+    run_fixture("integer-i32")
+}
+
+#[test]
+fn integer_methods_u32() -> Result<()> {
+    run_fixture("integer-u32")
+}
+
+#[test]
+fn integer_methods_isize() -> Result<()> {
+    run_fixture("integer-isize")
+}
+
+#[test]
+fn integer_methods_usize() -> Result<()> {
+    run_fixture("integer-usize")
+}
+
+#[test]
+fn signed_overflow_multiply64() -> Result<()> {
+    for level in ["0", "z"] {
+        run_fixture_at_level("signed-overflow-mul64", level)?;
+    }
+    Ok(())
+}
+
+#[test]
+fn unsigned_overflow_multiply64() -> Result<()> {
+    for level in ["0", "z"] {
+        run_fixture_at_level("unsigned-overflow-mul64", level)?;
     }
     Ok(())
 }

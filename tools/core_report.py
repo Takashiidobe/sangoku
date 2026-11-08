@@ -69,6 +69,26 @@ def undefined_symbols(clif_dirs):
                   if name not in runtime and f"__rust_{name}" not in runtime)
 
 
+def runtime_inventory(clif_dirs):
+    providers = {}
+    for path in (ROOT / "runtime").glob("*.asm"):
+        for name in re.findall(r"^([A-Za-z_][A-Za-z0-9_]*)::", path.read_text(), re.M):
+            providers[name] = str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else path.name
+    for directory in clif_dirs:
+        for path in directory.glob("*.clif"):
+            for name in re.findall(r"^; symbol (\S+)", path.read_text(), re.M):
+                providers[f"__rust_{name}"] = directory.name
+    source = (ROOT / "third_party/rustc_codegen_cranelift/src/rgbds.rs").read_text()
+    source = source.split("pub(crate) fn runtime_libcalls()")[1].split("pub(crate) fn symbol_name")[0]
+    mappings = re.findall(r'"LibCall\((\w+)\)"\.into\(\),\s*"([^\"]+)"\.into\(\)', source)
+    target = ROOT / "third_party/wasmtime/cranelift/codegen/src/isa/lr35902"
+    emitted = {name for file in ["lower.rs", "legalize.rs"]
+               for name in re.findall(r"LibCall::(\w+)", (target / file).read_text())}
+    inventory = [{"libcall": name, "symbol": symbol, "provider": providers.get(symbol)}
+                 for name, symbol in mappings]
+    return inventory, sorted(emitted - {name for name, _ in mappings})
+
+
 def probe(clif_path):
     result = run(["cargo", "run", "-q", "--release", "-p", "sangoku-lower", "--", "--probe", str(clif_path)])
     names = symbols(clif_path.read_text())
@@ -141,10 +161,12 @@ def main():
         rows = probe(driver_clif) if driver_clif.exists() else []
         reports.append(summarise("core generics (driver)", rows, errors))
         undefined = undefined_symbols([out / "core.clif", out / "compiler_builtins.clif", out / "driver.clif"])
+        inventory, unmapped = runtime_inventory([out / "core.clif", out / "compiler_builtins.clif"])
 
 
     if args.json:
-        print(json.dumps({"reports": reports, "undefined": undefined}, indent=2))
+        print(json.dumps({"reports": reports, "undefined": undefined,
+                          "runtime_libcalls": inventory, "unmapped_libcalls": unmapped}, indent=2))
         return
     for report in reports:
         print(f"{report['label']}: {report['ok']}/{report['functions']} lower, {report['failed']} fail")
@@ -154,6 +176,11 @@ def main():
             print(f"  {group['count']:5}  {group['status']}: {group['message']}")
             for example in group["examples"]:
                 print(f"           e.g. {example}")
+    print(f"runtime libcalls: {len(inventory)} mapped, "
+          f"{sum(row['provider'] is None for row in inventory)} missing definitions")
+    for row in inventory:
+        print(f"  {row['libcall']}: {row['symbol']} -> {row['provider'] or 'MISSING'}")
+    print(f"unmapped backend libcalls: {unmapped}")
     print(f"undefined symbols: {len(undefined)}")
     for name in undefined:
         print(f"  {name}")

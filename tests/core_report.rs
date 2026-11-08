@@ -30,6 +30,19 @@ fn core_lowers_to_lr35902_without_failures() -> Result<()> {
         "driver instantiated only {} functions",
         driver["functions"]
     );
+    ensure!(
+        document["unmapped_libcalls"].as_array().unwrap().is_empty(),
+        "unmapped backend libcalls: {}",
+        document["unmapped_libcalls"]
+    );
+    let inventory = document["runtime_libcalls"].as_array().unwrap();
+    ensure!(inventory.len() >= 34, "incomplete runtime inventory");
+    for entry in inventory {
+        ensure!(
+            !entry["provider"].is_null(),
+            "missing runtime definition: {entry}"
+        );
+    }
     let integer_libcalls: Vec<_> = document["undefined"]
         .as_array()
         .unwrap()
