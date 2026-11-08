@@ -1,5 +1,6 @@
 use core::ptr::{read_volatile, write_volatile};
 
+#[allow(dead_code)]
 #[derive(Clone, Copy)]
 pub enum Event {
     Note(u8, u8),
@@ -17,9 +18,6 @@ pub enum Event {
 const PITCHES: [i16; 12] = [
     -2004, -1891, -1785, -1685, -1590, -1501, -1417, -1337, -1262, -1192, -1125, -1062,
 ];
-const WAVE: [u8; 16] = [
-    0x02, 0x46, 0x8a, 0xcd, 0xef, 0xfe, 0xde, 0xff, 0xee, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10,
-];
 
 fn read(address: usize) -> u8 {
     unsafe { read_volatile(address as *const u8) }
@@ -35,7 +33,7 @@ fn pan(channel: u8, enabled: bool) {
     write(0xff25, if enabled { value | mask } else { value });
 }
 
-pub fn initialize() {
+pub fn initialize(wave: &[u8; 16]) {
     write(0xffff, 0);
     write(0xff26, 0);
     write(0xff26, 0x80);
@@ -43,7 +41,7 @@ pub fn initialize() {
     write(0xff25, 0);
     write(0xff10, 0);
     write(0xff1a, 0);
-    for (offset, value) in WAVE.iter().enumerate() {
+    for (offset, value) in wave.iter().enumerate() {
         write(0xff30 + offset, *value);
     }
     write(0xff1a, 0x80);
@@ -61,6 +59,7 @@ pub struct Channel {
     remaining: u8,
     fraction: u16,
     speed: u8,
+    tempo: u8,
     octave: u8,
     envelope: u8,
     duty: u8,
@@ -76,13 +75,14 @@ pub struct Channel {
 }
 
 impl Channel {
-    pub const fn new(score: &'static [Event]) -> Self {
+    pub const fn new(score: &'static [Event], tempo: u8) -> Self {
         Self {
             score,
             cursor: 0,
             remaining: 0,
             fraction: 0,
             speed: 12,
+            tempo,
             octave: 4,
             envelope: 0,
             duty: 2,
@@ -99,7 +99,7 @@ impl Channel {
     }
 
     fn duration(&mut self, length: u8) {
-        let duration = length as u16 * self.speed as u16 * 144 + self.fraction;
+        let duration = length as u16 * self.speed as u16 * self.tempo as u16 + self.fraction;
         self.fraction = duration & 255;
         self.remaining = (duration >> 8) as u8;
     }

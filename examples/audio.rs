@@ -7,12 +7,12 @@ mod player;
 
 #[unsafe(no_mangle)]
 pub fn gbc_main() -> u8 {
-    player::initialize();
+    player::initialize(&bike_riding::WAVE);
     let mut channels = [
-        player::Channel::new(bike_riding::CH1),
-        player::Channel::new(bike_riding::CH2),
-        player::Channel::new(bike_riding::CH3),
-        player::Channel::new(bike_riding::CH4),
+        player::Channel::new(bike_riding::CH1, bike_riding::TEMPO),
+        player::Channel::new(bike_riding::CH2, bike_riding::TEMPO),
+        player::Channel::new(bike_riding::CH3, bike_riding::TEMPO),
+        player::Channel::new(bike_riding::CH4, bike_riding::TEMPO),
     ];
     let mut drum = player::Drum::new();
     loop {
