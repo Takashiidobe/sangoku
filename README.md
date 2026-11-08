@@ -100,6 +100,11 @@ retained code references their helpers. `benchmarks/empty.rs` excludes these
 runtime objects; `tests/core_rom/runtime32.rs` checks dynamic 32-bit division
 and remainder in the emulator.
 
+`wide32.asm` remains a compatibility include for assembly harnesses. ROM builds
+select individual multiplication, shift and bit-operation helpers. Division and
+remainder wrappers share `div32_core.asm`, selected through their symbol
+references.
+
 SM83 stack-slot accesses now omit HL saves when physical-register liveness
 proves them unnecessary, including spills and reloads inserted by register
 allocation. Live HL values and any A scratch value remain preserved.

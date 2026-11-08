@@ -89,7 +89,7 @@ def main():
                 copy(source / name, staging / "libraries" / f"opt-{level}" / name)
         for directory in ["runtime", "targets", "rom", "examples"]:
             for source in (ROOT / directory).iterdir():
-                if source.is_file() and source.suffix in {".asm", ".rs", ".json"}:
+                if source.is_file() and source.suffix in {".asm", ".inc", ".rs", ".json"}:
                     copy(source, staging / directory / source.name)
         for source in [ROOT / "runtime/COPYING", ROOT / "runtime/NOTICE",
                        ROOT / "third_party/rust/LICENSE-APACHE", ROOT / "third_party/rust/LICENSE-MIT",

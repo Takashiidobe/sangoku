@@ -415,7 +415,7 @@ fn build_rom(
             )
             .map_err(|error| Error::io(format!("could not write {}", source.display()), error))?;
         }
-        assemble(&source, &object)?;
+        assemble(root, &source, &object)?;
         fixed_objects.push(object);
     }
 
@@ -424,7 +424,7 @@ fn build_rom(
     let probe_map = artifacts.path().join("probe.map");
     fs::write(&probe_source, link::bank_one(&linked))
         .map_err(|error| Error::io(format!("could not write {}", probe_source.display()), error))?;
-    assemble(&probe_source, &probe_object)?;
+    assemble(root, &probe_source, &probe_object)?;
     run_command(
         Command::new("rgblink")
             .arg("-m")
@@ -450,7 +450,7 @@ fn build_rom(
     let game_object = artifacts.path().join("game.o");
     fs::write(&game_source, link::place(&kept, &sizes, rom0_free))
         .map_err(|error| Error::io(format!("could not write {}", game_source.display()), error))?;
-    assemble(&game_source, &game_object)?;
+    assemble(root, &game_source, &game_object)?;
     let capacity = 32768;
     if used > capacity {
         return Err(Error::RomCapacity {
@@ -609,8 +609,15 @@ fn read_text(path: &Path) -> Result<String> {
         .map_err(|error| Error::io(format!("could not read {}", path.display()), error))
 }
 
-fn assemble(source: &Path, object: &Path) -> Result<()> {
-    run_command(Command::new("rgbasm").arg("-o").arg(object).arg(source))
+fn assemble(root: &Path, source: &Path, object: &Path) -> Result<()> {
+    run_command(
+        Command::new("rgbasm")
+            .arg("-I")
+            .arg(root)
+            .arg("-o")
+            .arg(object)
+            .arg(source),
+    )
 }
 
 fn absolute_path(path: &Path) -> Result<PathBuf> {

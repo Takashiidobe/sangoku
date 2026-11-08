@@ -141,16 +141,28 @@ fn empty_rom_excludes_unreferenced_arithmetic_runtime() -> Result<()> {
         );
     }
     ensure!(map.contains("__rust_gbc_main"), "missing entry point");
+    ensure!(
+        !map.contains("__gbc_"),
+        "empty ROM retained a runtime helper"
+    );
     Ok(())
 }
 
 #[test]
 fn referenced_32_bit_runtime_links_and_executes() -> Result<()> {
     let (rom, map) = build_runtime_rom("tests/core_rom/runtime32.rs")?;
-    ensure!(
-        map.contains("[\"32-bit runtime\"]"),
-        "missing 32-bit runtime"
-    );
+    for symbol in ["__gbc_udiv32", "__gbc_urem32", "__gbc_div32_core"] {
+        ensure!(map.contains(symbol), "missing {symbol}");
+    }
+    for symbol in [
+        "__gbc_sdiv32",
+        "__gbc_srem32",
+        "__gbc_mul32",
+        "__gbc_shift8",
+        "__gbc_popcnt32",
+    ] {
+        ensure!(!map.contains(symbol), "retained unrelated helper {symbol}");
+    }
     for (dividend, divisor) in [(0x12345678u32, 12345u32), (u32::MAX, 65537), (0, 7)] {
         let mut emulator = Emulator::new(&rom, 0x100)?;
         emulator.memory[0xc000..0xc004].copy_from_slice(&dividend.to_le_bytes());
@@ -177,4 +189,72 @@ fn referenced_32_bit_runtime_links_and_executes() -> Result<()> {
         );
     }
     Ok(())
+}
+
+fn check_single_runtime_helper(
+    name: &str,
+    symbol: &str,
+    output_bytes: usize,
+    operation: fn(u32, u32) -> u32,
+) -> Result<()> {
+    let (rom, map) = build_runtime_rom(&format!("tests/core_rom/runtime_{name}.rs"))?;
+    for helper in [
+        "__gbc_mul32",
+        "__gbc_div32_core",
+        "__gbc_udiv32",
+        "__gbc_urem32",
+        "__gbc_sdiv32",
+        "__gbc_srem32",
+        "__gbc_popcnt32",
+        "__gbc_clz32",
+        "__gbc_ctz32",
+        "__gbc_bitrev32",
+        "__gbc_shift8",
+        "__gbc_shift16",
+    ] {
+        ensure!(
+            map.contains(helper) == (helper == symbol),
+            "unexpected retention of {helper} for {name}"
+        );
+    }
+    for (lhs, rhs) in [(0u32, 0u32), (0x80000001, 3), (u32::MAX, 7)] {
+        let mut emulator = Emulator::new(&rom, 0x100)?;
+        emulator.memory[0xc000..0xc004].copy_from_slice(&lhs.to_le_bytes());
+        emulator.memory[0xc004..0xc008].copy_from_slice(&rhs.to_le_bytes());
+        emulator.memory[0xc008..0xc00c].fill(0xa5);
+        let mut halted = false;
+        for _ in 0..100_000 {
+            let before = emulator.pc;
+            emulator.step()?;
+            if emulator.pc == before {
+                halted = true;
+                break;
+            }
+        }
+        ensure!(halted, "{name} did not halt");
+        let mut bytes = [0u8; 4];
+        bytes[..output_bytes].copy_from_slice(&emulator.memory[0xc008..0xc008 + output_bytes]);
+        ensure!(
+            u32::from_le_bytes(bytes) == operation(lhs, rhs),
+            "wrong {name} result for {lhs}, {rhs}"
+        );
+    }
+    Ok(())
+}
+
+#[test]
+fn shift8_links_only_its_runtime_helper() -> Result<()> {
+    check_single_runtime_helper("shift8", "__gbc_shift8", 1, |lhs, rhs| {
+        (lhs as u8).wrapping_shl(rhs) as u32
+    })
+}
+
+#[test]
+fn popcnt32_links_only_its_runtime_helper() -> Result<()> {
+    check_single_runtime_helper("popcnt32", "__gbc_popcnt32", 4, |lhs, _| lhs.count_ones())
+}
+
+#[test]
+fn mul32_links_only_its_runtime_helper() -> Result<()> {
+    check_single_runtime_helper("mul32", "__gbc_mul32", 4, u32::wrapping_mul)
 }

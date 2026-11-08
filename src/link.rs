@@ -235,42 +235,63 @@ pub fn panic_symbol(assembly: &str) -> Option<&str> {
         .filter(|name| !exported_labels(assembly).any(|label| label == *name))
 }
 
+const RUNTIME_OBJECTS: &[(&str, &str)] = &[
+    ("udiv16", include_str!("../runtime/udiv16.asm")),
+    ("mul16", include_str!("../runtime/mul16.asm")),
+    ("mul32", include_str!("../runtime/mul32.asm")),
+    ("div32_core", include_str!("../runtime/div32_core.asm")),
+    ("udiv32", include_str!("../runtime/udiv32.asm")),
+    ("urem32", include_str!("../runtime/urem32.asm")),
+    ("sdiv32", include_str!("../runtime/sdiv32.asm")),
+    ("srem32", include_str!("../runtime/srem32.asm")),
+    ("popcnt32", include_str!("../runtime/popcnt32.asm")),
+    ("ctz32", include_str!("../runtime/ctz32.asm")),
+    ("clz32", include_str!("../runtime/clz32.asm")),
+    ("bitrev32", include_str!("../runtime/bitrev32.asm")),
+    ("shift8", include_str!("../runtime/shift8.asm")),
+    ("shift16", include_str!("../runtime/shift16.asm")),
+    ("mulo128", include_str!("../runtime/mulo128.asm")),
+    ("softfloat32", include_str!("../runtime/softfloat32.asm")),
+    ("softfloat64", include_str!("../runtime/softfloat64.asm")),
+    ("softfloat128", include_str!("../runtime/softfloat128.asm")),
+    ("convert", include_str!("../runtime/convert.asm")),
+    ("memory", include_str!("../runtime/memory.asm")),
+    ("panic", include_str!("../runtime/panic.asm")),
+    ("heap", include_str!("../runtime/heap.asm")),
+];
+
 pub fn runtime_objects(assembly: &str) -> Vec<&'static str> {
     let mut referenced: HashSet<_> = identifiers(assembly).collect();
-    for defined in exported_labels(assembly) {
-        referenced.remove(defined);
+    let mut defined: HashSet<_> = exported_labels(assembly).collect();
+    if panic_symbol(assembly).is_some() {
+        referenced.insert("__gbc_panic");
     }
-    let uses = |source| exported_labels(source).any(|name| referenced.contains(name));
-    let float32 = assembly
-        .replace("__gbc_f64", "")
-        .replace("__gbc_f128", "")
-        .contains("__gbc_f");
-    let memory = ["__gbc_mem", "memcpy", "memmove"]
+    if assembly.contains("___rust_alloc") {
+        referenced.insert("__gbc_heap_init");
+    }
+    let mut selected = vec![false; RUNTIME_OBJECTS.len()];
+    loop {
+        let mut changed = false;
+        for (index, (_, source)) in RUNTIME_OBJECTS.iter().enumerate() {
+            if !selected[index]
+                && exported_labels(source)
+                    .any(|name| referenced.contains(name) && !defined.contains(name))
+            {
+                selected[index] = true;
+                changed = true;
+                referenced.extend(identifiers(source));
+                defined.extend(exported_labels(source));
+            }
+        }
+        if !changed {
+            break;
+        }
+    }
+    RUNTIME_OBJECTS
         .iter()
-        .any(|name| assembly.contains(name));
-    let panic = panic_symbol(assembly).is_some();
-    [
-        ("udiv16", uses(include_str!("../runtime/udiv16.asm"))),
-        ("mul16", uses(include_str!("../runtime/mul16.asm"))),
-        ("wide32", uses(include_str!("../runtime/wide32.asm"))),
-        (
-            "mulo128",
-            assembly.contains("__gbc_u128_mulo") || assembly.contains("__gbc_i128_mulo"),
-        ),
-        ("softfloat32", float32),
-        ("softfloat64", assembly.contains("__gbc_f64")),
-        ("softfloat128", assembly.contains("__gbc_f128")),
-        ("convert", assembly.contains("__gbc_convert")),
-        ("memory", memory),
-        ("panic", panic),
-        (
-            "heap",
-            assembly.contains("___rust_alloc") || assembly.contains("__gbc_heap_init"),
-        ),
-    ]
-    .into_iter()
-    .filter_map(|(name, needed)| needed.then_some(name))
-    .collect()
+        .zip(selected)
+        .filter_map(|(&(name, _), selected)| selected.then_some(name))
+        .collect()
 }
 
 #[cfg(test)]
@@ -388,10 +409,24 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
 
     #[test]
     fn selects_runtime_objects_from_the_assembly() {
-        assert_eq!(runtime_objects("call __gbc_f64_add"), ["softfloat64"]);
+        assert_eq!(runtime_objects("call __gbc_f64"), ["softfloat64"]);
         assert!(runtime_objects("ret").is_empty());
-        assert_eq!(runtime_objects("call __gbc_mul32"), ["wide32"]);
-        assert_eq!(runtime_objects("call __gbc_shift8"), ["wide32"]);
+        assert_eq!(runtime_objects("call __gbc_mul32"), ["mul32"]);
+        assert_eq!(runtime_objects("call __gbc_shift8"), ["shift8"]);
+        assert_eq!(
+            runtime_objects("call __gbc_udiv32"),
+            ["div32_core", "udiv32"]
+        );
+        assert_eq!(
+            runtime_objects("call __gbc_srem32"),
+            ["div32_core", "srem32"]
+        );
+        assert_eq!(runtime_objects("call __gbc_popcnt32"), ["popcnt32"]);
+        assert!(runtime_objects("call __gbc_shift8_unused").is_empty());
+        assert_eq!(
+            runtime_objects("__gbc_div32_core::\nret\ncall __gbc_udiv32"),
+            ["udiv32"]
+        );
         assert_eq!(runtime_objects("call __gbc_mul16"), ["mul16"]);
         assert_eq!(runtime_objects("call __gbc_udiv16"), ["udiv16"]);
         assert!(runtime_objects("__gbc_mul32::\nret").is_empty());
