@@ -366,3 +366,52 @@ fn const_panics_remain_compile_errors() -> Result<()> {
     );
     Ok(())
 }
+
+#[test]
+fn ufmt_formats_edge_values_without_core_fmt_or_panic_handler() -> Result<()> {
+    let (rom, map) = build_runtime_rom("tests/core_rom/ufmt.rs")?;
+    ensure!(!map.contains("4core3fmt"), "ufmt retained core::fmt");
+    ensure!(
+        !map.contains("rust_begin_unwind"),
+        "ufmt retained a panic handler"
+    );
+    for line in map
+        .lines()
+        .filter(|line| line.contains("SECTION:") && line.contains("9panicking"))
+    {
+        ensure!(
+            line.contains("panic_bounds_check") && line.contains("($0001 byte)"),
+            "ufmt retained panic machinery: {line}"
+        );
+        let address = usize::from_str_radix(
+            &line.split('$').nth(1).ok_or("missing section address")?[..4],
+            16,
+        )?;
+        ensure!(rom[address] == 0xd7, "panic guard is not a direct trap");
+    }
+    for value in [0u16, 32768, u16::MAX] {
+        let mut emulator = Emulator::new(&rom, 0x100)?;
+        emulator.write16(0xc000, value);
+        emulator.memory[0xc004..0xc008].copy_from_slice(&u32::MAX.to_le_bytes());
+        let mut halted = false;
+        for _ in 0..2_000_000 {
+            let before = emulator.pc;
+            emulator.step()?;
+            if emulator.pc == before {
+                halted = true;
+                break;
+            }
+        }
+        ensure!(halted && emulator.a == 0, "ufmt did not return for {value}");
+        let signed = value as i16;
+        let expected = format!(
+            "value={value} signed={signed} wide=4294967295 hex={value:x}\npair=Pair {{ unsigned: {value}, signed: {signed} }}\narray=[0, {value}] option=Some({value})\nutf8=λ Ä {{}}\n"
+        );
+        ensure!(
+            emulator.serial == expected.as_bytes(),
+            "unexpected ufmt output: {:?}",
+            String::from_utf8_lossy(&emulator.serial)
+        );
+    }
+    Ok(())
+}

@@ -46,6 +46,28 @@ All optimization levels eliminate panic-only formatting. Failed checks still
 trap, and panic argument effects are preserved. Explicit formatting and
 Unicode tables retain their actual ROM costs. Check the build warnings.
 
+For serial output, use the supplied `sangoku_console` macros:
+
+```rust
+#![no_std]
+
+use sangoku_console::println;
+
+#[unsafe(no_mangle)]
+pub extern "C" fn gbc_main() -> u8 {
+    println!("answer = {}", 42u16);
+    0
+}
+```
+
+The console uses `ufmt` without `core::fmt`. For explicit writers, use
+`sangoku_console::{Serial, finish, write, writeln}` and pass the result to
+`finish`. Failed checks trap without panic diagnostics.
+
+Inputs are standalone Rust 2024 source files. Sangoku supplies `ufmt` and
+`sangoku_console`; it does not yet resolve dependencies from your own
+`Cargo.toml` or build arbitrary Cargo projects.
+
 ## Tests
 
 ```bash

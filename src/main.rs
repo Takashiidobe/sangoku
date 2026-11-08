@@ -12,6 +12,7 @@ use sangoku::{
     error::{Error, Result},
 };
 
+mod console;
 mod diagnostics;
 mod link;
 
@@ -278,11 +279,14 @@ fn emit_clif(
     let backend = build_backend(root)?;
     let artifacts = ArtifactDir::new(&source)?;
     let libraries = core_libraries(root, &backend, opt_level)?;
+    let console = console::libraries(root, &backend, opt_level, &libraries)?;
     run_command(
         rustc_command(root, opt_level)
+            .arg("--edition=2024")
             .env("CG_CLIF_CLIF_ONLY", "1")
             .arg(format!("-Zcodegen-backend={}", backend.display()))
             .args(libraries.externs(if alloc { 4 } else { 2 }))
+            .args(console.externs())
             .arg("--emit=asm,llvm-ir")
             .arg(&source)
             .arg("-o")
@@ -318,8 +322,12 @@ fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str, alloc: b
 
     let backend = build_backend(root)?;
     let libraries = core_libraries(root, &backend, opt_level)?;
+    let console = console::libraries(root, &backend, opt_level, &libraries)?;
     let mut command = rustc_command(root, opt_level);
-    command.args(libraries.externs(if alloc { 4 } else { 2 }));
+    command.arg("--edition=2024");
+    command
+        .args(libraries.externs(if alloc { 4 } else { 2 }))
+        .args(console.externs());
     command.arg("-Zunpretty=mir").arg(&source);
     if output == Path::new("-") {
         return run_command(&mut command);
@@ -360,12 +368,15 @@ fn build_rom(
     let artifacts = ArtifactDir::new(&source)?;
     let rust_asm = artifacts.path().join("game.asm");
     let libraries = core_libraries(root, &backend, opt_level)?;
+    let console = console::libraries(root, &backend, opt_level, &libraries)?;
 
     let mut command = rustc_command(root, opt_level);
+    command.arg("--edition=2024");
     command
         .arg(format!("-Zcodegen-backend={}", backend.display()))
         .arg("--emit=asm")
         .args(libraries.externs(if alloc { 4 } else { 2 }))
+        .args(console.externs())
         .arg(&source)
         .arg("-o")
         .arg(&rust_asm);
@@ -376,6 +387,9 @@ fn build_rom(
         read_text(&libraries.core_asm())?,
         read_text(&libraries.builtins_asm())?,
     ];
+    for path in console.assembly() {
+        texts.push(read_text(&path)?);
+    }
     if alloc {
         texts.push(read_text(&libraries.alloc_asm())?);
         texts.push(read_text(&libraries.heap_asm())?);

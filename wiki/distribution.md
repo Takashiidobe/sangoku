@@ -2,7 +2,8 @@
 
 Build one Linux x86-64 executable containing the pinned compiler, backend,
 shared libraries, runtime assembly, and precompiled target libraries. RGBDS
-remains an external requirement.
+remains an external requirement. Target libraries include `ufmt`, the serial
+console, and their host procedural macro dependency.
 
 From an already built checkout:
 

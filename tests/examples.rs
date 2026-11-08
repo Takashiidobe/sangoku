@@ -18,6 +18,13 @@ fn run_example(name: &str) -> Result<(String, u8)> {
         !String::from_utf8_lossy(&output.stderr).contains("sangoku::retained_formatting"),
         "unexpected formatting warning for {name}"
     );
+    let report = String::from_utf8_lossy(&output.stderr);
+    let artifacts = report
+        .lines()
+        .find_map(|line| line.strip_prefix("Build artifacts: "))
+        .ok_or("build did not report its artifact directory")?;
+    let map = fs::read_to_string(std::path::Path::new(artifacts).join("game.map"))?;
+    ensure!(!map.contains("4core3fmt"), "{name} retained core::fmt");
     let mut emulator = Emulator::new(&fs::read(&rom)?, 0x100)?;
     emulator.set_sp(0xe000);
     for _ in 0..200_000_000u64 {
