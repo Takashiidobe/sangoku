@@ -45,3 +45,13 @@ references retain their respective runtimes; f64-only builds omit the f32
 runtime. The f64 helper shares its algorithms across call sites, though operand
 copies and stack addressing still add substantial caller code. Keep large
 operation examples in separate ROMs while generated code is limited to ROM0.
+
+## Stack-slot accesses
+
+SM83 stack-slot accesses now omit HL saves when physical-register liveness
+proves them unnecessary, including spills and reloads inserted by register
+allocation. Live HL values and any A scratch value remain preserved.
+
+`tests/fixtures/lower/stack-liveness.clif` covers the shorter assembly;
+`cargo run --example check-spills` checks native bytes against RGBDS and runs
+register-preservation and stack-pressure cases in the emulator.

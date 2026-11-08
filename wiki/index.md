@@ -1,5 +1,11 @@
 # Index
 
+- [Building and running ROMs](concepts/building-roms.md)
+- [Testing](concepts/testing.md)
+- [Core and alloc support](concepts/core-alloc.md)
+- [Compilation support and hardware limits](concepts/practical-limits.md)
+- [Frontend fixtures](concepts/frontend-fixtures.md)
+- [Intrinsic call audit](intrinsics.md)
 - [Unicode lookup tables](concepts/concepts.md)
 - [ROM size baseline against SDCC](concepts/size-baseline.md)
 - [Legalization](concepts/legalization.md)

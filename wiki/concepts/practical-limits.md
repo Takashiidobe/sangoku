@@ -56,14 +56,15 @@ figures are lower bounds for a complete program.
 
 ## Printing and output
 
-`println!` is not supplied by this no_std ROM runtime. A program needs a target
-output implementation, such as a serial or screen writer, as well as formatting
-and linking support. `core::fmt` does not provide an output device.
+Use `sangoku_console::{print, println}` for serial output with `ufmt`, or
+implement `uWrite` for your output device. See [building ROMs](building-roms.md)
+for the serial and screen examples. These writers avoid `core::fmt`; the
+standard library's `println!` is not available in a `no_std` ROM.
 
-The formatting probes call `Display::fmt` with a bounded test sink. A target
-ROM test also checks `writeln!` of `u8` values through a serial writer. These
-checks do not establish support for every formatting type, `println!`, or std. Runtime imports such as `memcpy`, `memmove` and `memcmp`
-still need implementations when a compiled path references them.
+The core formatting probes use bounded sinks and serial output. They do not
+establish support for every formatting type or `std`. Runtime imports such as
+`memcpy`, `memmove`, and `memcmp` still need implementations when a compiled
+path references them.
 
 ## Wide integers and floats
 
