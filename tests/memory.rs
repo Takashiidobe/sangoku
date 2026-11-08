@@ -5,14 +5,15 @@ const REGION: usize = 0xc000;
 const REGION_LEN: usize = 0x1000;
 const BASE: usize = REGION + 0x400;
 
-fn program() -> Result<harness::Program> {
+fn program(copy: &str) -> Result<harness::Program> {
     harness::assemble_tiny(
         &[
             (
                 "stop.asm",
                 "SECTION \"reserved\", ROM0[$0000]\nds $100, 0\ndone::\nnop\n".into(),
             ),
-            ("memory.asm", harness::read("runtime/memory.asm")?),
+            ("memmove.asm", harness::read("runtime/memmove.asm")?),
+            ("memcpy.asm", harness::read(format!("runtime/{copy}.asm"))?),
         ],
         None,
     )
@@ -24,7 +25,13 @@ fn pattern() -> Vec<u8> {
         .collect()
 }
 
-fn check(program: &harness::Program, name: &str, dst: usize, src: usize, len: usize) -> Result<()> {
+fn check(
+    program: &harness::Program,
+    name: &str,
+    dst: usize,
+    src: usize,
+    len: usize,
+) -> Result<u64> {
     let stop = program.symbols["done"];
     let mut e = program.emulator(name)?;
     let initial = pattern();
@@ -37,7 +44,12 @@ fn check(program: &harness::Program, name: &str, dst: usize, src: usize, len: us
     e.memory[usize::from(STACK) + 2] = (src >> 8) as u8;
     e.memory[usize::from(STACK) + 3] = len as u8;
     e.memory[usize::from(STACK) + 4] = (len >> 8) as u8;
+    let arguments = e.memory[usize::from(STACK) + 2..usize::from(STACK) + 5].to_vec();
     e.run_until(stop, 5_000_000)?;
+    ensure!(
+        e.memory[usize::from(STACK) + 2..usize::from(STACK) + 5] == arguments,
+        "{name}: stack arguments changed"
+    );
 
     let mut expected = initial;
     let moved = expected[src - REGION..src - REGION + len].to_vec();
@@ -52,14 +64,13 @@ fn check(program: &harness::Program, name: &str, dst: usize, src: usize, len: us
         e.memory[REGION..REGION + REGION_LEN] == expected[..],
         "{context}: wrong memory"
     );
-    Ok(())
+    Ok(e.cycles)
 }
 
 #[test]
 fn memcpy_and_memmove_match_host_including_overlap() -> Result<()> {
-    let program = program()?;
     let mut cases = vec![(0isize, 0isize, 0usize), (0, 0, 1), (16, 0, 0), (0, 16, 1)];
-    for len in [1usize, 2, 3, 7, 255, 256, 257, 300] {
+    for len in [0usize, 1, 2, 3, 4, 5, 7, 8, 15, 255, 256, 257, 300, 511] {
         for shift in [
             -5isize,
             -1,
@@ -78,14 +89,36 @@ fn memcpy_and_memmove_match_host_including_overlap() -> Result<()> {
         let mut next = |modulus: u32| random.below(modulus) as isize;
         cases.push((next(200), next(200), next(64) as usize));
     }
-    for (dst, src, len) in cases {
-        let (dst, src) = (
-            (BASE as isize + dst) as usize,
-            (BASE as isize + src) as usize,
-        );
-        check(&program, "memmove", dst, src, len)?;
-        if dst.abs_diff(src) >= len {
-            check(&program, "memcpy", dst, src, len)?;
+    for copy in ["memcpy_size", "memcpy_opt"] {
+        let program = program(copy)?;
+        for &(dst, src, len) in &cases {
+            let (dst, src) = (
+                (BASE as isize + dst) as usize,
+                (BASE as isize + src) as usize,
+            );
+            check(&program, "memmove", dst, src, len)?;
+            if dst.abs_diff(src) >= len {
+                check(&program, "memcpy", dst, src, len)?;
+            }
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn memcpy_variants_trade_rom_for_long_copy_cycles() -> Result<()> {
+    let size = program("memcpy_size")?;
+    let opt = program("memcpy_opt")?;
+    let size_bytes = size.size("ROM0", &["memcpy"]);
+    let opt_bytes = opt.size("ROM0", &["memcpy"]);
+    ensure!(size_bytes > 0 && size_bytes < opt_bytes);
+    println!("memcpy ROM bytes: size={size_bytes}, opt={opt_bytes}");
+    for len in [0, 1, 2, 3, 4, 8, 16, 64, 256] {
+        let size_cycles = check(&size, "memcpy", BASE + 512, BASE, len)?;
+        let opt_cycles = check(&opt, "memcpy", BASE + 512, BASE, len)?;
+        println!("length={len}: size={size_cycles}, opt={opt_cycles} T-cycles (entry through RET)");
+        if len >= 16 {
+            ensure!(opt_cycles < size_cycles);
         }
     }
     Ok(())

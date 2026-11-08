@@ -78,7 +78,7 @@ are not evidence that atomic operations are available on this target.
 | `carrying_mul_add`                                        | wide Rust arithmetic; no dedicated shared helper for 64/128-bit                        | `sangoku-7qz.9.8`                 |
 | wide `mul_with_overflow`                                  | `__rust___gbc_u128_mulo` / `__rust___gbc_i128_mulo`                                    | `sangoku-7qz.9.8`                 |
 | unsigned `carryless_mul`                                  | Rust loop and shift operations; no dedicated helper                                    | `sangoku-57q.10.5`                |
-| dynamic byte `copy`, `copy_nonoverlapping`, `write_bytes` | `memmove`, `memcpy`, `__gbc_memset`; one shared runtime object                         | `sangoku-9bq.1`                   |
+| dynamic byte `copy`, `copy_nonoverlapping`, `write_bytes` | `memmove`, `memcpy`, `__gbc_memset`; separate objects, size/speed copy variants        | `sangoku-9bq.1`                   |
 | `compare_bytes`, fixed-size `raw_eq`                      | compiler-builtins/Rust comparison or inline loads                                      | `sangoku-mt4.6`                   |
 | saturation, byte swap, integer min/max                    | inline operations or Rust comparisons; preserve cheap forms                            | no new helper proposed            |
 

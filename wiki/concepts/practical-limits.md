@@ -62,9 +62,9 @@ for the serial and screen examples. These writers avoid `core::fmt`; the
 standard library's `println!` is not available in a `no_std` ROM.
 
 The core formatting probes use bounded sinks and serial output. They do not
-establish support for every formatting type or `std`. Runtime imports such as
-`memcpy`, `memmove`, and `memcmp` still need implementations when a compiled
-path references them.
+establish support for every formatting type or `std`. The runtime supplies
+`memcpy` and `memmove`; `memcmp` still needs an implementation when a compiled
+path references it.
 
 ## Wide integers and floats
 

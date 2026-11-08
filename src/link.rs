@@ -255,12 +255,15 @@ const RUNTIME_OBJECTS: &[(&str, &str)] = &[
     ("softfloat64", include_str!("../runtime/softfloat64.asm")),
     ("softfloat128", include_str!("../runtime/softfloat128.asm")),
     ("convert", include_str!("../runtime/convert.asm")),
-    ("memory", include_str!("../runtime/memory.asm")),
+    ("memset", include_str!("../runtime/memset.asm")),
+    ("memmove", include_str!("../runtime/memmove.asm")),
+    ("memcpy_size", include_str!("../runtime/memcpy_size.asm")),
+    ("memcpy_opt", include_str!("../runtime/memcpy_opt.asm")),
     ("panic", include_str!("../runtime/panic.asm")),
     ("heap", include_str!("../runtime/heap.asm")),
 ];
 
-pub fn runtime_objects(assembly: &str) -> Vec<&'static str> {
+pub fn runtime_objects(assembly: &str, opt_level: &str) -> Vec<&'static str> {
     let mut referenced: HashSet<_> = identifiers(assembly).collect();
     let mut defined: HashSet<_> = exported_labels(assembly).collect();
     if panic_symbol(assembly).is_some() {
@@ -269,10 +272,14 @@ pub fn runtime_objects(assembly: &str) -> Vec<&'static str> {
     if assembly.contains("___rust_alloc") {
         referenced.insert("__gbc_heap_init");
     }
+    let size = matches!(opt_level, "s" | "z");
     let mut selected = vec![false; RUNTIME_OBJECTS.len()];
     loop {
         let mut changed = false;
-        for (index, (_, source)) in RUNTIME_OBJECTS.iter().enumerate() {
+        for (index, (object, source)) in RUNTIME_OBJECTS.iter().enumerate() {
+            if (*object == "memcpy_size" && !size) || (*object == "memcpy_opt" && size) {
+                continue;
+            }
             if !selected[index]
                 && exported_labels(source)
                     .any(|name| referenced.contains(name) && !defined.contains(name))
@@ -399,7 +406,11 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
                     || ["memcpy", "memmove"].contains(&name)
                 {
                     assert!(
-                        runtime_objects(&format!("call {name}")).contains(&object),
+                        runtime_objects(
+                            &format!("call {name}"),
+                            if object == "memcpy_size" { "z" } else { "0" }
+                        )
+                        .contains(&object),
                         "{name} did not select {object}"
                     );
                 }
@@ -409,32 +420,46 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
 
     #[test]
     fn selects_runtime_objects_from_the_assembly() {
-        assert_eq!(runtime_objects("call __gbc_f64"), ["softfloat64"]);
-        assert!(runtime_objects("ret").is_empty());
-        assert_eq!(runtime_objects("call __gbc_mul32"), ["mul32"]);
-        assert_eq!(runtime_objects("call __gbc_shift8"), ["shift8"]);
+        assert_eq!(runtime_objects("call __gbc_f64", "0"), ["softfloat64"]);
+        assert!(runtime_objects("ret", "0").is_empty());
+        assert_eq!(runtime_objects("call __gbc_mul32", "0"), ["mul32"]);
+        assert_eq!(runtime_objects("call __gbc_shift8", "0"), ["shift8"]);
         assert_eq!(
-            runtime_objects("call __gbc_udiv32"),
+            runtime_objects("call __gbc_udiv32", "0"),
             ["div32_core", "udiv32"]
         );
         assert_eq!(
-            runtime_objects("call __gbc_srem32"),
+            runtime_objects("call __gbc_srem32", "0"),
             ["div32_core", "srem32"]
         );
-        assert_eq!(runtime_objects("call __gbc_popcnt32"), ["popcnt32"]);
-        assert!(runtime_objects("call __gbc_shift8_unused").is_empty());
+        assert_eq!(runtime_objects("call __gbc_popcnt32", "0"), ["popcnt32"]);
+        assert!(runtime_objects("call __gbc_shift8_unused", "0").is_empty());
         assert_eq!(
-            runtime_objects("__gbc_div32_core::\nret\ncall __gbc_udiv32"),
+            runtime_objects("__gbc_div32_core::\nret\ncall __gbc_udiv32", "0"),
             ["udiv32"]
         );
-        assert_eq!(runtime_objects("call __gbc_mul16"), ["mul16"]);
-        assert_eq!(runtime_objects("call __gbc_udiv16"), ["udiv16"]);
-        assert!(runtime_objects("__gbc_mul32::\nret").is_empty());
-        assert!(runtime_objects("call memcpy").contains(&"memory"));
-        assert!(runtime_objects("call __rust___gbc_u128_mulo").contains(&"mulo128"));
-        assert!(!runtime_objects("ret").contains(&"mulo128"));
-        assert!(runtime_objects("call __rust__Rx_rust_begin_unwind").contains(&"panic"));
-        assert!(!runtime_objects("__rust_x_rust_begin_unwind::").contains(&"panic"));
+        assert_eq!(runtime_objects("call __gbc_mul16", "0"), ["mul16"]);
+        assert_eq!(runtime_objects("call __gbc_udiv16", "0"), ["udiv16"]);
+        assert!(runtime_objects("__gbc_mul32::\nret", "0").is_empty());
+        for level in ["0", "1", "2", "3", "s", "z"] {
+            let copy = if matches!(level, "s" | "z") {
+                "memcpy_size"
+            } else {
+                "memcpy_opt"
+            };
+            assert_eq!(runtime_objects("call memcpy", level), [copy]);
+            assert_eq!(runtime_objects("call memmove", level), ["memmove"]);
+            assert_eq!(runtime_objects("call __gbc_memset", level), ["memset"]);
+            let objects = runtime_objects("call memcpy\ncall memmove\ncall __gbc_memset", level);
+            assert_eq!(objects.len(), 3);
+            assert!(objects.contains(&copy));
+            assert!(objects.contains(&"memmove"));
+            assert!(objects.contains(&"memset"));
+        }
+        assert!(runtime_objects("call __rust___gbc_u128_mulo", "0").contains(&"mulo128"));
+        assert!(!runtime_objects("ret", "0").contains(&"mulo128"));
+        assert!(runtime_objects("call __rust__Rx_rust_begin_unwind", "0").contains(&"panic"));
+        assert!(!runtime_objects("__rust_x_rust_begin_unwind::", "0").contains(&"panic"));
         assert_eq!(
             panic_symbol("call __rust_Rx_rust_begin_unwind"),
             Some("__rust_Rx_rust_begin_unwind")

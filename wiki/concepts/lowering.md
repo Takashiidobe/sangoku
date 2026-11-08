@@ -95,10 +95,13 @@ function/data relocations and per-codegen-unit anonymous names. Writable data,
 TLS and custom data sections remain unsupported in this path. The target layout
 aligns ordinary wide scalars to two bytes, matching the backend stack ABI.
 
-The runtime supplies the split-ABI `memset` helper. Other standard memory
-libcalls are emitted as external symbols and still require runtime bodies.
-Branch-table assembly uses executable comparisons and jumps for full-width
-indices.
+The runtime supplies independently linked `__gbc_memset`, `memcpy`, and
+`memmove` helpers. Build with `--opt-level s` or `--opt-level z` to select
+compact byte-loop `memcpy`; levels `0`, `1`, `2`, and `3` select the unrolled
+implementation. Only the selected copy implementation is linked. Both return the
+destination pointer and accept zero lengths; `memmove` also handles overlap.
+`memcmp` still requires an implementation when referenced. Branch-table assembly
+uses executable comparisons and jumps for full-width indices.
 
 Formatting APIs remain upstream implementations. See
 [practical limits](practical-limits.md) for why compilation support does not

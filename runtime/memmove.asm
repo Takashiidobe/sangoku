@@ -1,38 +1,5 @@
-SECTION "memory", ROM0
+SECTION "memmove", ROM0
 
-__gbc_memset::
-    push bc
-    ld d, a
-    ld a, b
-    ld b, c
-    ld c, a
-    ld hl, sp + 7
-    ld a, [hli]
-    ld h, [hl]
-    ld l, a
-.loop:
-    ld a, h
-    or l
-    jr z, .done
-    ld a, d
-    ld [bc], a
-    inc bc
-    dec hl
-    jr .loop
-.done:
-    pop bc
-    ld a, b
-    ld b, c
-    ret
-
-
-; memcpy and memmove(dst, src, len) -> dst. dst = B (low), C (high); src = A
-; (low) and first stack byte (high); len = next two stack bytes. Arguments are
-; left for the caller to pop. memcpy is the same routine: it copies forward
-; when dst < src and backward otherwise, which is correct for overlap too.
-; The forward loop is SDCC 4.6.4 device/lib/sm83/memcpy.s (see NOTICE): four
-; bytes per iteration, entered by Duff's device.
-memcpy::
 memmove::
     push bc
     ld d, c

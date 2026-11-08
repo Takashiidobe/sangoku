@@ -419,7 +419,7 @@ fn build_rom(
             .arg(root.join("rom/header.asm")),
     )?;
     let mut fixed_objects = vec![header_object];
-    for name in link::runtime_objects(&linked) {
+    for name in link::runtime_objects(&linked, opt_level) {
         let object = artifacts.path().join(format!("{name}.o"));
         let mut source = root.join(format!("runtime/{name}.asm"));
         if name == "panic"

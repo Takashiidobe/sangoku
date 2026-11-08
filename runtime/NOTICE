@@ -38,7 +38,7 @@ be covered by the GNU General Public License. This exception does
 not however invalidate any other reasons why the executable file
  might be covered by the GNU General Public License.
 
-memory.asm (memcpy and memmove forward loop) adapts SDCC device/lib/sm83/memcpy.s,
+memcpy_opt.asm and memmove.asm (forward loops) adapts SDCC device/lib/sm83/memcpy.s,
 SVN revision 17147 (SDCC source tree, same revision as above).
 Upstream SHA-256:
 cae459769bcd7122a87e0a844536730be5d9129fb9d5ee4bf158687cfbf2d00a
