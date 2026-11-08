@@ -59,6 +59,16 @@ overflowing multiplication, is described in
 
 ## Core and alloc roadmap
 
+Builds use `core` by default, including `#![no_core]` fixtures. Pass `--alloc`
+to `build`, `run`, `frontend`, or `clif` to enable `alloc` and the heap crate:
+
+```bash
+cargo run -- build examples/heap.rs build/heap.gb --alloc --opt-level z
+```
+
+Program fixtures live in `tests/fixtures/core/programs`; allocator fixtures live
+in `tests/fixtures/alloc` and require `--alloc`.
+
 Run `python3 tools/core_report.py --alloc --json` to compile the libraries and
 representative generic drivers to CLIF and probe LR35902 lowering. Use
 `--keep build/alloc-report` to retain CLIF and alloc compiler diagnostics.

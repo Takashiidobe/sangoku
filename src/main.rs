@@ -34,7 +34,7 @@ fn run() -> Result<()> {
     };
 
     let root = bundle::root()?;
-    let (paths, opt_level) = parse_build_args(args)?;
+    let (paths, opt_level, alloc) = parse_build_args(args)?;
     match command.to_str() {
         Some("example") => {
             let output = paths
@@ -44,7 +44,13 @@ fn run() -> Result<()> {
             if paths.len() > 1 {
                 return Err(usage());
             }
-            build_rom(&root, &root.join("examples/hello.rs"), &output, &opt_level)
+            build_rom(
+                &root,
+                &root.join("examples/hello.rs"),
+                &output,
+                &opt_level,
+                alloc,
+            )
         }
         Some("build") => {
             let Some(source) = paths.first() else {
@@ -57,7 +63,7 @@ fn run() -> Result<()> {
             if paths.len() > 2 {
                 return Err(usage());
             }
-            build_rom(&root, source, &output, &opt_level)
+            build_rom(&root, source, &output, &opt_level, alloc)
         }
         Some("run") => {
             let Some(source) = paths.first() else {
@@ -68,7 +74,7 @@ fn run() -> Result<()> {
             }
             let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
             let output = PathBuf::from("build").join(name).with_extension("gb");
-            build_rom(&root, source, &output, &opt_level)?;
+            build_rom(&root, source, &output, &opt_level, alloc)?;
             run_rom(&output)
         }
         Some("frontend") => {
@@ -82,7 +88,7 @@ fn run() -> Result<()> {
             if paths.len() > 2 {
                 return Err(usage());
             }
-            emit_mir(&root, source, &output, &opt_level)
+            emit_mir(&root, source, &output, &opt_level, alloc)
         }
         Some("clif") => {
             let Some(source) = paths.first() else {
@@ -95,7 +101,7 @@ fn run() -> Result<()> {
             if paths.len() > 2 {
                 return Err(usage());
             }
-            emit_clif(&root, source, &output, &opt_level)
+            emit_clif(&root, source, &output, &opt_level, alloc)
         }
         Some("lower") => {
             let Some(source) = paths.first() else {
@@ -142,14 +148,21 @@ fn run_rom(rom: &Path) -> Result<()> {
 }
 
 fn usage() -> Error {
-    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z] | sangoku run <source.rs> [--opt-level 0|1|2|3|s|z] | sangoku frontend <source.rs> [output.mir|-] [--opt-level 0|1|2|3|s|z] | sangoku clif <source.rs> [output.clif|-] [--opt-level 0|1|2|3|s|z] | sangoku lower <input.clif> [output.s|-]".into()
+    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku run <source.rs> [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku frontend <source.rs> [output.mir|-] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku clif <source.rs> [output.clif|-] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku lower <input.clif> [output.s|-]".into()
 }
 
-fn parse_build_args(args: impl IntoIterator<Item = OsString>) -> Result<(Vec<PathBuf>, String)> {
+fn parse_build_args(
+    args: impl IntoIterator<Item = OsString>,
+) -> Result<(Vec<PathBuf>, String, bool)> {
     let mut args = args.into_iter();
     let mut paths = Vec::new();
     let mut opt_level = "0".to_owned();
+    let mut alloc = false;
     while let Some(arg) = args.next() {
+        if arg == "--alloc" {
+            alloc = true;
+            continue;
+        }
         let level = if arg == "--opt-level" {
             Some(
                 args.next()
@@ -174,7 +187,7 @@ fn parse_build_args(args: impl IntoIterator<Item = OsString>) -> Result<(Vec<Pat
             paths.push(PathBuf::from(arg));
         }
     }
-    Ok((paths, opt_level))
+    Ok((paths, opt_level, alloc))
 }
 
 fn rustc_command(root: &Path, opt_level: &str) -> Command {
@@ -247,7 +260,13 @@ fn lower_clif(root: &Path, input: &Path, output: &Path) -> Result<()> {
     write_output(output, result.stdout)
 }
 
-fn emit_clif(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<()> {
+fn emit_clif(
+    root: &Path,
+    source: &Path,
+    output: &Path,
+    opt_level: &str,
+    alloc: bool,
+) -> Result<()> {
     let source = absolute_path(source)?;
     if !source.is_file() {
         return Err(format!("Rust source does not exist: {}", source.display()).into());
@@ -260,7 +279,7 @@ fn emit_clif(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
         rustc_command(root, opt_level)
             .env("CG_CLIF_CLIF_ONLY", "1")
             .arg(format!("-Zcodegen-backend={}", backend.display()))
-            .args(libraries.externs(4))
+            .args(libraries.externs(if alloc { 4 } else { 2 }))
             .arg("--emit=asm,llvm-ir")
             .arg(&source)
             .arg("-o")
@@ -288,7 +307,7 @@ fn write_output(output: &Path, contents: Vec<u8>) -> Result<()> {
     Ok(())
 }
 
-fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<()> {
+fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str, alloc: bool) -> Result<()> {
     let source = absolute_path(source)?;
     if !source.is_file() {
         return Err(format!("Rust source does not exist: {}", source.display()).into());
@@ -297,7 +316,7 @@ fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resul
     let backend = build_backend(root)?;
     let libraries = core_libraries(root, &backend, opt_level)?;
     let mut command = rustc_command(root, opt_level);
-    command.args(libraries.externs(4));
+    command.args(libraries.externs(if alloc { 4 } else { 2 }));
     command.arg("-Zunpretty=mir").arg(&source);
     if output == Path::new("-") {
         return run_command(&mut command);
@@ -316,7 +335,13 @@ fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resul
     write_output(output, result.stdout)
 }
 
-fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Result<()> {
+fn build_rom(
+    root: &Path,
+    source: &Path,
+    output: &Path,
+    opt_level: &str,
+    alloc: bool,
+) -> Result<()> {
     let source = absolute_path(source)?;
     if !source.is_file() {
         return Err(format!("Rust source does not exist: {}", source.display()).into());
@@ -337,19 +362,21 @@ fn build_rom(root: &Path, source: &Path, output: &Path, opt_level: &str) -> Resu
     command
         .arg(format!("-Zcodegen-backend={}", backend.display()))
         .arg("--emit=asm")
-        .args(libraries.externs(4))
-        .arg(source)
+        .args(libraries.externs(if alloc { 4 } else { 2 }))
+        .arg(&source)
         .arg("-o")
         .arg(&rust_asm);
     run_command(&mut command)?;
 
-    let texts = [
+    let mut texts = vec![
         read_text(&rust_asm)?,
         read_text(&libraries.core_asm())?,
         read_text(&libraries.builtins_asm())?,
-        read_text(&libraries.alloc_asm())?,
-        read_text(&libraries.heap_asm())?,
     ];
+    if alloc {
+        texts.push(read_text(&libraries.alloc_asm())?);
+        texts.push(read_text(&libraries.heap_asm())?);
+    }
     let sections: Vec<_> = texts
         .iter()
         .flat_map(|text| link::split_sections(text))
@@ -649,17 +676,28 @@ mod tests {
                 vec!["--opt-level", level, "game.rs", "game.gb"],
                 vec!["game.rs", "game.gb", "--opt-level", level],
             ] {
-                let (paths, selected) =
+                let (paths, selected, _) =
                     parse_build_args(args.into_iter().map(OsString::from)).unwrap();
                 assert_eq!(paths, [PathBuf::from("game.rs"), PathBuf::from("game.gb")]);
                 assert_eq!(selected, level);
             }
         }
-        let (_, selected) = parse_build_args([OsString::from("--opt-level=z")]).unwrap();
+        let (_, selected, _) = parse_build_args([OsString::from("--opt-level=z")]).unwrap();
         assert_eq!(selected, "z");
-        let (paths, selected) = parse_build_args([]).unwrap();
+        let (paths, selected, _) = parse_build_args([]).unwrap();
         assert!(paths.is_empty());
         assert_eq!(selected, "0");
+    }
+
+    #[test]
+    fn alloc_is_opt_in() {
+        let (_, _, alloc) = parse_build_args([]).unwrap();
+        assert!(!alloc);
+        for args in [["--alloc", "game.rs"], ["game.rs", "--alloc"]] {
+            let (paths, _, alloc) = parse_build_args(args.into_iter().map(OsString::from)).unwrap();
+            assert!(alloc);
+            assert_eq!(paths, [PathBuf::from("game.rs")]);
+        }
     }
 
     #[test]

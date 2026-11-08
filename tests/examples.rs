@@ -59,7 +59,10 @@ fn oversized_program_reports_retained_formatting_and_rom_capacity() -> Result<()
     let rom = directory.path().join("oversized.gb");
     let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
         .current_dir(env!("CARGO_MANIFEST_DIR"))
-        .args(["build", "tests/fixtures/programs/oversized_formatting.rs"])
+        .args([
+            "build",
+            "tests/fixtures/core/programs/oversized_formatting.rs",
+        ])
         .arg(&rom)
         .output()?;
     ensure!(
@@ -92,5 +95,23 @@ fn sort_prints_before_and_after() -> Result<()> {
         "{text:?}"
     );
     ensure!(result == 0, "returned {result}");
+    Ok(())
+}
+
+#[test]
+fn alloc_fixture_links_heap() -> Result<()> {
+    let directory = sangoku_test_support::tempfile::tempdir()?;
+    let rom = directory.path().join("heap.gb");
+    let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args(["build", "tests/fixtures/alloc/heap.rs", "--alloc"])
+        .arg(&rom)
+        .output()?;
+    ensure!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    ensure!(rom.is_file(), "heap ROM missing");
     Ok(())
 }
