@@ -13,6 +13,14 @@ mod surfing;
 #[path = "../examples/audio/pokemon_center.rs"]
 mod pokemon_center;
 
+#[allow(dead_code)]
+#[path = "../examples/audio/let_down.rs"]
+mod let_down;
+
+#[allow(dead_code)]
+#[path = "../examples/audio/creep.rs"]
+mod creep;
+
 use player::{Event, Note, Sequence};
 
 fn expand(events: &[Event], depth: usize) -> Vec<Event> {
@@ -193,4 +201,38 @@ fn four_nested_phrase_calls_can_return() {
 #[should_panic]
 fn excessive_phrase_nesting_traps_at_the_bounded_depth() {
     Sequence::new(CALL5).next_event();
+}
+
+fn excerpt_ticks(score: &'static [Event], tempo: u8) -> u32 {
+    let expected = expand(score, 0);
+    let mut sequence = Sequence::new(score);
+    let mut speed = 12;
+    let mut duration = 0u32;
+    for event in expected {
+        assert!(sequence.next_event() == Some(event));
+        match event {
+            Event::NoteType(value, _, _) | Event::Speed(value) => speed = value,
+            Event::Note(_, length) | Event::Rest(length) | Event::Drum(length) => {
+                assert!((1..=16).contains(&length));
+                duration += length as u32 * speed as u32 * tempo as u32;
+            }
+            _ => {}
+        }
+    }
+    assert!(sequence.next_event().is_none());
+    duration
+}
+
+#[test]
+fn let_down_excerpt_ends_with_all_four_channels_synchronized() {
+    for score in [let_down::CH1, let_down::CH2, let_down::CH3, let_down::CH4] {
+        assert_eq!(excerpt_ticks(score, let_down::TEMPO), 305016);
+    }
+}
+
+#[test]
+fn creep_vocal_and_guitar_parts_cover_the_full_song() {
+    for score in [creep::CH1, creep::CH2, creep::CH3] {
+        assert_eq!(excerpt_ticks(score, creep::TEMPO), 3551040);
+    }
 }
