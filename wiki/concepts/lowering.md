@@ -104,6 +104,13 @@ destination pointer and accept zero lengths; `memmove` also handles overlap.
 `memcmp` still requires an implementation when referenced. Branch-table assembly
 uses executable comparisons and jumps for full-width indices.
 
+Run `cargo run --example audit-memory-inline` for a bounded comparison of
+backend-generated inline copy/fill sequences and helper calls at 1–16 bytes.
+Results, callers, assembly, and provenance are written to
+`build/memory-inline/`. This probe uses a dynamic destination and constant
+source/value without unrelated live values; it does not establish a universal
+inlining threshold.
+
 Formatting APIs remain upstream implementations. See
 [practical limits](practical-limits.md) for why compilation support does not
 imply that general formatting fits a ROM.
