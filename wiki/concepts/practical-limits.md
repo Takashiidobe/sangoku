@@ -63,8 +63,7 @@ standard library's `println!` is not available in a `no_std` ROM.
 
 The core formatting probes use bounded sinks and serial output. They do not
 establish support for every formatting type or `std`. The runtime supplies
-`memcpy` and `memmove`; `memcmp` still needs an implementation when a compiled
-path references it.
+`memcpy` and `memmove`; compiler-builtins supplies `memcmp`.
 
 ## Wide integers and floats
 

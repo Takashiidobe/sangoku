@@ -101,8 +101,9 @@ compact byte loops for all three helpers; levels `0`, `1`, `2`, and `3` select
 four-byte-unrolled implementations. `memmove` unrolls both copy directions. Only
 the selected variant of each referenced helper is linked. All three return the
 destination pointer and accept zero lengths; `memmove` also handles overlap.
-`memcmp` still requires an implementation when referenced. Branch-table assembly
-uses executable comparisons and jumps for full-width indices.
+`memcmp` is supplied by compiler-builtins, including calls used by ordering and
+equality intrinsics. Branch-table assembly uses executable comparisons and jumps
+for full-width indices.
 
 Run `cargo run --example audit-memory-inline` for a bounded comparison of
 backend-generated inline copy/fill sequences and helper calls at 1–16 bytes.
@@ -110,6 +111,11 @@ Results, callers, assembly, and provenance are written to
 `build/memory-inline/`. This probe uses a dynamic destination and constant
 source/value without unrelated live values; it does not establish a universal
 inlining threshold.
+
+Run `cargo run --example audit-move-compare` for bounded overlap-safe move,
+unsigned memory ordering, and equality comparisons. Results and assembled
+candidates are written to `build/move-compare/`. The comparison candidates
+remain audit fixtures until the runtime replacement task is implemented.
 
 Formatting APIs remain upstream implementations. See
 [practical limits](practical-limits.md) for why compilation support does not

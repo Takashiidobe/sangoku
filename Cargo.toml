@@ -57,3 +57,7 @@ path = "tests/bin/audit_shifts.rs"
 [[example]]
 name = "audit-memory-inline"
 path = "tests/bin/audit_memory_inline.rs"
+
+[[example]]
+name = "audit-move-compare"
+path = "tests/bin/audit_move_compare.rs"
