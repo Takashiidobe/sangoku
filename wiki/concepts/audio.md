@@ -14,6 +14,19 @@ cargo run -- build examples/surfing.rs build/surfing.gb --opt-level z
 sameboy build/surfing.gb
 ```
 
+Build Pokémon Center with its shared accompaniment phrases:
+
+```bash
+cargo run -- build examples/pokemon_center.rs build/pokemon_center.gb --opt-level z
+sameboy build/pokemon_center.gb
+```
+
+The [Pokémon Center score](../../examples/audio/pokemon_center.rs) preserves the
+supplied `sound_call` subroutines. All three channels loop every 1,728 frames
+without an introduction. Its
+[original score](https://github.com/pret/pokered/blob/master/audio/music/pokecenter.asm)
+uses tempo 144 and wave instrument 0.
+
 Surfing uses tempo 160 and wave instrument 0, with no noise percussion. Its
 first pulse channel has a 195-frame introduction; the other two have 180-frame
 introductions. This preserves the score's delayed first voice. Every repeating
@@ -37,7 +50,7 @@ sound registers directly and uses no heap or floating-point arithmetic.
 Note durations carry an 8-bit fractional frame remainder between notes.
 `tempo 144` is the original engine's timing parameter, not a BPM value. All four
 tracks have a 13.5-frame introduction and a 2,052-frame repeating section. The
-drum part expands its repeated patterns and plays instrument 16's two noise
+drum part calls three shared patterns and plays instrument 16's two noise
 stages. The wave channel uses instrument 3's waveform.
 
 The score was transcribed from the user-supplied
@@ -46,6 +59,26 @@ Pitch, timing, vibrato, waveform, and drum conventions follow its
 [audio engine](https://github.com/pret/pokered/blob/master/audio/engine_1.asm).
 This example implements the commands this score uses; it is not a general
 Pokémon sound-engine port or a promise of cycle-identical playback.
+
+## Shared phrases
+
+Define each phrase once and call it from a score:
+
+```rust
+static PHRASE: &[Event] = &[Note(E, 2), Note(A, 2)];
+static MAIN: &[Event] = &[Call(PHRASE), Note(B, 4), Call(PHRASE), Loop(0)];
+```
+
+`Call` switches to the referenced array; reaching its end resumes the caller at
+the next event. Octave, envelope, speed, vibrato, and fractional timing remain
+channel state across calls. `Loop` indexes the current array. The player
+supports four nested calls using a fixed return stack; deeper or recursive calls
+trap. No score expansion or heap allocation happens during playback.
+
+Phrase data is stored once, with references at call sites. Events are still
+unpacked Rust enums, so this is not the original music engine's packed byte
+format. Initial channel arrays are constructed in const Rust to avoid repeating
+large runtime initialization sequences.
 
 Run the bounded score checks with:
 

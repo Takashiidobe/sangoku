@@ -36,6 +36,14 @@ cargo run -- build examples/screen.rs build/screen.gb --opt-level z
 sameboy build/screen.gb
 ```
 
+For audio, play the Pokémon Center tune using two pulse channels and a wave
+channel:
+
+```bash
+cargo run -- build examples/pokemon_center.rs build/pokemon_center.gb --opt-level z
+sameboy build/pokemon_center.gb
+```
+
 ## Testing
 
 ```bash

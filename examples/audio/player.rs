@@ -1,7 +1,7 @@
 use core::ptr::{read_volatile, write_volatile};
 
 #[allow(dead_code)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum Note {
     C,
@@ -19,7 +19,7 @@ pub enum Note {
 }
 
 #[allow(dead_code)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Event {
     Note(Note, u8),
     Rest(u8),
@@ -31,6 +31,7 @@ pub enum Event {
     Drum(u8),
     Speed(u8),
     Loop(usize),
+    Call(&'static [Event]),
 }
 
 const PITCHES: [i16; 12] = [
@@ -71,9 +72,58 @@ pub fn wait_frame() {
     while read(0xff44) < 144 {}
 }
 
-pub struct Channel {
+#[derive(Clone, Copy)]
+struct Position {
     score: &'static [Event],
     cursor: usize,
+}
+
+pub struct Sequence {
+    current: Position,
+    callers: [Position; 4],
+    depth: usize,
+}
+
+impl Sequence {
+    pub const fn new(score: &'static [Event]) -> Self {
+        Self {
+            current: Position { score, cursor: 0 },
+            callers: [Position {
+                score: &[],
+                cursor: 0,
+            }; 4],
+            depth: 0,
+        }
+    }
+
+    pub fn next_event(&mut self) -> Option<Event> {
+        loop {
+            if self.current.cursor == self.current.score.len() {
+                if self.depth == 0 {
+                    return None;
+                }
+                self.depth -= 1;
+                self.current = self.callers[self.depth];
+                continue;
+            }
+            let event = self.current.score[self.current.cursor];
+            self.current.cursor += 1;
+            match event {
+                Event::Call(score) => {
+                    assert!(self.depth < self.callers.len());
+                    self.callers[self.depth] = self.current;
+                    self.depth += 1;
+                    self.current = Position { score, cursor: 0 };
+                }
+                Event::Loop(cursor) => self.current.cursor = cursor,
+                _ => return Some(event),
+            }
+        }
+    }
+}
+
+pub struct Channel {
+    sequence: Sequence,
     remaining: u8,
     fraction: u16,
     speed: u8,
@@ -95,8 +145,7 @@ pub struct Channel {
 impl Channel {
     pub const fn new(score: &'static [Event], tempo: u8) -> Self {
         Self {
-            score,
-            cursor: 0,
+            sequence: Sequence::new(score),
             remaining: 0,
             fraction: 0,
             speed: 12,
@@ -150,8 +199,11 @@ impl Channel {
         }
         self.vibrato_left = self.vibrato_delay;
         loop {
-            let event = self.score[self.cursor];
-            self.cursor += 1;
+            let Some(event) = self.sequence.next_event() else {
+                pan(channel, false);
+                self.sounding = false;
+                return;
+            };
             match event {
                 Event::Octave(value) => self.octave = value,
                 Event::Speed(value) => self.speed = value,
@@ -174,7 +226,7 @@ impl Channel {
                     self.vibrato_counter = rate;
                 }
                 Event::PerfectPitch => self.perfect = !self.perfect,
-                Event::Loop(cursor) => self.cursor = cursor,
+                Event::Call(_) | Event::Loop(_) => unreachable!(),
                 Event::Rest(length) => {
                     if channel != 3 {
                         pan(channel, false);
