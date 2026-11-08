@@ -1,6 +1,7 @@
 # Index
 
 - [Unicode lookup tables](concepts/concepts.md)
+- [ROM size baseline against SDCC](concepts/size-baseline.md)
 - [Legalization](concepts/legalization.md)
 - [Lowering](concepts/lowering.md)
 - [Optimizations](concepts/optimizations.md)
