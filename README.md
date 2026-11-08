@@ -39,6 +39,18 @@ Build a ROM:
 cargo run -- build examples/sort.rs build/sort.gb
 ```
 
+Build the screen demo and open it in SameBoy:
+
+```bash
+cargo run -- build examples/screen.rs build/screen.gb --opt-level z
+sameboy build/screen.gb
+```
+
+It displays a small uppercase font, a greeting, and arithmetic formatted with
+`ufmt`. The CPU halts after setup while the image stays visible. Use an
+external emulator for this example; the built-in runner does not emulate LCD
+timing or graphics.
+
 Use the [examples](examples/) as a starting point. Add `--opt-level z` to
 optimize for size. Build artifacts stay in `build/artifacts/` for debugging.
 

@@ -1,7 +1,7 @@
 use sangoku_test_support::{Result, emu::Emulator, ensure};
 use std::{fs, process::Command};
 
-fn run_example(name: &str) -> Result<(String, u8)> {
+fn build_example(name: &str) -> Result<Vec<u8>> {
     let directory = sangoku_test_support::tempfile::tempdir()?;
     let rom = directory.path().join(format!("{name}.gb"));
     let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
@@ -25,7 +25,11 @@ fn run_example(name: &str) -> Result<(String, u8)> {
         .ok_or("build did not report its artifact directory")?;
     let map = fs::read_to_string(std::path::Path::new(artifacts).join("game.map"))?;
     ensure!(!map.contains("4core3fmt"), "{name} retained core::fmt");
-    let mut emulator = Emulator::new(&fs::read(&rom)?, 0x100)?;
+    Ok(fs::read(&rom)?)
+}
+
+fn run_example(name: &str) -> Result<(String, u8)> {
+    let mut emulator = Emulator::new(&build_example(name)?, 0x100)?;
     emulator.set_sp(0xe000);
     for _ in 0..200_000_000u64 {
         let before = emulator.pc;
@@ -120,5 +124,89 @@ fn alloc_fixture_links_heap() -> Result<()> {
         String::from_utf8_lossy(&output.stderr)
     );
     ensure!(rom.is_file(), "heap ROM missing");
+    Ok(())
+}
+
+#[test]
+fn screen_draws_text_with_the_lcd_disabled() -> Result<()> {
+    let rom = build_example("screen")?;
+    for lcdc in [0, 0x91] {
+        let mut emulator = Emulator::new(&rom, 0x100)?;
+        emulator.memory[0x8000..0xa000].fill(0xa5);
+        emulator.memory[0xff40] = lcdc;
+        if lcdc != 0 {
+            for _ in 0..1_000 {
+                emulator.step()?;
+            }
+            ensure!(
+                emulator.memory[0xff40] == lcdc,
+                "disabled LCD before vblank"
+            );
+            ensure!(
+                emulator
+                    .written_addresses
+                    .range(0x8000..0xa000)
+                    .next()
+                    .is_none(),
+                "wrote VRAM before vblank"
+            );
+            emulator.memory[0xff44] = 144;
+        }
+        let mut halted = false;
+        for _ in 0..2_000_000 {
+            let before = emulator.pc;
+            let lcd_on = emulator.memory[0xff40] & 0x80 != 0;
+            let vram_writes = if lcd_on {
+                emulator.written_addresses.range(0x8000..0xa000).count()
+            } else {
+                0
+            };
+            emulator.step()?;
+            if lcd_on {
+                ensure!(
+                    emulator.written_addresses.range(0x8000..0xa000).count() == vram_writes,
+                    "wrote VRAM while LCD was enabled"
+                );
+            }
+            if emulator.pc == before {
+                halted = true;
+                break;
+            }
+        }
+        ensure!(halted && emulator.a == 0, "screen setup did not finish");
+        ensure!(emulator.memory[0xff40] == 0x91, "incorrect LCD mode");
+        ensure!(emulator.memory[0xff47] == 0xe4, "incorrect palette");
+        ensure!(
+            emulator.memory[0xff42..0xff44] == [0, 0],
+            "incorrect scroll"
+        );
+        let alphabet = b" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!*=";
+        for (row, text) in [
+            (4, "SANGOKU"),
+            (6, "HELLO GAME BOY!"),
+            (8, "RUST ON SCREEN"),
+            (10, "6 * 7 = 42"),
+        ] {
+            let start = 0x9800 + row * 32 + 3;
+            let actual: String = emulator.memory[start..start + text.len()]
+                .iter()
+                .map(|&tile| alphabet[tile as usize] as char)
+                .collect();
+            ensure!(actual == text, "row {row}: {actual:?}");
+        }
+        ensure!(
+            emulator.memory[0x9800..0x9820] == [0; 32],
+            "background was not cleared"
+        );
+        ensure!(
+            emulator.memory[0x8000..0x8010] == [0; 16],
+            "space tile is not blank"
+        );
+        let h = 0x8000 + 8 * 16;
+        ensure!(
+            emulator.memory[h..h + 6] == [0, 0, 0x22, 0x22, 0x22, 0x22],
+            "font bitplanes are incorrect"
+        );
+    }
     Ok(())
 }
