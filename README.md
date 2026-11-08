@@ -1,7 +1,8 @@
 # sangoku
 
 Compile Rust into Game Boy and Game Boy Color ROMs. Rust `core` and representative
-`alloc` collections compile and lower for LR35902; heap execution is pending.
+`alloc` collections compile and lower for LR35902. The optimized heap example
+runs in the emulator.
 
 ## Standalone compiler
 
@@ -84,6 +85,14 @@ The 2026-11-07 survey at opt-level 0 with immediate-abort panic reports:
 | alloc | 1,137 | 0 |
 | alloc collection driver | 1,238 | 0 |
 
+SM83 stack-slot accesses now omit HL saves when physical-register liveness
+proves them unnecessary, including spills and reloads inserted by register
+allocation. Live HL values and any A scratch value remain preserved.
+
+`tests/fixtures/lower/stack-liveness.clif` covers the shorter assembly;
+`cargo run --example check-spills` checks native bytes against RGBDS and runs
+register-preservation and stack-pressure cases in the emulator.
+
 No alloc compilation blockers were observed in this coverage
 (`sangoku-30k.9.2`). The driver instantiates `Vec`, UTF-8 `String`, `Box`, `Rc`,
 `BTreeMap`, `BTreeSet`, `VecDeque`, `BinaryHeap`, and `LinkedList`; other generic
@@ -97,5 +106,7 @@ Unicode support is kept for correctness but costs about 47 KB at opt-level z
 ROM, so case conversion cannot run on a 32 KiB cartridge yet (`sangoku-6o2`).
 Games should use an ASCII string crate instead (`sangoku-yjb`).
 
-Heap ROM execution still needs allocator hooks and a WRAM heap policy
-(`sangoku-30k.9.3`). This survey checks compilation and lowering, without linking or running collections.
+`cargo run -- run examples/heap.rs --alloc --opt-level z` executes `Vec` and
+`Box` allocations in WRAM and returns 52. At opt-level 0, this example still
+exceeds the 32 KiB cartridge limit. The collection survey above checks
+compilation and lowering; it does not link or execute every collection.

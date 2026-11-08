@@ -1,0 +1,223 @@
+set enable_verifier=false
+target z80
+
+function %stack_liveness(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i8 v0+0
+    v2 = load.i8 v0+1
+    v3 = load.i8 v0+2
+    v4 = load.i8 v0+3
+    v5 = load.i8 v0+4
+    v6 = load.i8 v0+5
+    v7 = load.i8 v0+6
+    v8 = load.i8 v0+7
+    v9 = load.i8 v0+8
+    v10 = load.i8 v0+9
+    v11 = load.i8 v0+10
+    v12 = load.i8 v0+11
+    v13 = iadd v1, v2
+    v14 = iadd v13, v3
+    v15 = iadd v14, v4
+    v16 = iadd v15, v5
+    v17 = iadd v16, v6
+    v18 = iadd v17, v7
+    v19 = iadd v18, v8
+    v20 = iadd v19, v9
+    v21 = iadd v20, v10
+    v22 = iadd v21, v11
+    v23 = iadd v22, v12
+    return v23
+}
+
+; CHECK: SECTION "__rust_stack_liveness", ROM0
+; CHECK-NEXT: EXPORT __rust_stack_liveness
+; CHECK-NEXT: __rust_stack_liveness::
+; CHECK-NEXT:   add sp, -20
+; CHECK-NEXT: .block0:
+; CHECK-NEXT:   ld d, b
+; CHECK-NEXT:   ld b, c
+; CHECK-NEXT:   ld c, d
+; CHECK-NEXT:   ld h, b
+; CHECK-NEXT: ld l, c
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT: ld d, a
+; CHECK-NEXT:   ld hl, sp + 18
+; CHECK-NEXT: ld [hl], d
+; CHECK-NEXT:   ld h, b
+; CHECK-NEXT: ld l, c
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT: ld e, a
+; CHECK-NEXT:   ld h, b
+; CHECK-NEXT: ld l, c
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT: ld d, a
+; CHECK-NEXT:   ld hl, sp + 16
+; CHECK-NEXT: ld [hl], d
+; CHECK-NEXT:   ld h, b
+; CHECK-NEXT: ld l, c
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT: ld d, a
+; CHECK-NEXT:   ld hl, sp + 14
+; CHECK-NEXT: ld [hl], d
+; CHECK-NEXT:   ld h, b
+; CHECK-NEXT: ld l, c
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT: ld d, a
+; CHECK-NEXT:   ld hl, sp + 12
+; CHECK-NEXT: ld [hl], d
+; CHECK-NEXT:   ld h, b
+; CHECK-NEXT: ld l, c
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT: ld d, a
+; CHECK-NEXT:   ld hl, sp + 10
+; CHECK-NEXT: ld [hl], d
+; CHECK-NEXT:   ld h, b
+; CHECK-NEXT: ld l, c
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT: ld d, a
+; CHECK-NEXT:   ld hl, sp + 8
+; CHECK-NEXT: ld [hl], d
+; CHECK-NEXT:   ld h, b
+; CHECK-NEXT: ld l, c
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT: ld d, a
+; CHECK-NEXT:   ld hl, sp + 6
+; CHECK-NEXT: ld [hl], d
+; CHECK-NEXT:   ld h, b
+; CHECK-NEXT: ld l, c
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT: ld d, a
+; CHECK-NEXT:   ld hl, sp + 4
+; CHECK-NEXT: ld [hl], d
+; CHECK-NEXT:   ld h, b
+; CHECK-NEXT: ld l, c
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT: ld d, a
+; CHECK-NEXT:   ld hl, sp + 2
+; CHECK-NEXT: ld [hl], d
+; CHECK-NEXT:   ld h, b
+; CHECK-NEXT: ld l, c
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT: ld d, a
+; CHECK-NEXT:   ld hl, sp + 0
+; CHECK-NEXT: ld [hl], d
+; CHECK-NEXT:   ld h, b
+; CHECK-NEXT: ld l, c
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: inc hl
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT: ld b, a
+; CHECK-NEXT:   ld hl, sp + 18
+; CHECK-NEXT: ld d, [hl]
+; CHECK-NEXT:   ld a, d
+; CHECK-NEXT: add a, e
+; CHECK-NEXT: ld c, a
+; CHECK-NEXT:   ld hl, sp + 16
+; CHECK-NEXT: ld d, [hl]
+; CHECK-NEXT:   ld a, c
+; CHECK-NEXT: add a, d
+; CHECK-NEXT: ld c, a
+; CHECK-NEXT:   ld hl, sp + 14
+; CHECK-NEXT: ld d, [hl]
+; CHECK-NEXT:   ld a, c
+; CHECK-NEXT: add a, d
+; CHECK-NEXT: ld c, a
+; CHECK-NEXT:   ld hl, sp + 12
+; CHECK-NEXT: ld e, [hl]
+; CHECK-NEXT:   ld a, c
+; CHECK-NEXT: add a, e
+; CHECK-NEXT: ld c, a
+; CHECK-NEXT:   ld hl, sp + 10
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT:   add a, c
+; CHECK-NEXT: ld c, a
+; CHECK-NEXT:   ld hl, sp + 8
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT:   add a, c
+; CHECK-NEXT: ld c, a
+; CHECK-NEXT:   ld hl, sp + 6
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT:   add a, c
+; CHECK-NEXT: ld c, a
+; CHECK-NEXT:   ld hl, sp + 4
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT:   add a, c
+; CHECK-NEXT: ld c, a
+; CHECK-NEXT:   ld hl, sp + 2
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT:   add a, c
+; CHECK-NEXT: ld c, a
+; CHECK-NEXT:   ld hl, sp + 0
+; CHECK-NEXT: ld a, [hl]
+; CHECK-NEXT:   add a, c
+; CHECK-NEXT: ld c, a
+; CHECK-NEXT:   ld a, c
+; CHECK-NEXT: add a, b
+; CHECK-NEXT: ld b, a
+; CHECK-NEXT:   ld a, b
+; CHECK-NEXT:   add sp, 20
+; CHECK-NEXT:   ret

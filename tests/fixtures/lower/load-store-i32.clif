@@ -26,19 +26,15 @@ block0(v0: i16):
 ; CHECK-NEXT: ld l, c
 ; CHECK-NEXT: ld a, [hl]
 ; CHECK-NEXT: ld e, a
-; CHECK-NEXT:   push hl
-; CHECK-NEXT: ld hl, sp + 2
+; CHECK-NEXT:   ld hl, sp + 0
 ; CHECK-NEXT: ld [hl], e
-; CHECK-NEXT: pop hl
 ; CHECK-NEXT:   ld h, b
 ; CHECK-NEXT: ld l, c
 ; CHECK-NEXT: inc hl
 ; CHECK-NEXT: ld a, [hl]
 ; CHECK-NEXT: ld e, a
-; CHECK-NEXT:   push hl
-; CHECK-NEXT: ld hl, sp + 4
+; CHECK-NEXT:   ld hl, sp + 2
 ; CHECK-NEXT: ld [hl], e
-; CHECK-NEXT: pop hl
 ; CHECK-NEXT:   ld h, b
 ; CHECK-NEXT: ld l, c
 ; CHECK-NEXT: inc hl
@@ -52,15 +48,11 @@ block0(v0: i16):
 ; CHECK-NEXT: inc hl
 ; CHECK-NEXT: ld a, [hl]
 ; CHECK-NEXT: ld d, a
-; CHECK-NEXT:   push hl
-; CHECK-NEXT: ld hl, sp + 4
+; CHECK-NEXT:   ld hl, sp + 2
 ; CHECK-NEXT: ld b, [hl]
-; CHECK-NEXT: pop hl
 ; CHECK-NEXT:   ld c, e
-; CHECK-NEXT:   push hl
-; CHECK-NEXT: ld hl, sp + 2
+; CHECK-NEXT:   ld hl, sp + 0
 ; CHECK-NEXT: ld a, [hl]
-; CHECK-NEXT: pop hl
 ; CHECK-NEXT:   add sp, 4
 ; CHECK-NEXT:   ret
 ; CHECK-EMPTY:
@@ -71,42 +63,30 @@ block0(v0: i16):
 ; CHECK-NEXT: .block0:
 ; CHECK-NEXT:   ld e, $78
 ; CHECK-NEXT:   ld d, $56
-; CHECK-NEXT:   push hl
-; CHECK-NEXT: ld hl, sp + 2
+; CHECK-NEXT:   ld hl, sp + 0
 ; CHECK-NEXT: ld [hl], d
-; CHECK-NEXT: pop hl
 ; CHECK-NEXT:   ld d, $34
-; CHECK-NEXT:   push hl
-; CHECK-NEXT: ld hl, sp + 4
+; CHECK-NEXT:   ld hl, sp + 2
 ; CHECK-NEXT: ld [hl], d
-; CHECK-NEXT: pop hl
 ; CHECK-NEXT:   ld d, $12
-; CHECK-NEXT:   push hl
-; CHECK-NEXT: ld hl, sp + 6
+; CHECK-NEXT:   ld hl, sp + 4
 ; CHECK-NEXT: ld [hl], b
-; CHECK-NEXT: pop hl
 ; CHECK-NEXT:   ld b, c
-; CHECK-NEXT:   push hl
-; CHECK-NEXT: ld hl, sp + 6
+; CHECK-NEXT:   ld hl, sp + 4
 ; CHECK-NEXT: ld c, [hl]
-; CHECK-NEXT: pop hl
 ; CHECK-NEXT:   ld h, b
 ; CHECK-NEXT: ld l, c
 ; CHECK-NEXT: ld a, e
 ; CHECK-NEXT: ld [hl], a
-; CHECK-NEXT:   push hl
-; CHECK-NEXT: ld hl, sp + 2
+; CHECK-NEXT:   ld hl, sp + 0
 ; CHECK-NEXT: ld e, [hl]
-; CHECK-NEXT: pop hl
 ; CHECK-NEXT:   ld h, b
 ; CHECK-NEXT: ld l, c
 ; CHECK-NEXT: inc hl
 ; CHECK-NEXT: ld a, e
 ; CHECK-NEXT: ld [hl], a
-; CHECK-NEXT:   push hl
-; CHECK-NEXT: ld hl, sp + 4
+; CHECK-NEXT:   ld hl, sp + 2
 ; CHECK-NEXT: ld e, [hl]
-; CHECK-NEXT: pop hl
 ; CHECK-NEXT:   ld h, b
 ; CHECK-NEXT: ld l, c
 ; CHECK-NEXT: inc hl

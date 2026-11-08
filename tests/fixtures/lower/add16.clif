@@ -11,12 +11,8 @@ block0(v0: i16, v1: i16):
 ; CHECK-NEXT: __rust_add16::
 ; CHECK-NEXT: .block0:
 ; CHECK-NEXT:   ld e, a
-; CHECK-NEXT:   push af
-; CHECK-NEXT: ld a, l
-; CHECK-NEXT: ld hl, sp + 4
+; CHECK-NEXT:   ld hl, sp + 2
 ; CHECK-NEXT: ld h, [hl]
-; CHECK-NEXT: ld l, a
-; CHECK-NEXT: pop af
 ; CHECK-NEXT:   ld a, b
 ; CHECK-NEXT: add a, e
 ; CHECK-NEXT: ld d, a

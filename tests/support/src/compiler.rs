@@ -119,7 +119,9 @@ impl Runner {
             strings(&[
                 "cargo",
                 "+gbc-lr35902",
-                "test",
+                "nextest",
+                "run",
+                "--no-fail-fast",
                 "--locked",
                 "--manifest-path",
                 "third_party/wasmtime/cranelift/codegen/Cargo.toml",
@@ -279,6 +281,89 @@ pub fn check_accesses(directory: &Path) -> Result<usize> {
     );
     Ok(executions)
 }
+fn check_liveness_accesses(directory: &Path) -> Result<usize> {
+    let directory = directory.join("instructions/liveness");
+    let mut paths: Vec<_> = fs::read_dir(&directory)?
+        .map(|entry| entry.map(|entry| entry.path()))
+        .collect::<std::result::Result<_, _>>()?;
+    paths.sort();
+    let mut executions = 0;
+    for path in paths {
+        if path.extension().is_none_or(|ext| ext != "bin") {
+            continue;
+        }
+        let stem = path.file_stem().unwrap().to_str().unwrap();
+        let parts: Vec<_> = stem.split('_').collect();
+        let load = parts[0] == "load";
+        let mask: u8 = parts[1].parse()?;
+        let reg = "bcdehl_a".as_bytes()[parts[2].parse::<usize>()?] as char;
+        let offset: u16 = parts[3].parse()?;
+        let code = fs::read(&path)?;
+        let asm = fs::read_to_string(path.with_extension("asm"))?;
+        let program = harness::assemble(
+            &[(
+                "access.asm",
+                "SECTION \"Access\", ROM0[0]\n".to_owned() + &asm,
+            )],
+            None,
+        )?;
+        ensure!(
+            program.rom[..code.len()] == code,
+            "native/RGBDS mismatch {stem}"
+        );
+        for stack in [0xc800u16, 0xd400] {
+            for seed in [0x35u8, 0xa7] {
+                let mut emulator = Emulator::new(&code, 0)?;
+                for (index, reg) in "abcdehl".chars().enumerate() {
+                    emulator.set_reg(reg, seed.wrapping_add(index as u8 * 31));
+                }
+                emulator.set_sp(stack);
+                emulator.f = 0xf0;
+                let address = stack + offset;
+                emulator.memory[address as usize] = seed ^ 0x5a;
+                let mut expected: BTreeMap<_, _> = "abcdehl"
+                    .chars()
+                    .map(|reg| (reg, emulator.reg(reg)))
+                    .collect();
+                let stored = if load {
+                    expected.insert(reg, seed ^ 0x5a);
+                    seed ^ 0x5a
+                } else {
+                    emulator.reg(reg)
+                };
+                emulator.run_until(code.len() as u16, 64)?;
+                ensure!(
+                    emulator.memory[address as usize] == stored,
+                    "wrong stack data {stem}"
+                );
+                for (&checked, &value) in &expected {
+                    let scratch = "hla".find(checked);
+                    let live = scratch.is_none_or(|bit| mask & (1 << bit) != 0);
+                    if live || (load && checked == reg) {
+                        ensure!(
+                            emulator.reg(checked) == value,
+                            "corrupted {checked} in {stem}"
+                        );
+                    }
+                }
+                ensure!(emulator.sp() == stack, "unbalanced stack {stem}");
+                ensure!(
+                    emulator.written_addresses.iter().all(|&written| {
+                        written == address || (stack - 4..stack).contains(&written)
+                    }),
+                    "out-of-frame write {stem}"
+                );
+                executions += 1;
+            }
+        }
+    }
+    ensure!(
+        executions == 1344,
+        "expected 1344 liveness executions, got {executions}"
+    );
+    Ok(executions)
+}
+
 pub fn check_pressure(directory: &Path) -> Result<usize> {
     let mut n = 0;
     for name in ["pressure", "incoming"] {
@@ -669,7 +754,8 @@ pub fn run(tool: &str, args: &[String]) -> Result<()> {
     let directory = runner.directory.clone();
     let access = check_accesses(&directory)?;
     let pressure = check_pressure(&directory)?;
-    let mut result = json!({"commands":runner.commands,"access_executions":access,"pressure_executions":pressure});
+    let liveness = check_liveness_accesses(&directory)?;
+    let mut result = json!({"commands":runner.commands,"access_executions":access,"pressure_executions":pressure,"liveness_executions":liveness});
     if pop {
         let reference = kernels(&directory)?;
         let mut levels = serde_json::Map::new();
