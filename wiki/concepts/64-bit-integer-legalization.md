@@ -31,7 +31,7 @@ inclusion, and [lowering](lowering.md) for the calling convention.
 Run the bounded emulator checks with:
 
 ```sh
-cargo nextest run --no-fail-fast -E 'test(split_i64_values_match_host) | test(split_i64_remaining_arithmetic_matches_host) | test(split_i128_values_match_host) | test(split_i128_remaining_arithmetic_matches_host) | test(rust_u64_memory_add_lowers_and_executes) | test(rust_u128_memory_add_lowers_and_executes)'
+cargo nextest run --profile extensive --no-fail-fast -E 'test(split_i64_values_match_host) | test(split_i64_remaining_arithmetic_matches_host) | test(split_i128_values_match_host) | test(split_i128_remaining_arithmetic_matches_host) | test(rust_u64_memory_add_lowers_and_executes) | test(rust_u128_memory_add_lowers_and_executes)'
 ```
 
 The checks compile separate operation ROMs to stay within the current ROM0

@@ -26,7 +26,11 @@ validating changes; core compilation is the target milestone.
 
 ## Testing Loop
 
-Run tests with `cargo nextest run --no-fail-fast`, not `cargo test`.
+Run tests with `cargo nextest run --no-fail-fast`, not `cargo test`. This uses
+`.config/nextest.toml`'s default profile. Move tests measured above 10 seconds,
+except FileCheck, out of default and into extensive. Run the full suite with
+`cargo nextest run --profile extensive --no-fail-fast`; use that profile when
+selecting a test excluded from default.
 
 After backend or compiler changes, rebuild the affected toolchain component,
 then use the smallest reproducer for the feature being worked on. Use

@@ -51,6 +51,15 @@ failure paths can consume substantial ROM space. Check the build warnings.
 cargo nextest run --no-fail-fast
 ```
 
+The default profile keeps FileCheck and fast regression tests. Tests measured
+above 10 seconds, except FileCheck, belong in the extensive profile configured
+in [`.config/nextest.toml`](.config/nextest.toml). Run the full suite, including
+the core/alloc reports, coverage matrix, and broader numeric checks, with:
+
+```bash
+cargo nextest run --profile extensive --no-fail-fast
+```
+
 See the [wiki](wiki/index.md) for backend details and
 [practical limits](wiki/concepts/practical-limits.md) for ROM constraints.
 
@@ -73,7 +82,8 @@ in `tests/fixtures/alloc` and require `--alloc`.
 Run `python3 tools/core_report.py --alloc --json` to compile the libraries and
 representative generic drivers to CLIF and probe LR35902 lowering. Use
 `--keep build/alloc-report` to retain CLIF and alloc compiler diagnostics.
-The regression check is `cargo nextest run --no-fail-fast --test alloc_report`.
+The regression check is
+`cargo nextest run --profile extensive --no-fail-fast --test alloc_report`.
 
 The 2026-11-07 survey at opt-level 0 with immediate-abort panic reports:
 

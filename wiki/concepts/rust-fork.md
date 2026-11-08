@@ -40,7 +40,7 @@ Rebuild the entire chain after changing core:
 
 ```sh
 tools/rebuild_toolchain.sh
-cargo nextest run --no-fail-fast
+cargo nextest run --profile extensive --no-fail-fast
 cargo run -- build examples/blank.rs build/blank.gb
 ```
 
@@ -66,6 +66,6 @@ this), touching two files in
 
 `tools/rebuild_toolchain.sh` runs `check` first and `core` last. To move to a
 newer upstream: `tools/rust_fork.sh rebase`, commit the submodule pointer and
-`patches/`, then `tools/rebuild_toolchain.sh` and `cargo nextest run
---no-fail-fast`. Keep new fork changes out of `library/` and out of files that
+`patches/`, then `tools/rebuild_toolchain.sh` and
+`cargo nextest run --profile extensive --no-fail-fast`. Keep new fork changes out of `library/` and out of files that
 upstream edits often; put target behavior in the backend or `targets/`.

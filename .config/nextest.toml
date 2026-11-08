@@ -1,0 +1,28 @@
+[profile.default]
+default-filter = """
+not (
+    binary(=core_report)
+    | binary(=alloc_report)
+    | binary(=coverage)
+    | test(=target_core_preserves_upstream_api_surface)
+    | test(=target_core_and_alloc_respect_16_bit_size_limits)
+    | test(=upstream_u64_decimal_formatting_matches_host)
+    | test(=f128_shared_runtime_matches_reference)
+    | test(=f64_shared_runtime_matches_host)
+    | test(=split_i128_values_match_host)
+    | test(=split_i64_values_match_host)
+    | test(=wide_numeric_conversions_match_reference)
+    | test(=signed_overflow_multiply)
+    | test(=unsigned_overflow_multiply64)
+    | test(=wide_overflow_multiply)
+    | test(=signed_overflow_multiply64)
+    | test(=rust_numeric_conversions_lower_and_execute)
+    | test(=f16_fma_matches_reference)
+    | test(=scalar_integer_gaps_match_host)
+    | test(=split_i64_remaining_arithmetic_matches_host)
+    | test(=split_i128_remaining_arithmetic_matches_host)
+)
+"""
+
+[profile.extensive]
+default-filter = "all()"

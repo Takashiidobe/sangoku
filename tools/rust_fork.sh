@@ -95,7 +95,7 @@ rebase() {
     printf '%s\n' "$new_base" >"$patches/BASE"
     export_patches
     check
-    echo "next: tools/rebuild_toolchain.sh, then cargo nextest run --no-fail-fast"
+    echo "next: tools/rebuild_toolchain.sh, then cargo nextest run --profile extensive --no-fail-fast"
 }
 
 case ${1:-check} in

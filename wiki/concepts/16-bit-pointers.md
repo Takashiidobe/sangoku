@@ -59,7 +59,7 @@ operation-cost question, not a requirement that `usize` itself be 32 bits.
 Run the bounded checks with the pinned toolchain installed:
 
 ```sh
-cargo nextest run --no-fail-fast -E 'test(target_core_and_alloc_respect_16_bit_size_limits) | test(rust_usize_and_pointer_offsets_use_16_bits)'
+cargo nextest run --profile extensive --no-fail-fast -E 'test(target_core_and_alloc_respect_16_bit_size_limits) | test(rust_usize_and_pointer_offsets_use_16_bits)'
 ```
 
 The frontend regression builds target metadata for core, compiler-builtins and
