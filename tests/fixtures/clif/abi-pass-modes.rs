@@ -22,76 +22,8 @@ pub fn gbc_main() -> u8 {
 
 // CHECK: target z80 optimize_for_size=0
 // CHECK-EMPTY:
-// CHECK-NEXT: ; symbol _RNvMs4_NtCs40R3J0iFVxM_4core3numh12wrapping_add
-// CHECK-NEXT: function u0:0(i8, i8) -> i8 system_v {
-// CHECK-NEXT: ; symbol _RNvMs4_NtCs40R3J0iFVxM_4core3numh12wrapping_add
-// CHECK-EMPTY:
-// CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
-// CHECK-NEXT: ; ssa   _0    u8                                1b 1                var=1
-// CHECK-NEXT: ; ret   _0      -          Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) u8
-// CHECK-NEXT: ; arg   _1      = v0       Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) u8
-// CHECK-NEXT: ; arg   _2      = v1       Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) u8
-// CHECK-EMPTY:
-// CHECK-NEXT: ; kind  local ty                              size align (abi)
-// CHECK-NEXT: ; ssa   _1    u8                                1b 1                var=2
-// CHECK-NEXT: ; ssa   _2    u8                                1b 1                var=3
-// CHECK-EMPTY:
-// CHECK-NEXT: block0(v0: i8, v1: i8):
-// CHECK-NEXT:     v2 -> v0
-// CHECK-NEXT:     v3 -> v1
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; write_cvalue: Var(_1, var2): u8 <- ByVal(v0): u8
-// CHECK-NEXT: ; write_cvalue: Var(_2, var3): u8 <- ByVal(v1): u8
-// CHECK-NEXT:     jump block1
-// CHECK-EMPTY:
-// CHECK-NEXT: block1:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _0 = Add(copy _1, copy _2)
-// CHECK-NEXT:     v4 = iadd.i8 v2, v3
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u8 <- ByVal(v4): u8
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; return
-// CHECK-NEXT:     return v4
-// CHECK-NEXT: }
-// CHECK-EMPTY:
-// CHECK-NEXT: target z80 optimize_for_size=0
-// CHECK-EMPTY:
-// CHECK-NEXT: ; symbol _RNvMs5_NtCs40R3J0iFVxM_4core3numt12wrapping_add
-// CHECK-NEXT: function u0:1(i16, i16) -> i16 system_v {
-// CHECK-NEXT: ; symbol _RNvMs5_NtCs40R3J0iFVxM_4core3numt12wrapping_add
-// CHECK-EMPTY:
-// CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
-// CHECK-NEXT: ; ssa   _0    u16                               2b 2                var=1
-// CHECK-NEXT: ; ret   _0      -          Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) u16
-// CHECK-NEXT: ; arg   _1      = v0       Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) u16
-// CHECK-NEXT: ; arg   _2      = v1       Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) u16
-// CHECK-EMPTY:
-// CHECK-NEXT: ; kind  local ty                              size align (abi)
-// CHECK-NEXT: ; ssa   _1    u16                               2b 2                var=2
-// CHECK-NEXT: ; ssa   _2    u16                               2b 2                var=3
-// CHECK-EMPTY:
-// CHECK-NEXT: block0(v0: i16, v1: i16):
-// CHECK-NEXT:     v2 -> v0
-// CHECK-NEXT:     v3 -> v1
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; write_cvalue: Var(_1, var2): u16 <- ByVal(v0): u16
-// CHECK-NEXT: ; write_cvalue: Var(_2, var3): u16 <- ByVal(v1): u16
-// CHECK-NEXT:     jump block1
-// CHECK-EMPTY:
-// CHECK-NEXT: block1:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _0 = Add(copy _1, copy _2)
-// CHECK-NEXT:     v4 = iadd.i16 v2, v3
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u16 <- ByVal(v4): u16
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; return
-// CHECK-NEXT:     return v4
-// CHECK-NEXT: }
-// CHECK-EMPTY:
-// CHECK-NEXT: target z80 optimize_for_size=0
-// CHECK-EMPTY:
 // CHECK-NEXT: ; symbol _RNvNtCs40R3J0iFVxM_4core9panicking18panic_bounds_checkCs1vI5IyamSN6_14abi_pass_modes
-// CHECK-NEXT: function u0:2(i16, i16, i16) system_v {
+// CHECK-NEXT: function u0:0(i16, i16, i16) system_v {
 // CHECK-NEXT: ; symbol _RNvNtCs40R3J0iFVxM_4core9panicking18panic_bounds_checkCs1vI5IyamSN6_14abi_pass_modes
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
@@ -125,103 +57,8 @@ pub fn gbc_main() -> u8 {
 // CHECK-EMPTY:
 // CHECK-NEXT: target z80 optimize_for_size=0
 // CHECK-EMPTY:
-// CHECK-NEXT: ; symbol _RNvXNtNtCs40R3J0iFVxM_4core5array8equalityAtj5_NtNtB6_3cmp9PartialEq2eqCs1vI5IyamSN6_14abi_pass_modes
-// CHECK-NEXT: function u0:3(i16, i16) -> i8 uext system_v {
-// CHECK-NEXT: ; symbol _RNvXNtNtCs40R3J0iFVxM_4core5array8equalityAtj5_NtNtB6_3cmp9PartialEq2eqCs1vI5IyamSN6_14abi_pass_modes
-// CHECK-EMPTY:
-// CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
-// CHECK-NEXT: ; ssa   _0    bool                              1b 1                var=1
-// CHECK-NEXT: ; ret   _0      -          Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) bool
-// CHECK-NEXT: ; arg   _1      = v0       Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) &'{erased} [u16; 5_usize]
-// CHECK-NEXT: ; arg   _2      = v1       Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) &'{erased} [u16; 5_usize]
-// CHECK-EMPTY:
-// CHECK-NEXT: ; kind  local ty                              size align (abi)
-// CHECK-NEXT: ; ssa   _1    &'{erased} [u16; 5_usize]         2b 2                var=2
-// CHECK-NEXT: ; ssa   _2    &'{erased} [u16; 5_usize]         2b 2                var=3
-// CHECK-EMPTY:
-// CHECK-NEXT:     sig0 = (i16, i16) -> i8 uext system_v
-// CHECK-NEXT:     fn0 = colocated u0:4 sig0 ; Instance { def: Item(DefId(1:5481 ~ core[..]::array::equality::{impl#9}::spec_eq)), args: [u16, u16, 5_usize] }
-// CHECK-EMPTY:
-// CHECK-NEXT: block0(v0: i16, v1: i16):
-// CHECK-NEXT:     v2 -> v0
-// CHECK-NEXT:     v3 -> v1
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; write_cvalue: Var(_1, var2): &'{erased} [u16; 5_usize] <- ByVal(v0): &'{erased} [u16; 5_usize]
-// CHECK-NEXT: ; write_cvalue: Var(_2, var3): &'{erased} [u16; 5_usize] <- ByVal(v1): &'{erased} [u16; 5_usize]
-// CHECK-NEXT:     jump block1
-// CHECK-EMPTY:
-// CHECK-NEXT: block1:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; _0 = <T as core::array::equality::SpecArrayEq<U, N>>::spec_eq(copy _1, copy _2)
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: &[u16; 5], layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }, ArgAbi { layout: TyAndLayout { ty: &[u16; 5], layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }], ret: ArgAbi { layout: TyAndLayout { ty: bool, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is 0..=1), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: u8, valid_range: 0..=1 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 281483566645249 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
-// CHECK-NEXT:     v4 = call fn0(v2, v3)
-// CHECK-NEXT:     v5 -> v4
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): bool <- ByVal(v4): bool
-// CHECK-NEXT:     jump block2
-// CHECK-EMPTY:
-// CHECK-NEXT: block2:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; return
-// CHECK-NEXT:     return v5
-// CHECK-NEXT: }
-// CHECK-EMPTY:
-// CHECK-NEXT: target z80 optimize_for_size=0
-// CHECK-EMPTY:
-// CHECK-NEXT: ; symbol _RNvXs7_NtNtCs40R3J0iFVxM_4core5array8equalitytINtB5_11SpecArrayEqtKj5_E7spec_eqCs1vI5IyamSN6_14abi_pass_modes
-// CHECK-NEXT: function u0:4(i16, i16) -> i8 uext system_v {
-// CHECK-NEXT: ; symbol _RNvXs7_NtNtCs40R3J0iFVxM_4core5array8equalitytINtB5_11SpecArrayEqtKj5_E7spec_eqCs1vI5IyamSN6_14abi_pass_modes
-// CHECK-EMPTY:
-// CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
-// CHECK-NEXT: ; ssa   _0    bool                              1b 1                var=1
-// CHECK-NEXT: ; ret   _0      -          Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) bool
-// CHECK-NEXT: ; arg   _1      = v0       Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) &'{erased} [u16; 5_usize]
-// CHECK-NEXT: ; arg   _2      = v1       Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) &'{erased} [u16; 5_usize]
-// CHECK-EMPTY:
-// CHECK-NEXT: ; kind  local ty                              size align (abi)
-// CHECK-NEXT: ; ssa   _1    &'{erased} [u16; 5_usize]         2b 2                var=2
-// CHECK-NEXT: ; ssa   _2    &'{erased} [u16; 5_usize]         2b 2                var=3
-// CHECK-NEXT: ; ssa   _3    &'{erased} [u16; 5_usize]         2b 2                var=4
-// CHECK-EMPTY:
-// CHECK-NEXT:     sig0 = (i16, i16, i16) -> i32 system_v
-// CHECK-NEXT:     fn0 = u0:12 sig0 ; "memcmp"
-// CHECK-EMPTY:
-// CHECK-NEXT: block0(v0: i16, v1: i16):
-// CHECK-NEXT:     v3 -> v0
-// CHECK-NEXT:     v2 -> v1
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; write_cvalue: Var(_1, var2): &'{erased} [u16; 5_usize] <- ByVal(v0): &'{erased} [u16; 5_usize]
-// CHECK-NEXT: ; write_cvalue: Var(_2, var3): &'{erased} [u16; 5_usize] <- ByVal(v1): &'{erased} [u16; 5_usize]
-// CHECK-NEXT:     jump block1
-// CHECK-EMPTY:
-// CHECK-NEXT: block1:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _3 = copy _2 as &[T; N] (Transmute)
-// CHECK-NEXT: ; write_cvalue_transmute: Var(_3, var4): &'{erased} [u16; 5_usize] <- ByVal(v2): &'{erased} [u16; 5_usize]
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; _0 = core::intrinsics::raw_eq::<[T; N]>(copy _1, move _3)
-// CHECK-NEXT:     v4 = iconst.i16 10
-// CHECK-NEXT: ; lib_call memcmp
-// CHECK-NEXT:     v5 = call fn0(v3, v2, v4)  ; v4 = 10
-// CHECK-NEXT:     v6 = iconst.i32 0
-// CHECK-NEXT:     v7 = icmp eq v5, v6  ; v6 = 0
-// CHECK-NEXT:     v8 -> v7
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): bool <- ByVal(v7): bool
-// CHECK-NEXT:     jump block2
-// CHECK-EMPTY:
-// CHECK-NEXT: block2:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; return
-// CHECK-NEXT:     return v8
-// CHECK-NEXT: }
-// CHECK-EMPTY:
-// CHECK-NEXT: target z80 optimize_for_size=0
-// CHECK-EMPTY:
 // CHECK-NEXT: ; symbol _RNvXs8_NtCs40R3J0iFVxM_4core5tupleThtENtNtB7_3cmp9PartialEq2eqCs1vI5IyamSN6_14abi_pass_modes
-// CHECK-NEXT: function u0:5(i16, i16) -> i8 uext system_v {
+// CHECK-NEXT: function u0:1(i16, i16) -> i8 uext system_v {
 // CHECK-NEXT: ; symbol _RNvXs8_NtCs40R3J0iFVxM_4core5tupleThtENtNtB7_3cmp9PartialEq2eqCs1vI5IyamSN6_14abi_pass_modes
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
@@ -243,8 +80,8 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT:     ss1 = explicit_slot 2, align = 2
 // CHECK-NEXT:     sig0 = (i16, i16) -> i8 uext system_v
 // CHECK-NEXT:     sig1 = (i16, i16) -> i8 uext system_v
-// CHECK-NEXT:     fn0 = colocated u0:6 sig0 ; Instance { def: Item(DefId(1:29972 ~ core[..]::cmp::impls::{impl#22}::eq)), args: [] }
-// CHECK-NEXT:     fn1 = colocated u0:7 sig1 ; Instance { def: Item(DefId(1:29975 ~ core[..]::cmp::impls::{impl#23}::eq)), args: [] }
+// CHECK-NEXT:     fn0 = colocated u0:2 sig0 ; Instance { def: Item(DefId(1:29972 ~ core[..]::cmp::impls::{impl#22}::eq)), args: [] }
+// CHECK-NEXT:     fn1 = colocated u0:3 sig1 ; Instance { def: Item(DefId(1:29975 ~ core[..]::cmp::impls::{impl#23}::eq)), args: [] }
 // CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i16, v1: i16):
 // CHECK-NEXT:     nop
@@ -323,7 +160,7 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: target z80 optimize_for_size=0
 // CHECK-EMPTY:
 // CHECK-NEXT: ; symbol _RNvXsk_NtNtCs40R3J0iFVxM_4core3cmp5implshNtB7_9PartialEq2eqCs1vI5IyamSN6_14abi_pass_modes
-// CHECK-NEXT: function u0:6(i16, i16) -> i8 uext system_v {
+// CHECK-NEXT: function u0:2(i16, i16) -> i8 uext system_v {
 // CHECK-NEXT: ; symbol _RNvXsk_NtNtCs40R3J0iFVxM_4core3cmp5implshNtB7_9PartialEq2eqCs1vI5IyamSN6_14abi_pass_modes
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
@@ -365,7 +202,7 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: target z80 optimize_for_size=0
 // CHECK-EMPTY:
 // CHECK-NEXT: ; symbol _RNvXsl_NtNtCs40R3J0iFVxM_4core3cmp5implstNtB7_9PartialEq2eqCs1vI5IyamSN6_14abi_pass_modes
-// CHECK-NEXT: function u0:7(i16, i16) -> i8 uext system_v {
+// CHECK-NEXT: function u0:3(i16, i16) -> i8 uext system_v {
 // CHECK-NEXT: ; symbol _RNvXsl_NtNtCs40R3J0iFVxM_4core3cmp5implstNtB7_9PartialEq2eqCs1vI5IyamSN6_14abi_pass_modes
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
@@ -407,7 +244,7 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: target z80 optimize_for_size=0
 // CHECK-EMPTY:
 // CHECK-NEXT: ; symbol aggregate
-// CHECK-NEXT: function u0:8(i16 sret, i16) system_v {
+// CHECK-NEXT: function u0:4(i16 sret, i16) system_v {
 // CHECK-NEXT: ; symbol aggregate
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
@@ -428,15 +265,13 @@ pub fn gbc_main() -> u8 {
 // CHECK-EMPTY:
 // CHECK-NEXT:     gv0 = symbol colocated userextname0 ; alloc6
 // CHECK-NEXT:     gv1 = symbol colocated userextname2 ; alloc7
-// CHECK-NEXT:     gv2 = symbol colocated userextname4 ; alloc8
+// CHECK-NEXT:     gv2 = symbol colocated userextname3 ; alloc8
 // CHECK-NEXT:     sig0 = (i16, i16, i16) system_v
 // CHECK-NEXT:     sig1 = (i16, i16, i16) system_v
-// CHECK-NEXT:     sig2 = (i16, i16) -> i16 system_v
-// CHECK-NEXT:     sig3 = (i16, i16, i16) system_v
-// CHECK-NEXT:     fn0 = colocated u0:2 sig0 ; "_RNvNtCs40R3J0iFVxM_4core9panicking18panic_bounds_checkCs1vI5IyamSN6_14abi_pass_modes"
-// CHECK-NEXT:     fn1 = colocated u0:2 sig1 ; "_RNvNtCs40R3J0iFVxM_4core9panicking18panic_bounds_checkCs1vI5IyamSN6_14abi_pass_modes"
-// CHECK-NEXT:     fn2 = colocated u0:1 sig2 ; Instance { def: Item(DefId(1:27660 ~ core[..]::num::{impl#7}::wrapping_add)), args: [] }
-// CHECK-NEXT:     fn3 = colocated u0:2 sig3 ; "_RNvNtCs40R3J0iFVxM_4core9panicking18panic_bounds_checkCs1vI5IyamSN6_14abi_pass_modes"
+// CHECK-NEXT:     sig2 = (i16, i16, i16) system_v
+// CHECK-NEXT:     fn0 = colocated u0:0 sig0 ; "_RNvNtCs40R3J0iFVxM_4core9panicking18panic_bounds_checkCs1vI5IyamSN6_14abi_pass_modes"
+// CHECK-NEXT:     fn1 = colocated u0:0 sig1 ; "_RNvNtCs40R3J0iFVxM_4core9panicking18panic_bounds_checkCs1vI5IyamSN6_14abi_pass_modes"
+// CHECK-NEXT:     fn2 = colocated u0:0 sig2 ; "_RNvNtCs40R3J0iFVxM_4core9panicking18panic_bounds_checkCs1vI5IyamSN6_14abi_pass_modes"
 // CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i16, v1: i16):
 // CHECK-NEXT:     nop
@@ -455,9 +290,9 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: ; write_cvalue: Var(_5, var4): bool <- ByVal(v4): bool
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; assert(move _5, "index out of bounds: the length is {} but the index is {}", const 5_usize, copy _4)
-// CHECK-NEXT:     brif v4, block2, block6
+// CHECK-NEXT:     brif v4, block2, block5
 // CHECK-EMPTY:
-// CHECK-NEXT: block6 cold:
+// CHECK-NEXT: block5 cold:
 // CHECK-NEXT:     nop
 // CHECK-NEXT:     v5 = iconst.i16 5
 // CHECK-NEXT:     v7 = symbol_value.i16 gv0
@@ -486,9 +321,9 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: ; write_cvalue: Var(_8, var7): bool <- ByVal(v15): bool
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; assert(move _8, "index out of bounds: the length is {} but the index is {}", const 5_usize, copy _7)
-// CHECK-NEXT:     brif v15, block3, block7
+// CHECK-NEXT:     brif v15, block3, block6
 // CHECK-EMPTY:
-// CHECK-NEXT: block7 cold:
+// CHECK-NEXT: block6 cold:
 // CHECK-NEXT:     nop
 // CHECK-NEXT:     v16 = iconst.i16 5
 // CHECK-NEXT:     v18 = symbol_value.i16 gv1
@@ -505,17 +340,10 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT:     v22 = iadd.i16 v1, v21
 // CHECK-NEXT: ; write_cvalue: Var(_6, var5): u16 <- ByRef(Pointer { base: Addr(v22), offset: Offset32(0) }, None): u16
 // CHECK-NEXT:     v23 = load.i16 notrap v22
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; _2 = core::num::<impl u16>::wrapping_add(move _3, move _6)
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: u16, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(u16 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322775554 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, ArgAbi { layout: TyAndLayout { ty: u16, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(u16 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322775554 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }], ret: ArgAbi { layout: TyAndLayout { ty: u16, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(u16 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322775554 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
-// CHECK-NEXT:     v25 = call fn2(v24, v23)
+// CHECK-NEXT: ; _2 = Add(copy _3, copy _6)
+// CHECK-NEXT:     v25 = iadd.i16 v24, v23
 // CHECK-NEXT:     v36 -> v25
 // CHECK-NEXT: ; write_cvalue: Var(_2, var1): u16 <- ByVal(v25): u16
-// CHECK-NEXT:     jump block4
-// CHECK-EMPTY:
-// CHECK-NEXT: block4:
-// CHECK-NEXT:     nop
 // CHECK-NEXT: ; _9 = const 4_usize
 // CHECK-NEXT:     v26 = iconst.i16 4
 // CHECK-NEXT:     v30 -> v26
@@ -527,18 +355,18 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: ; write_cvalue: Var(_10, var9): bool <- ByVal(v28): bool
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; assert(move _10, "index out of bounds: the length is {} but the index is {}", const 5_usize, copy _9)
-// CHECK-NEXT:     brif v28, block5, block8
+// CHECK-NEXT:     brif v28, block4, block7
 // CHECK-EMPTY:
-// CHECK-NEXT: block8 cold:
+// CHECK-NEXT: block7 cold:
 // CHECK-NEXT:     nop
 // CHECK-NEXT:     v29 = iconst.i16 5
 // CHECK-NEXT:     v31 = symbol_value.i16 gv2
 // CHECK-NEXT: ; panic _RNvNtCs40R3J0iFVxM_4core9panicking18panic_bounds_checkCs1vI5IyamSN6_14abi_pass_modes
 // CHECK-NEXT:     nop
-// CHECK-NEXT:     call fn3(v30, v29, v31)  ; v30 = 4, v29 = 5
+// CHECK-NEXT:     call fn2(v30, v29, v31)  ; v30 = 4, v29 = 5
 // CHECK-NEXT:     trap user1
 // CHECK-EMPTY:
-// CHECK-NEXT: block5:
+// CHECK-NEXT: block4:
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ; _1[_9] = move _2
 // CHECK-NEXT:     v33 = iconst.i16 2
@@ -566,7 +394,7 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: target z80 optimize_for_size=0
 // CHECK-EMPTY:
 // CHECK-NEXT: ; symbol gbc_main
-// CHECK-NEXT: function u0:9() -> i8 system_v {
+// CHECK-NEXT: function u0:5() -> i8 system_v {
 // CHECK-NEXT: ; symbol gbc_main
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
@@ -596,12 +424,12 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT:     sig1 = (i8, i16) -> i8, i16 system_v
 // CHECK-NEXT:     sig2 = (i16 sret, i16) system_v
 // CHECK-NEXT:     sig3 = (i16, i16) -> i8 uext system_v
-// CHECK-NEXT:     sig4 = (i16, i16) -> i8 uext system_v
-// CHECK-NEXT:     fn0 = colocated u0:11 sig0 ; Instance { def: Item(DefId(0:3 ~ abi_pass_modes[..]::scalar)), args: [] }
-// CHECK-NEXT:     fn1 = colocated u0:10 sig1 ; Instance { def: Item(DefId(0:4 ~ abi_pass_modes[..]::pair)), args: [] }
-// CHECK-NEXT:     fn2 = colocated u0:8 sig2 ; Instance { def: Item(DefId(0:5 ~ abi_pass_modes[..]::aggregate)), args: [] }
-// CHECK-NEXT:     fn3 = colocated u0:5 sig3 ; Instance { def: Item(DefId(1:46739 ~ core[..]::tuple::{impl#10}::eq)), args: [u8, u16] }
-// CHECK-NEXT:     fn4 = colocated u0:3 sig4 ; Instance { def: Item(DefId(1:5402 ~ core[..]::array::equality::{impl#0}::eq)), args: [u16, u16, 5_usize] }
+// CHECK-NEXT:     sig4 = (i16, i16, i16) -> i32 system_v
+// CHECK-NEXT:     fn0 = colocated u0:7 sig0 ; Instance { def: Item(DefId(0:3 ~ abi_pass_modes[..]::scalar)), args: [] }
+// CHECK-NEXT:     fn1 = colocated u0:6 sig1 ; Instance { def: Item(DefId(0:4 ~ abi_pass_modes[..]::pair)), args: [] }
+// CHECK-NEXT:     fn2 = colocated u0:4 sig2 ; Instance { def: Item(DefId(0:5 ~ abi_pass_modes[..]::aggregate)), args: [] }
+// CHECK-NEXT:     fn3 = colocated u0:1 sig3 ; Instance { def: Item(DefId(1:46739 ~ core[..]::tuple::{impl#10}::eq)), args: [u8, u16] }
+// CHECK-NEXT:     fn4 = u0:8 sig4 ; "memcmp"
 // CHECK-EMPTY:
 // CHECK-NEXT: block0:
 // CHECK-NEXT:     nop
@@ -732,35 +560,37 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT:     v48 = symbol_value.i16 gv1
 // CHECK-NEXT: ; write_cvalue: Var(_12, var11): &'{erased} [u16; 5_usize] <- ByVal(v48): &'{erased} [u16; 5_usize]
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _6 = <[u16; 5] as core::cmp::PartialEq>::eq(move _11, move _12)
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: &[u16; 5], layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }, ArgAbi { layout: TyAndLayout { ty: &[u16; 5], layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }], ret: ArgAbi { layout: TyAndLayout { ty: bool, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is 0..=1), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: u8, valid_range: 0..=1 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 281483566645249 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
-// CHECK-NEXT:     v49 = call fn4(v47, v48)
-// CHECK-NEXT: ; write_cvalue: Var(_6, var5): bool <- ByVal(v49): bool
-// CHECK-NEXT:     jump block9(v49)
+// CHECK-NEXT: ; _6 = core::intrinsics::raw_eq::<[u16; 5]>(copy _11, copy _12)
+// CHECK-NEXT:     v49 = iconst.i16 10
+// CHECK-NEXT: ; lib_call memcmp
+// CHECK-NEXT:     v50 = call fn4(v47, v48, v49)  ; v49 = 10
+// CHECK-NEXT:     v51 = iconst.i32 0
+// CHECK-NEXT:     v52 = icmp eq v50, v51  ; v51 = 0
+// CHECK-NEXT: ; write_cvalue: Var(_6, var5): bool <- ByVal(v52): bool
+// CHECK-NEXT:     jump block9(v52)
 // CHECK-EMPTY:
 // CHECK-NEXT: block8:
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ; _6 = const false
-// CHECK-NEXT:     v50 = iconst.i8 0
-// CHECK-NEXT: ; write_cvalue: Var(_6, var5): bool <- ByVal(v50): bool
+// CHECK-NEXT:     v53 = iconst.i8 0
+// CHECK-NEXT: ; write_cvalue: Var(_6, var5): bool <- ByVal(v53): bool
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block9(v50)  ; v50 = 0
+// CHECK-NEXT:     jump block9(v53)  ; v53 = 0
 // CHECK-EMPTY:
-// CHECK-NEXT: block9(v51: i8):
+// CHECK-NEXT: block9(v54: i8):
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ; _0 = move _6 as u8 (IntToInt)
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u8 <- ByVal(v51): u8
+// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u8 <- ByVal(v54): u8
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; return
-// CHECK-NEXT:     return v51
+// CHECK-NEXT:     return v54
 // CHECK-NEXT: }
 // CHECK-EMPTY:
 // CHECK-NEXT: target z80 optimize_for_size=0
 // CHECK-EMPTY:
 // CHECK-NEXT: ; symbol pair
-// CHECK-NEXT: function u0:10(i8, i16) -> i8, i16 system_v {
+// CHECK-NEXT: function u0:6(i8, i16) -> i8, i16 system_v {
 // CHECK-NEXT: ; symbol pair
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
@@ -775,11 +605,6 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: ; ssa   _4    u16                               2b 2                var=7
 // CHECK-NEXT: ; ssa   _5    u16                               2b 2                var=8
 // CHECK-EMPTY:
-// CHECK-NEXT:     sig0 = (i8, i8) -> i8 system_v
-// CHECK-NEXT:     sig1 = (i16, i16) -> i16 system_v
-// CHECK-NEXT:     fn0 = colocated u0:0 sig0 ; Instance { def: Item(DefId(1:27478 ~ core[..]::num::{impl#6}::wrapping_add)), args: [] }
-// CHECK-NEXT:     fn1 = colocated u0:1 sig1 ; Instance { def: Item(DefId(1:27660 ~ core[..]::num::{impl#7}::wrapping_add)), args: [] }
-// CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i8, v1: i16):
 // CHECK-NEXT:     v2 -> v0
 // CHECK-NEXT:     v5 -> v1
@@ -791,44 +616,28 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ; _3 = copy (_1.0: u8)
 // CHECK-NEXT: ; write_cvalue: Var(_3, var6): u8 <- ByVal(v2): u8
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; _2 = core::num::<impl u8>::wrapping_add(move _3, const 1_u8)
+// CHECK-NEXT: ; _2 = Add(copy _3, const 1_u8)
 // CHECK-NEXT:     v3 = iconst.i8 1
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: u8, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 71776127651151873 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, ArgAbi { layout: TyAndLayout { ty: u8, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 71776127651151873 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }], ret: ArgAbi { layout: TyAndLayout { ty: u8, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 71776127651151873 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
-// CHECK-NEXT:     v4 = call fn0(v2, v3)  ; v3 = 1
-// CHECK-NEXT:     v8 -> v4
+// CHECK-NEXT:     v4 = iadd.i8 v2, v3  ; v3 = 1
 // CHECK-NEXT: ; write_cvalue: Var(_2, var5): u8 <- ByVal(v4): u8
-// CHECK-NEXT:     jump block2
-// CHECK-EMPTY:
-// CHECK-NEXT: block2:
-// CHECK-NEXT:     nop
 // CHECK-NEXT: ; _5 = copy (_1.1: u16)
 // CHECK-NEXT: ; write_cvalue: Var(_5, var8): u16 <- ByVal(v5): u16
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; _4 = core::num::<impl u16>::wrapping_add(move _5, const 2_u16)
+// CHECK-NEXT: ; _4 = Add(copy _5, const 2_u16)
 // CHECK-NEXT:     v6 = iconst.i16 2
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: u16, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(u16 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322775554 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, ArgAbi { layout: TyAndLayout { ty: u16, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(u16 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322775554 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }], ret: ArgAbi { layout: TyAndLayout { ty: u16, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(u16 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322775554 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
-// CHECK-NEXT:     v7 = call fn1(v5, v6)  ; v6 = 2
-// CHECK-NEXT:     v9 -> v7
+// CHECK-NEXT:     v7 = iadd.i16 v5, v6  ; v6 = 2
 // CHECK-NEXT: ; write_cvalue: Var(_4, var7): u16 <- ByVal(v7): u16
-// CHECK-NEXT:     jump block3
-// CHECK-EMPTY:
-// CHECK-NEXT: block3:
-// CHECK-NEXT:     nop
 // CHECK-NEXT: ; _0 = (move _2, move _4)
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u8 <- ByVal(v8): u8
-// CHECK-NEXT: ; write_cvalue: Var(_0, var2): u16 <- ByVal(v9): u16
+// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u8 <- ByVal(v4): u8
+// CHECK-NEXT: ; write_cvalue: Var(_0, var2): u16 <- ByVal(v7): u16
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; return
-// CHECK-NEXT:     return v8, v9
+// CHECK-NEXT:     return v4, v7
 // CHECK-NEXT: }
 // CHECK-EMPTY:
 // CHECK-NEXT: target z80 optimize_for_size=0
 // CHECK-EMPTY:
 // CHECK-NEXT: ; symbol scalar
-// CHECK-NEXT: function u0:11(i16) -> i16 system_v {
+// CHECK-NEXT: function u0:7(i16) -> i16 system_v {
 // CHECK-NEXT: ; symbol scalar
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
@@ -841,9 +650,6 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: ; ssa   _1    u16                               2b 2                var=2
 // CHECK-NEXT: ; zst   _2    ()                                0b 1                align=1,offset=
 // CHECK-EMPTY:
-// CHECK-NEXT:     sig0 = (i16, i16) -> i16 system_v
-// CHECK-NEXT:     fn0 = colocated u0:1 sig0 ; Instance { def: Item(DefId(1:27660 ~ core[..]::num::{impl#7}::wrapping_add)), args: [] }
-// CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i16):
 // CHECK-NEXT:     v1 -> v0
 // CHECK-NEXT:     nop
@@ -852,19 +658,11 @@ pub fn gbc_main() -> u8 {
 // CHECK-EMPTY:
 // CHECK-NEXT: block1:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; _0 = core::num::<impl u16>::wrapping_add(copy _1, const 1_u16)
+// CHECK-NEXT: ; _0 = Add(copy _1, const 1_u16)
 // CHECK-NEXT:     v2 = iconst.i16 1
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: u16, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(u16 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322775554 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, ArgAbi { layout: TyAndLayout { ty: u16, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(u16 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322775554 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }], ret: ArgAbi { layout: TyAndLayout { ty: u16, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(u16 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322775554 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
-// CHECK-NEXT:     v3 = call fn0(v1, v2)  ; v2 = 1
-// CHECK-NEXT:     v4 -> v3
+// CHECK-NEXT:     v3 = iadd.i16 v1, v2  ; v2 = 1
 // CHECK-NEXT: ; write_cvalue: Var(_0, var1): u16 <- ByVal(v3): u16
-// CHECK-NEXT:     jump block2
-// CHECK-EMPTY:
-// CHECK-NEXT: block2:
-// CHECK-NEXT:     nop
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; return
-// CHECK-NEXT:     return v4
+// CHECK-NEXT:     return v3
 // CHECK-NEXT: }

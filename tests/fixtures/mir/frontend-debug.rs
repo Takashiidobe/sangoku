@@ -16,13 +16,12 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT:     let mut _2: u8;
 // CHECK-NEXT:     let mut _3: u8;
 // CHECK-NEXT:     let mut _4: u16;
+// CHECK-NEXT:     scope 1 (inlined core::num::<impl u8>::wrapping_add) {
+// CHECK-NEXT:     }
 // CHECK-EMPTY:
 // CHECK-NEXT:     bb0: {
 // CHECK-NEXT:         _3 = copy (_1.0: u8);
-// CHECK-NEXT:         _2 = core::num::<impl u8>::wrapping_add(move _3, const 1_u8) -> [return: bb1, unwind unreachable];
-// CHECK-NEXT:     }
-// CHECK-EMPTY:
-// CHECK-NEXT:     bb1: {
+// CHECK-NEXT:         _2 = Add(copy _3, const 1_u8);
 // CHECK-NEXT:         _4 = copy (_1.1: u16);
 // CHECK-NEXT:         _0 = (move _2, move _4);
 // CHECK-NEXT:         return;
