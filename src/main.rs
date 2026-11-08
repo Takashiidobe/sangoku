@@ -529,8 +529,8 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
         libraries.alloc_asm(),
         libraries.heap_asm(),
     ]
-        .iter()
-        .all(|path| modified(path).is_some_and(|time| Some(time) >= backend_time));
+    .iter()
+    .all(|path| modified(path).is_some_and(|time| Some(time) >= backend_time));
     if fresh {
         return Ok(libraries);
     }
@@ -560,7 +560,11 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
         library.join("compiler-builtins/compiler-builtins/src/lib.rs"),
         extra,
     )?;
-    compile("alloc", library.join("alloc/src/lib.rs"), libraries.externs(2))?;
+    compile(
+        "alloc",
+        library.join("alloc/src/lib.rs"),
+        libraries.externs(2),
+    )?;
     compile(
         "gbc_heap",
         root.join("runtime/heap/lib.rs"),

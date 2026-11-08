@@ -53,8 +53,17 @@ are supported and their ROM cost is measured.
 ## Rust string behavior
 
 The Rust fork uses upstream UTF-8 decoding and full Unicode tables for `str` and
-`char`, including reverse iteration and escaping. A focused `alloctests`
-regression covers forward and reverse iteration at each UTF-8 width boundary.
-Target-side MIR/CLIF/emulator coverage remains blocked until the target `core`
-build can run through the Cranelift backend. `sangoku-30k` tracks this work,
-including compact Unicode tables and wider integer support.
+`char`, including reverse iteration and escaping. `tests/core_rom/utf8.rs`
+executes forward and reverse iteration at each UTF-8 width boundary on the
+target, and `tests/core_rom/unicode_properties.rs` checks alphabetic,
+whitespace and numeric properties.
+
+## Measured cost
+
+A 2026-11-07 opt-level z probe using the property and case APIs retained about
+47 KB of Unicode code and data. The lookup code (two `bitset_search` and two
+`skip_search` instantiations, case-conversion lookup, `u64::rotate_left`) is
+about 42 KB; the tables are about 11 KB. A ROM calling only
+`char::to_lowercase` needs 40 KB. Compacting tables cannot make this fit, so
+Unicode stays for correctness and testing, and games should use an ASCII string
+crate (`sangoku-yjb`).

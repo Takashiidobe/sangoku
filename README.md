@@ -80,5 +80,12 @@ No alloc compilation blockers were observed in this coverage
 instantiations can still expose gaps. Long per-function CLIF filename warnings
 remain tracked in `sangoku-30k.9.1.11`.
 
+Target ROM tests in `tests/core_link.rs` execute UTF-8 iteration across every
+width boundary and the alphabetic, whitespace and numeric properties. Upstream
+Unicode support is kept for correctness but costs about 47 KB at opt-level z
+(about 42 KB lookup code, 11 KB tables); one `char::to_lowercase` needs a 40 KB
+ROM, so case conversion cannot run on a 32 KiB cartridge yet (`sangoku-6o2`).
+Games should use an ASCII string crate instead (`sangoku-yjb`).
+
 Heap ROM execution still needs allocator hooks and a WRAM heap policy
 (`sangoku-30k.9.3`). This survey checks compilation and lowering, without linking or running collections.

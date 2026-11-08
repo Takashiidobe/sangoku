@@ -246,8 +246,7 @@ pub fn check_accesses(directory: &Path) -> Result<usize> {
                     }
                     e.reset_metrics();
                     e.run_until(code.len() as u16, 1024)?;
-                    let actual: BTreeMap<_, _> =
-                        "abcdehl".chars().map(|r| (r, e.reg(r))).collect();
+                    let actual: BTreeMap<_, _> = "abcdehl".chars().map(|r| (r, e.reg(r))).collect();
                     let saved = e.peak_stack_bytes as u16;
                     ensure!(
                         actual == expected,
