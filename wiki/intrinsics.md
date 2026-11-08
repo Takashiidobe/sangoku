@@ -71,7 +71,7 @@ are not evidence that atomic operations are available on this target.
 
 | Rust path at level 0                                      | Terminal calls / implementation                                                        | Follow-up                         |
 | --------------------------------------------------------- | -------------------------------------------------------------------------------------- | --------------------------------- |
-| `u8::count_ones`                                          | `__gbc_popcnt32`; `u16` currently uses a small inline sequence                         | `sangoku-57q.10.4`                |
+| `u8::count_ones`                                          | `__gbc_popcnt32` size/opt variants; `u16` uses an inline loop or parallel counting     | `sangoku-57q.10.4`                |
 | narrow leading/trailing-zero counts and bit reversal      | `__gbc_clz32`, `__gbc_ctz32`, `__gbc_bitrev32` after widening                          | `sangoku-57q.10.4`                |
 | 32/64-bit counts and bit reversal                         | existing 32-bit helpers, repeated for wider values                                     | `sangoku-57q.10.1`                |
 | variable rotate and unsigned funnel shifts                | `__gbc_shift8` for 8-bit; `__gbc_shift16` through 64-bit; inline expansion for 128-bit | `sangoku-clp`, `sangoku-57q.10.1` |

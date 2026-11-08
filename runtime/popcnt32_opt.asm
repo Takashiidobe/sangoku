@@ -1,6 +1,5 @@
 SECTION "32-bit population count", ROM0
 
-EXPORT __gbc_popcnt32
 __gbc_popcnt32::
     ld d, a
     ld hl, sp + 2
@@ -16,19 +15,30 @@ __gbc_popcnt32::
         ELSE
             DEF REG EQUS "e"
         ENDC
-.byte{u:I}
         ld a, {REG}
-        or a
-        jr z, .byte_done{u:I}
-        srl {REG}
-        jr nc, .byte{u:I}
-        inc h
-        jr .byte{u:I}
-.byte_done{u:I}
+        rrca
+        and $55
+        ld l, a
+        ld a, {REG}
+        sub l
+        ld {REG}, a
+        and $33
+        ld l, a
+        ld a, {REG}
+        rrca
+        rrca
+        and $33
+        add l
+        ld {REG}, a
+        swap a
+        add {REG}
+        and $0f
+        add h
+        ld h, a
         PURGE REG
     ENDR
     ld a, h
     ld b, 0
-    ld c, 0
-    ld d, 0
+    ld c, b
+    ld d, b
     ret

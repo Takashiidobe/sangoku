@@ -16,6 +16,12 @@ operands, and unsigned 16-bit division/remainder. Division and remainder share
 an SM83 core and reach the trap vector for a zero divisor. Spills and reloads
 preserve live registers and flags.
 
+The 32-bit population-count helper selects a compact 32-iteration shift loop for
+`s`/`z` and table-free parallel counting for `0`–`3`. Only the selected variant
+is linked. Its 32-bit return is zero-extended. The 16-bit inline path already
+selects loops for `0`/`s`/`z` and parallel counting for `1`–`3`; see the
+[population-count audit](../audits/popcount16.md).
+
 Signed i8/i16 division and remainder widen through the i32 helpers. Division
 checks that the result fits the original width and traps on `MIN / -1`.
 Remainder returns zero for `MIN % -1`; both operations trap on division by zero.

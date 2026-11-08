@@ -201,7 +201,17 @@ fn check_single_runtime_helper(
     output_bytes: usize,
     operation: fn(u32, u32) -> u32,
 ) -> Result<()> {
-    let (rom, map) = build_runtime_rom(&format!("tests/core_rom/runtime_{name}.rs"))?;
+    check_single_runtime_helper_at_level(name, symbol, output_bytes, operation, "0")
+}
+
+fn check_single_runtime_helper_at_level(
+    name: &str,
+    symbol: &str,
+    output_bytes: usize,
+    operation: fn(u32, u32) -> u32,
+    opt_level: &str,
+) -> Result<()> {
+    let (rom, map) = build_mapped_rom(&format!("tests/core_rom/runtime_{name}.rs"), opt_level)?;
     for helper in [
         "__gbc_mul32",
         "__gbc_div32_core",
@@ -255,7 +265,16 @@ fn shift8_links_only_its_runtime_helper() -> Result<()> {
 
 #[test]
 fn popcnt32_links_only_its_runtime_helper() -> Result<()> {
-    check_single_runtime_helper("popcnt32", "__gbc_popcnt32", 4, |lhs, _| lhs.count_ones())
+    for level in ["0", "2", "z"] {
+        check_single_runtime_helper_at_level(
+            "popcnt32",
+            "__gbc_popcnt32",
+            4,
+            |lhs, _| lhs.count_ones(),
+            level,
+        )?;
+    }
+    Ok(())
 }
 
 #[test]

@@ -244,7 +244,11 @@ const RUNTIME_OBJECTS: &[(&str, &str)] = &[
     ("urem32", include_str!("../runtime/urem32.asm")),
     ("sdiv32", include_str!("../runtime/sdiv32.asm")),
     ("srem32", include_str!("../runtime/srem32.asm")),
-    ("popcnt32", include_str!("../runtime/popcnt32.asm")),
+    (
+        "popcnt32_size",
+        include_str!("../runtime/popcnt32_size.asm"),
+    ),
+    ("popcnt32_opt", include_str!("../runtime/popcnt32_opt.asm")),
     ("ctz32", include_str!("../runtime/ctz32.asm")),
     ("clz32", include_str!("../runtime/clz32.asm")),
     ("bitrev32", include_str!("../runtime/bitrev32.asm")),
@@ -434,7 +438,14 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
             runtime_objects("call __gbc_srem32", "0"),
             ["div32_core", "srem32"]
         );
-        assert_eq!(runtime_objects("call __gbc_popcnt32", "0"), ["popcnt32"]);
+        for level in ["0", "1", "2", "3", "s", "z"] {
+            let expected = if matches!(level, "s" | "z") {
+                "popcnt32_size"
+            } else {
+                "popcnt32_opt"
+            };
+            assert_eq!(runtime_objects("call __gbc_popcnt32", level), [expected]);
+        }
         assert!(runtime_objects("call __gbc_shift8_unused", "0").is_empty());
         assert_eq!(
             runtime_objects("__gbc_div32_core::\nret\ncall __gbc_udiv32", "0"),
