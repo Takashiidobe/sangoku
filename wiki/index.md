@@ -1,5 +1,6 @@
 # Index
 
+- [Playing audio](concepts/audio.md)
 - [Building and running ROMs](concepts/building-roms.md)
 - [Testing](concepts/testing.md)
 - [Core and alloc support](concepts/core-alloc.md)
