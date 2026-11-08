@@ -1,8 +1,8 @@
 # sangoku
 
 Compile Rust into Game Boy and Game Boy Color ROMs. Rust `core` and representative
-`alloc` collections compile and lower for LR35902. The optimized heap example
-runs in the emulator.
+`alloc` collections compile and lower for LR35902. Sorting and heap examples
+run in the emulator.
 
 ## Standalone compiler
 
@@ -42,8 +42,9 @@ cargo run -- build examples/sort.rs build/sort.gb
 Use the [examples](examples/) as a starting point. Add `--opt-level z` to
 optimize for size. Build artifacts stay in `build/artifacts/` for debugging.
 
-Avoid methods that pull in panic or formatting code, even indirectly: unused
-failure paths can consume substantial ROM space. Check the build warnings.
+All optimization levels eliminate panic-only formatting. Failed checks still
+trap, and panic argument effects are preserved. Explicit formatting and
+Unicode tables retain their actual ROM costs. Check the build warnings.
 
 ## Tests
 
@@ -54,7 +55,8 @@ cargo nextest run --no-fail-fast
 The default profile keeps FileCheck and fast regression tests. Tests measured
 above 10 seconds, except FileCheck, belong in the extensive profile configured
 in [`.config/nextest.toml`](.config/nextest.toml). Run the full suite, including
-the core/alloc reports, coverage matrix, and broader numeric checks, with:
+the core/alloc reports, coverage matrix, panic-profile matrix, and broader
+numeric checks, with:
 
 ```bash
 cargo nextest run --profile extensive --no-fail-fast
@@ -105,6 +107,12 @@ select individual multiplication, shift and bit-operation helpers. Division and
 remainder wrappers share `div32_core.asm`, selected through their symbol
 references.
 
+The default compiler options combine immediate-abort panics with MIR level 2 and
+stripped MIR local debug information at every optimization level. This removes
+dead formatter references before code generation. `examples/sort.rs` uses
+upstream `sort_unstable` and fits at all six levels. The library cache rebuilds
+when compiler options change.
+
 SM83 stack-slot accesses now omit HL saves when physical-register liveness
 proves them unnecessary, including spills and reloads inserted by register
 allocation. Live HL values and any A scratch value remain preserved.
@@ -126,7 +134,7 @@ Unicode support is kept for correctness but costs about 47 KB at opt-level z
 ROM, so case conversion cannot run on a 32 KiB cartridge yet (`sangoku-6o2`).
 Games should use an ASCII string crate instead (`sangoku-yjb`).
 
-`cargo run -- run examples/heap.rs --alloc --opt-level z` executes `Vec` and
-`Box` allocations in WRAM and returns 52. At opt-level 0, this example still
-exceeds the 32 KiB cartridge limit. The collection survey above checks
-compilation and lowering; it does not link or execute every collection.
+`cargo run -- run examples/heap.rs --alloc` executes `Vec` and `Box`
+allocations in WRAM and returns 52, including at opt-level 0. The collection
+survey above checks compilation and lowering; it does not link or execute
+every collection.

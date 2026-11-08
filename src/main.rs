@@ -210,6 +210,9 @@ fn rustc_command(root: &Path, opt_level: &str) -> Command {
             "-Cpanic=immediate-abort",
             "-Cdebug-assertions=off",
             "-Zinline-mir=yes",
+            "-Zmir-opt-level=2",
+            // mir debug locals otherwise keep dead panic formatting arguments live.
+            "-Zmir-strip-debuginfo=all-locals",
         ])
         .arg(format!("--remap-path-prefix={}=.", root.display()))
         .arg(format!("-Copt-level={opt_level}"));
@@ -554,19 +557,30 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
             .join(format!("opt-{opt_level}")),
     );
     let backend_time = modified(backend);
-    let fresh = [
-        libraries.core_asm(),
-        libraries.builtins_asm(),
-        libraries.alloc_asm(),
-        libraries.heap_asm(),
-    ]
-    .iter()
-    .all(|path| modified(path).is_some_and(|time| Some(time) >= backend_time));
+    let options = format!(
+        "{:?}",
+        rustc_command(root, opt_level)
+            .get_args()
+            .collect::<Vec<_>>()
+    );
+    let options_file = libraries.0.join("rustc-options");
+    let options_match = fs::read_to_string(&options_file).is_ok_and(|saved| saved == options);
+    let fresh = options_match
+        && [
+            libraries.core_asm(),
+            libraries.builtins_asm(),
+            libraries.alloc_asm(),
+            libraries.heap_asm(),
+        ]
+        .iter()
+        .all(|path| modified(path).is_some_and(|time| Some(time) >= backend_time));
     if fresh {
         return Ok(libraries);
     }
     fs::create_dir_all(&libraries.0)
         .map_err(|error| Error::io(format!("could not create {}", libraries.0.display()), error))?;
+    fs::write(&options_file, "")
+        .map_err(|error| Error::io(format!("could not write {}", options_file.display()), error))?;
     let library = root.join("third_party/rust/library");
     let compile = |name: &str, source: PathBuf, extra: Vec<OsString>| {
         run_command(
@@ -601,6 +615,8 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
         root.join("runtime/heap/lib.rs"),
         libraries.externs(2),
     )?;
+    fs::write(&options_file, options)
+        .map_err(|error| Error::io(format!("could not write {}", options_file.display()), error))?;
     Ok(libraries)
 }
 

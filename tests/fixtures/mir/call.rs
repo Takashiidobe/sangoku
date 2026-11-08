@@ -43,7 +43,7 @@ pub fn caller(x: u8) -> u8 {
 // CHECK-NEXT:     let mut _0: u8;
 // CHECK-EMPTY:
 // CHECK-NEXT:     bb0: {
-// CHECK-NEXT:         _0 = callee(copy _1) -> [return: bb1, unwind unreachable];
+// CHECK-NEXT:         _0 = callee(move _1) -> [return: bb1, unwind unreachable];
 // CHECK-NEXT:     }
 // CHECK-EMPTY:
 // CHECK-NEXT:     bb1: {

@@ -75,8 +75,8 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT:     ss1 = explicit_slot 2, align = 2
 // CHECK-NEXT:     sig0 = (i16, i16) -> i8 uext system_v
 // CHECK-NEXT:     sig1 = (i16, i16) -> i8 uext system_v
-// CHECK-NEXT:     fn0 = colocated u0:4 sig0 ; Instance { def: Item(DefId(1:29975 ~ core[..]::cmp::impls::{impl#23}::eq)), args: [] }
-// CHECK-NEXT:     fn1 = colocated u0:3 sig1 ; Instance { def: Item(DefId(1:29963 ~ core[..]::cmp::impls::{impl#19}::eq)), args: [] }
+// CHECK-NEXT:     fn0 = colocated u0:3 sig0 ; Instance { def: Item(DefId(1:29975 ~ core[..]::cmp::impls::{impl#23}::eq)), args: [] }
+// CHECK-NEXT:     fn1 = colocated u0:2 sig1 ; Instance { def: Item(DefId(1:29963 ~ core[..]::cmp::impls::{impl#19}::eq)), args: [] }
 // CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i16, v1: i16):
 // CHECK-NEXT:     nop
@@ -154,162 +154,8 @@ pub fn gbc_main() -> u8 {
 // CHECK-EMPTY:
 // CHECK-NEXT: target z80 optimize_for_size=0
 // CHECK-EMPTY:
-// CHECK-NEXT: ; symbol _RNvXsf_NtCs40R3J0iFVxM_4core6optionINtB5_6OptiontENtNtB7_3cmp9PartialEq2eqCs4paCXeqFxQW_11integer_u16
-// CHECK-NEXT: function u0:2(i16, i16) -> i8 uext system_v {
-// CHECK-NEXT: ; symbol _RNvXsf_NtCs40R3J0iFVxM_4core6optionINtB5_6OptiontENtNtB7_3cmp9PartialEq2eqCs4paCXeqFxQW_11integer_u16
-// CHECK-EMPTY:
-// CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
-// CHECK-NEXT: ; ssa   _0    bool                              1b 1                var=1
-// CHECK-NEXT: ; ret   _0      -          Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) bool
-// CHECK-NEXT: ; arg   _1      = v0       Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) &'{erased} core::option::Option<u16>
-// CHECK-NEXT: ; arg   _2      = v1       Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) &'{erased} core::option::Option<u16>
-// CHECK-EMPTY:
-// CHECK-NEXT: ; kind  local ty                              size align (abi)
-// CHECK-NEXT: ; ssa   _1    &'{erased} core::option::Option<u16>    2b 2                var=2
-// CHECK-NEXT: ; ssa   _2    &'{erased} core::option::Option<u16>    2b 2                var=3
-// CHECK-NEXT: ; ssa   _3    (&'{erased} core::option::Option<u16>, &'{erased} core::option::Option<u16>)    4b 2                var=(4, 5)
-// CHECK-NEXT: ; ssa   _4    isize                             2b 2                var=6
-// CHECK-NEXT: ; ssa   _5    isize                             2b 2                var=7
-// CHECK-NEXT: ; ssa   _6    isize                             2b 2                var=8
-// CHECK-NEXT: ; ssa   _7    &'{erased} u16                    2b 2                var=9
-// CHECK-NEXT: ; ssa   _8    &'{erased} u16                    2b 2                var=10
-// CHECK-NEXT: ; ssa   _9    &'{erased} core::option::Option<u16>    2b 2                var=11
-// CHECK-NEXT: ; ssa   _10   &'{erased} core::option::Option<u16>    2b 2                var=12
-// CHECK-NEXT: ; ssa   _11   &'{erased} core::option::Option<u16>    2b 2                var=13
-// CHECK-NEXT: ; stack _12   &'{erased} core::option::Option<u16>    2b 2                storage=ss0
-// CHECK-NEXT: ; stack _13   &'{erased} core::option::Option<u16>    2b 2                storage=ss1
-// CHECK-EMPTY:
-// CHECK-NEXT:     ss0 = explicit_slot 2, align = 2
-// CHECK-NEXT:     ss1 = explicit_slot 2, align = 2
-// CHECK-NEXT:     sig0 = (i16, i16) -> i8 uext system_v
-// CHECK-NEXT:     fn0 = colocated u0:4 sig0 ; Instance { def: Item(DefId(1:29975 ~ core[..]::cmp::impls::{impl#23}::eq)), args: [] }
-// CHECK-EMPTY:
-// CHECK-NEXT: block0(v0: i16, v1: i16):
-// CHECK-NEXT:     v2 -> v0
-// CHECK-NEXT:     v15 -> v0
-// CHECK-NEXT:     v3 -> v1
-// CHECK-NEXT:     v6 -> v1
-// CHECK-NEXT:     v9 -> v1
-// CHECK-NEXT:     v21 -> v1
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; write_cvalue: Var(_1, var2): &'{erased} core::option::Option<u16> <- ByVal(v0): &'{erased} core::option::Option<u16>
-// CHECK-NEXT: ; write_cvalue: Var(_2, var3): &'{erased} core::option::Option<u16> <- ByVal(v1): &'{erased} core::option::Option<u16>
-// CHECK-NEXT:     jump block1
-// CHECK-EMPTY:
-// CHECK-NEXT: block1:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _3 = (copy _1, copy _2)
-// CHECK-NEXT: ; write_cvalue: Var(_3, var4): &'{erased} core::option::Option<u16> <- ByVal(v2): &'{erased} core::option::Option<u16>
-// CHECK-NEXT: ; write_cvalue: Var(_3, var5): &'{erased} core::option::Option<u16> <- ByVal(v3): &'{erased} core::option::Option<u16>
-// CHECK-NEXT: ; _9 = no_retag copy (_3.0: &core::option::Option<T>)
-// CHECK-NEXT: ; write_cvalue: Var(_9, var11): &'{erased} core::option::Option<u16> <- ByVal(v2): &'{erased} core::option::Option<u16>
-// CHECK-NEXT: ; _6 = discriminant((*_9))
-// CHECK-NEXT:     v4 = load.i16 notrap v2
-// CHECK-NEXT: ; write_cvalue: Var(_6, var8): isize <- ByVal(v4): isize
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _6)
-// CHECK-NEXT:     v5 = uextend.i32 v4
-// CHECK-NEXT:     br_table v5, block2, [block4, block3]
-// CHECK-EMPTY:
-// CHECK-NEXT: block2 cold:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; unreachable
-// CHECK-NEXT:     trap user1
-// CHECK-EMPTY:
-// CHECK-NEXT: block3:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _10 = no_retag copy (_3.1: &core::option::Option<T>)
-// CHECK-NEXT: ; write_cvalue: Var(_10, var12): &'{erased} core::option::Option<u16> <- ByVal(v6): &'{erased} core::option::Option<u16>
-// CHECK-NEXT: ; _4 = discriminant((*_10))
-// CHECK-NEXT:     v7 = load.i16 notrap v6
-// CHECK-NEXT: ; write_cvalue: Var(_4, var6): isize <- ByVal(v7): isize
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _4)
-// CHECK-NEXT:     v8 = uextend.i32 v7
-// CHECK-NEXT:     br_table v8, block2, [block7, block8]
-// CHECK-EMPTY:
-// CHECK-NEXT: block4:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _11 = no_retag copy (_3.1: &core::option::Option<T>)
-// CHECK-NEXT: ; write_cvalue: Var(_11, var13): &'{erased} core::option::Option<u16> <- ByVal(v9): &'{erased} core::option::Option<u16>
-// CHECK-NEXT: ; _5 = discriminant((*_11))
-// CHECK-NEXT:     v10 = load.i16 notrap v9
-// CHECK-NEXT: ; write_cvalue: Var(_5, var7): isize <- ByVal(v10): isize
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _5)
-// CHECK-NEXT:     v11 = uextend.i32 v10
-// CHECK-NEXT:     br_table v11, block2, [block5, block6]
-// CHECK-EMPTY:
-// CHECK-NEXT: block5:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _0 = const true
-// CHECK-NEXT:     v12 = iconst.i8 1
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): bool <- ByVal(v12): bool
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; goto
-// CHECK-NEXT:     return v12  ; v12 = 1
-// CHECK-EMPTY:
-// CHECK-NEXT: block6:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _0 = const false
-// CHECK-NEXT:     v13 = iconst.i8 0
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): bool <- ByVal(v13): bool
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; goto
-// CHECK-NEXT:     return v13  ; v13 = 0
-// CHECK-EMPTY:
-// CHECK-NEXT: block7:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _0 = const false
-// CHECK-NEXT:     v14 = iconst.i8 0
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): bool <- ByVal(v14): bool
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; goto
-// CHECK-NEXT:     return v14  ; v14 = 0
-// CHECK-EMPTY:
-// CHECK-NEXT: block8:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _12 = no_retag copy (_3.0: &core::option::Option<T>)
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss0), offset: Offset32(0) }, None): &'{erased} core::option::Option<u16> <- ByVal(v15): &'{erased} core::option::Option<u16>
-// CHECK-NEXT:     v16 = stack_addr.i16 ss0
-// CHECK-NEXT:     store.i16 notrap v15, v16
-// CHECK-NEXT: ; _7 = &(((*_12) as Some).0: T)
-// CHECK-NEXT:     v17 = stack_addr.i16 ss0
-// CHECK-NEXT:     v18 = load.i16 notrap v17
-// CHECK-NEXT:     v19 = iconst.i16 2
-// CHECK-NEXT:     v20 = iadd v18, v19  ; v19 = 2
-// CHECK-NEXT: ; write_cvalue: Var(_7, var9): &'{erased} u16 <- ByVal(v20): &'{erased} u16
-// CHECK-NEXT: ; _13 = no_retag copy (_3.1: &core::option::Option<T>)
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss1), offset: Offset32(0) }, None): &'{erased} core::option::Option<u16> <- ByVal(v21): &'{erased} core::option::Option<u16>
-// CHECK-NEXT:     v22 = stack_addr.i16 ss1
-// CHECK-NEXT:     store.i16 notrap v21, v22
-// CHECK-NEXT: ; _8 = &(((*_13) as Some).0: T)
-// CHECK-NEXT:     v23 = stack_addr.i16 ss1
-// CHECK-NEXT:     v24 = load.i16 notrap v23
-// CHECK-NEXT:     v25 = iconst.i16 2
-// CHECK-NEXT:     v26 = iadd v24, v25  ; v25 = 2
-// CHECK-NEXT: ; write_cvalue: Var(_8, var10): &'{erased} u16 <- ByVal(v26): &'{erased} u16
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; _0 = <T as core::cmp::PartialEq>::eq(copy _7, copy _8)
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: &u16, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }, ArgAbi { layout: TyAndLayout { ty: &u16, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }], ret: ArgAbi { layout: TyAndLayout { ty: bool, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is 0..=1), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: u8, valid_range: 0..=1 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 281483566645249 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
-// CHECK-NEXT:     v27 = call fn0(v20, v26)
-// CHECK-NEXT:     v28 -> v27
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): bool <- ByVal(v27): bool
-// CHECK-NEXT:     jump block9
-// CHECK-EMPTY:
-// CHECK-NEXT: block9:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; return
-// CHECK-NEXT:     return v28
-// CHECK-NEXT: }
-// CHECK-EMPTY:
-// CHECK-NEXT: target z80 optimize_for_size=0
-// CHECK-EMPTY:
 // CHECK-NEXT: ; symbol _RNvXsh_NtNtCs40R3J0iFVxM_4core3cmp5implsbNtB7_9PartialEq2eqCs4paCXeqFxQW_11integer_u16
-// CHECK-NEXT: function u0:3(i16, i16) -> i8 uext system_v {
+// CHECK-NEXT: function u0:2(i16, i16) -> i8 uext system_v {
 // CHECK-NEXT: ; symbol _RNvXsh_NtNtCs40R3J0iFVxM_4core3cmp5implsbNtB7_9PartialEq2eqCs4paCXeqFxQW_11integer_u16
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
@@ -351,7 +197,7 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: target z80 optimize_for_size=0
 // CHECK-EMPTY:
 // CHECK-NEXT: ; symbol _RNvXsl_NtNtCs40R3J0iFVxM_4core3cmp5implstNtB7_9PartialEq2eqCs4paCXeqFxQW_11integer_u16
-// CHECK-NEXT: function u0:4(i16, i16) -> i8 uext system_v {
+// CHECK-NEXT: function u0:3(i16, i16) -> i8 uext system_v {
 // CHECK-NEXT: ; symbol _RNvXsl_NtNtCs40R3J0iFVxM_4core3cmp5implstNtB7_9PartialEq2eqCs4paCXeqFxQW_11integer_u16
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
@@ -393,7 +239,7 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: target z80 optimize_for_size=0
 // CHECK-EMPTY:
 // CHECK-NEXT: ; symbol gbc_main
-// CHECK-NEXT: function u0:5() -> i8 system_v {
+// CHECK-NEXT: function u0:4() -> i8 system_v {
 // CHECK-NEXT: ; symbol gbc_main
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
@@ -405,7 +251,7 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: ; ssa   _2    u8                                1b 1                var=3
 // CHECK-EMPTY:
 // CHECK-NEXT:     sig0 = (i16, i16) -> i8 system_v
-// CHECK-NEXT:     fn0 = colocated u0:6 sig0 ; Instance { def: Item(DefId(0:3 ~ integer_u16[..]::integer_methods)), args: [] }
+// CHECK-NEXT:     fn0 = colocated u0:5 sig0 ; Instance { def: Item(DefId(0:3 ~ integer_u16[..]::integer_methods)), args: [] }
 // CHECK-EMPTY:
 // CHECK-NEXT: block0:
 // CHECK-NEXT:     nop
@@ -414,7 +260,7 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: block1:
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _2 = integer_methods(const core::num::<impl u16>::MAX, const 2_u16)
+// CHECK-NEXT: ; _2 = integer_methods(const u16::MAX, const 2_u16)
 // CHECK-NEXT:     v0 = iconst.i16 -1
 // CHECK-NEXT:     v1 = iconst.i16 2
 // CHECK-NEXT:     nop
@@ -440,7 +286,7 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: target z80 optimize_for_size=0
 // CHECK-EMPTY:
 // CHECK-NEXT: ; symbol integer_methods
-// CHECK-NEXT: function u0:6(i16, i16) -> i8 system_v {
+// CHECK-NEXT: function u0:5(i16, i16) -> i8 system_v {
 // CHECK-NEXT: ; symbol integer_methods
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  loc.idx   param    pass mode                            ty
@@ -454,95 +300,71 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: ; ssa   _2    u16                               2b 2                var=3
 // CHECK-NEXT: ; stack _3    (u16, bool)                       4b 2                storage=ss0
 // CHECK-NEXT: ; stack _4    (u16, bool)                       4b 2                storage=ss1
-// CHECK-NEXT: ; ssa   _5    u16                               2b 2                var=4
-// CHECK-NEXT: ; stack _6    (u16, bool)                       4b 2                storage=ss2
-// CHECK-NEXT: ; ssa   _7    u16                               2b 2                var=5
+// CHECK-NEXT: ; stack _5    (u16, bool)                       4b 2                storage=ss2
+// CHECK-NEXT: ; ssa   _6    u8                                1b 1                var=4
+// CHECK-NEXT: ; ssa   _7    u8                                1b 1                var=5
 // CHECK-NEXT: ; ssa   _8    u8                                1b 1                var=6
 // CHECK-NEXT: ; ssa   _9    u8                                1b 1                var=7
 // CHECK-NEXT: ; ssa   _10   u8                                1b 1                var=8
 // CHECK-NEXT: ; ssa   _11   u8                                1b 1                var=9
 // CHECK-NEXT: ; ssa   _12   u8                                1b 1                var=10
-// CHECK-NEXT: ; ssa   _13   u8                                1b 1                var=11
-// CHECK-NEXT: ; ssa   _14   u8                                1b 1                var=12
-// CHECK-NEXT: ; ssa   _15   bool                              1b 1                var=13
-// CHECK-NEXT: ; ssa   _16   &'{erased} core::option::Option<u16>    2b 2                var=14
-// CHECK-NEXT: ; stack _17   core::option::Option<u16>         4b 2                storage=ss3
-// CHECK-NEXT: ; ssa   _18   u8                                1b 1                var=15
-// CHECK-NEXT: ; ssa   _19   u8                                1b 1                var=16
-// CHECK-NEXT: ; ssa   _20   bool                              1b 1                var=17
-// CHECK-NEXT: ; ssa   _21   &'{erased} core::option::Option<u16>    2b 2                var=18
-// CHECK-NEXT: ; stack _22   core::option::Option<u16>         4b 2                storage=ss4
-// CHECK-NEXT: ; ssa   _23   &'{erased} core::option::Option<u16>    2b 2                var=19
-// CHECK-NEXT: ; ssa   _24   u8                                1b 1                var=20
-// CHECK-NEXT: ; ssa   _25   u8                                1b 1                var=21
-// CHECK-NEXT: ; ssa   _26   bool                              1b 1                var=22
-// CHECK-NEXT: ; ssa   _27   &'{erased} core::option::Option<u16>    2b 2                var=23
-// CHECK-NEXT: ; stack _28   core::option::Option<u16>         4b 2                storage=ss5
-// CHECK-NEXT: ; ssa   _29   u8                                1b 1                var=24
-// CHECK-NEXT: ; ssa   _30   u8                                1b 1                var=25
-// CHECK-NEXT: ; ssa   _31   bool                              1b 1                var=26
-// CHECK-NEXT: ; ssa   _32   u16                               2b 2                var=27
-// CHECK-NEXT: ; ssa   _33   u16                               2b 2                var=28
-// CHECK-NEXT: ; ssa   _34   u8                                1b 1                var=29
+// CHECK-NEXT: ; ssa   _13   bool                              1b 1                var=11
+// CHECK-NEXT: ; stack _14   core::option::Option<u16>         4b 2                storage=ss3
+// CHECK-NEXT: ; ssa   _15   u8                                1b 1                var=12
+// CHECK-NEXT: ; ssa   _16   u8                                1b 1                var=13
+// CHECK-NEXT: ; ssa   _17   bool                              1b 1                var=14
+// CHECK-NEXT: ; stack _18   core::option::Option<u16>         4b 2                storage=ss4
+// CHECK-NEXT: ; ssa   _19   u8                                1b 1                var=15
+// CHECK-NEXT: ; ssa   _20   u8                                1b 1                var=16
+// CHECK-NEXT: ; ssa   _21   bool                              1b 1                var=17
+// CHECK-NEXT: ; stack _22   core::option::Option<u16>         4b 2                storage=ss5
+// CHECK-NEXT: ; ssa   _23   u8                                1b 1                var=18
+// CHECK-NEXT: ; ssa   _24   u8                                1b 1                var=19
+// CHECK-NEXT: ; ssa   _25   bool                              1b 1                var=20
+// CHECK-NEXT: ; ssa   _26   u16                               2b 2                var=21
+// CHECK-NEXT: ; ssa   _27   u8                                1b 1                var=22
+// CHECK-NEXT: ; ssa   _28   u8                                1b 1                var=23
+// CHECK-NEXT: ; ssa   _29   bool                              1b 1                var=24
+// CHECK-NEXT: ; ssa   _30   u16                               2b 2                var=25
+// CHECK-NEXT: ; ssa   _31   u8                                1b 1                var=26
+// CHECK-NEXT: ; ssa   _32   u8                                1b 1                var=27
+// CHECK-NEXT: ; ssa   _33   bool                              1b 1                var=28
+// CHECK-NEXT: ; ssa   _34   u16                               2b 2                var=29
 // CHECK-NEXT: ; ssa   _35   u8                                1b 1                var=30
-// CHECK-NEXT: ; ssa   _36   bool                              1b 1                var=31
-// CHECK-NEXT: ; ssa   _37   u16                               2b 2                var=32
-// CHECK-NEXT: ; ssa   _38   u16                               2b 2                var=33
-// CHECK-NEXT: ; ssa   _39   u8                                1b 1                var=34
-// CHECK-NEXT: ; ssa   _40   u8                                1b 1                var=35
-// CHECK-NEXT: ; ssa   _41   bool                              1b 1                var=36
-// CHECK-NEXT: ; ssa   _42   u16                               2b 2                var=37
-// CHECK-NEXT: ; ssa   _43   u16                               2b 2                var=38
-// CHECK-NEXT: ; ssa   _44   u8                                1b 1                var=39
-// CHECK-NEXT: ; ssa   _45   u8                                1b 1                var=40
-// CHECK-NEXT: ; ssa   _46   bool                              1b 1                var=41
-// CHECK-NEXT: ; ssa   _47   bool                              1b 1                var=42
-// CHECK-NEXT: ; ssa   _48   &'{erased} (u16, bool)            2b 2                var=43
-// CHECK-NEXT: ; stack _49   (u16, bool)                       4b 2                storage=ss6
-// CHECK-NEXT: ; ssa   _50   &'{erased} (u16, bool)            2b 2                var=44
-// CHECK-NEXT: ; ssa   _51   bool                              1b 1                var=45
-// CHECK-NEXT: ; ssa   _52   &'{erased} (u16, bool)            2b 2                var=46
-// CHECK-NEXT: ; stack _53   (u16, bool)                       4b 2                storage=ss7
-// CHECK-NEXT: ; ssa   _54   &'{erased} (u16, bool)            2b 2                var=47
-// CHECK-NEXT: ; ssa   _55   &'{erased} (u16, bool)            2b 2                var=48
-// CHECK-NEXT: ; stack _56   (u16, bool)                       4b 2                storage=ss8
-// CHECK-NEXT: ; ssa   _57   &'{erased} (u16, bool)            2b 2                var=49
-// CHECK-NEXT: ; ssa   _58   u8                                1b 1                var=50
-// CHECK-NEXT: ; ssa   _59   u8                                1b 1                var=51
-// CHECK-NEXT: ; ssa   _60   bool                              1b 1                var=52
+// CHECK-NEXT: ; ssa   _36   u8                                1b 1                var=31
+// CHECK-NEXT: ; ssa   _37   bool                              1b 1                var=32
+// CHECK-NEXT: ; ssa   _38   bool                              1b 1                var=33
+// CHECK-NEXT: ; ssa   _39   &'{erased} (u16, bool)            2b 2                var=34
+// CHECK-NEXT: ; stack _40   (u16, bool)                       4b 2                storage=ss6
+// CHECK-NEXT: ; ssa   _41   &'{erased} (u16, bool)            2b 2                var=35
+// CHECK-NEXT: ; ssa   _42   bool                              1b 1                var=36
+// CHECK-NEXT: ; ssa   _43   &'{erased} (u16, bool)            2b 2                var=37
+// CHECK-NEXT: ; stack _44   (u16, bool)                       4b 2                storage=ss7
+// CHECK-NEXT: ; ssa   _45   &'{erased} (u16, bool)            2b 2                var=38
+// CHECK-NEXT: ; ssa   _46   &'{erased} (u16, bool)            2b 2                var=39
+// CHECK-NEXT: ; stack _47   (u16, bool)                       4b 2                storage=ss8
+// CHECK-NEXT: ; ssa   _48   &'{erased} (u16, bool)            2b 2                var=40
+// CHECK-NEXT: ; ssa   _49   u8                                1b 1                var=41
+// CHECK-NEXT: ; ssa   _50   u8                                1b 1                var=42
+// CHECK-NEXT: ; ssa   _51   bool                              1b 1                var=43
+// CHECK-NEXT: ; ssa   _52   u32                               4b 2                var=44
+// CHECK-NEXT: ; ssa   _53   u32                               4b 2                var=45
+// CHECK-NEXT: ; ssa   _54   u32                               4b 2                var=46
+// CHECK-NEXT: ; ssa   _55   bool                              1b 1                var=47
+// CHECK-NEXT: ; ssa   _56   (u16, bool)                       4b 2                var=(48, 49)
+// CHECK-NEXT: ; ssa   _57   u16                               2b 2                var=50
+// CHECK-NEXT: ; zst   _58   ()                                0b 1                align=1,offset=
+// CHECK-NEXT: ; ssa   _59   bool                              1b 1                var=51
+// CHECK-NEXT: ; ssa   _60   isize                             2b 2                var=52
 // CHECK-NEXT: ; ssa   _61   bool                              1b 1                var=53
-// CHECK-NEXT: ; ssa   _62   u32                               4b 2                var=54
-// CHECK-NEXT: ; ssa   _63   bool                              1b 1                var=55
-// CHECK-NEXT: ; ssa   _64   u32                               4b 2                var=56
-// CHECK-NEXT: ; ssa   _65   u32                               4b 2                var=57
-// CHECK-NEXT: ; ssa   _66   bool                              1b 1                var=58
-// CHECK-NEXT: ; ssa   _67   bool                              1b 1                var=59
-// CHECK-NEXT: ; ssa   _68   (u16, bool)                       4b 2                var=(60, 61)
-// CHECK-NEXT: ; ssa   _69   u16                               2b 2                var=62
-// CHECK-NEXT: ; zst   _70   ()                                0b 1                align=1,offset=
-// CHECK-NEXT: ; ssa   _71   bool                              1b 1                var=63
-// CHECK-NEXT: ; ssa   _72   isize                             2b 2                var=64
-// CHECK-NEXT: ; ssa   _73   bool                              1b 1                var=65
-// CHECK-NEXT: ; ssa   _74   u16                               2b 2                var=66
-// CHECK-NEXT: ; ssa   _75   u16                               2b 2                var=67
-// CHECK-NEXT: ; ssa   _76   bool                              1b 1                var=68
-// CHECK-NEXT: ; ssa   _77   (u16, bool)                       4b 2                var=(69, 70)
-// CHECK-NEXT: ; ssa   _78   bool                              1b 1                var=71
-// CHECK-NEXT: ; ssa   _79   u16                               2b 2                var=72
-// CHECK-NEXT: ; ssa   _80   bool                              1b 1                var=73
-// CHECK-NEXT: ; ssa   _81   (u16, bool)                       4b 2                var=(74, 75)
-// CHECK-NEXT: ; zst   _82   ()                                0b 1                align=1,offset=
-// CHECK-NEXT: ; ssa   _83   bool                              1b 1                var=76
-// CHECK-NEXT: ; ssa   _84   isize                             2b 2                var=77
-// CHECK-NEXT: ; ssa   _85   u16                               2b 2                var=78
-// CHECK-NEXT: ; ssa   _86   bool                              1b 1                var=79
-// CHECK-NEXT: ; ssa   _87   (u16, bool)                       4b 2                var=(80, 81)
-// CHECK-NEXT: ; ssa   _88   u16                               2b 2                var=82
-// CHECK-NEXT: ; ssa   _89   bool                              1b 1                var=83
-// CHECK-NEXT: ; ssa   _90   (u16, bool)                       4b 2                var=(84, 85)
-// CHECK-NEXT: ; ssa   _91   u16                               2b 2                var=86
-// CHECK-NEXT: ; ssa   _92   bool                              1b 1                var=87
-// CHECK-NEXT: ; ssa   _93   (u16, bool)                       4b 2                var=(88, 89)
+// CHECK-NEXT: ; ssa   _62   u16                               2b 2                var=54
+// CHECK-NEXT: ; ssa   _63   u16                               2b 2                var=55
+// CHECK-NEXT: ; ssa   _64   u16                               2b 2                var=56
+// CHECK-NEXT: ; ssa   _65   bool                              1b 1                var=57
+// CHECK-NEXT: ; ssa   _66   (u16, bool)                       4b 2                var=(58, 59)
+// CHECK-NEXT: ; zst   _67   ()                                0b 1                align=1,offset=
+// CHECK-NEXT: ; ssa   _68   bool                              1b 1                var=60
+// CHECK-NEXT: ; ssa   _69   isize                             2b 2                var=61
 // CHECK-EMPTY:
 // CHECK-NEXT:     ss0 = explicit_slot 4, align = 2
 // CHECK-NEXT:     ss1 = explicit_slot 4, align = 2
@@ -553,23 +375,25 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT:     ss6 = explicit_slot 4, align = 2
 // CHECK-NEXT:     ss7 = explicit_slot 4, align = 2
 // CHECK-NEXT:     ss8 = explicit_slot 4, align = 2
-// CHECK-NEXT:     gv0 = symbol colocated userextname1 ; alloc3
+// CHECK-NEXT:     gv0 = symbol colocated userextname0 ; alloc7
+// CHECK-NEXT:     gv1 = symbol colocated userextname1 ; alloc8
+// CHECK-NEXT:     gv2 = symbol colocated userextname2 ; alloc9
+// CHECK-NEXT:     gv3 = symbol colocated userextname4 ; alloc4
+// CHECK-NEXT:     gv4 = symbol colocated userextname5 ; alloc6
 // CHECK-NEXT:     sig0 = (i16, i16) -> i8 uext system_v
 // CHECK-NEXT:     sig1 = (i16, i16) -> i8 uext system_v
 // CHECK-NEXT:     sig2 = (i16, i16) -> i8 uext system_v
-// CHECK-NEXT:     sig3 = (i16, i16) -> i8 uext system_v
 // CHECK-NEXT:     fn0 = colocated u0:1 sig0 ; Instance { def: Item(DefId(1:46739 ~ core[..]::tuple::{impl#10}::eq)), args: [u16, bool] }
 // CHECK-NEXT:     fn1 = colocated u0:1 sig1 ; Instance { def: Item(DefId(1:46739 ~ core[..]::tuple::{impl#10}::eq)), args: [u16, bool] }
-// CHECK-NEXT:     fn2 = colocated u0:2 sig2 ; Instance { def: Item(DefId(1:11950 ~ core[..]::option::{impl#17}::eq)), args: [u16] }
-// CHECK-NEXT:     fn3 = colocated u0:1 sig3 ; Instance { def: Item(DefId(1:46739 ~ core[..]::tuple::{impl#10}::eq)), args: [u16, bool] }
+// CHECK-NEXT:     fn2 = colocated u0:1 sig2 ; Instance { def: Item(DefId(1:46739 ~ core[..]::tuple::{impl#10}::eq)), args: [u16, bool] }
 // CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i16, v1: i16):
-// CHECK-NEXT:     v18 -> v0
-// CHECK-NEXT:     v186 -> v0
-// CHECK-NEXT:     v187 -> v0
-// CHECK-NEXT:     v19 -> v1
-// CHECK-NEXT:     v188 -> v1
-// CHECK-NEXT:     v189 -> v1
+// CHECK-NEXT:     v17 -> v0
+// CHECK-NEXT:     v74 -> v0
+// CHECK-NEXT:     v165 -> v0
+// CHECK-NEXT:     v18 -> v1
+// CHECK-NEXT:     v75 -> v1
+// CHECK-NEXT:     v166 -> v1
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ; write_cvalue: Var(_1, var2): u16 <- ByVal(v0): u16
 // CHECK-NEXT: ; write_cvalue: Var(_2, var3): u16 <- ByVal(v1): u16
@@ -577,653 +401,481 @@ pub fn gbc_main() -> u8 {
 // CHECK-EMPTY:
 // CHECK-NEXT: block1:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _3 = (const 1_u16, const true)
-// CHECK-NEXT:     v2 = iconst.i16 1
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss0), offset: Offset32(0) }, None): u16 <- ByVal(v2): u16
-// CHECK-NEXT:     v3 = stack_addr.i16 ss0
-// CHECK-NEXT:     store notrap v2, v3  ; v2 = 1
-// CHECK-NEXT:     v4 = iconst.i8 1
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss0), offset: Offset32(2) }, None): bool <- ByVal(v4): bool
-// CHECK-NEXT:     v5 = stack_addr.i16 ss0+2
-// CHECK-NEXT:     store notrap v4, v5  ; v4 = 1
-// CHECK-NEXT: ; _5 = Sub(const core::num::<impl u16>::MAX, const 2_u16)
-// CHECK-NEXT:     v6 = iconst.i16 -1
-// CHECK-NEXT:     v7 = iconst.i16 2
-// CHECK-NEXT:     v8 = isub v6, v7  ; v6 = -1, v7 = 2
-// CHECK-NEXT: ; write_cvalue: Var(_5, var4): u16 <- ByVal(v8): u16
-// CHECK-NEXT: ; _4 = (move _5, const false)
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss1), offset: Offset32(0) }, None): u16 <- ByVal(v8): u16
-// CHECK-NEXT:     v9 = stack_addr.i16 ss1
-// CHECK-NEXT:     store notrap v8, v9
-// CHECK-NEXT:     v10 = iconst.i8 0
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss1), offset: Offset32(2) }, None): bool <- ByVal(v10): bool
+// CHECK-NEXT: ; _3 = const (1_u16, true)
+// CHECK-NEXT:     v2 = symbol_value.i16 gv0
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss0), offset: Offset32(0) }, None): (u16, bool) <- ByRef(Pointer { base: Addr(v2), offset: Offset32(0) }, None): (u16, bool)
+// CHECK-NEXT:     v3 = load.i16 notrap v2
+// CHECK-NEXT:     v4 = load.i8 notrap v2+2
+// CHECK-NEXT:     v5 = stack_addr.i16 ss0
+// CHECK-NEXT:     store notrap v3, v5
+// CHECK-NEXT:     v6 = stack_addr.i16 ss0+2
+// CHECK-NEXT:     store notrap v4, v6
+// CHECK-NEXT: ; _4 = const (65533_u16, false)
+// CHECK-NEXT:     v7 = symbol_value.i16 gv1
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss1), offset: Offset32(0) }, None): (u16, bool) <- ByRef(Pointer { base: Addr(v7), offset: Offset32(0) }, None): (u16, bool)
+// CHECK-NEXT:     v8 = load.i16 notrap v7
+// CHECK-NEXT:     v9 = load.i8 notrap v7+2
+// CHECK-NEXT:     v10 = stack_addr.i16 ss1
+// CHECK-NEXT:     store notrap v8, v10
 // CHECK-NEXT:     v11 = stack_addr.i16 ss1+2
-// CHECK-NEXT:     store notrap v10, v11  ; v10 = 0
-// CHECK-NEXT: ; _7 = Sub(const core::num::<impl u16>::MAX, const 1_u16)
-// CHECK-NEXT:     v12 = iconst.i16 -1
-// CHECK-NEXT:     v13 = iconst.i16 1
-// CHECK-NEXT:     v14 = isub v12, v13  ; v12 = -1, v13 = 1
-// CHECK-NEXT: ; write_cvalue: Var(_7, var5): u16 <- ByVal(v14): u16
-// CHECK-NEXT: ; _6 = (move _7, const true)
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss2), offset: Offset32(0) }, None): u16 <- ByVal(v14): u16
+// CHECK-NEXT:     store notrap v9, v11
+// CHECK-NEXT: ; _5 = const (65534_u16, true)
+// CHECK-NEXT:     v12 = symbol_value.i16 gv2
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss2), offset: Offset32(0) }, None): (u16, bool) <- ByRef(Pointer { base: Addr(v12), offset: Offset32(0) }, None): (u16, bool)
+// CHECK-NEXT:     v13 = load.i16 notrap v12
+// CHECK-NEXT:     v14 = load.i8 notrap v12+2
 // CHECK-NEXT:     v15 = stack_addr.i16 ss2
-// CHECK-NEXT:     store notrap v14, v15
-// CHECK-NEXT:     v16 = iconst.i8 1
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss2), offset: Offset32(2) }, None): bool <- ByVal(v16): bool
-// CHECK-NEXT:     v17 = stack_addr.i16 ss2+2
-// CHECK-NEXT:     store notrap v16, v17  ; v16 = 1
-// CHECK-NEXT: ; _68 = AddWithOverflow(copy _1, copy _2)
-// CHECK-NEXT:     v20 = iadd.i16 v18, v19
-// CHECK-NEXT:     v21 = icmp ult v20, v18
-// CHECK-NEXT: ; write_cvalue: VarPair(_68, var60, var61): (u16, bool) <- ByValPair(v20, v21): (u16, bool)
-// CHECK-NEXT: ; _67 = copy (_68.1: bool)
-// CHECK-NEXT: ; write_cvalue: Var(_67, var59): bool <- ByVal(v21): bool
+// CHECK-NEXT:     store notrap v13, v15
+// CHECK-NEXT:     v16 = stack_addr.i16 ss2+2
+// CHECK-NEXT:     store notrap v14, v16
+// CHECK-NEXT: ; _56 = AddWithOverflow(copy _1, copy _2)
+// CHECK-NEXT:     v19 = iadd.i16 v17, v18
+// CHECK-NEXT:     v173 -> v19
+// CHECK-NEXT:     v174 -> v19
+// CHECK-NEXT:     v181 -> v19
+// CHECK-NEXT:     v182 -> v19
+// CHECK-NEXT:     v20 = icmp ult v19, v17
+// CHECK-NEXT:     v175 -> v20
+// CHECK-NEXT:     v176 -> v20
+// CHECK-NEXT:     v183 -> v20
+// CHECK-NEXT:     v184 -> v20
+// CHECK-NEXT: ; write_cvalue: VarPair(_56, var48, var49): (u16, bool) <- ByValPair(v19, v20): (u16, bool)
+// CHECK-NEXT: ; _55 = copy (_56.1: bool)
+// CHECK-NEXT: ; write_cvalue: Var(_55, var47): bool <- ByVal(v20): bool
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(copy _67)
-// CHECK-NEXT:     brif v21, block17, block19
+// CHECK-NEXT: ; switchInt(copy _55)
+// CHECK-NEXT:     brif v20, block13, block15
 // CHECK-EMPTY:
 // CHECK-NEXT: block2:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _19 = move _20 as u8 (IntToInt)
-// CHECK-NEXT: ; write_cvalue: Var(_19, var16): u8 <- ByVal(v22): u8
-// CHECK-NEXT: ; _18 = Shl(move _19, const 1_i32)
-// CHECK-NEXT:     v23 = iconst.i32 1
-// CHECK-NEXT:     v24 = ishl.i8 v22, v23  ; v23 = 1
-// CHECK-NEXT: ; write_cvalue: Var(_18, var15): u8 <- ByVal(v24): u8
-// CHECK-NEXT: ; _13 = BitOr(move _14, move _18)
-// CHECK-NEXT:     v26 = bor.i8 v25, v24
-// CHECK-NEXT:     v203 -> v26
-// CHECK-NEXT:     v204 -> v26
-// CHECK-NEXT:     v209 -> v26
-// CHECK-NEXT:     v210 -> v26
-// CHECK-NEXT: ; write_cvalue: Var(_13, var11): u8 <- ByVal(v26): u8
-// CHECK-NEXT: ; _81 = MulWithOverflow(copy _1, copy _2)
-// CHECK-NEXT:     v29 = uextend.i32 v27
-// CHECK-NEXT:     v30 = uextend.i32 v28
-// CHECK-NEXT:     v31 = imul v29, v30
-// CHECK-NEXT:     v32 = iconst.i32 0xffff
-// CHECK-NEXT:     v33 = icmp ugt v31, v32  ; v32 = 0xffff
-// CHECK-NEXT:     v34 = ireduce.i16 v31
-// CHECK-NEXT:     v201 -> v34
-// CHECK-NEXT:     v202 -> v34
-// CHECK-NEXT: ; write_cvalue: VarPair(_81, var74, var75): (u16, bool) <- ByValPair(v34, v33): (u16, bool)
-// CHECK-NEXT: ; _79 = copy (_81.0: u16)
-// CHECK-NEXT: ; write_cvalue: Var(_79, var72): u16 <- ByVal(v34): u16
-// CHECK-NEXT: ; _80 = copy (_81.1: bool)
-// CHECK-NEXT: ; write_cvalue: Var(_80, var73): bool <- ByVal(v33): bool
-// CHECK-NEXT: ; _77 = (copy _79, copy _80)
-// CHECK-NEXT: ; write_cvalue: Var(_77, var69): u16 <- ByVal(v34): u16
-// CHECK-NEXT: ; write_cvalue: Var(_77, var70): bool <- ByVal(v33): bool
-// CHECK-NEXT: ; _75 = copy (_77.0: u16)
-// CHECK-NEXT: ; write_cvalue: Var(_75, var67): u16 <- ByVal(v34): u16
-// CHECK-NEXT: ; _76 = copy (_77.1: bool)
-// CHECK-NEXT: ; write_cvalue: Var(_76, var68): bool <- ByVal(v33): bool
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(copy _76)
-// CHECK-NEXT:     brif v33, block31, block33
+// CHECK-NEXT: ; switchInt(move _38)
+// CHECK-NEXT:     brif.i8 v21, block3, block6
 // CHECK-EMPTY:
 // CHECK-NEXT: block3:
 // CHECK-NEXT:     nop
+// CHECK-NEXT: ; _44 = SubWithOverflow(copy _1, copy _2)
+// CHECK-NEXT:     v24 = isub.i16 v22, v23
+// CHECK-NEXT:     v25 = icmp ugt v24, v22
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss7), offset: Offset32(0) }, None): (u16, bool) <- ByValPair(v24, v25): (u16, bool)
+// CHECK-NEXT:     v26 = stack_addr.i16 ss7
+// CHECK-NEXT:     store notrap v24, v26
+// CHECK-NEXT:     v27 = stack_addr.i16 ss7+2
+// CHECK-NEXT:     store notrap v25, v27
+// CHECK-NEXT: ; _43 = &_44
+// CHECK-NEXT:     v28 = stack_addr.i16 ss7
+// CHECK-NEXT: ; write_cvalue: Var(_43, var37): &'{erased} (u16, bool) <- ByVal(v28): &'{erased} (u16, bool)
+// CHECK-NEXT: ; _45 = &_4
+// CHECK-NEXT:     v29 = stack_addr.i16 ss1
+// CHECK-NEXT: ; write_cvalue: Var(_45, var38): &'{erased} (u16, bool) <- ByVal(v29): &'{erased} (u16, bool)
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _47)
-// CHECK-NEXT:     brif.i8 v35, block4, block7
+// CHECK-NEXT: ; _42 = <(u16, bool) as core::cmp::PartialEq>::eq(move _43, move _45)
+// CHECK-NEXT:     nop
+// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: &(u16, bool), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }, ArgAbi { layout: TyAndLayout { ty: &(u16, bool), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }], ret: ArgAbi { layout: TyAndLayout { ty: bool, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is 0..=1), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: u8, valid_range: 0..=1 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 281483566645249 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
+// CHECK-NEXT:     v30 = call fn0(v28, v29)
+// CHECK-NEXT:     v31 -> v30
+// CHECK-NEXT: ; write_cvalue: Var(_42, var36): bool <- ByVal(v30): bool
+// CHECK-NEXT:     jump block4
 // CHECK-EMPTY:
 // CHECK-NEXT: block4:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _90 = SubWithOverflow(copy _1, copy _2)
-// CHECK-NEXT:     v38 = isub.i16 v36, v37
-// CHECK-NEXT:     v39 = icmp ugt v38, v36
-// CHECK-NEXT: ; write_cvalue: VarPair(_90, var84, var85): (u16, bool) <- ByValPair(v38, v39): (u16, bool)
-// CHECK-NEXT: ; _88 = copy (_90.0: u16)
-// CHECK-NEXT: ; write_cvalue: Var(_88, var82): u16 <- ByVal(v38): u16
-// CHECK-NEXT: ; _89 = copy (_90.1: bool)
-// CHECK-NEXT: ; write_cvalue: Var(_89, var83): bool <- ByVal(v39): bool
-// CHECK-NEXT: ; _53 = (copy _88, copy _89)
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss7), offset: Offset32(0) }, None): u16 <- ByVal(v38): u16
-// CHECK-NEXT:     v40 = stack_addr.i16 ss7
-// CHECK-NEXT:     store notrap v38, v40
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss7), offset: Offset32(2) }, None): bool <- ByVal(v39): bool
-// CHECK-NEXT:     v41 = stack_addr.i16 ss7+2
-// CHECK-NEXT:     store notrap v39, v41
-// CHECK-NEXT: ; _52 = &_53
-// CHECK-NEXT:     v42 = stack_addr.i16 ss7
-// CHECK-NEXT: ; write_cvalue: Var(_52, var46): &'{erased} (u16, bool) <- ByVal(v42): &'{erased} (u16, bool)
-// CHECK-NEXT: ; _54 = &_4
-// CHECK-NEXT:     v43 = stack_addr.i16 ss1
-// CHECK-NEXT: ; write_cvalue: Var(_54, var47): &'{erased} (u16, bool) <- ByVal(v43): &'{erased} (u16, bool)
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _51 = <(u16, bool) as core::cmp::PartialEq>::eq(move _52, move _54)
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: &(u16, bool), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }, ArgAbi { layout: TyAndLayout { ty: &(u16, bool), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }], ret: ArgAbi { layout: TyAndLayout { ty: bool, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is 0..=1), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: u8, valid_range: 0..=1 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 281483566645249 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
-// CHECK-NEXT:     v44 = call fn0(v42, v43)
-// CHECK-NEXT:     v45 -> v44
-// CHECK-NEXT: ; write_cvalue: Var(_51, var45): bool <- ByVal(v44): bool
-// CHECK-NEXT:     jump block5
+// CHECK-NEXT: ; switchInt(move _42)
+// CHECK-NEXT:     brif.i8 v31, block5, block6
 // CHECK-EMPTY:
 // CHECK-NEXT: block5:
 // CHECK-NEXT:     nop
+// CHECK-NEXT: ; _47 = copy _66
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss8), offset: Offset32(0) }, None): (u16, bool) <- ByValPair(v32, v33): (u16, bool)
+// CHECK-NEXT:     v34 = stack_addr.i16 ss8
+// CHECK-NEXT:     store.i16 notrap v32, v34
+// CHECK-NEXT:     v35 = stack_addr.i16 ss8+2
+// CHECK-NEXT:     store.i8 notrap v33, v35
+// CHECK-NEXT: ; _46 = &_47
+// CHECK-NEXT:     v36 = stack_addr.i16 ss8
+// CHECK-NEXT: ; write_cvalue: Var(_46, var39): &'{erased} (u16, bool) <- ByVal(v36): &'{erased} (u16, bool)
+// CHECK-NEXT: ; _48 = &_5
+// CHECK-NEXT:     v37 = stack_addr.i16 ss2
+// CHECK-NEXT: ; write_cvalue: Var(_48, var40): &'{erased} (u16, bool) <- ByVal(v37): &'{erased} (u16, bool)
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _51)
-// CHECK-NEXT:     brif.i8 v45, block6, block7
+// CHECK-NEXT: ; _37 = <(u16, bool) as core::cmp::PartialEq>::eq(move _46, move _48)
+// CHECK-NEXT:     nop
+// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: &(u16, bool), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }, ArgAbi { layout: TyAndLayout { ty: &(u16, bool), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }], ret: ArgAbi { layout: TyAndLayout { ty: bool, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is 0..=1), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: u8, valid_range: 0..=1 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 281483566645249 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
+// CHECK-NEXT:     v38 = call fn1(v36, v37)
+// CHECK-NEXT: ; write_cvalue: Var(_37, var32): bool <- ByVal(v38): bool
+// CHECK-NEXT:     jump block7(v38)
 // CHECK-EMPTY:
 // CHECK-NEXT: block6:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _93 = MulWithOverflow(copy _1, copy _2)
-// CHECK-NEXT:     v48 = uextend.i32 v46
-// CHECK-NEXT:     v49 = uextend.i32 v47
-// CHECK-NEXT:     v50 = imul v48, v49
-// CHECK-NEXT:     v51 = iconst.i32 0xffff
-// CHECK-NEXT:     v52 = icmp ugt v50, v51  ; v51 = 0xffff
-// CHECK-NEXT:     v53 = ireduce.i16 v50
-// CHECK-NEXT: ; write_cvalue: VarPair(_93, var88, var89): (u16, bool) <- ByValPair(v53, v52): (u16, bool)
-// CHECK-NEXT: ; _91 = copy (_93.0: u16)
-// CHECK-NEXT: ; write_cvalue: Var(_91, var86): u16 <- ByVal(v53): u16
-// CHECK-NEXT: ; _92 = copy (_93.1: bool)
-// CHECK-NEXT: ; write_cvalue: Var(_92, var87): bool <- ByVal(v52): bool
-// CHECK-NEXT: ; _56 = (copy _91, copy _92)
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss8), offset: Offset32(0) }, None): u16 <- ByVal(v53): u16
-// CHECK-NEXT:     v54 = stack_addr.i16 ss8
-// CHECK-NEXT:     store notrap v53, v54
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss8), offset: Offset32(2) }, None): bool <- ByVal(v52): bool
-// CHECK-NEXT:     v55 = stack_addr.i16 ss8+2
-// CHECK-NEXT:     store notrap v52, v55
-// CHECK-NEXT: ; _55 = &_56
-// CHECK-NEXT:     v56 = stack_addr.i16 ss8
-// CHECK-NEXT: ; write_cvalue: Var(_55, var48): &'{erased} (u16, bool) <- ByVal(v56): &'{erased} (u16, bool)
-// CHECK-NEXT: ; _57 = &_6
-// CHECK-NEXT:     v57 = stack_addr.i16 ss2
-// CHECK-NEXT: ; write_cvalue: Var(_57, var49): &'{erased} (u16, bool) <- ByVal(v57): &'{erased} (u16, bool)
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; _46 = <(u16, bool) as core::cmp::PartialEq>::eq(move _55, move _57)
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: &(u16, bool), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }, ArgAbi { layout: TyAndLayout { ty: &(u16, bool), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }], ret: ArgAbi { layout: TyAndLayout { ty: bool, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is 0..=1), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: u8, valid_range: 0..=1 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 281483566645249 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
-// CHECK-NEXT:     v58 = call fn1(v56, v57)
-// CHECK-NEXT: ; write_cvalue: Var(_46, var41): bool <- ByVal(v58): bool
-// CHECK-NEXT:     jump block8(v58)
-// CHECK-EMPTY:
-// CHECK-NEXT: block7:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _46 = const false
-// CHECK-NEXT:     v59 = iconst.i8 0
-// CHECK-NEXT: ; write_cvalue: Var(_46, var41): bool <- ByVal(v59): bool
+// CHECK-NEXT: ; _37 = const false
+// CHECK-NEXT:     v39 = iconst.i8 0
+// CHECK-NEXT: ; write_cvalue: Var(_37, var32): bool <- ByVal(v39): bool
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block8(v59)  ; v59 = 0
+// CHECK-NEXT:     jump block7(v39)  ; v39 = 0
 // CHECK-EMPTY:
-// CHECK-NEXT: block8(v60: i8):
+// CHECK-NEXT: block7(v40: i8):
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _45 = move _46 as u8 (IntToInt)
-// CHECK-NEXT: ; write_cvalue: Var(_45, var40): u8 <- ByVal(v60): u8
-// CHECK-NEXT: ; _44 = Shl(move _45, const 6_i32)
-// CHECK-NEXT:     v61 = iconst.i32 6
-// CHECK-NEXT:     v62 = ishl v60, v61  ; v61 = 6
-// CHECK-NEXT: ; write_cvalue: Var(_44, var39): u8 <- ByVal(v62): u8
-// CHECK-NEXT: ; _8 = BitOr(move _9, move _44)
-// CHECK-NEXT:     v64 = bor.i8 v63, v62
-// CHECK-NEXT:     v181 -> v64
-// CHECK-NEXT:     v182 -> v64
-// CHECK-NEXT:     v183 -> v64
-// CHECK-NEXT: ; write_cvalue: Var(_8, var6): u8 <- ByVal(v64): u8
+// CHECK-NEXT: ; _36 = move _37 as u8 (IntToInt)
+// CHECK-NEXT: ; write_cvalue: Var(_36, var31): u8 <- ByVal(v40): u8
+// CHECK-NEXT: ; _35 = Shl(move _36, const 6_i32)
+// CHECK-NEXT:     v41 = iconst.i32 6
+// CHECK-NEXT:     v42 = ishl v40, v41  ; v41 = 6
+// CHECK-NEXT: ; write_cvalue: Var(_35, var30): u8 <- ByVal(v42): u8
+// CHECK-NEXT: ; _6 = BitOr(move _7, move _35)
+// CHECK-NEXT:     v44 = bor.i8 v43, v42
+// CHECK-NEXT:     v162 -> v44
+// CHECK-NEXT:     v163 -> v44
+// CHECK-NEXT:     v164 -> v44
+// CHECK-NEXT: ; write_cvalue: Var(_6, var4): u8 <- ByVal(v44): u8
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _62 = core::intrinsics::ctlz::<u16>(copy _1)
-// CHECK-NEXT:     v66 = clz.i16 v65
-// CHECK-NEXT:     v67 = uextend.i32 v66
-// CHECK-NEXT:     v164 -> v67
-// CHECK-NEXT: ; write_cvalue: Var(_62, var54): u32 <- ByVal(v67): u32
-// CHECK-NEXT:     jump block37
+// CHECK-NEXT: ; _52 = core::intrinsics::ctlz::<u16>(copy _1)
+// CHECK-NEXT:     v46 = clz.i16 v45
+// CHECK-NEXT:     v47 = uextend.i32 v46
+// CHECK-NEXT:     v150 -> v47
+// CHECK-NEXT: ; write_cvalue: Var(_52, var44): u32 <- ByVal(v47): u32
+// CHECK-NEXT:     jump block23
+// CHECK-EMPTY:
+// CHECK-NEXT: block8:
+// CHECK-NEXT:     nop
+// CHECK-NEXT: ;
+// CHECK-NEXT: ; _53 = core::intrinsics::cttz::<u16>(copy _1)
+// CHECK-NEXT:     v49 = ctz.i16 v48
+// CHECK-NEXT:     v50 = uextend.i32 v49
+// CHECK-NEXT:     v151 -> v50
+// CHECK-NEXT: ; write_cvalue: Var(_53, var45): u32 <- ByVal(v50): u32
+// CHECK-NEXT:     jump block24
 // CHECK-EMPTY:
 // CHECK-NEXT: block9:
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _64 = core::intrinsics::cttz::<u16>(copy _1)
-// CHECK-NEXT:     v69 = ctz.i16 v68
-// CHECK-NEXT:     v70 = uextend.i32 v69
-// CHECK-NEXT:     v167 -> v70
-// CHECK-NEXT: ; write_cvalue: Var(_64, var56): u32 <- ByVal(v70): u32
-// CHECK-NEXT:     jump block38
+// CHECK-NEXT: ; _54 = core::intrinsics::ctpop::<u16>(move _1)
+// CHECK-NEXT:     v52 = popcnt.i16 v51
+// CHECK-NEXT:     v53 = uextend.i32 v52
+// CHECK-NEXT:     v152 -> v53
+// CHECK-NEXT: ; write_cvalue: Var(_54, var46): u32 <- ByVal(v53): u32
+// CHECK-NEXT:     jump block25
 // CHECK-EMPTY:
-// CHECK-NEXT: block10:
+// CHECK-NEXT: block10(v161: i8):
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; _65 = core::intrinsics::ctpop::<u16>(copy _1)
-// CHECK-NEXT:     v72 = popcnt.i16 v71
-// CHECK-NEXT:     v73 = uextend.i32 v72
-// CHECK-NEXT:     v170 -> v73
-// CHECK-NEXT: ; write_cvalue: Var(_65, var57): u32 <- ByVal(v73): u32
-// CHECK-NEXT:     jump block39
-// CHECK-EMPTY:
-// CHECK-NEXT: block11(v180: i8):
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _60 = const false
-// CHECK-NEXT:     v74 = iconst.i8 0
-// CHECK-NEXT: ; write_cvalue: Var(_60, var52): bool <- ByVal(v74): bool
+// CHECK-NEXT: ; _51 = const false
+// CHECK-NEXT:     v54 = iconst.i8 0
+// CHECK-NEXT: ; write_cvalue: Var(_51, var43): bool <- ByVal(v54): bool
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block12(v74, v180)  ; v74 = 0
+// CHECK-NEXT:     jump block11(v54, v161)  ; v54 = 0
 // CHECK-EMPTY:
-// CHECK-NEXT: block12(v75: i8, v78: i8):
+// CHECK-NEXT: block11(v55: i8, v58: i8):
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _59 = move _60 as u8 (IntToInt)
-// CHECK-NEXT: ; write_cvalue: Var(_59, var51): u8 <- ByVal(v75): u8
-// CHECK-NEXT: ; _58 = Shl(move _59, const 7_i32)
-// CHECK-NEXT:     v76 = iconst.i32 7
-// CHECK-NEXT:     v77 = ishl v75, v76  ; v76 = 7
-// CHECK-NEXT: ; write_cvalue: Var(_58, var50): u8 <- ByVal(v77): u8
-// CHECK-NEXT: ; _0 = BitOr(move _8, move _58)
-// CHECK-NEXT:     v79 = bor v78, v77
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u8 <- ByVal(v79): u8
+// CHECK-NEXT: ; _50 = move _51 as u8 (IntToInt)
+// CHECK-NEXT: ; write_cvalue: Var(_50, var42): u8 <- ByVal(v55): u8
+// CHECK-NEXT: ; _49 = Shl(move _50, const 7_i32)
+// CHECK-NEXT:     v56 = iconst.i32 7
+// CHECK-NEXT:     v57 = ishl v55, v56  ; v56 = 7
+// CHECK-NEXT: ; write_cvalue: Var(_49, var41): u8 <- ByVal(v57): u8
+// CHECK-NEXT: ; _0 = BitOr(move _6, move _49)
+// CHECK-NEXT:     v59 = bor v58, v57
+// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u8 <- ByVal(v59): u8
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; return
-// CHECK-NEXT:     return v79
+// CHECK-NEXT:     return v59
 // CHECK-EMPTY:
-// CHECK-NEXT: block13:
+// CHECK-NEXT: block12(v66: i16, v67: i16):
+// CHECK-NEXT:     v81 -> v66
+// CHECK-NEXT:     v96 -> v66
+// CHECK-NEXT:     v169 -> v66
+// CHECK-NEXT:     v170 -> v66
+// CHECK-NEXT:     v82 -> v67
+// CHECK-NEXT:     v97 -> v67
+// CHECK-NEXT:     v171 -> v67
+// CHECK-NEXT:     v172 -> v67
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _16 = &_17
-// CHECK-NEXT:     v80 = stack_addr.i16 ss3
-// CHECK-NEXT: ; write_cvalue: Var(_16, var14): &'{erased} core::option::Option<u16> <- ByVal(v80): &'{erased} core::option::Option<u16>
-// CHECK-NEXT: ; _72 = discriminant((*_16))
-// CHECK-NEXT:     v81 = load.i16 notrap v80
-// CHECK-NEXT: ; write_cvalue: Var(_72, var64): isize <- ByVal(v81): isize
+// CHECK-NEXT: ; _60 = discriminant(_14)
+// CHECK-NEXT:     v60 = stack_addr.i16 ss3
+// CHECK-NEXT:     v61 = load.i16 notrap v60
+// CHECK-NEXT: ; write_cvalue: Var(_60, var52): isize <- ByVal(v61): isize
+// CHECK-NEXT: ; _59 = Eq(copy _60, const 1_isize)
+// CHECK-NEXT:     v62 = iconst.i16 1
+// CHECK-NEXT:     v63 = icmp eq v61, v62  ; v62 = 1
+// CHECK-NEXT: ; write_cvalue: Var(_59, var51): bool <- ByVal(v63): bool
+// CHECK-NEXT: ; _13 = Not(move _59)
+// CHECK-NEXT:     v64 = iconst.i8 0
+// CHECK-NEXT:     v65 = icmp eq v63, v64  ; v64 = 0
+// CHECK-NEXT:     v94 -> v65
+// CHECK-NEXT: ; write_cvalue: Var(_13, var11): bool <- ByVal(v65): bool
+// CHECK-NEXT: ; _12 = move _13 as u8 (IntToInt)
+// CHECK-NEXT: ; write_cvalue: Var(_12, var10): u8 <- ByVal(v65): u8
+// CHECK-NEXT: ; _61 = Lt(copy _1, copy _2)
+// CHECK-NEXT:     v68 = icmp ult v66, v67
+// CHECK-NEXT: ; write_cvalue: Var(_61, var53): bool <- ByVal(v68): bool
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _72)
-// CHECK-NEXT:     v82 = uextend.i32 v81
-// CHECK-NEXT:     br_table v82, block23, [block21, block22]
+// CHECK-NEXT: ; switchInt(move _61)
+// CHECK-NEXT:     brif v68, block16, block17
+// CHECK-EMPTY:
+// CHECK-NEXT: block13 cold:
+// CHECK-NEXT:     nop
+// CHECK-NEXT: ;
+// CHECK-NEXT: ; _58 = core::intrinsics::cold_path()
+// CHECK-NEXT:     jump block14
 // CHECK-EMPTY:
 // CHECK-NEXT: block14:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _17 = core::option::Option::<u16>::None
-// CHECK-NEXT:     v83 = iconst.i16 0
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss3), offset: Offset32(0) }, None): u16 <- ByVal(v83): u16
-// CHECK-NEXT:     v84 = stack_addr.i16 ss3
-// CHECK-NEXT:     store notrap v83, v84  ; v83 = 0
+// CHECK-NEXT: ; _14 = const core::option::Option::<u16>::None
+// CHECK-NEXT:     v69 = symbol_value.i16 gv3
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss3), offset: Offset32(0) }, None): core::option::Option<u16> <- ByRef(Pointer { base: Addr(v69), offset: Offset32(0) }, None): core::option::Option<u16>
+// CHECK-NEXT:     v70 = load.i16 notrap v69
+// CHECK-NEXT:     v71 = load.i16 notrap v69+2
+// CHECK-NEXT:     v72 = stack_addr.i16 ss3
+// CHECK-NEXT:     store notrap v70, v72
+// CHECK-NEXT:     v73 = stack_addr.i16 ss3+2
+// CHECK-NEXT:     store notrap v71, v73
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block13
+// CHECK-NEXT:     jump block12(v165, v166)
 // CHECK-EMPTY:
 // CHECK-NEXT: block15:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _69 = AddUnchecked(copy _1, copy _2)
-// CHECK-NEXT:     v87 = iadd.i16 v85, v86
-// CHECK-NEXT: ; write_cvalue: Var(_69, var62): u16 <- ByVal(v87): u16
-// CHECK-NEXT: ; _17 = core::option::Option::<u16>::Some(move _69)
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss3), offset: Offset32(2) }, None): u16 <- ByVal(v87): u16
-// CHECK-NEXT:     v88 = stack_addr.i16 ss3+2
-// CHECK-NEXT:     store notrap v87, v88
-// CHECK-NEXT:     v89 = iconst.i16 1
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss3), offset: Offset32(0) }, None): u16 <- ByVal(v89): u16
-// CHECK-NEXT:     v90 = stack_addr.i16 ss3
-// CHECK-NEXT:     store notrap v89, v90  ; v89 = 1
+// CHECK-NEXT: ; _57 = AddUnchecked(copy _1, copy _2)
+// CHECK-NEXT:     v76 = iadd.i16 v74, v75
+// CHECK-NEXT: ; write_cvalue: Var(_57, var50): u16 <- ByVal(v76): u16
+// CHECK-NEXT: ; _14 = core::option::Option::<u16>::Some(move _57)
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss3), offset: Offset32(2) }, None): u16 <- ByVal(v76): u16
+// CHECK-NEXT:     v77 = stack_addr.i16 ss3+2
+// CHECK-NEXT:     store notrap v76, v77
+// CHECK-NEXT:     v78 = iconst.i16 1
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss3), offset: Offset32(0) }, None): u16 <- ByVal(v78): u16
+// CHECK-NEXT:     v79 = stack_addr.i16 ss3
+// CHECK-NEXT:     store notrap v78, v79  ; v78 = 1
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block13
+// CHECK-NEXT:     jump block12(v74, v75)
 // CHECK-EMPTY:
-// CHECK-NEXT: block16(v91: i8, v184: i16, v185: i16):
-// CHECK-NEXT:     v85 -> v184
-// CHECK-NEXT:     v190 -> v184
-// CHECK-NEXT:     v191 -> v184
-// CHECK-NEXT:     v194 -> v184
-// CHECK-NEXT:     v86 -> v185
-// CHECK-NEXT:     v192 -> v185
-// CHECK-NEXT:     v193 -> v185
-// CHECK-NEXT:     v195 -> v185
+// CHECK-NEXT: block16:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _66)
-// CHECK-NEXT:     brif v91, block14, block15
-// CHECK-EMPTY:
-// CHECK-NEXT: block17 cold:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; _70 = core::intrinsics::cold_path()
-// CHECK-NEXT:     jump block18
-// CHECK-EMPTY:
-// CHECK-NEXT: block18:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _66 = const true
-// CHECK-NEXT:     v92 = iconst.i8 1
-// CHECK-NEXT: ; write_cvalue: Var(_66, var58): bool <- ByVal(v92): bool
+// CHECK-NEXT: ; _17 = const false
+// CHECK-NEXT:     v80 = iconst.i8 0
+// CHECK-NEXT: ; write_cvalue: Var(_17, var14): bool <- ByVal(v80): bool
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block16(v92, v186, v188)  ; v92 = 1
+// CHECK-NEXT:     jump block18(v80)  ; v80 = 0
 // CHECK-EMPTY:
-// CHECK-NEXT: block19:
+// CHECK-NEXT: block17:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _66 = const false
-// CHECK-NEXT:     v93 = iconst.i8 0
-// CHECK-NEXT: ; write_cvalue: Var(_66, var58): bool <- ByVal(v93): bool
+// CHECK-NEXT: ; _62 = SubUnchecked(copy _1, copy _2)
+// CHECK-NEXT:     v83 = isub.i16 v81, v82
+// CHECK-NEXT: ; write_cvalue: Var(_62, var54): u16 <- ByVal(v83): u16
+// CHECK-NEXT: ; _18 = core::option::Option::<u16>::Some(move _62)
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss4), offset: Offset32(2) }, None): u16 <- ByVal(v83): u16
+// CHECK-NEXT:     v84 = stack_addr.i16 ss4+2
+// CHECK-NEXT:     store notrap v83, v84
+// CHECK-NEXT:     v85 = iconst.i16 1
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss4), offset: Offset32(0) }, None): u16 <- ByVal(v85): u16
+// CHECK-NEXT:     v86 = stack_addr.i16 ss4
+// CHECK-NEXT:     store notrap v85, v86  ; v85 = 1
+// CHECK-NEXT: ; _63 = copy ((_18 as Some).0: u16)
+// CHECK-NEXT: ; write_cvalue: Var(_63, var55): u16 <- ByRef(Pointer { base: Stack(ss4), offset: Offset32(2) }, None): u16
+// CHECK-NEXT:     v87 = stack_addr.i16 ss4+2
+// CHECK-NEXT:     v88 = load.i16 notrap v87
+// CHECK-NEXT: ; _17 = Eq(move _63, const 65533_u16)
+// CHECK-NEXT:     v89 = iconst.i16 -3
+// CHECK-NEXT:     v90 = icmp eq v88, v89  ; v89 = -3
+// CHECK-NEXT: ; write_cvalue: Var(_17, var14): bool <- ByVal(v90): bool
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block16(v93, v187, v189)  ; v93 = 0
+// CHECK-NEXT:     jump block18(v90)
 // CHECK-EMPTY:
-// CHECK-NEXT: block20(v94: i8, v97: i16, v98: i16):
-// CHECK-NEXT:     v107 -> v97
-// CHECK-NEXT:     v198 -> v97
-// CHECK-NEXT:     v108 -> v98
-// CHECK-NEXT:     v199 -> v98
+// CHECK-NEXT: block18(v91: i8):
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _15 = Not(move _71)
-// CHECK-NEXT:     v95 = iconst.i8 0
-// CHECK-NEXT:     v96 = icmp eq v94, v95  ; v95 = 0
-// CHECK-NEXT:     v196 -> v96
-// CHECK-NEXT:     v197 -> v96
-// CHECK-NEXT: ; write_cvalue: Var(_15, var13): bool <- ByVal(v96): bool
-// CHECK-NEXT: ; _14 = move _15 as u8 (IntToInt)
-// CHECK-NEXT: ; write_cvalue: Var(_14, var12): u8 <- ByVal(v96): u8
-// CHECK-NEXT: ; _73 = Lt(copy _1, copy _2)
-// CHECK-NEXT:     v99 = icmp ult v97, v98
-// CHECK-NEXT: ; write_cvalue: Var(_73, var65): bool <- ByVal(v99): bool
+// CHECK-NEXT: ; _16 = move _17 as u8 (IntToInt)
+// CHECK-NEXT: ; write_cvalue: Var(_16, var13): u8 <- ByVal(v91): u8
+// CHECK-NEXT: ; _15 = Shl(move _16, const 1_i32)
+// CHECK-NEXT:     v92 = iconst.i32 1
+// CHECK-NEXT:     v93 = ishl v91, v92  ; v92 = 1
+// CHECK-NEXT: ; write_cvalue: Var(_15, var12): u8 <- ByVal(v93): u8
+// CHECK-NEXT: ; _11 = BitOr(move _12, move _15)
+// CHECK-NEXT:     v95 = bor.i8 v94, v93
+// CHECK-NEXT:     v167 -> v95
+// CHECK-NEXT:     v168 -> v95
+// CHECK-NEXT: ; write_cvalue: Var(_11, var9): u8 <- ByVal(v95): u8
+// CHECK-NEXT: ; _66 = MulWithOverflow(copy _1, copy _2)
+// CHECK-NEXT:     v98 = uextend.i32 v96
+// CHECK-NEXT:     v99 = uextend.i32 v97
+// CHECK-NEXT:     v100 = imul v98, v99
+// CHECK-NEXT:     v101 = iconst.i32 0xffff
+// CHECK-NEXT:     v102 = icmp ugt v100, v101  ; v101 = 0xffff
+// CHECK-NEXT:     v179 -> v102
+// CHECK-NEXT:     v180 -> v102
+// CHECK-NEXT:     v103 = ireduce.i16 v100
+// CHECK-NEXT:     v146 -> v103
+// CHECK-NEXT:     v177 -> v103
+// CHECK-NEXT:     v178 -> v103
+// CHECK-NEXT: ; write_cvalue: VarPair(_66, var58, var59): (u16, bool) <- ByValPair(v103, v102): (u16, bool)
+// CHECK-NEXT: ; _64 = copy (_66.0: u16)
+// CHECK-NEXT: ; write_cvalue: Var(_64, var56): u16 <- ByVal(v103): u16
+// CHECK-NEXT: ; _65 = copy (_66.1: bool)
+// CHECK-NEXT: ; write_cvalue: Var(_65, var57): bool <- ByVal(v102): bool
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _73)
-// CHECK-NEXT:     brif v99, block25, block26
+// CHECK-NEXT: ; switchInt(copy _65)
+// CHECK-NEXT:     brif v102, block20, block22
+// CHECK-EMPTY:
+// CHECK-NEXT: block19(v112: i8, v114: i16, v115: i16, v134: i16, v135: i8, v155: i16, v156: i8):
+// CHECK-NEXT:     v22 -> v114
+// CHECK-NEXT:     v45 -> v114
+// CHECK-NEXT:     v158 -> v114
+// CHECK-NEXT:     v159 -> v114
+// CHECK-NEXT:     v160 -> v114
+// CHECK-NEXT:     v51 -> v160
+// CHECK-NEXT:     v48 -> v159
+// CHECK-NEXT:     v23 -> v115
+// CHECK-NEXT:     v32 -> v155
+// CHECK-NEXT:     v33 -> v156
+// CHECK-NEXT:     nop
+// CHECK-NEXT: ; _69 = discriminant(_22)
+// CHECK-NEXT:     v104 = stack_addr.i16 ss5
+// CHECK-NEXT:     v105 = load.i16 notrap v104
+// CHECK-NEXT: ; write_cvalue: Var(_69, var61): isize <- ByVal(v105): isize
+// CHECK-NEXT: ; _68 = Eq(copy _69, const 1_isize)
+// CHECK-NEXT:     v106 = iconst.i16 1
+// CHECK-NEXT:     v107 = icmp eq v105, v106  ; v106 = 1
+// CHECK-NEXT: ; write_cvalue: Var(_68, var60): bool <- ByVal(v107): bool
+// CHECK-NEXT: ; _21 = Not(move _68)
+// CHECK-NEXT:     v108 = iconst.i8 0
+// CHECK-NEXT:     v109 = icmp eq v107, v108  ; v108 = 0
+// CHECK-NEXT: ; write_cvalue: Var(_21, var17): bool <- ByVal(v109): bool
+// CHECK-NEXT: ; _20 = move _21 as u8 (IntToInt)
+// CHECK-NEXT: ; write_cvalue: Var(_20, var16): u8 <- ByVal(v109): u8
+// CHECK-NEXT: ; _19 = Shl(move _20, const 2_i32)
+// CHECK-NEXT:     v110 = iconst.i32 2
+// CHECK-NEXT:     v111 = ishl v109, v110  ; v110 = 2
+// CHECK-NEXT: ; write_cvalue: Var(_19, var15): u8 <- ByVal(v111): u8
+// CHECK-NEXT: ; _10 = BitOr(move _11, move _19)
+// CHECK-NEXT:     v113 = bor v112, v111
+// CHECK-NEXT: ; write_cvalue: Var(_10, var8): u8 <- ByVal(v113): u8
+// CHECK-NEXT: ; _26 = Add(copy _1, copy _2)
+// CHECK-NEXT:     v116 = iadd v114, v115
+// CHECK-NEXT: ; write_cvalue: Var(_26, var21): u16 <- ByVal(v116): u16
+// CHECK-NEXT: ; _25 = Eq(move _26, const 1_u16)
+// CHECK-NEXT:     v117 = iconst.i16 1
+// CHECK-NEXT:     v118 = icmp eq v116, v117  ; v117 = 1
+// CHECK-NEXT: ; write_cvalue: Var(_25, var20): bool <- ByVal(v118): bool
+// CHECK-NEXT: ; _24 = move _25 as u8 (IntToInt)
+// CHECK-NEXT: ; write_cvalue: Var(_24, var19): u8 <- ByVal(v118): u8
+// CHECK-NEXT: ; _23 = Shl(move _24, const 3_i32)
+// CHECK-NEXT:     v119 = iconst.i32 3
+// CHECK-NEXT:     v120 = ishl v118, v119  ; v119 = 3
+// CHECK-NEXT: ; write_cvalue: Var(_23, var18): u8 <- ByVal(v120): u8
+// CHECK-NEXT: ; _9 = BitOr(move _10, move _23)
+// CHECK-NEXT:     v121 = bor v113, v120
+// CHECK-NEXT: ; write_cvalue: Var(_9, var7): u8 <- ByVal(v121): u8
+// CHECK-NEXT: ; _30 = Sub(copy _1, copy _2)
+// CHECK-NEXT:     v122 = isub v114, v115
+// CHECK-NEXT: ; write_cvalue: Var(_30, var25): u16 <- ByVal(v122): u16
+// CHECK-NEXT: ; _29 = Eq(move _30, const 65533_u16)
+// CHECK-NEXT:     v123 = iconst.i16 -3
+// CHECK-NEXT:     v124 = icmp eq v122, v123  ; v123 = -3
+// CHECK-NEXT: ; write_cvalue: Var(_29, var24): bool <- ByVal(v124): bool
+// CHECK-NEXT: ; _28 = move _29 as u8 (IntToInt)
+// CHECK-NEXT: ; write_cvalue: Var(_28, var23): u8 <- ByVal(v124): u8
+// CHECK-NEXT: ; _27 = Shl(move _28, const 4_i32)
+// CHECK-NEXT:     v125 = iconst.i32 4
+// CHECK-NEXT:     v126 = ishl v124, v125  ; v125 = 4
+// CHECK-NEXT: ; write_cvalue: Var(_27, var22): u8 <- ByVal(v126): u8
+// CHECK-NEXT: ; _8 = BitOr(move _9, move _27)
+// CHECK-NEXT:     v127 = bor v121, v126
+// CHECK-NEXT: ; write_cvalue: Var(_8, var6): u8 <- ByVal(v127): u8
+// CHECK-NEXT: ; _34 = Mul(copy _1, copy _2)
+// CHECK-NEXT:     v128 = imul v114, v115
+// CHECK-NEXT: ; write_cvalue: Var(_34, var29): u16 <- ByVal(v128): u16
+// CHECK-NEXT: ; _33 = Eq(move _34, const 65534_u16)
+// CHECK-NEXT:     v129 = iconst.i16 -2
+// CHECK-NEXT:     v130 = icmp eq v128, v129  ; v129 = -2
+// CHECK-NEXT: ; write_cvalue: Var(_33, var28): bool <- ByVal(v130): bool
+// CHECK-NEXT: ; _32 = move _33 as u8 (IntToInt)
+// CHECK-NEXT: ; write_cvalue: Var(_32, var27): u8 <- ByVal(v130): u8
+// CHECK-NEXT: ; _31 = Shl(move _32, const 5_i32)
+// CHECK-NEXT:     v131 = iconst.i32 5
+// CHECK-NEXT:     v132 = ishl v130, v131  ; v131 = 5
+// CHECK-NEXT: ; write_cvalue: Var(_31, var26): u8 <- ByVal(v132): u8
+// CHECK-NEXT: ; _7 = BitOr(move _8, move _31)
+// CHECK-NEXT:     v133 = bor v127, v132
+// CHECK-NEXT:     v43 -> v133
+// CHECK-NEXT:     v157 -> v133
+// CHECK-NEXT: ; write_cvalue: Var(_7, var5): u8 <- ByVal(v133): u8
+// CHECK-NEXT: ; _40 = copy _56
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss6), offset: Offset32(0) }, None): (u16, bool) <- ByValPair(v134, v135): (u16, bool)
+// CHECK-NEXT:     v136 = stack_addr.i16 ss6
+// CHECK-NEXT:     store notrap v134, v136
+// CHECK-NEXT:     v137 = stack_addr.i16 ss6+2
+// CHECK-NEXT:     store notrap v135, v137
+// CHECK-NEXT: ; _39 = &_40
+// CHECK-NEXT:     v138 = stack_addr.i16 ss6
+// CHECK-NEXT: ; write_cvalue: Var(_39, var34): &'{erased} (u16, bool) <- ByVal(v138): &'{erased} (u16, bool)
+// CHECK-NEXT: ; _41 = &_3
+// CHECK-NEXT:     v139 = stack_addr.i16 ss0
+// CHECK-NEXT: ; write_cvalue: Var(_41, var35): &'{erased} (u16, bool) <- ByVal(v139): &'{erased} (u16, bool)
+// CHECK-NEXT: ;
+// CHECK-NEXT: ; _38 = <(u16, bool) as core::cmp::PartialEq>::eq(move _39, move _41)
+// CHECK-NEXT:     nop
+// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: &(u16, bool), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }, ArgAbi { layout: TyAndLayout { ty: &(u16, bool), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }], ret: ArgAbi { layout: TyAndLayout { ty: bool, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is 0..=1), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: u8, valid_range: 0..=1 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 281483566645249 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
+// CHECK-NEXT:     v140 = call fn2(v138, v139)
+// CHECK-NEXT:     v21 -> v140
+// CHECK-NEXT: ; write_cvalue: Var(_38, var33): bool <- ByVal(v140): bool
+// CHECK-NEXT:     jump block2
+// CHECK-EMPTY:
+// CHECK-NEXT: block20 cold:
+// CHECK-NEXT:     nop
+// CHECK-NEXT: ;
+// CHECK-NEXT: ; _67 = core::intrinsics::cold_path()
+// CHECK-NEXT:     jump block21
 // CHECK-EMPTY:
 // CHECK-NEXT: block21:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _71 = const false
-// CHECK-NEXT:     v100 = iconst.i8 0
-// CHECK-NEXT: ; write_cvalue: Var(_71, var63): bool <- ByVal(v100): bool
+// CHECK-NEXT: ; _22 = const core::option::Option::<u16>::None
+// CHECK-NEXT:     v141 = symbol_value.i16 gv4
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss5), offset: Offset32(0) }, None): core::option::Option<u16> <- ByRef(Pointer { base: Addr(v141), offset: Offset32(0) }, None): core::option::Option<u16>
+// CHECK-NEXT:     v142 = load.i16 notrap v141
+// CHECK-NEXT:     v143 = load.i16 notrap v141+2
+// CHECK-NEXT:     v144 = stack_addr.i16 ss5
+// CHECK-NEXT:     store notrap v142, v144
+// CHECK-NEXT:     v145 = stack_addr.i16 ss5+2
+// CHECK-NEXT:     store notrap v143, v145
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block20(v100, v190, v192)  ; v100 = 0
+// CHECK-NEXT:     jump block19(v167, v169, v171, v173, v175, v177, v179)
 // CHECK-EMPTY:
 // CHECK-NEXT: block22:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _71 = const true
-// CHECK-NEXT:     v101 = iconst.i8 1
-// CHECK-NEXT: ; write_cvalue: Var(_71, var63): bool <- ByVal(v101): bool
+// CHECK-NEXT: ; _22 = core::option::Option::<u16>::Some(copy _64)
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss5), offset: Offset32(2) }, None): u16 <- ByVal(v146): u16
+// CHECK-NEXT:     v147 = stack_addr.i16 ss5+2
+// CHECK-NEXT:     store.i16 notrap v146, v147
+// CHECK-NEXT:     v148 = iconst.i16 1
+// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss5), offset: Offset32(0) }, None): u16 <- ByVal(v148): u16
+// CHECK-NEXT:     v149 = stack_addr.i16 ss5
+// CHECK-NEXT:     store notrap v148, v149  ; v148 = 1
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block20(v101, v191, v193)  ; v101 = 1
+// CHECK-NEXT:     jump block19(v168, v170, v172, v174, v176, v178, v180)
 // CHECK-EMPTY:
-// CHECK-NEXT: block23 cold:
+// CHECK-NEXT: block23:
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; unreachable
-// CHECK-NEXT:     trap user1
+// CHECK-NEXT: ; switchInt(copy _52)
+// CHECK-NEXT:     brif.i32 v150, block10(v162), block8
 // CHECK-EMPTY:
-// CHECK-NEXT: block24(v173: i8, v174: i16, v175: i16):
-// CHECK-NEXT:     v25 -> v173
-// CHECK-NEXT:     v27 -> v174
-// CHECK-NEXT:     v205 -> v174
-// CHECK-NEXT:     v206 -> v174
-// CHECK-NEXT:     v211 -> v174
-// CHECK-NEXT:     v212 -> v174
-// CHECK-NEXT:     v28 -> v175
-// CHECK-NEXT:     v207 -> v175
-// CHECK-NEXT:     v208 -> v175
-// CHECK-NEXT:     v213 -> v175
-// CHECK-NEXT:     v214 -> v175
+// CHECK-NEXT: block24:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _21 = &_22
-// CHECK-NEXT:     v102 = stack_addr.i16 ss4
-// CHECK-NEXT: ; write_cvalue: Var(_21, var18): &'{erased} core::option::Option<u16> <- ByVal(v102): &'{erased} core::option::Option<u16>
-// CHECK-NEXT: ; _23 = const integer_methods::promoted[0]
-// CHECK-NEXT:     v103 = symbol_value.i16 gv0
-// CHECK-NEXT: ; write_cvalue: Var(_23, var19): &'{erased} core::option::Option<u16> <- ByVal(v103): &'{erased} core::option::Option<u16>
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _20 = <core::option::Option<u16> as core::cmp::PartialEq>::eq(move _21, move _23)
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: &core::option::Option<u16>, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }, ArgAbi { layout: TyAndLayout { ty: &core::option::Option<u16>, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }], ret: ArgAbi { layout: TyAndLayout { ty: bool, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is 0..=1), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: u8, valid_range: 0..=1 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 281483566645249 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
-// CHECK-NEXT:     v104 = call fn2(v102, v103)
-// CHECK-NEXT:     v22 -> v104
-// CHECK-NEXT: ; write_cvalue: Var(_20, var17): bool <- ByVal(v104): bool
-// CHECK-NEXT:     jump block2
+// CHECK-NEXT: ; switchInt(copy _53)
+// CHECK-NEXT:     brif.i32 v151, block10(v163), block9
 // CHECK-EMPTY:
 // CHECK-NEXT: block25:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _22 = core::option::Option::<u16>::None
-// CHECK-NEXT:     v105 = iconst.i16 0
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss4), offset: Offset32(0) }, None): u16 <- ByVal(v105): u16
-// CHECK-NEXT:     v106 = stack_addr.i16 ss4
-// CHECK-NEXT:     store notrap v105, v106  ; v105 = 0
+// CHECK-NEXT: ; _51 = Eq(move _54, const 16_u32)
+// CHECK-NEXT:     v153 = iconst.i32 16
+// CHECK-NEXT:     v154 = icmp.i32 eq v152, v153  ; v153 = 16
+// CHECK-NEXT: ; write_cvalue: Var(_51, var43): bool <- ByVal(v154): bool
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block24(v196, v198, v199)
-// CHECK-EMPTY:
-// CHECK-NEXT: block26:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _74 = SubUnchecked(copy _1, copy _2)
-// CHECK-NEXT:     v109 = isub.i16 v107, v108
-// CHECK-NEXT: ; write_cvalue: Var(_74, var66): u16 <- ByVal(v109): u16
-// CHECK-NEXT: ; _22 = core::option::Option::<u16>::Some(move _74)
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss4), offset: Offset32(2) }, None): u16 <- ByVal(v109): u16
-// CHECK-NEXT:     v110 = stack_addr.i16 ss4+2
-// CHECK-NEXT:     store notrap v109, v110
-// CHECK-NEXT:     v111 = iconst.i16 1
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss4), offset: Offset32(0) }, None): u16 <- ByVal(v111): u16
-// CHECK-NEXT:     v112 = stack_addr.i16 ss4
-// CHECK-NEXT:     store notrap v111, v112  ; v111 = 1
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block24(v197, v107, v108)
-// CHECK-EMPTY:
-// CHECK-NEXT: block27:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _27 = &_28
-// CHECK-NEXT:     v113 = stack_addr.i16 ss5
-// CHECK-NEXT: ; write_cvalue: Var(_27, var23): &'{erased} core::option::Option<u16> <- ByVal(v113): &'{erased} core::option::Option<u16>
-// CHECK-NEXT: ; _84 = discriminant((*_27))
-// CHECK-NEXT:     v114 = load.i16 notrap v113
-// CHECK-NEXT: ; write_cvalue: Var(_84, var77): isize <- ByVal(v114): isize
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _84)
-// CHECK-NEXT:     v115 = uextend.i32 v114
-// CHECK-NEXT:     br_table v115, block23, [block35, block36]
-// CHECK-EMPTY:
-// CHECK-NEXT: block28:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _28 = core::option::Option::<u16>::None
-// CHECK-NEXT:     v116 = iconst.i16 0
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss5), offset: Offset32(0) }, None): u16 <- ByVal(v116): u16
-// CHECK-NEXT:     v117 = stack_addr.i16 ss5
-// CHECK-NEXT:     store notrap v116, v117  ; v116 = 0
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block27
-// CHECK-EMPTY:
-// CHECK-NEXT: block29:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _28 = core::option::Option::<u16>::Some(copy _75)
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss5), offset: Offset32(2) }, None): u16 <- ByVal(v118): u16
-// CHECK-NEXT:     v119 = stack_addr.i16 ss5+2
-// CHECK-NEXT:     store.i16 notrap v118, v119
-// CHECK-NEXT:     v120 = iconst.i16 1
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss5), offset: Offset32(0) }, None): u16 <- ByVal(v120): u16
-// CHECK-NEXT:     v121 = stack_addr.i16 ss5
-// CHECK-NEXT:     store notrap v120, v121  ; v120 = 1
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block27
-// CHECK-EMPTY:
-// CHECK-NEXT: block30(v122: i8, v200: i16):
-// CHECK-NEXT:     v118 -> v200
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _78)
-// CHECK-NEXT:     brif v122, block28, block29
-// CHECK-EMPTY:
-// CHECK-NEXT: block31 cold:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; _82 = core::intrinsics::cold_path()
-// CHECK-NEXT:     jump block32
-// CHECK-EMPTY:
-// CHECK-NEXT: block32:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _78 = const true
-// CHECK-NEXT:     v123 = iconst.i8 1
-// CHECK-NEXT: ; write_cvalue: Var(_78, var71): bool <- ByVal(v123): bool
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block30(v123, v201)  ; v123 = 1
-// CHECK-EMPTY:
-// CHECK-NEXT: block33:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _78 = const false
-// CHECK-NEXT:     v124 = iconst.i8 0
-// CHECK-NEXT: ; write_cvalue: Var(_78, var71): bool <- ByVal(v124): bool
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block30(v124, v202)  ; v124 = 0
-// CHECK-EMPTY:
-// CHECK-NEXT: block34(v125: i8, v130: i8, v132: i16, v133: i16):
-// CHECK-NEXT:     v36 -> v132
-// CHECK-NEXT:     v46 -> v132
-// CHECK-NEXT:     v65 -> v132
-// CHECK-NEXT:     v177 -> v132
-// CHECK-NEXT:     v178 -> v132
-// CHECK-NEXT:     v179 -> v132
-// CHECK-NEXT:     v71 -> v179
-// CHECK-NEXT:     v68 -> v178
-// CHECK-NEXT:     v37 -> v133
-// CHECK-NEXT:     v47 -> v133
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _26 = Not(move _83)
-// CHECK-NEXT:     v126 = iconst.i8 0
-// CHECK-NEXT:     v127 = icmp eq v125, v126  ; v126 = 0
-// CHECK-NEXT: ; write_cvalue: Var(_26, var22): bool <- ByVal(v127): bool
-// CHECK-NEXT: ; _25 = move _26 as u8 (IntToInt)
-// CHECK-NEXT: ; write_cvalue: Var(_25, var21): u8 <- ByVal(v127): u8
-// CHECK-NEXT: ; _24 = Shl(move _25, const 2_i32)
-// CHECK-NEXT:     v128 = iconst.i32 2
-// CHECK-NEXT:     v129 = ishl v127, v128  ; v128 = 2
-// CHECK-NEXT: ; write_cvalue: Var(_24, var20): u8 <- ByVal(v129): u8
-// CHECK-NEXT: ; _12 = BitOr(move _13, move _24)
-// CHECK-NEXT:     v131 = bor v130, v129
-// CHECK-NEXT: ; write_cvalue: Var(_12, var10): u8 <- ByVal(v131): u8
-// CHECK-NEXT: ; _32 = Add(copy _1, copy _2)
-// CHECK-NEXT:     v134 = iadd v132, v133
-// CHECK-NEXT: ; write_cvalue: Var(_32, var27): u16 <- ByVal(v134): u16
-// CHECK-NEXT: ; _33 = copy (_3.0: u16)
-// CHECK-NEXT: ; write_cvalue: Var(_33, var28): u16 <- ByRef(Pointer { base: Stack(ss0), offset: Offset32(0) }, None): u16
-// CHECK-NEXT:     v135 = stack_addr.i16 ss0
-// CHECK-NEXT:     v136 = load.i16 notrap v135
-// CHECK-NEXT: ; _31 = Eq(move _32, move _33)
-// CHECK-NEXT:     v137 = icmp eq v134, v136
-// CHECK-NEXT: ; write_cvalue: Var(_31, var26): bool <- ByVal(v137): bool
-// CHECK-NEXT: ; _30 = move _31 as u8 (IntToInt)
-// CHECK-NEXT: ; write_cvalue: Var(_30, var25): u8 <- ByVal(v137): u8
-// CHECK-NEXT: ; _29 = Shl(move _30, const 3_i32)
-// CHECK-NEXT:     v138 = iconst.i32 3
-// CHECK-NEXT:     v139 = ishl v137, v138  ; v138 = 3
-// CHECK-NEXT: ; write_cvalue: Var(_29, var24): u8 <- ByVal(v139): u8
-// CHECK-NEXT: ; _11 = BitOr(move _12, move _29)
-// CHECK-NEXT:     v140 = bor v131, v139
-// CHECK-NEXT: ; write_cvalue: Var(_11, var9): u8 <- ByVal(v140): u8
-// CHECK-NEXT: ; _37 = Sub(copy _1, copy _2)
-// CHECK-NEXT:     v141 = isub v132, v133
-// CHECK-NEXT: ; write_cvalue: Var(_37, var32): u16 <- ByVal(v141): u16
-// CHECK-NEXT: ; _38 = copy (_4.0: u16)
-// CHECK-NEXT: ; write_cvalue: Var(_38, var33): u16 <- ByRef(Pointer { base: Stack(ss1), offset: Offset32(0) }, None): u16
-// CHECK-NEXT:     v142 = stack_addr.i16 ss1
-// CHECK-NEXT:     v143 = load.i16 notrap v142
-// CHECK-NEXT: ; _36 = Eq(move _37, move _38)
-// CHECK-NEXT:     v144 = icmp eq v141, v143
-// CHECK-NEXT: ; write_cvalue: Var(_36, var31): bool <- ByVal(v144): bool
-// CHECK-NEXT: ; _35 = move _36 as u8 (IntToInt)
-// CHECK-NEXT: ; write_cvalue: Var(_35, var30): u8 <- ByVal(v144): u8
-// CHECK-NEXT: ; _34 = Shl(move _35, const 4_i32)
-// CHECK-NEXT:     v145 = iconst.i32 4
-// CHECK-NEXT:     v146 = ishl v144, v145  ; v145 = 4
-// CHECK-NEXT: ; write_cvalue: Var(_34, var29): u8 <- ByVal(v146): u8
-// CHECK-NEXT: ; _10 = BitOr(move _11, move _34)
-// CHECK-NEXT:     v147 = bor v140, v146
-// CHECK-NEXT: ; write_cvalue: Var(_10, var8): u8 <- ByVal(v147): u8
-// CHECK-NEXT: ; _42 = Mul(copy _1, copy _2)
-// CHECK-NEXT:     v148 = imul v132, v133
-// CHECK-NEXT: ; write_cvalue: Var(_42, var37): u16 <- ByVal(v148): u16
-// CHECK-NEXT: ; _43 = copy (_6.0: u16)
-// CHECK-NEXT: ; write_cvalue: Var(_43, var38): u16 <- ByRef(Pointer { base: Stack(ss2), offset: Offset32(0) }, None): u16
-// CHECK-NEXT:     v149 = stack_addr.i16 ss2
-// CHECK-NEXT:     v150 = load.i16 notrap v149
-// CHECK-NEXT: ; _41 = Eq(move _42, move _43)
-// CHECK-NEXT:     v151 = icmp eq v148, v150
-// CHECK-NEXT: ; write_cvalue: Var(_41, var36): bool <- ByVal(v151): bool
-// CHECK-NEXT: ; _40 = move _41 as u8 (IntToInt)
-// CHECK-NEXT: ; write_cvalue: Var(_40, var35): u8 <- ByVal(v151): u8
-// CHECK-NEXT: ; _39 = Shl(move _40, const 5_i32)
-// CHECK-NEXT:     v152 = iconst.i32 5
-// CHECK-NEXT:     v153 = ishl v151, v152  ; v152 = 5
-// CHECK-NEXT: ; write_cvalue: Var(_39, var34): u8 <- ByVal(v153): u8
-// CHECK-NEXT: ; _9 = BitOr(move _10, move _39)
-// CHECK-NEXT:     v154 = bor v147, v153
-// CHECK-NEXT:     v63 -> v154
-// CHECK-NEXT:     v176 -> v154
-// CHECK-NEXT: ; write_cvalue: Var(_9, var7): u8 <- ByVal(v154): u8
-// CHECK-NEXT: ; _87 = AddWithOverflow(copy _1, copy _2)
-// CHECK-NEXT:     v155 = iadd v132, v133
-// CHECK-NEXT:     v156 = icmp ult v155, v132
-// CHECK-NEXT: ; write_cvalue: VarPair(_87, var80, var81): (u16, bool) <- ByValPair(v155, v156): (u16, bool)
-// CHECK-NEXT: ; _85 = copy (_87.0: u16)
-// CHECK-NEXT: ; write_cvalue: Var(_85, var78): u16 <- ByVal(v155): u16
-// CHECK-NEXT: ; _86 = copy (_87.1: bool)
-// CHECK-NEXT: ; write_cvalue: Var(_86, var79): bool <- ByVal(v156): bool
-// CHECK-NEXT: ; _49 = (copy _85, copy _86)
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss6), offset: Offset32(0) }, None): u16 <- ByVal(v155): u16
-// CHECK-NEXT:     v157 = stack_addr.i16 ss6
-// CHECK-NEXT:     store notrap v155, v157
-// CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss6), offset: Offset32(2) }, None): bool <- ByVal(v156): bool
-// CHECK-NEXT:     v158 = stack_addr.i16 ss6+2
-// CHECK-NEXT:     store notrap v156, v158
-// CHECK-NEXT: ; _48 = &_49
-// CHECK-NEXT:     v159 = stack_addr.i16 ss6
-// CHECK-NEXT: ; write_cvalue: Var(_48, var43): &'{erased} (u16, bool) <- ByVal(v159): &'{erased} (u16, bool)
-// CHECK-NEXT: ; _50 = &_3
-// CHECK-NEXT:     v160 = stack_addr.i16 ss0
-// CHECK-NEXT: ; write_cvalue: Var(_50, var44): &'{erased} (u16, bool) <- ByVal(v160): &'{erased} (u16, bool)
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; _47 = <(u16, bool) as core::cmp::PartialEq>::eq(move _48, move _50)
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: &(u16, bool), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }, ArgAbi { layout: TyAndLayout { ty: &(u16, bool), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }], ret: ArgAbi { layout: TyAndLayout { ty: bool, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is 0..=1), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: u8, valid_range: 0..=1 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 281483566645249 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
-// CHECK-NEXT:     v161 = call fn3(v159, v160)
-// CHECK-NEXT:     v35 -> v161
-// CHECK-NEXT: ; write_cvalue: Var(_47, var42): bool <- ByVal(v161): bool
-// CHECK-NEXT:     jump block3
-// CHECK-EMPTY:
-// CHECK-NEXT: block35:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _83 = const false
-// CHECK-NEXT:     v162 = iconst.i8 0
-// CHECK-NEXT: ; write_cvalue: Var(_83, var76): bool <- ByVal(v162): bool
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block34(v162, v203, v205, v207)  ; v162 = 0
-// CHECK-EMPTY:
-// CHECK-NEXT: block36:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _83 = const true
-// CHECK-NEXT:     v163 = iconst.i8 1
-// CHECK-NEXT: ; write_cvalue: Var(_83, var76): bool <- ByVal(v163): bool
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block34(v163, v204, v206, v208)  ; v163 = 1
-// CHECK-EMPTY:
-// CHECK-NEXT: block37:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _61 = Eq(move _62, const 0_u32)
-// CHECK-NEXT:     v165 = iconst.i32 0
-// CHECK-NEXT:     v166 = icmp.i32 eq v164, v165  ; v165 = 0
-// CHECK-NEXT: ; write_cvalue: Var(_61, var53): bool <- ByVal(v166): bool
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _61)
-// CHECK-NEXT:     brif.i32 v164, block11(v181), block9
-// CHECK-EMPTY:
-// CHECK-NEXT: block38:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _63 = Eq(move _64, const 0_u32)
-// CHECK-NEXT:     v168 = iconst.i32 0
-// CHECK-NEXT:     v169 = icmp.i32 eq v167, v168  ; v168 = 0
-// CHECK-NEXT: ; write_cvalue: Var(_63, var55): bool <- ByVal(v169): bool
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _63)
-// CHECK-NEXT:     brif.i32 v167, block11(v182), block10
-// CHECK-EMPTY:
-// CHECK-NEXT: block39:
-// CHECK-NEXT:     nop
-// CHECK-NEXT: ; _60 = Eq(move _65, const 16_u32)
-// CHECK-NEXT:     v171 = iconst.i32 16
-// CHECK-NEXT:     v172 = icmp.i32 eq v170, v171  ; v171 = 16
-// CHECK-NEXT: ; write_cvalue: Var(_60, var52): bool <- ByVal(v172): bool
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; goto
-// CHECK-NEXT:     jump block12(v172, v183)
+// CHECK-NEXT:     jump block11(v154, v164)
 // CHECK-NEXT: }

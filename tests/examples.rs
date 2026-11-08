@@ -73,7 +73,7 @@ fn oversized_program_reports_retained_formatting_and_rom_capacity() -> Result<()
     for expected in [
         "sangoku::retained_formatting",
         "sangoku::rom_capacity",
-        "encode_utf8_raw",
+        "pad_integral",
         "32768",
         "Largest retained sections",
         "probe.map",

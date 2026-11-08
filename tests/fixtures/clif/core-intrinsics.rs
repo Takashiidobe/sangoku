@@ -74,7 +74,7 @@ pub fn gbc_main() -> u8 { (bits(1, 1) == 0x81000022 && saturating(65535, 1) == (
 // CHECK-NEXT:     v11 = urem.i32 v9, v10
 // CHECK-NEXT: ; write_cvalue: Var(_3, var4): u32 <- ByVal(v11): u32
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _0 = core::intrinsics::unchecked_funnel_shl::<T>(copy _1, copy _1, move _3)
+// CHECK-NEXT: ; _0 = core::intrinsics::unchecked_funnel_shl::<T>(copy _1, move _1, move _3)
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }], ret: ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 3, conv: Rust, can_unwind: false }
 // CHECK-NEXT:     v13 = call fn1(v12, v12, v11)
@@ -120,7 +120,7 @@ pub fn gbc_main() -> u8 { (bits(1, 1) == 0x81000022 && saturating(65535, 1) == (
 // CHECK-NEXT: block1:
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _0 = <T as core::intrinsics::fallback::DisjointBitOr>::disjoint_bitor(copy _1, copy _2)
+// CHECK-NEXT: ; _0 = <T as core::intrinsics::fallback::DisjointBitOr>::disjoint_bitor(move _1, move _2)
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }], ret: ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
 // CHECK-NEXT:     v5 = call fn0(v3, v4)
@@ -169,7 +169,7 @@ pub fn gbc_main() -> u8 { (bits(1, 1) == 0x81000022 && saturating(65535, 1) == (
 // CHECK-NEXT: block1:
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _0 = <T as core::intrinsics::fallback::FunnelShift>::unchecked_funnel_shl(copy _1, copy _2, copy _3)
+// CHECK-NEXT: ; _0 = <T as core::intrinsics::fallback::FunnelShift>::unchecked_funnel_shl(move _1, move _2, move _3)
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }], ret: ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 3, conv: Rust, can_unwind: false }
 // CHECK-NEXT:     v6 = call fn0(v3, v4, v5)
@@ -414,21 +414,20 @@ pub fn gbc_main() -> u8 { (bits(1, 1) == 0x81000022 && saturating(65535, 1) == (
 // CHECK-NEXT: ; ssa   _1    u32                               4b 2                var=2
 // CHECK-NEXT: ; ssa   _2    u32                               4b 2                var=3
 // CHECK-NEXT: ; ssa   _3    u32                               4b 2                var=4
-// CHECK-NEXT: ; ssa   _4    bool                              1b 1                var=5
+// CHECK-NEXT: ; ssa   _4    u32                               4b 2                var=5
 // CHECK-NEXT: ; ssa   _5    u32                               4b 2                var=6
 // CHECK-NEXT: ; ssa   _6    u32                               4b 2                var=7
-// CHECK-NEXT: ; ssa   _7    u32                               4b 2                var=8
 // CHECK-EMPTY:
 // CHECK-NEXT:     gv0 = symbol colocated userextname0 ; alloc9
 // CHECK-NEXT:     sig0 = (i32, i32, i16) -> i32 system_v
 // CHECK-NEXT:     fn0 = colocated u0:1 sig0 ; Instance { def: Item(DefId(1:29129 ~ core[..]::intrinsics::disjoint_bitor)), args: [u32] }
 // CHECK-EMPTY:
 // CHECK-NEXT: block0(v0: i32, v1: i32, v2: i32):
-// CHECK-NEXT:     v6 -> v0
-// CHECK-NEXT:     v7 -> v0
-// CHECK-NEXT:     v12 -> v1
+// CHECK-NEXT:     v4 -> v0
+// CHECK-NEXT:     v5 -> v0
+// CHECK-NEXT:     v10 -> v1
 // CHECK-NEXT:     v3 -> v2
-// CHECK-NEXT:     v8 -> v2
+// CHECK-NEXT:     v6 -> v2
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ; write_cvalue: Var(_1, var2): u32 <- ByVal(v0): u32
 // CHECK-NEXT: ; write_cvalue: Var(_2, var3): u32 <- ByVal(v1): u32
@@ -437,49 +436,45 @@ pub fn gbc_main() -> u8 { (bits(1, 1) == 0x81000022 && saturating(65535, 1) == (
 // CHECK-EMPTY:
 // CHECK-NEXT: block1:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _4 = Eq(copy _3, const 0_u32)
-// CHECK-NEXT:     v4 = iconst.i32 0
-// CHECK-NEXT:     v5 = icmp.i32 eq v3, v4  ; v4 = 0
-// CHECK-NEXT: ; write_cvalue: Var(_4, var5): bool <- ByVal(v5): bool
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _4)
+// CHECK-NEXT: ; switchInt(copy _3)
 // CHECK-NEXT:     brif.i32 v3, block3, block2
 // CHECK-EMPTY:
 // CHECK-NEXT: block2:
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ; _0 = copy _1
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u32 <- ByVal(v6): u32
+// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u32 <- ByVal(v4): u32
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; goto
-// CHECK-NEXT:     return v6
+// CHECK-NEXT:     return v4
 // CHECK-EMPTY:
 // CHECK-NEXT: block3:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _5 = ShlUnchecked(copy _1, copy _3)
-// CHECK-NEXT:     v9 = ishl.i32 v7, v8
-// CHECK-NEXT: ; write_cvalue: Var(_5, var6): u32 <- ByVal(v9): u32
-// CHECK-NEXT: ; _7 = Sub(const core::num::<impl u32>::BITS, copy _3)
-// CHECK-NEXT:     v10 = iconst.i32 32
-// CHECK-NEXT:     v11 = isub v10, v8  ; v10 = 32
-// CHECK-NEXT: ; write_cvalue: Var(_7, var8): u32 <- ByVal(v11): u32
-// CHECK-NEXT: ; _6 = ShrUnchecked(copy _2, move _7)
-// CHECK-NEXT:     v13 = ushr.i32 v12, v11
-// CHECK-NEXT: ; write_cvalue: Var(_6, var7): u32 <- ByVal(v13): u32
+// CHECK-NEXT: ; _4 = ShlUnchecked(copy _1, copy _3)
+// CHECK-NEXT:     v7 = ishl.i32 v5, v6
+// CHECK-NEXT: ; write_cvalue: Var(_4, var5): u32 <- ByVal(v7): u32
+// CHECK-NEXT: ; _6 = Sub(const 32_u32, copy _3)
+// CHECK-NEXT:     v8 = iconst.i32 32
+// CHECK-NEXT:     v9 = isub v8, v6  ; v8 = 32
+// CHECK-NEXT: ; write_cvalue: Var(_6, var7): u32 <- ByVal(v9): u32
+// CHECK-NEXT: ; _5 = ShrUnchecked(copy _2, move _6)
+// CHECK-NEXT:     v11 = ushr.i32 v10, v9
+// CHECK-NEXT: ; write_cvalue: Var(_5, var6): u32 <- ByVal(v11): u32
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _0 = core::intrinsics::disjoint_bitor::<u32>(move _5, move _6)
-// CHECK-NEXT:     v14 = symbol_value.i16 gv0
+// CHECK-NEXT: ; _0 = core::intrinsics::disjoint_bitor::<u32>(move _4, move _5)
+// CHECK-NEXT:     v12 = symbol_value.i16 gv0
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, ArgAbi { layout: TyAndLayout { ty: &core::panic::Location<'_>, layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }], ret: ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
-// CHECK-NEXT:     v15 = call fn0(v9, v13, v14)
-// CHECK-NEXT:     v16 -> v15
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u32 <- ByVal(v15): u32
+// CHECK-NEXT:     v13 = call fn0(v7, v11, v12)
+// CHECK-NEXT:     v14 -> v13
+// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u32 <- ByVal(v13): u32
 // CHECK-NEXT:     jump block4
 // CHECK-EMPTY:
 // CHECK-NEXT: block4:
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; return
-// CHECK-NEXT:     return v16
+// CHECK-NEXT:     return v14
 // CHECK-NEXT: }
 // CHECK-EMPTY:
 // CHECK-NEXT: target z80 optimize_for_size=0
@@ -572,7 +567,7 @@ pub fn gbc_main() -> u8 { (bits(1, 1) == 0x81000022 && saturating(65535, 1) == (
 // CHECK-NEXT:     v22 -> v18
 // CHECK-NEXT: ; write_cvalue: Var(_4, var5): u32 <- ByVal(v18): u32
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _11 = core::intrinsics::rotate_left::<u32>(copy _1, copy _2)
+// CHECK-NEXT: ; _11 = core::intrinsics::rotate_left::<u32>(copy _1, move _2)
 // CHECK-NEXT:     v21 = rotl.i32 v19, v20
 // CHECK-NEXT:     v23 -> v21
 // CHECK-NEXT: ; write_cvalue: Var(_11, var12): u32 <- ByVal(v21): u32
@@ -585,7 +580,7 @@ pub fn gbc_main() -> u8 { (bits(1, 1) == 0x81000022 && saturating(65535, 1) == (
 // CHECK-NEXT:     v27 -> v24
 // CHECK-NEXT: ; write_cvalue: Var(_3, var4): u32 <- ByVal(v24): u32
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _12 = core::intrinsics::bitreverse::<u32>(copy _1)
+// CHECK-NEXT: ; _12 = core::intrinsics::bitreverse::<u32>(move _1)
 // CHECK-NEXT:     v26 = bitrev.i32 v25
 // CHECK-NEXT:     v28 -> v26
 // CHECK-NEXT: ; write_cvalue: Var(_12, var13): u32 <- ByVal(v26): u32
@@ -613,11 +608,9 @@ pub fn gbc_main() -> u8 { (bits(1, 1) == 0x81000022 && saturating(65535, 1) == (
 // CHECK-EMPTY:
 // CHECK-NEXT: ; kind  local ty                              size align (abi)
 // CHECK-NEXT: ; ssa   _1    bool                              1b 1                var=2
-// CHECK-NEXT: ; ssa   _2    bool                              1b 1                var=3
-// CHECK-NEXT: ; ssa   _3    u32                               4b 2                var=4
-// CHECK-NEXT: ; ssa   _4    &'{erased} (u16, u16)             2b 2                var=5
-// CHECK-NEXT: ; stack _5    (u16, u16)                        4b 2                storage=ss0
-// CHECK-NEXT: ; ssa   _6    &'{erased} (u16, u16)             2b 2                var=6
+// CHECK-NEXT: ; ssa   _2    u32                               4b 2                var=3
+// CHECK-NEXT: ; ssa   _3    &'{erased} (u16, u16)             2b 2                var=4
+// CHECK-NEXT: ; stack _4    (u16, u16)                        4b 2                storage=ss0
 // CHECK-EMPTY:
 // CHECK-NEXT:     ss0 = explicit_slot 4, align = 2
 // CHECK-NEXT:     gv0 = symbol colocated userextname2 ; alloc2
@@ -635,30 +628,28 @@ pub fn gbc_main() -> u8 { (bits(1, 1) == 0x81000022 && saturating(65535, 1) == (
 // CHECK-NEXT: block1:
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _3 = bits(const 1_u32, const 1_u32)
+// CHECK-NEXT: ; _2 = bits(const 1_u32, const 1_u32)
 // CHECK-NEXT:     v0 = iconst.i32 1
 // CHECK-NEXT:     v1 = iconst.i32 1
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }], ret: ArgAbi { layout: TyAndLayout { ty: u32, layout: Layout { size: Size(4 bytes), align: Align(2 bytes), backend_repr: Scalar(u32 is ..), fields: Primitive, largest_niche: None, uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 18446462607322841091 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
 // CHECK-NEXT:     v2 = call fn0(v0, v1)  ; v0 = 1, v1 = 1
 // CHECK-NEXT:     v3 -> v2
-// CHECK-NEXT: ; write_cvalue: Var(_3, var4): u32 <- ByVal(v2): u32
+// CHECK-NEXT: ; write_cvalue: Var(_2, var3): u32 <- ByVal(v2): u32
 // CHECK-NEXT:     jump block2
 // CHECK-EMPTY:
 // CHECK-NEXT: block2:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _2 = Eq(move _3, const 2164260898_u32)
+// CHECK-NEXT: ;
+// CHECK-NEXT: ; switchInt(copy _2)
 // CHECK-NEXT:     v4 = iconst.i32 -2130706398
 // CHECK-NEXT:     v5 = icmp.i32 eq v3, v4  ; v4 = -2130706398
-// CHECK-NEXT: ; write_cvalue: Var(_2, var3): bool <- ByVal(v5): bool
-// CHECK-NEXT: ;
-// CHECK-NEXT: ; switchInt(move _2)
 // CHECK-NEXT:     brif v5, block3, block4
 // CHECK-EMPTY:
 // CHECK-NEXT: block3:
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _5 = saturating(const u16::MAX, const 1_u16)
+// CHECK-NEXT: ; _4 = saturating(const u16::MAX, const 1_u16)
 // CHECK-NEXT:     v6 = iconst.i16 -1
 // CHECK-NEXT:     v7 = iconst.i16 1
 // CHECK-NEXT:     nop
@@ -682,14 +673,12 @@ pub fn gbc_main() -> u8 { (bits(1, 1) == 0x81000022 && saturating(65535, 1) == (
 // CHECK-EMPTY:
 // CHECK-NEXT: block5:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _4 = &_5
+// CHECK-NEXT: ; _3 = &_4
 // CHECK-NEXT:     v13 = stack_addr.i16 ss0
-// CHECK-NEXT: ; write_cvalue: Var(_4, var5): &'{erased} (u16, u16) <- ByVal(v13): &'{erased} (u16, u16)
-// CHECK-NEXT: ; _6 = const gbc_main::promoted[0]
-// CHECK-NEXT:     v14 = symbol_value.i16 gv0
-// CHECK-NEXT: ; write_cvalue: Var(_6, var6): &'{erased} (u16, u16) <- ByVal(v14): &'{erased} (u16, u16)
+// CHECK-NEXT: ; write_cvalue: Var(_3, var4): &'{erased} (u16, u16) <- ByVal(v13): &'{erased} (u16, u16)
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _1 = <(u16, u16) as core::cmp::PartialEq>::eq(move _4, move _6)
+// CHECK-NEXT: ; _1 = <(u16, u16) as core::cmp::PartialEq>::eq(move _3, const gbc_main::promoted[0])
+// CHECK-NEXT:     v14 = symbol_value.i16 gv0
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ; abi: FnAbi { args: [ArgAbi { layout: TyAndLayout { ty: &(u16, u16), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }, ArgAbi { layout: TyAndLayout { ty: &(u16, u16), layout: Layout { size: Size(2 bytes), align: Align(2 bytes), backend_repr: Scalar(pointer is 1..=65535), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: pointer, valid_range: 1..=65535 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(2 bytes), repr_c: false, randomization_seed: 17179869186 } }, mode: Direct(ArgAttributes { regular: NonNull | NoUndef, arg_ext: None, pointee_size: Size(0 bytes), pointee_align: Some(Align(2 bytes)) }) }], ret: ArgAbi { layout: TyAndLayout { ty: bool, layout: Layout { size: Size(1 bytes), align: Align(1 bytes), backend_repr: Scalar(u8 is 0..=1), fields: Primitive, largest_niche: Some(Niche { offset: Size(0 bytes), value: u8, valid_range: 0..=1 }), uninhabited: false, variants: Single { index: 0 }, max_repr_align: None, unadjusted_abi_align: Align(1 bytes), repr_c: false, randomization_seed: 281483566645249 } }, mode: Direct(ArgAttributes { regular: NoUndef, arg_ext: Zext, pointee_size: Size(0 bytes), pointee_align: None }) }, c_variadic: false, fixed_count: 2, conv: Rust, can_unwind: false }
 // CHECK-NEXT:     v15 = call fn2(v13, v14)
@@ -749,7 +738,7 @@ pub fn gbc_main() -> u8 { (bits(1, 1) == 0x81000022 && saturating(65535, 1) == (
 // CHECK-NEXT: block2:
 // CHECK-NEXT:     nop
 // CHECK-NEXT: ;
-// CHECK-NEXT: ; _4 = core::intrinsics::saturating_sub::<u16>(copy _1, copy _2)
+// CHECK-NEXT: ; _4 = core::intrinsics::saturating_sub::<u16>(move _1, move _2)
 // CHECK-NEXT:     v11 = iconst.i16 0
 // CHECK-NEXT:     v12 = iconst.i16 -1
 // CHECK-NEXT:     v13 = isub.i16 v9, v10

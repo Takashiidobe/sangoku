@@ -29,13 +29,11 @@ pub fn gbc_main() -> u8 { (folded(42) == 42) as u8 }
 // CHECK-EMPTY:
 // CHECK-NEXT: block1:
 // CHECK-NEXT:     nop
-// CHECK-NEXT: ; _0 = Add(copy _1, const 0_u16)
-// CHECK-NEXT:     v2 = iconst.i16 0
-// CHECK-NEXT:     v3 = iadd.i16 v1, v2  ; v2 = 0
-// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u16 <- ByVal(v3): u16
+// CHECK-NEXT: ; _0 = copy _1
+// CHECK-NEXT: ; write_cvalue: Var(_0, var1): u16 <- ByVal(v1): u16
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; return
-// CHECK-NEXT:     return v3
+// CHECK-NEXT:     return v1
 // CHECK-NEXT: }
 // CHECK-EMPTY:
 // CHECK-NEXT: target z80 optimize_for_size=0

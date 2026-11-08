@@ -110,11 +110,15 @@ fn inlined_volatile_poll_rereads_the_register() -> Result<()> {
 }
 
 fn build_runtime_rom(source: &str) -> Result<(Vec<u8>, String)> {
+    build_mapped_rom(source, "0")
+}
+
+fn build_mapped_rom(source: &str, opt_level: &str) -> Result<(Vec<u8>, String)> {
     let directory = sangoku_test_support::tempfile::tempdir()?;
     let rom = directory.path().join("runtime.gb");
     let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
         .current_dir(env!("CARGO_MANIFEST_DIR"))
-        .args(["build", source])
+        .args(["build", source, "--opt-level", opt_level])
         .arg(&rom)
         .output()?;
     let report = String::from_utf8(output.stderr)?;
@@ -257,4 +261,108 @@ fn popcnt32_links_only_its_runtime_helper() -> Result<()> {
 #[test]
 fn mul32_links_only_its_runtime_helper() -> Result<()> {
     check_single_runtime_helper("mul32", "__gbc_mul32", 4, u32::wrapping_mul)
+}
+
+#[test]
+fn formatted_panic_traps_without_formatting_and_keeps_argument_effects() -> Result<()> {
+    let (rom, map) = build_runtime_rom("tests/core_rom/panic_format.rs")?;
+    ensure!(!map.contains("4core3fmt"), "panic retained formatting");
+    for mode in 0..4 {
+        let mut emulator = Emulator::new(&rom, 0x100)?;
+        emulator.write16(0xc000, 12345);
+        emulator.memory[0xc020] = mode;
+        let mut halted = false;
+        for _ in 0..100_000 {
+            let before = emulator.pc;
+            emulator.step()?;
+            if emulator.pc == before {
+                halted = true;
+                break;
+            }
+        }
+        ensure!(
+            halted && emulator.pc == 0x11,
+            "panic mode {mode} did not trap"
+        );
+        ensure!(
+            emulator.memory[0xc010] == 0x5a,
+            "panic argument effect was lost"
+        );
+    }
+    Ok(())
+}
+
+#[test]
+fn range_checks_trap_without_retaining_formatting() -> Result<()> {
+    let (rom, map) = build_runtime_rom("tests/core_rom/range_check.rs")?;
+    ensure!(
+        !map.contains("4core3fmt"),
+        "range check retained formatting"
+    );
+    for end in [2u8, 4] {
+        let mut emulator = Emulator::new(&rom, 0x100)?;
+        emulator.memory[0xc000] = end;
+        let mut halted = false;
+        for _ in 0..100_000 {
+            let before = emulator.pc;
+            emulator.step()?;
+            if emulator.pc == before {
+                halted = true;
+                break;
+            }
+        }
+        ensure!(halted, "range check did not halt");
+        if end <= 3 {
+            ensure!(
+                emulator.a == end && emulator.pc != 0x11,
+                "valid range failed"
+            );
+        } else {
+            ensure!(emulator.pc == 0x11, "out-of-range access did not trap");
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn explicit_formatting_still_executes() -> Result<()> {
+    let (rom, map) = build_mapped_rom("tests/core_rom/format_value.rs", "z")?;
+    ensure!(map.contains("4core3fmt"), "explicit formatting was removed");
+    for value in [0u8, 123, u8::MAX] {
+        let mut emulator = Emulator::new(&rom, 0x100)?;
+        emulator.memory[0xc000] = value;
+        let mut halted = false;
+        for _ in 0..2_000_000 {
+            let before = emulator.pc;
+            emulator.step()?;
+            if emulator.pc == before {
+                halted = true;
+                break;
+            }
+        }
+        ensure!(
+            halted && emulator.a == 0,
+            "explicit formatting did not return"
+        );
+        ensure!(
+            emulator.serial == format!("value={value}\n").as_bytes(),
+            "explicit formatting failed for {value}"
+        );
+    }
+    Ok(())
+}
+
+#[test]
+fn const_panics_remain_compile_errors() -> Result<()> {
+    let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args(["frontend", "tests/core_rom/const_panic.rs", "-"])
+        .output()?;
+    let report = String::from_utf8(output.stderr)?;
+    ensure!(!output.status.success(), "constant panic was accepted");
+    ensure!(
+        report.contains("E0080") && report.contains("constant panic remains an error"),
+        "{report}"
+    );
+    Ok(())
 }

@@ -4,6 +4,24 @@ Keep Rust APIs enabled when the backend can lower them. A supported type or
 operation can still be too expensive for a particular ROM's size, stack or CPU
 budget. Check the operation you use rather than banning a type by width.
 
+## Panics
+
+Every optimization level uses `-Cpanic=immediate-abort`, `-Zmir-opt-level=2` and
+`-Zmir-strip-debuginfo=all-locals`. MIR local debug records can otherwise keep
+dead formatter arguments reachable, even when the panic itself becomes a trap.
+These defaults apply to programs, core and alloc.
+
+Failed bounds checks, assertions, unwraps and formatted panics still trap.
+Argument side effects still execute, and constant panics remain compilation
+errors. Sorting can use upstream `sort_unstable` without retaining panic-only
+formatting. Explicit formatting remains supported and retains its own code.
+
+Run the optimization-level matrix explicitly:
+
+```sh
+cargo nextest run --profile extensive --no-fail-fast --test panic_profiles
+```
+
 ## Formatting
 
 Upstream integer and float formatting remain available in core. The standalone
@@ -42,9 +60,9 @@ figures are lower bounds for a complete program.
 output implementation, such as a serial or screen writer, as well as formatting
 and linking support. `core::fmt` does not provide an output device.
 
-The formatting regression calls `Display::fmt` with a bounded test sink. It does
-not establish support for general `write!`, `println!`, std, or a complete
-core/alloc application. Runtime imports such as `memcpy`, `memmove` and `memcmp`
+The formatting probes call `Display::fmt` with a bounded test sink. A target
+ROM test also checks `writeln!` of `u8` values through a serial writer. These
+checks do not establish support for every formatting type, `println!`, or std. Runtime imports such as `memcpy`, `memmove` and `memcmp`
 still need implementations when a compiled path references them.
 
 ## Wide integers and floats

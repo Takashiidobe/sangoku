@@ -4,6 +4,7 @@ not (
     binary(=core_report)
     | binary(=alloc_report)
     | binary(=coverage)
+    | binary(=panic_profiles)
     | test(=target_core_preserves_upstream_api_surface)
     | test(=target_core_and_alloc_respect_16_bit_size_limits)
     | test(=upstream_u64_decimal_formatting_matches_host)

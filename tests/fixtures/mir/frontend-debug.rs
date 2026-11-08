@@ -31,15 +31,17 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: fn gbc_main() -> u8 {
 // CHECK-NEXT:     let mut _0: u8;
 // CHECK-NEXT:     let mut _1: (u8, u16);
-// CHECK-NEXT:     let mut _2: (u8, u16);
 // CHECK-EMPTY:
 // CHECK-NEXT:     bb0: {
-// CHECK-NEXT:         _2 = (const 3_u8, const 20_u16);
-// CHECK-NEXT:         _1 = pair(move _2) -> [return: bb1, unwind unreachable];
+// CHECK-NEXT:         _1 = pair(const (3_u8, 20_u16)) -> [return: bb1, unwind unreachable];
 // CHECK-NEXT:     }
 // CHECK-EMPTY:
 // CHECK-NEXT:     bb1: {
 // CHECK-NEXT:         _0 = copy (_1.0: u8);
 // CHECK-NEXT:         return;
 // CHECK-NEXT:     }
+// CHECK-NEXT: }
+// CHECK-EMPTY:
+// CHECK-NEXT: alloc1 (size: 4, align: 2) {
+// CHECK-NEXT:     03 __ 14 00                                     │ .░..
 // CHECK-NEXT: }
