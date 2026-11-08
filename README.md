@@ -106,6 +106,10 @@ in `tests/fixtures/alloc` and require `--alloc`.
 Run `python3 tools/core_report.py --alloc --json` to compile the libraries and
 representative generic drivers to CLIF and probe LR35902 lowering. Use
 `--keep build/alloc-report` to retain CLIF and alloc compiler diagnostics.
+The [intrinsic audit](wiki/intrinsics.md) records source-level intrinsic call
+routes and candidates for compact shared libcalls. Its broader matrix runs
+only in the extensive profile.
+
 The regression check is
 `cargo nextest run --profile extensive --no-fail-fast --test alloc_report`.
 

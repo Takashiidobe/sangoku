@@ -1,0 +1,1018 @@
+case	phase	status	detail
+add_with_overflow_i128	callees	no-external-call	
+add_with_overflow_i128	lowering	ok	
+add_with_overflow_i128	rust-functions	1	before-runtime-objects
+add_with_overflow_i16	callees	no-external-call	
+add_with_overflow_i16	lowering	ok	
+add_with_overflow_i16	rust-functions	1	before-runtime-objects
+add_with_overflow_i32	callees	no-external-call	
+add_with_overflow_i32	lowering	ok	
+add_with_overflow_i32	rust-functions	1	before-runtime-objects
+add_with_overflow_i64	callees	no-external-call	
+add_with_overflow_i64	lowering	ok	
+add_with_overflow_i64	rust-functions	1	before-runtime-objects
+add_with_overflow_i8	callees	no-external-call	
+add_with_overflow_i8	lowering	ok	
+add_with_overflow_i8	rust-functions	1	before-runtime-objects
+add_with_overflow_isize	callees	no-external-call	
+add_with_overflow_isize	lowering	ok	
+add_with_overflow_isize	rust-functions	1	before-runtime-objects
+add_with_overflow_u128	callees	no-external-call	
+add_with_overflow_u128	lowering	ok	
+add_with_overflow_u128	rust-functions	1	before-runtime-objects
+add_with_overflow_u16	callees	no-external-call	
+add_with_overflow_u16	lowering	ok	
+add_with_overflow_u16	rust-functions	1	before-runtime-objects
+add_with_overflow_u32	callees	no-external-call	
+add_with_overflow_u32	lowering	ok	
+add_with_overflow_u32	rust-functions	1	before-runtime-objects
+add_with_overflow_u64	callees	no-external-call	
+add_with_overflow_u64	lowering	ok	
+add_with_overflow_u64	rust-functions	1	before-runtime-objects
+add_with_overflow_u8	callees	no-external-call	
+add_with_overflow_u8	lowering	ok	
+add_with_overflow_u8	rust-functions	1	before-runtime-objects
+add_with_overflow_usize	callees	no-external-call	
+add_with_overflow_usize	lowering	ok	
+add_with_overflow_usize	rust-functions	1	before-runtime-objects
+bitreverse_i128	callees	external	__gbc_bitrev32
+bitreverse_i128	lowering	ok	
+bitreverse_i128	rust-functions	1	before-runtime-objects
+bitreverse_i16	callees	external	__gbc_bitrev32
+bitreverse_i16	lowering	ok	
+bitreverse_i16	rust-functions	1	before-runtime-objects
+bitreverse_i32	callees	external	__gbc_bitrev32
+bitreverse_i32	lowering	ok	
+bitreverse_i32	rust-functions	1	before-runtime-objects
+bitreverse_i64	callees	external	__gbc_bitrev32
+bitreverse_i64	lowering	ok	
+bitreverse_i64	rust-functions	1	before-runtime-objects
+bitreverse_i8	callees	external	__gbc_bitrev32
+bitreverse_i8	lowering	ok	
+bitreverse_i8	rust-functions	1	before-runtime-objects
+bitreverse_isize	callees	external	__gbc_bitrev32
+bitreverse_isize	lowering	ok	
+bitreverse_isize	rust-functions	1	before-runtime-objects
+bitreverse_u128	callees	external	__gbc_bitrev32
+bitreverse_u128	lowering	ok	
+bitreverse_u128	rust-functions	1	before-runtime-objects
+bitreverse_u16	callees	external	__gbc_bitrev32
+bitreverse_u16	lowering	ok	
+bitreverse_u16	rust-functions	1	before-runtime-objects
+bitreverse_u32	callees	external	__gbc_bitrev32
+bitreverse_u32	lowering	ok	
+bitreverse_u32	rust-functions	1	before-runtime-objects
+bitreverse_u64	callees	external	__gbc_bitrev32
+bitreverse_u64	lowering	ok	
+bitreverse_u64	rust-functions	1	before-runtime-objects
+bitreverse_u8	callees	external	__gbc_bitrev32
+bitreverse_u8	lowering	ok	
+bitreverse_u8	rust-functions	1	before-runtime-objects
+bitreverse_usize	callees	external	__gbc_bitrev32
+bitreverse_usize	lowering	ok	
+bitreverse_usize	rust-functions	1	before-runtime-objects
+bswap_i128	callees	no-external-call	
+bswap_i128	lowering	ok	
+bswap_i128	rust-functions	1	before-runtime-objects
+bswap_i16	callees	no-external-call	
+bswap_i16	lowering	ok	
+bswap_i16	rust-functions	1	before-runtime-objects
+bswap_i32	callees	no-external-call	
+bswap_i32	lowering	ok	
+bswap_i32	rust-functions	1	before-runtime-objects
+bswap_i64	callees	no-external-call	
+bswap_i64	lowering	ok	
+bswap_i64	rust-functions	1	before-runtime-objects
+bswap_i8	callees	no-external-call	
+bswap_i8	lowering	ok	
+bswap_i8	rust-functions	1	before-runtime-objects
+bswap_isize	callees	no-external-call	
+bswap_isize	lowering	ok	
+bswap_isize	rust-functions	1	before-runtime-objects
+bswap_u128	callees	no-external-call	
+bswap_u128	lowering	ok	
+bswap_u128	rust-functions	1	before-runtime-objects
+bswap_u16	callees	no-external-call	
+bswap_u16	lowering	ok	
+bswap_u16	rust-functions	1	before-runtime-objects
+bswap_u32	callees	no-external-call	
+bswap_u32	lowering	ok	
+bswap_u32	rust-functions	1	before-runtime-objects
+bswap_u64	callees	no-external-call	
+bswap_u64	lowering	ok	
+bswap_u64	rust-functions	1	before-runtime-objects
+bswap_u8	callees	no-external-call	
+bswap_u8	lowering	ok	
+bswap_u8	rust-functions	1	before-runtime-objects
+bswap_usize	callees	no-external-call	
+bswap_usize	lowering	ok	
+bswap_usize	rust-functions	1	before-runtime-objects
+carrying_mul_add_i128	callees	no-external-call	
+carrying_mul_add_i128	lowering	ok	
+carrying_mul_add_i128	rust-functions	4	before-runtime-objects
+carrying_mul_add_i16	callees	external	__gbc_mul32, __gbc_shift16
+carrying_mul_add_i16	lowering	ok	
+carrying_mul_add_i16	rust-functions	3	before-runtime-objects
+carrying_mul_add_i32	callees	external	__gbc_mul32, __gbc_shift16
+carrying_mul_add_i32	lowering	ok	
+carrying_mul_add_i32	rust-functions	3	before-runtime-objects
+carrying_mul_add_i64	callees	no-external-call	
+carrying_mul_add_i64	lowering	ok	
+carrying_mul_add_i64	rust-functions	3	before-runtime-objects
+carrying_mul_add_i8	callees	external	__gbc_mul16
+carrying_mul_add_i8	lowering	ok	
+carrying_mul_add_i8	rust-functions	3	before-runtime-objects
+carrying_mul_add_isize	callees	external	__gbc_mul32
+carrying_mul_add_isize	lowering	ok	
+carrying_mul_add_isize	rust-functions	3	before-runtime-objects
+carrying_mul_add_u128	callees	no-external-call	
+carrying_mul_add_u128	lowering	ok	
+carrying_mul_add_u128	rust-functions	4	before-runtime-objects
+carrying_mul_add_u16	callees	external	__gbc_mul32
+carrying_mul_add_u16	lowering	ok	
+carrying_mul_add_u16	rust-functions	3	before-runtime-objects
+carrying_mul_add_u32	callees	external	__gbc_mul32, __gbc_shift16
+carrying_mul_add_u32	lowering	ok	
+carrying_mul_add_u32	rust-functions	3	before-runtime-objects
+carrying_mul_add_u64	callees	no-external-call	
+carrying_mul_add_u64	lowering	ok	
+carrying_mul_add_u64	rust-functions	3	before-runtime-objects
+carrying_mul_add_u8	callees	external	__gbc_mul16
+carrying_mul_add_u8	lowering	ok	
+carrying_mul_add_u8	rust-functions	3	before-runtime-objects
+carrying_mul_add_usize	callees	external	__gbc_mul32
+carrying_mul_add_usize	lowering	ok	
+carrying_mul_add_usize	rust-functions	3	before-runtime-objects
+carryless_mul_u128	callees	no-external-call	
+carryless_mul_u128	lowering	ok	
+carryless_mul_u128	rust-functions	3	before-runtime-objects
+carryless_mul_u16	callees	external	__gbc_shift16
+carryless_mul_u16	lowering	ok	
+carryless_mul_u16	rust-functions	3	before-runtime-objects
+carryless_mul_u32	callees	external	__gbc_shift16
+carryless_mul_u32	lowering	ok	
+carryless_mul_u32	rust-functions	3	before-runtime-objects
+carryless_mul_u64	callees	external	__gbc_shift16
+carryless_mul_u64	lowering	ok	
+carryless_mul_u64	rust-functions	3	before-runtime-objects
+carryless_mul_u8	callees	external	__gbc_shift8
+carryless_mul_u8	lowering	ok	
+carryless_mul_u8	rust-functions	3	before-runtime-objects
+carryless_mul_usize	callees	external	__gbc_shift16
+carryless_mul_usize	lowering	ok	
+carryless_mul_usize	rust-functions	3	before-runtime-objects
+ceil_f128	callees	external	__gbc_f128
+ceil_f128	lowering	ok	
+ceil_f128	rust-functions	1	before-runtime-objects
+ceil_f16	callees	external	__rust_ceilf16
+ceil_f16	lowering	ok	
+ceil_f16	rust-functions	3	before-runtime-objects
+ceil_f32	callees	external	__gbc_fround32
+ceil_f32	lowering	ok	
+ceil_f32	rust-functions	1	before-runtime-objects
+ceil_f64	callees	external	__gbc_f64
+ceil_f64	lowering	ok	
+ceil_f64	rust-functions	1	before-runtime-objects
+compare_bytes	callees	no-external-call	
+compare_bytes	lowering	ok	
+compare_bytes	rust-functions	4	before-runtime-objects
+copy	callees	external	memmove
+copy	lowering	ok	
+copy	rust-functions	1	before-runtime-objects
+copy_nonoverlapping	callees	external	memcpy
+copy_nonoverlapping	lowering	ok	
+copy_nonoverlapping	rust-functions	1	before-runtime-objects
+copysignf128	callees	no-external-call	
+copysignf128	lowering	ok	
+copysignf128	rust-functions	1	before-runtime-objects
+copysignf16	callees	no-external-call	
+copysignf16	lowering	ok	
+copysignf16	rust-functions	2	before-runtime-objects
+copysignf32	callees	no-external-call	
+copysignf32	lowering	ok	
+copysignf32	rust-functions	1	before-runtime-objects
+copysignf64	callees	no-external-call	
+copysignf64	lowering	ok	
+copysignf64	rust-functions	1	before-runtime-objects
+cos_f128	callees	external	__rust_cosf128
+cos_f128	lowering	ok	
+cos_f128	rust-functions	1	before-runtime-objects
+cos_f16	callees	external	__gbc_convert, __gbc_f16tof32, __gbc_f32tof16, __gbc_f64, __gbc_fadd32, __gbc_mul16, __gbc_mul32, __gbc_sdiv32, __gbc_shift16
+cos_f16	lowering	ok	
+cos_f16	rust-functions	42	before-runtime-objects
+cos_f32	callees	external	__gbc_convert, __gbc_f64, __gbc_fadd32, __gbc_mul16, __gbc_mul32, __gbc_sdiv32, __gbc_shift16
+cos_f32	lowering	ok	
+cos_f32	rust-functions	40	before-runtime-objects
+cos_f64	callees	external	__gbc_convert, __gbc_f64, __gbc_mul16, __gbc_mul32, __gbc_sdiv32, __gbc_shift16
+cos_f64	lowering	ok	
+cos_f64	rust-functions	43	before-runtime-objects
+ctlz_i128	callees	external	__gbc_clz32
+ctlz_i128	lowering	ok	
+ctlz_i128	rust-functions	1	before-runtime-objects
+ctlz_i16	callees	external	__gbc_clz32
+ctlz_i16	lowering	ok	
+ctlz_i16	rust-functions	1	before-runtime-objects
+ctlz_i32	callees	external	__gbc_clz32
+ctlz_i32	lowering	ok	
+ctlz_i32	rust-functions	1	before-runtime-objects
+ctlz_i64	callees	external	__gbc_clz32
+ctlz_i64	lowering	ok	
+ctlz_i64	rust-functions	1	before-runtime-objects
+ctlz_i8	callees	external	__gbc_clz32
+ctlz_i8	lowering	ok	
+ctlz_i8	rust-functions	1	before-runtime-objects
+ctlz_isize	callees	external	__gbc_clz32
+ctlz_isize	lowering	ok	
+ctlz_isize	rust-functions	1	before-runtime-objects
+ctlz_nonzero_i128	callees	external	__gbc_clz32
+ctlz_nonzero_i128	lowering	ok	
+ctlz_nonzero_i128	rust-functions	1	before-runtime-objects
+ctlz_nonzero_i16	callees	external	__gbc_clz32
+ctlz_nonzero_i16	lowering	ok	
+ctlz_nonzero_i16	rust-functions	1	before-runtime-objects
+ctlz_nonzero_i32	callees	external	__gbc_clz32
+ctlz_nonzero_i32	lowering	ok	
+ctlz_nonzero_i32	rust-functions	1	before-runtime-objects
+ctlz_nonzero_i64	callees	external	__gbc_clz32
+ctlz_nonzero_i64	lowering	ok	
+ctlz_nonzero_i64	rust-functions	1	before-runtime-objects
+ctlz_nonzero_i8	callees	external	__gbc_clz32
+ctlz_nonzero_i8	lowering	ok	
+ctlz_nonzero_i8	rust-functions	1	before-runtime-objects
+ctlz_nonzero_isize	callees	external	__gbc_clz32
+ctlz_nonzero_isize	lowering	ok	
+ctlz_nonzero_isize	rust-functions	1	before-runtime-objects
+ctlz_nonzero_u128	callees	external	__gbc_clz32
+ctlz_nonzero_u128	lowering	ok	
+ctlz_nonzero_u128	rust-functions	1	before-runtime-objects
+ctlz_nonzero_u16	callees	external	__gbc_clz32
+ctlz_nonzero_u16	lowering	ok	
+ctlz_nonzero_u16	rust-functions	1	before-runtime-objects
+ctlz_nonzero_u32	callees	external	__gbc_clz32
+ctlz_nonzero_u32	lowering	ok	
+ctlz_nonzero_u32	rust-functions	1	before-runtime-objects
+ctlz_nonzero_u64	callees	external	__gbc_clz32
+ctlz_nonzero_u64	lowering	ok	
+ctlz_nonzero_u64	rust-functions	1	before-runtime-objects
+ctlz_nonzero_u8	callees	external	__gbc_clz32
+ctlz_nonzero_u8	lowering	ok	
+ctlz_nonzero_u8	rust-functions	1	before-runtime-objects
+ctlz_nonzero_usize	callees	external	__gbc_clz32
+ctlz_nonzero_usize	lowering	ok	
+ctlz_nonzero_usize	rust-functions	1	before-runtime-objects
+ctlz_u128	callees	external	__gbc_clz32
+ctlz_u128	lowering	ok	
+ctlz_u128	rust-functions	1	before-runtime-objects
+ctlz_u16	callees	external	__gbc_clz32
+ctlz_u16	lowering	ok	
+ctlz_u16	rust-functions	1	before-runtime-objects
+ctlz_u32	callees	external	__gbc_clz32
+ctlz_u32	lowering	ok	
+ctlz_u32	rust-functions	1	before-runtime-objects
+ctlz_u64	callees	external	__gbc_clz32
+ctlz_u64	lowering	ok	
+ctlz_u64	rust-functions	1	before-runtime-objects
+ctlz_u8	callees	external	__gbc_clz32
+ctlz_u8	lowering	ok	
+ctlz_u8	rust-functions	1	before-runtime-objects
+ctlz_usize	callees	external	__gbc_clz32
+ctlz_usize	lowering	ok	
+ctlz_usize	rust-functions	1	before-runtime-objects
+ctpop_i128	callees	external	__gbc_popcnt32
+ctpop_i128	lowering	ok	
+ctpop_i128	rust-functions	1	before-runtime-objects
+ctpop_i16	callees	no-external-call	
+ctpop_i16	lowering	ok	
+ctpop_i16	rust-functions	1	before-runtime-objects
+ctpop_i32	callees	external	__gbc_popcnt32
+ctpop_i32	lowering	ok	
+ctpop_i32	rust-functions	1	before-runtime-objects
+ctpop_i64	callees	external	__gbc_popcnt32
+ctpop_i64	lowering	ok	
+ctpop_i64	rust-functions	1	before-runtime-objects
+ctpop_i8	callees	external	__gbc_popcnt32
+ctpop_i8	lowering	ok	
+ctpop_i8	rust-functions	1	before-runtime-objects
+ctpop_isize	callees	no-external-call	
+ctpop_isize	lowering	ok	
+ctpop_isize	rust-functions	1	before-runtime-objects
+ctpop_u128	callees	external	__gbc_popcnt32
+ctpop_u128	lowering	ok	
+ctpop_u128	rust-functions	1	before-runtime-objects
+ctpop_u16	callees	no-external-call	
+ctpop_u16	lowering	ok	
+ctpop_u16	rust-functions	1	before-runtime-objects
+ctpop_u32	callees	external	__gbc_popcnt32
+ctpop_u32	lowering	ok	
+ctpop_u32	rust-functions	1	before-runtime-objects
+ctpop_u64	callees	external	__gbc_popcnt32
+ctpop_u64	lowering	ok	
+ctpop_u64	rust-functions	1	before-runtime-objects
+ctpop_u8	callees	external	__gbc_popcnt32
+ctpop_u8	lowering	ok	
+ctpop_u8	rust-functions	1	before-runtime-objects
+ctpop_usize	callees	no-external-call	
+ctpop_usize	lowering	ok	
+ctpop_usize	rust-functions	1	before-runtime-objects
+cttz_i128	callees	external	__gbc_ctz32
+cttz_i128	lowering	ok	
+cttz_i128	rust-functions	1	before-runtime-objects
+cttz_i16	callees	external	__gbc_ctz32
+cttz_i16	lowering	ok	
+cttz_i16	rust-functions	1	before-runtime-objects
+cttz_i32	callees	external	__gbc_ctz32
+cttz_i32	lowering	ok	
+cttz_i32	rust-functions	1	before-runtime-objects
+cttz_i64	callees	external	__gbc_ctz32
+cttz_i64	lowering	ok	
+cttz_i64	rust-functions	1	before-runtime-objects
+cttz_i8	callees	external	__gbc_ctz32
+cttz_i8	lowering	ok	
+cttz_i8	rust-functions	1	before-runtime-objects
+cttz_isize	callees	external	__gbc_ctz32
+cttz_isize	lowering	ok	
+cttz_isize	rust-functions	1	before-runtime-objects
+cttz_nonzero_i128	callees	external	__gbc_ctz32
+cttz_nonzero_i128	lowering	ok	
+cttz_nonzero_i128	rust-functions	1	before-runtime-objects
+cttz_nonzero_i16	callees	external	__gbc_ctz32
+cttz_nonzero_i16	lowering	ok	
+cttz_nonzero_i16	rust-functions	1	before-runtime-objects
+cttz_nonzero_i32	callees	external	__gbc_ctz32
+cttz_nonzero_i32	lowering	ok	
+cttz_nonzero_i32	rust-functions	1	before-runtime-objects
+cttz_nonzero_i64	callees	external	__gbc_ctz32
+cttz_nonzero_i64	lowering	ok	
+cttz_nonzero_i64	rust-functions	1	before-runtime-objects
+cttz_nonzero_i8	callees	external	__gbc_ctz32
+cttz_nonzero_i8	lowering	ok	
+cttz_nonzero_i8	rust-functions	1	before-runtime-objects
+cttz_nonzero_isize	callees	external	__gbc_ctz32
+cttz_nonzero_isize	lowering	ok	
+cttz_nonzero_isize	rust-functions	1	before-runtime-objects
+cttz_nonzero_u128	callees	external	__gbc_ctz32
+cttz_nonzero_u128	lowering	ok	
+cttz_nonzero_u128	rust-functions	1	before-runtime-objects
+cttz_nonzero_u16	callees	external	__gbc_ctz32
+cttz_nonzero_u16	lowering	ok	
+cttz_nonzero_u16	rust-functions	1	before-runtime-objects
+cttz_nonzero_u32	callees	external	__gbc_ctz32
+cttz_nonzero_u32	lowering	ok	
+cttz_nonzero_u32	rust-functions	1	before-runtime-objects
+cttz_nonzero_u64	callees	external	__gbc_ctz32
+cttz_nonzero_u64	lowering	ok	
+cttz_nonzero_u64	rust-functions	1	before-runtime-objects
+cttz_nonzero_u8	callees	external	__gbc_ctz32
+cttz_nonzero_u8	lowering	ok	
+cttz_nonzero_u8	rust-functions	1	before-runtime-objects
+cttz_nonzero_usize	callees	external	__gbc_ctz32
+cttz_nonzero_usize	lowering	ok	
+cttz_nonzero_usize	rust-functions	1	before-runtime-objects
+cttz_u128	callees	external	__gbc_ctz32
+cttz_u128	lowering	ok	
+cttz_u128	rust-functions	1	before-runtime-objects
+cttz_u16	callees	external	__gbc_ctz32
+cttz_u16	lowering	ok	
+cttz_u16	rust-functions	1	before-runtime-objects
+cttz_u32	callees	external	__gbc_ctz32
+cttz_u32	lowering	ok	
+cttz_u32	rust-functions	1	before-runtime-objects
+cttz_u64	callees	external	__gbc_ctz32
+cttz_u64	lowering	ok	
+cttz_u64	rust-functions	1	before-runtime-objects
+cttz_u8	callees	external	__gbc_ctz32
+cttz_u8	lowering	ok	
+cttz_u8	rust-functions	1	before-runtime-objects
+cttz_usize	callees	external	__gbc_ctz32
+cttz_usize	lowering	ok	
+cttz_usize	rust-functions	1	before-runtime-objects
+exp2_f128	callees	external	__rust_exp2f128
+exp2_f128	lowering	ok	
+exp2_f128	rust-functions	1	before-runtime-objects
+exp2_f16	callees	external	__gbc_convert, __gbc_f16tof32, __gbc_f32tof16, __gbc_f64, __gbc_fadd32, __gbc_fdiv32, __gbc_fmul32, __gbc_mul16, __gbc_shift16, __gbc_udiv32
+exp2_f16	lowering	ok	
+exp2_f16	rust-functions	11	before-runtime-objects
+exp2_f32	callees	external	__gbc_convert, __gbc_f64, __gbc_fadd32, __gbc_fdiv32, __gbc_fmul32, __gbc_mul16, __gbc_shift16, __gbc_udiv32
+exp2_f32	lowering	ok	
+exp2_f32	rust-functions	9	before-runtime-objects
+exp2_f64	callees	external	__gbc_convert, __gbc_f64, __gbc_mul16, __gbc_mul32, __gbc_sdiv32, __gbc_shift16, __gbc_udiv32, __gbc_urem32
+exp2_f64	lowering	ok	
+exp2_f64	rust-functions	15	before-runtime-objects
+exp_f128	callees	external	__rust_expf128
+exp_f128	lowering	ok	
+exp_f128	rust-functions	1	before-runtime-objects
+exp_f16	callees	external	__gbc_f16tof32, __gbc_f32tof16, __gbc_fadd32, __gbc_fcvtfromint32, __gbc_fcvttoint32, __gbc_fdiv32, __gbc_fmul32, __gbc_mul16, __gbc_shift16
+exp_f16	lowering	ok	
+exp_f16	rust-functions	17	before-runtime-objects
+exp_f32	callees	external	__gbc_fadd32, __gbc_fcvtfromint32, __gbc_fcvttoint32, __gbc_fdiv32, __gbc_fmul32, __gbc_mul16, __gbc_shift16
+exp_f32	lowering	ok	
+exp_f32	rust-functions	15	before-runtime-objects
+exp_f64	callees	external	__gbc_convert, __gbc_f64, __gbc_mul16, __gbc_shift16
+exp_f64	lowering	ok	
+exp_f64	rust-functions	15	before-runtime-objects
+fabs_f128	callees	no-external-call	
+fabs_f128	lowering	ok	
+fabs_f128	rust-functions	1	before-runtime-objects
+fabs_f16	callees	no-external-call	
+fabs_f16	lowering	ok	
+fabs_f16	rust-functions	6	before-runtime-objects
+fabs_f32	callees	no-external-call	
+fabs_f32	lowering	ok	
+fabs_f32	rust-functions	1	before-runtime-objects
+fabs_f64	callees	no-external-call	
+fabs_f64	lowering	ok	
+fabs_f64	rust-functions	1	before-runtime-objects
+fadd_algebraic_f128	callees	external	__gbc_f128
+fadd_algebraic_f128	lowering	ok	
+fadd_algebraic_f128	rust-functions	1	before-runtime-objects
+fadd_algebraic_f16	callees	external	__gbc_f16tof32, __gbc_f32tof16, __gbc_fadd32
+fadd_algebraic_f16	lowering	ok	
+fadd_algebraic_f16	rust-functions	1	before-runtime-objects
+fadd_algebraic_f32	callees	external	__gbc_fadd32
+fadd_algebraic_f32	lowering	ok	
+fadd_algebraic_f32	rust-functions	1	before-runtime-objects
+fadd_algebraic_f64	callees	external	__gbc_f64
+fadd_algebraic_f64	lowering	ok	
+fadd_algebraic_f64	rust-functions	1	before-runtime-objects
+fdiv_algebraic_f128	callees	external	__gbc_f128
+fdiv_algebraic_f128	lowering	ok	
+fdiv_algebraic_f128	rust-functions	1	before-runtime-objects
+fdiv_algebraic_f16	callees	external	__gbc_f16tof32, __gbc_f32tof16, __gbc_fdiv32
+fdiv_algebraic_f16	lowering	ok	
+fdiv_algebraic_f16	rust-functions	1	before-runtime-objects
+fdiv_algebraic_f32	callees	external	__gbc_fdiv32
+fdiv_algebraic_f32	lowering	ok	
+fdiv_algebraic_f32	rust-functions	1	before-runtime-objects
+fdiv_algebraic_f64	callees	external	__gbc_f64
+fdiv_algebraic_f64	lowering	ok	
+fdiv_algebraic_f64	rust-functions	1	before-runtime-objects
+floor_f128	callees	external	__gbc_f128
+floor_f128	lowering	ok	
+floor_f128	rust-functions	1	before-runtime-objects
+floor_f16	callees	external	__rust_floorf16
+floor_f16	lowering	ok	
+floor_f16	rust-functions	3	before-runtime-objects
+floor_f32	callees	external	__gbc_fround32
+floor_f32	lowering	ok	
+floor_f32	rust-functions	1	before-runtime-objects
+floor_f64	callees	external	__gbc_f64
+floor_f64	lowering	ok	
+floor_f64	rust-functions	1	before-runtime-objects
+fma_f128	callees	external	__gbc_f128
+fma_f128	lowering	ok	
+fma_f128	rust-functions	1	before-runtime-objects
+fma_f16	callees	external	__gbc_convert, __gbc_f16tof32, __gbc_f64, __rust___truncdfhf2
+fma_f16	lowering	ok	
+fma_f16	rust-functions	1	before-runtime-objects
+fma_f32	callees	external	__gbc_ffma32
+fma_f32	lowering	ok	
+fma_f32	rust-functions	1	before-runtime-objects
+fma_f64	callees	external	__gbc_f64
+fma_f64	lowering	ok	
+fma_f64	rust-functions	1	before-runtime-objects
+fmul_algebraic_f128	callees	external	__gbc_f128
+fmul_algebraic_f128	lowering	ok	
+fmul_algebraic_f128	rust-functions	1	before-runtime-objects
+fmul_algebraic_f16	callees	external	__gbc_f16tof32, __gbc_f32tof16, __gbc_fmul32
+fmul_algebraic_f16	lowering	ok	
+fmul_algebraic_f16	rust-functions	1	before-runtime-objects
+fmul_algebraic_f32	callees	external	__gbc_fmul32
+fmul_algebraic_f32	lowering	ok	
+fmul_algebraic_f32	rust-functions	1	before-runtime-objects
+fmul_algebraic_f64	callees	external	__gbc_f64
+fmul_algebraic_f64	lowering	ok	
+fmul_algebraic_f64	rust-functions	1	before-runtime-objects
+fmuladd_f128	callees	external	__gbc_f128
+fmuladd_f128	lowering	ok	
+fmuladd_f128	rust-functions	1	before-runtime-objects
+fmuladd_f16	callees	external	__gbc_f16tof32, __gbc_f32tof16, __gbc_fadd32, __gbc_fmul32
+fmuladd_f16	lowering	ok	
+fmuladd_f16	rust-functions	4	before-runtime-objects
+fmuladd_f32	callees	external	__gbc_ffma32
+fmuladd_f32	lowering	ok	
+fmuladd_f32	rust-functions	1	before-runtime-objects
+fmuladd_f64	callees	external	__gbc_f64
+fmuladd_f64	lowering	ok	
+fmuladd_f64	rust-functions	1	before-runtime-objects
+frem_algebraic_f128	callees	external	__rust_fmodf128
+frem_algebraic_f128	lowering	ok	
+frem_algebraic_f128	rust-functions	1	before-runtime-objects
+frem_algebraic_f16	callees	external	__gbc_clz32, __gbc_f16tof32, __gbc_f32tof16, __gbc_fdiv32, __gbc_fmul32, __gbc_mul32, __gbc_shift16, __gbc_urem32
+frem_algebraic_f16	lowering	ok	
+frem_algebraic_f16	rust-functions	63	before-runtime-objects
+frem_algebraic_f32	callees	external	__gbc_clz32, __gbc_fdiv32, __gbc_fmul32, __gbc_mul32, __gbc_shift16, __gbc_urem32
+frem_algebraic_f32	lowering	ok	
+frem_algebraic_f32	rust-functions	63	before-runtime-objects
+frem_algebraic_f64	callees	external	__gbc_clz32, __gbc_f64, __gbc_shift16
+frem_algebraic_f64	lowering	ok	
+frem_algebraic_f64	rust-functions	71	before-runtime-objects
+fsub_algebraic_f128	callees	external	__gbc_f128
+fsub_algebraic_f128	lowering	ok	
+fsub_algebraic_f128	rust-functions	1	before-runtime-objects
+fsub_algebraic_f16	callees	external	__gbc_f16tof32, __gbc_f32tof16, __gbc_fadd32
+fsub_algebraic_f16	lowering	ok	
+fsub_algebraic_f16	rust-functions	1	before-runtime-objects
+fsub_algebraic_f32	callees	external	__gbc_fadd32
+fsub_algebraic_f32	lowering	ok	
+fsub_algebraic_f32	rust-functions	1	before-runtime-objects
+fsub_algebraic_f64	callees	external	__gbc_f64
+fsub_algebraic_f64	lowering	ok	
+fsub_algebraic_f64	rust-functions	1	before-runtime-objects
+integer_max_i128	callees	no-external-call	
+integer_max_i128	lowering	ok	
+integer_max_i128	rust-functions	3	before-runtime-objects
+integer_max_i16	callees	no-external-call	
+integer_max_i16	lowering	ok	
+integer_max_i16	rust-functions	1	before-runtime-objects
+integer_max_i32	callees	no-external-call	
+integer_max_i32	lowering	ok	
+integer_max_i32	rust-functions	1	before-runtime-objects
+integer_max_i64	callees	no-external-call	
+integer_max_i64	lowering	ok	
+integer_max_i64	rust-functions	1	before-runtime-objects
+integer_max_i8	callees	no-external-call	
+integer_max_i8	lowering	ok	
+integer_max_i8	rust-functions	1	before-runtime-objects
+integer_max_isize	callees	no-external-call	
+integer_max_isize	lowering	ok	
+integer_max_isize	rust-functions	1	before-runtime-objects
+integer_max_u128	callees	no-external-call	
+integer_max_u128	lowering	ok	
+integer_max_u128	rust-functions	3	before-runtime-objects
+integer_max_u16	callees	no-external-call	
+integer_max_u16	lowering	ok	
+integer_max_u16	rust-functions	1	before-runtime-objects
+integer_max_u32	callees	no-external-call	
+integer_max_u32	lowering	ok	
+integer_max_u32	rust-functions	1	before-runtime-objects
+integer_max_u64	callees	no-external-call	
+integer_max_u64	lowering	ok	
+integer_max_u64	rust-functions	1	before-runtime-objects
+integer_max_u8	callees	no-external-call	
+integer_max_u8	lowering	ok	
+integer_max_u8	rust-functions	1	before-runtime-objects
+integer_max_usize	callees	no-external-call	
+integer_max_usize	lowering	ok	
+integer_max_usize	rust-functions	1	before-runtime-objects
+integer_min_i128	callees	no-external-call	
+integer_min_i128	lowering	ok	
+integer_min_i128	rust-functions	3	before-runtime-objects
+integer_min_i16	callees	no-external-call	
+integer_min_i16	lowering	ok	
+integer_min_i16	rust-functions	1	before-runtime-objects
+integer_min_i32	callees	no-external-call	
+integer_min_i32	lowering	ok	
+integer_min_i32	rust-functions	1	before-runtime-objects
+integer_min_i64	callees	no-external-call	
+integer_min_i64	lowering	ok	
+integer_min_i64	rust-functions	1	before-runtime-objects
+integer_min_i8	callees	no-external-call	
+integer_min_i8	lowering	ok	
+integer_min_i8	rust-functions	1	before-runtime-objects
+integer_min_isize	callees	no-external-call	
+integer_min_isize	lowering	ok	
+integer_min_isize	rust-functions	1	before-runtime-objects
+integer_min_u128	callees	no-external-call	
+integer_min_u128	lowering	ok	
+integer_min_u128	rust-functions	3	before-runtime-objects
+integer_min_u16	callees	no-external-call	
+integer_min_u16	lowering	ok	
+integer_min_u16	rust-functions	1	before-runtime-objects
+integer_min_u32	callees	no-external-call	
+integer_min_u32	lowering	ok	
+integer_min_u32	rust-functions	1	before-runtime-objects
+integer_min_u64	callees	no-external-call	
+integer_min_u64	lowering	ok	
+integer_min_u64	rust-functions	1	before-runtime-objects
+integer_min_u8	callees	no-external-call	
+integer_min_u8	lowering	ok	
+integer_min_u8	rust-functions	1	before-runtime-objects
+integer_min_usize	callees	no-external-call	
+integer_min_usize	lowering	ok	
+integer_min_usize	rust-functions	1	before-runtime-objects
+log10_f128	callees	external	__rust_log10f128
+log10_f128	lowering	ok	
+log10_f128	rust-functions	1	before-runtime-objects
+log10_f16	callees	external	__gbc_f16tof32, __gbc_f32tof16, __gbc_fadd32, __gbc_fcvtfromint32, __gbc_fdiv32, __gbc_fmul32, __gbc_shift16
+log10_f16	lowering	ok	
+log10_f16	rust-functions	6	before-runtime-objects
+log10_f32	callees	external	__gbc_fadd32, __gbc_fcvtfromint32, __gbc_fdiv32, __gbc_fmul32, __gbc_shift16
+log10_f32	lowering	ok	
+log10_f32	rust-functions	4	before-runtime-objects
+log10_f64	callees	external	__gbc_convert, __gbc_f64, __gbc_shift16
+log10_f64	lowering	ok	
+log10_f64	rust-functions	4	before-runtime-objects
+log2_f128	callees	external	__rust_log2f128
+log2_f128	lowering	ok	
+log2_f128	rust-functions	1	before-runtime-objects
+log2_f16	callees	external	__gbc_f16tof32, __gbc_f32tof16, __gbc_fadd32, __gbc_fcvtfromint32, __gbc_fdiv32, __gbc_fmul32, __gbc_shift16
+log2_f16	lowering	ok	
+log2_f16	rust-functions	6	before-runtime-objects
+log2_f32	callees	external	__gbc_fadd32, __gbc_fcvtfromint32, __gbc_fdiv32, __gbc_fmul32, __gbc_shift16
+log2_f32	lowering	ok	
+log2_f32	rust-functions	4	before-runtime-objects
+log2_f64	callees	external	__gbc_convert, __gbc_f64, __gbc_shift16
+log2_f64	lowering	ok	
+log2_f64	rust-functions	4	before-runtime-objects
+log_f128	callees	external	__rust_logf128
+log_f128	lowering	ok	
+log_f128	rust-functions	1	before-runtime-objects
+log_f16	callees	external	__gbc_f16tof32, __gbc_f32tof16, __gbc_fadd32, __gbc_fcvtfromint32, __gbc_fdiv32, __gbc_fmul32, __gbc_shift16
+log_f16	lowering	ok	
+log_f16	rust-functions	6	before-runtime-objects
+log_f32	callees	external	__gbc_fadd32, __gbc_fcvtfromint32, __gbc_fdiv32, __gbc_fmul32, __gbc_shift16
+log_f32	lowering	ok	
+log_f32	rust-functions	4	before-runtime-objects
+log_f64	callees	external	__gbc_convert, __gbc_f64, __gbc_shift16
+log_f64	lowering	ok	
+log_f64	rust-functions	4	before-runtime-objects
+maximum_number_nsz_f128	callees	external	__gbc_f128
+maximum_number_nsz_f128	lowering	ok	
+maximum_number_nsz_f128	rust-functions	1	before-runtime-objects
+maximum_number_nsz_f16	callees	external	__gbc_f16tof32, __gbc_fcmp32
+maximum_number_nsz_f16	lowering	ok	
+maximum_number_nsz_f16	rust-functions	1	before-runtime-objects
+maximum_number_nsz_f32	callees	external	__gbc_fcmp32
+maximum_number_nsz_f32	lowering	ok	
+maximum_number_nsz_f32	rust-functions	1	before-runtime-objects
+maximum_number_nsz_f64	callees	external	__gbc_f64
+maximum_number_nsz_f64	lowering	ok	
+maximum_number_nsz_f64	rust-functions	1	before-runtime-objects
+maximumf128	callees	external	__gbc_f128
+maximumf128	lowering	ok	
+maximumf128	rust-functions	1	before-runtime-objects
+maximumf16	callees	external	__gbc_f16tof32, __gbc_f32tof16, __gbc_fmax32
+maximumf16	lowering	ok	
+maximumf16	rust-functions	1	before-runtime-objects
+maximumf32	callees	external	__gbc_fmax32
+maximumf32	lowering	ok	
+maximumf32	rust-functions	1	before-runtime-objects
+maximumf64	callees	external	__gbc_f64
+maximumf64	lowering	ok	
+maximumf64	rust-functions	1	before-runtime-objects
+minimum_number_nsz_f128	callees	external	__gbc_f128
+minimum_number_nsz_f128	lowering	ok	
+minimum_number_nsz_f128	rust-functions	1	before-runtime-objects
+minimum_number_nsz_f16	callees	external	__gbc_f16tof32, __gbc_fcmp32
+minimum_number_nsz_f16	lowering	ok	
+minimum_number_nsz_f16	rust-functions	1	before-runtime-objects
+minimum_number_nsz_f32	callees	external	__gbc_fcmp32
+minimum_number_nsz_f32	lowering	ok	
+minimum_number_nsz_f32	rust-functions	1	before-runtime-objects
+minimum_number_nsz_f64	callees	external	__gbc_f64
+minimum_number_nsz_f64	lowering	ok	
+minimum_number_nsz_f64	rust-functions	1	before-runtime-objects
+minimumf128	callees	external	__gbc_f128
+minimumf128	lowering	ok	
+minimumf128	rust-functions	1	before-runtime-objects
+minimumf16	callees	external	__gbc_f16tof32, __gbc_f32tof16, __gbc_fmin32
+minimumf16	lowering	ok	
+minimumf16	rust-functions	1	before-runtime-objects
+minimumf32	callees	external	__gbc_fmin32
+minimumf32	lowering	ok	
+minimumf32	rust-functions	1	before-runtime-objects
+minimumf64	callees	external	__gbc_f64
+minimumf64	lowering	ok	
+minimumf64	rust-functions	1	before-runtime-objects
+mul_with_overflow_i128	callees	external	__rust___gbc_i128_mulo
+mul_with_overflow_i128	lowering	ok	
+mul_with_overflow_i128	rust-functions	1	before-runtime-objects
+mul_with_overflow_i16	callees	external	__gbc_mul32
+mul_with_overflow_i16	lowering	ok	
+mul_with_overflow_i16	rust-functions	1	before-runtime-objects
+mul_with_overflow_i32	callees	external	__gbc_mul32
+mul_with_overflow_i32	lowering	ok	
+mul_with_overflow_i32	rust-functions	1	before-runtime-objects
+mul_with_overflow_i64	callees	external	__gbc_shift16, __rust___gbc_i128_mulo
+mul_with_overflow_i64	lowering	ok	
+mul_with_overflow_i64	rust-functions	1	before-runtime-objects
+mul_with_overflow_i8	callees	external	__gbc_mul16
+mul_with_overflow_i8	lowering	ok	
+mul_with_overflow_i8	rust-functions	1	before-runtime-objects
+mul_with_overflow_isize	callees	external	__gbc_mul32
+mul_with_overflow_isize	lowering	ok	
+mul_with_overflow_isize	rust-functions	1	before-runtime-objects
+mul_with_overflow_u128	callees	external	__rust___gbc_u128_mulo
+mul_with_overflow_u128	lowering	ok	
+mul_with_overflow_u128	rust-functions	1	before-runtime-objects
+mul_with_overflow_u16	callees	external	__gbc_mul32
+mul_with_overflow_u16	lowering	ok	
+mul_with_overflow_u16	rust-functions	1	before-runtime-objects
+mul_with_overflow_u32	callees	external	__gbc_mul32
+mul_with_overflow_u32	lowering	ok	
+mul_with_overflow_u32	rust-functions	1	before-runtime-objects
+mul_with_overflow_u64	callees	external	__rust___gbc_u128_mulo
+mul_with_overflow_u64	lowering	ok	
+mul_with_overflow_u64	rust-functions	1	before-runtime-objects
+mul_with_overflow_u8	callees	external	__gbc_mul16
+mul_with_overflow_u8	lowering	ok	
+mul_with_overflow_u8	rust-functions	1	before-runtime-objects
+mul_with_overflow_usize	callees	external	__gbc_mul32
+mul_with_overflow_usize	lowering	ok	
+mul_with_overflow_usize	rust-functions	1	before-runtime-objects
+powf_f128	callees	external	__rust_powf128
+powf_f128	lowering	ok	
+powf_f128	rust-functions	1	before-runtime-objects
+powf_f16	callees	external	__gbc_f16tof32, __gbc_f32tof16, __gbc_fadd32, __gbc_fcmp32, __gbc_fcvtfromint32, __gbc_fdiv32, __gbc_fmul32, __gbc_mul16, __gbc_mul32, __gbc_shift16
+powf_f16	lowering	ok	
+powf_f16	rust-functions	54	before-runtime-objects
+powf_f32	callees	external	__gbc_fadd32, __gbc_fcmp32, __gbc_fcvtfromint32, __gbc_fdiv32, __gbc_fmul32, __gbc_mul16, __gbc_mul32, __gbc_shift16
+powf_f32	lowering	ok	
+powf_f32	rust-functions	52	before-runtime-objects
+powf_f64	callees	external	__gbc_convert, __gbc_f64, __gbc_mul16, __gbc_mul32, __gbc_shift16
+powf_f64	lowering	ok	
+powf_f64	rust-functions	62	before-runtime-objects
+powi_f128	callees	external	__rust___powitf2
+powi_f128	lowering	ok	
+powi_f128	rust-functions	3	before-runtime-objects
+powi_f16	callees	external	__gbc_f16tof32, __gbc_f32tof16, __gbc_fdiv32, __gbc_fmul32
+powi_f16	lowering	ok	
+powi_f16	rust-functions	10	before-runtime-objects
+powi_f32	callees	external	__gbc_fdiv32, __gbc_fmul32
+powi_f32	lowering	ok	
+powi_f32	rust-functions	8	before-runtime-objects
+powi_f64	callees	external	__gbc_f64
+powi_f64	lowering	ok	
+powi_f64	rust-functions	8	before-runtime-objects
+raw_eq	callees	no-external-call	
+raw_eq	lowering	ok	
+raw_eq	rust-functions	1	before-runtime-objects
+rotate_left_i128	callees	no-external-call	
+rotate_left_i128	lowering	ok	
+rotate_left_i128	rust-functions	1	before-runtime-objects
+rotate_left_i16	callees	external	__gbc_shift16
+rotate_left_i16	lowering	ok	
+rotate_left_i16	rust-functions	1	before-runtime-objects
+rotate_left_i32	callees	external	__gbc_shift16
+rotate_left_i32	lowering	ok	
+rotate_left_i32	rust-functions	1	before-runtime-objects
+rotate_left_i64	callees	external	__gbc_shift16
+rotate_left_i64	lowering	ok	
+rotate_left_i64	rust-functions	1	before-runtime-objects
+rotate_left_i8	callees	external	__gbc_shift8
+rotate_left_i8	lowering	ok	
+rotate_left_i8	rust-functions	1	before-runtime-objects
+rotate_left_isize	callees	external	__gbc_shift16
+rotate_left_isize	lowering	ok	
+rotate_left_isize	rust-functions	1	before-runtime-objects
+rotate_left_u128	callees	no-external-call	
+rotate_left_u128	lowering	ok	
+rotate_left_u128	rust-functions	1	before-runtime-objects
+rotate_left_u16	callees	external	__gbc_shift16
+rotate_left_u16	lowering	ok	
+rotate_left_u16	rust-functions	1	before-runtime-objects
+rotate_left_u32	callees	external	__gbc_shift16
+rotate_left_u32	lowering	ok	
+rotate_left_u32	rust-functions	1	before-runtime-objects
+rotate_left_u64	callees	external	__gbc_shift16
+rotate_left_u64	lowering	ok	
+rotate_left_u64	rust-functions	1	before-runtime-objects
+rotate_left_u8	callees	external	__gbc_shift8
+rotate_left_u8	lowering	ok	
+rotate_left_u8	rust-functions	1	before-runtime-objects
+rotate_left_usize	callees	external	__gbc_shift16
+rotate_left_usize	lowering	ok	
+rotate_left_usize	rust-functions	1	before-runtime-objects
+rotate_right_i128	callees	no-external-call	
+rotate_right_i128	lowering	ok	
+rotate_right_i128	rust-functions	1	before-runtime-objects
+rotate_right_i16	callees	external	__gbc_shift16
+rotate_right_i16	lowering	ok	
+rotate_right_i16	rust-functions	1	before-runtime-objects
+rotate_right_i32	callees	external	__gbc_shift16
+rotate_right_i32	lowering	ok	
+rotate_right_i32	rust-functions	1	before-runtime-objects
+rotate_right_i64	callees	external	__gbc_shift16
+rotate_right_i64	lowering	ok	
+rotate_right_i64	rust-functions	1	before-runtime-objects
+rotate_right_i8	callees	external	__gbc_shift8
+rotate_right_i8	lowering	ok	
+rotate_right_i8	rust-functions	1	before-runtime-objects
+rotate_right_isize	callees	external	__gbc_shift16
+rotate_right_isize	lowering	ok	
+rotate_right_isize	rust-functions	1	before-runtime-objects
+rotate_right_u128	callees	no-external-call	
+rotate_right_u128	lowering	ok	
+rotate_right_u128	rust-functions	1	before-runtime-objects
+rotate_right_u16	callees	external	__gbc_shift16
+rotate_right_u16	lowering	ok	
+rotate_right_u16	rust-functions	1	before-runtime-objects
+rotate_right_u32	callees	external	__gbc_shift16
+rotate_right_u32	lowering	ok	
+rotate_right_u32	rust-functions	1	before-runtime-objects
+rotate_right_u64	callees	external	__gbc_shift16
+rotate_right_u64	lowering	ok	
+rotate_right_u64	rust-functions	1	before-runtime-objects
+rotate_right_u8	callees	external	__gbc_shift8
+rotate_right_u8	lowering	ok	
+rotate_right_u8	rust-functions	1	before-runtime-objects
+rotate_right_usize	callees	external	__gbc_shift16
+rotate_right_usize	lowering	ok	
+rotate_right_usize	rust-functions	1	before-runtime-objects
+round_f128	callees	external	__rust_roundf128
+round_f128	lowering	ok	
+round_f128	rust-functions	1	before-runtime-objects
+round_f16	callees	external	__rust_roundf16
+round_f16	lowering	ok	
+round_f16	rust-functions	3	before-runtime-objects
+round_f32	callees	external	__gbc_fadd32, __gbc_fmul32, __gbc_shift16
+round_f32	lowering	ok	
+round_f32	rust-functions	26	before-runtime-objects
+round_f64	callees	external	__gbc_f64, __gbc_shift16
+round_f64	lowering	ok	
+round_f64	rust-functions	27	before-runtime-objects
+round_ties_even_f128	callees	external	__gbc_f128
+round_ties_even_f128	lowering	ok	
+round_ties_even_f128	rust-functions	1	before-runtime-objects
+round_ties_even_f16	callees	external	__rust_roundevenf16
+round_ties_even_f16	lowering	ok	
+round_ties_even_f16	rust-functions	3	before-runtime-objects
+round_ties_even_f32	callees	external	__gbc_fround32
+round_ties_even_f32	lowering	ok	
+round_ties_even_f32	rust-functions	1	before-runtime-objects
+round_ties_even_f64	callees	external	__gbc_f64
+round_ties_even_f64	lowering	ok	
+round_ties_even_f64	rust-functions	1	before-runtime-objects
+saturating_add_i128	callees	no-external-call	
+saturating_add_i128	lowering	ok	
+saturating_add_i128	rust-functions	1	before-runtime-objects
+saturating_add_i16	callees	no-external-call	
+saturating_add_i16	lowering	ok	
+saturating_add_i16	rust-functions	1	before-runtime-objects
+saturating_add_i32	callees	no-external-call	
+saturating_add_i32	lowering	ok	
+saturating_add_i32	rust-functions	1	before-runtime-objects
+saturating_add_i64	callees	no-external-call	
+saturating_add_i64	lowering	ok	
+saturating_add_i64	rust-functions	1	before-runtime-objects
+saturating_add_i8	callees	no-external-call	
+saturating_add_i8	lowering	ok	
+saturating_add_i8	rust-functions	1	before-runtime-objects
+saturating_add_isize	callees	no-external-call	
+saturating_add_isize	lowering	ok	
+saturating_add_isize	rust-functions	1	before-runtime-objects
+saturating_add_u128	callees	no-external-call	
+saturating_add_u128	lowering	ok	
+saturating_add_u128	rust-functions	1	before-runtime-objects
+saturating_add_u16	callees	no-external-call	
+saturating_add_u16	lowering	ok	
+saturating_add_u16	rust-functions	1	before-runtime-objects
+saturating_add_u32	callees	no-external-call	
+saturating_add_u32	lowering	ok	
+saturating_add_u32	rust-functions	1	before-runtime-objects
+saturating_add_u64	callees	no-external-call	
+saturating_add_u64	lowering	ok	
+saturating_add_u64	rust-functions	1	before-runtime-objects
+saturating_add_u8	callees	no-external-call	
+saturating_add_u8	lowering	ok	
+saturating_add_u8	rust-functions	1	before-runtime-objects
+saturating_add_usize	callees	no-external-call	
+saturating_add_usize	lowering	ok	
+saturating_add_usize	rust-functions	1	before-runtime-objects
+saturating_sub_i128	callees	no-external-call	
+saturating_sub_i128	lowering	ok	
+saturating_sub_i128	rust-functions	1	before-runtime-objects
+saturating_sub_i16	callees	no-external-call	
+saturating_sub_i16	lowering	ok	
+saturating_sub_i16	rust-functions	1	before-runtime-objects
+saturating_sub_i32	callees	no-external-call	
+saturating_sub_i32	lowering	ok	
+saturating_sub_i32	rust-functions	1	before-runtime-objects
+saturating_sub_i64	callees	no-external-call	
+saturating_sub_i64	lowering	ok	
+saturating_sub_i64	rust-functions	1	before-runtime-objects
+saturating_sub_i8	callees	no-external-call	
+saturating_sub_i8	lowering	ok	
+saturating_sub_i8	rust-functions	1	before-runtime-objects
+saturating_sub_isize	callees	no-external-call	
+saturating_sub_isize	lowering	ok	
+saturating_sub_isize	rust-functions	1	before-runtime-objects
+saturating_sub_u128	callees	no-external-call	
+saturating_sub_u128	lowering	ok	
+saturating_sub_u128	rust-functions	1	before-runtime-objects
+saturating_sub_u16	callees	no-external-call	
+saturating_sub_u16	lowering	ok	
+saturating_sub_u16	rust-functions	1	before-runtime-objects
+saturating_sub_u32	callees	no-external-call	
+saturating_sub_u32	lowering	ok	
+saturating_sub_u32	rust-functions	1	before-runtime-objects
+saturating_sub_u64	callees	no-external-call	
+saturating_sub_u64	lowering	ok	
+saturating_sub_u64	rust-functions	1	before-runtime-objects
+saturating_sub_u8	callees	no-external-call	
+saturating_sub_u8	lowering	ok	
+saturating_sub_u8	rust-functions	1	before-runtime-objects
+saturating_sub_usize	callees	no-external-call	
+saturating_sub_usize	lowering	ok	
+saturating_sub_usize	rust-functions	1	before-runtime-objects
+sin_f128	callees	external	__rust_sinf128
+sin_f128	lowering	ok	
+sin_f128	rust-functions	1	before-runtime-objects
+sin_f16	callees	external	__gbc_convert, __gbc_f16tof32, __gbc_f32tof16, __gbc_f64, __gbc_fadd32, __gbc_fdiv32, __gbc_mul16, __gbc_mul32, __gbc_sdiv32, __gbc_shift16
+sin_f16	lowering	ok	
+sin_f16	rust-functions	42	before-runtime-objects
+sin_f32	callees	external	__gbc_convert, __gbc_f64, __gbc_fadd32, __gbc_fdiv32, __gbc_mul16, __gbc_mul32, __gbc_sdiv32, __gbc_shift16
+sin_f32	lowering	ok	
+sin_f32	rust-functions	40	before-runtime-objects
+sin_f64	callees	external	__gbc_convert, __gbc_f64, __gbc_mul16, __gbc_mul32, __gbc_sdiv32, __gbc_shift16
+sin_f64	lowering	ok	
+sin_f64	rust-functions	43	before-runtime-objects
+sqrt_f128	callees	external	__gbc_f128
+sqrt_f128	lowering	ok	
+sqrt_f128	rust-functions	1	before-runtime-objects
+sqrt_f16	callees	external	__rust_sqrtf16
+sqrt_f16	lowering	ok	
+sqrt_f16	rust-functions	3	before-runtime-objects
+sqrt_f32	callees	external	__gbc_fsqrt32
+sqrt_f32	lowering	ok	
+sqrt_f32	rust-functions	1	before-runtime-objects
+sqrt_f64	callees	external	__gbc_f64
+sqrt_f64	lowering	ok	
+sqrt_f64	rust-functions	1	before-runtime-objects
+sub_with_overflow_i128	callees	no-external-call	
+sub_with_overflow_i128	lowering	ok	
+sub_with_overflow_i128	rust-functions	1	before-runtime-objects
+sub_with_overflow_i16	callees	no-external-call	
+sub_with_overflow_i16	lowering	ok	
+sub_with_overflow_i16	rust-functions	1	before-runtime-objects
+sub_with_overflow_i32	callees	no-external-call	
+sub_with_overflow_i32	lowering	ok	
+sub_with_overflow_i32	rust-functions	1	before-runtime-objects
+sub_with_overflow_i64	callees	no-external-call	
+sub_with_overflow_i64	lowering	ok	
+sub_with_overflow_i64	rust-functions	1	before-runtime-objects
+sub_with_overflow_i8	callees	no-external-call	
+sub_with_overflow_i8	lowering	ok	
+sub_with_overflow_i8	rust-functions	1	before-runtime-objects
+sub_with_overflow_isize	callees	no-external-call	
+sub_with_overflow_isize	lowering	ok	
+sub_with_overflow_isize	rust-functions	1	before-runtime-objects
+sub_with_overflow_u128	callees	no-external-call	
+sub_with_overflow_u128	lowering	ok	
+sub_with_overflow_u128	rust-functions	1	before-runtime-objects
+sub_with_overflow_u16	callees	no-external-call	
+sub_with_overflow_u16	lowering	ok	
+sub_with_overflow_u16	rust-functions	1	before-runtime-objects
+sub_with_overflow_u32	callees	no-external-call	
+sub_with_overflow_u32	lowering	ok	
+sub_with_overflow_u32	rust-functions	1	before-runtime-objects
+sub_with_overflow_u64	callees	no-external-call	
+sub_with_overflow_u64	lowering	ok	
+sub_with_overflow_u64	rust-functions	1	before-runtime-objects
+sub_with_overflow_u8	callees	no-external-call	
+sub_with_overflow_u8	lowering	ok	
+sub_with_overflow_u8	rust-functions	1	before-runtime-objects
+sub_with_overflow_usize	callees	no-external-call	
+sub_with_overflow_usize	lowering	ok	
+sub_with_overflow_usize	rust-functions	1	before-runtime-objects
+trunc_f128	callees	external	__gbc_f128
+trunc_f128	lowering	ok	
+trunc_f128	rust-functions	1	before-runtime-objects
+trunc_f16	callees	external	__rust_truncf16
+trunc_f16	lowering	ok	
+trunc_f16	rust-functions	3	before-runtime-objects
+trunc_f32	callees	external	__gbc_fround32
+trunc_f32	lowering	ok	
+trunc_f32	rust-functions	1	before-runtime-objects
+trunc_f64	callees	external	__gbc_f64
+trunc_f64	lowering	ok	
+trunc_f64	rust-functions	1	before-runtime-objects
+unchecked_funnel_shl_u128	callees	no-external-call	
+unchecked_funnel_shl_u128	lowering	ok	
+unchecked_funnel_shl_u128	rust-functions	5	before-runtime-objects
+unchecked_funnel_shl_u16	callees	external	__gbc_shift16
+unchecked_funnel_shl_u16	lowering	ok	
+unchecked_funnel_shl_u16	rust-functions	5	before-runtime-objects
+unchecked_funnel_shl_u32	callees	external	__gbc_shift16
+unchecked_funnel_shl_u32	lowering	ok	
+unchecked_funnel_shl_u32	rust-functions	5	before-runtime-objects
+unchecked_funnel_shl_u64	callees	external	__gbc_shift16
+unchecked_funnel_shl_u64	lowering	ok	
+unchecked_funnel_shl_u64	rust-functions	5	before-runtime-objects
+unchecked_funnel_shl_u8	callees	external	__gbc_shift8
+unchecked_funnel_shl_u8	lowering	ok	
+unchecked_funnel_shl_u8	rust-functions	5	before-runtime-objects
+unchecked_funnel_shl_usize	callees	external	__gbc_shift16
+unchecked_funnel_shl_usize	lowering	ok	
+unchecked_funnel_shl_usize	rust-functions	5	before-runtime-objects
+unchecked_funnel_shr_u128	callees	no-external-call	
+unchecked_funnel_shr_u128	lowering	ok	
+unchecked_funnel_shr_u128	rust-functions	5	before-runtime-objects
+unchecked_funnel_shr_u16	callees	external	__gbc_shift16
+unchecked_funnel_shr_u16	lowering	ok	
+unchecked_funnel_shr_u16	rust-functions	5	before-runtime-objects
+unchecked_funnel_shr_u32	callees	external	__gbc_shift16
+unchecked_funnel_shr_u32	lowering	ok	
+unchecked_funnel_shr_u32	rust-functions	5	before-runtime-objects
+unchecked_funnel_shr_u64	callees	external	__gbc_shift16
+unchecked_funnel_shr_u64	lowering	ok	
+unchecked_funnel_shr_u64	rust-functions	5	before-runtime-objects
+unchecked_funnel_shr_u8	callees	external	__gbc_shift8
+unchecked_funnel_shr_u8	lowering	ok	
+unchecked_funnel_shr_u8	rust-functions	5	before-runtime-objects
+unchecked_funnel_shr_usize	callees	external	__gbc_shift16
+unchecked_funnel_shr_usize	lowering	ok	
+unchecked_funnel_shr_usize	rust-functions	5	before-runtime-objects
+write_bytes	callees	external	__gbc_memset
+write_bytes	lowering	ok	
+write_bytes	rust-functions	1	before-runtime-objects
