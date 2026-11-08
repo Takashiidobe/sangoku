@@ -29,11 +29,7 @@ fn score_lengths(score: &[Event], tempo: u8) -> [u32; 2] {
                 speed = value as u32;
                 continue;
             }
-            Event::Note(pitch, length) => {
-                assert!(pitch < 12);
-                length
-            }
-            Event::Rest(length) | Event::Drum(length) => length,
+            Event::Note(_, length) | Event::Rest(length) | Event::Drum(length) => length,
             Event::Octave(value) => {
                 assert!((1..=8).contains(&value));
                 continue;

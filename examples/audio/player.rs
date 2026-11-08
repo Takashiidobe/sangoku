@@ -2,8 +2,26 @@ use core::ptr::{read_volatile, write_volatile};
 
 #[allow(dead_code)]
 #[derive(Clone, Copy)]
+#[repr(u8)]
+pub enum Note {
+    C,
+    CSharp,
+    D,
+    DSharp,
+    E,
+    F,
+    FSharp,
+    G,
+    GSharp,
+    A,
+    ASharp,
+    B,
+}
+
+#[allow(dead_code)]
+#[derive(Clone, Copy)]
 pub enum Event {
-    Note(u8, u8),
+    Note(Note, u8),
     Rest(u8),
     Octave(u8),
     NoteType(u8, u8, i8),

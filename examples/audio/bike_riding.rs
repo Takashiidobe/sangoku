@@ -4,17 +4,8 @@ pub const WAVE: [u8; 16] = [
 ];
 
 use super::player::Event;
+use super::player::Note::{A, ASharp, B, C, D, E, F, FSharp, G};
 use Event::*;
-
-const C: u8 = 0;
-const D: u8 = 2;
-const E: u8 = 4;
-const F: u8 = 5;
-const FS: u8 = 6;
-const G: u8 = 7;
-const A: u8 = 9;
-const AS: u8 = 10;
-const B: u8 = 11;
 
 pub static CH1: &[Event] = &[
     Duty(3),
@@ -155,7 +146,7 @@ pub static CH1: &[Event] = &[
     Note(C, 4),
     Note(F, 4),
     Note(D, 4),
-    Note(FS, 4),
+    Note(FSharp, 4),
     Vibrato(10, 2, 6),
     NoteType(12, 8, 0),
     Note(G, 16),
@@ -200,7 +191,7 @@ pub static CH2: &[Event] = &[
     Note(G, 4),
     Duty(3),
     NoteType(12, 8, 4),
-    Note(AS, 6),
+    Note(ASharp, 6),
     Duty(2),
     NoteType(12, 12, 5),
     Octave(5),
@@ -281,7 +272,7 @@ pub static CH2: &[Event] = &[
     Note(B, 4),
     Note(A, 4),
     Note(G, 2),
-    Note(AS, 4),
+    Note(ASharp, 4),
     Note(A, 2),
     Note(G, 4),
     Note(F, 2),
@@ -558,17 +549,17 @@ pub static CH3: &[Event] = &[
     Rest(1),
     Note(G, 1),
     Rest(1),
-    Note(AS, 1),
+    Note(ASharp, 1),
     Rest(1),
     Note(E, 1),
     Rest(1),
-    Note(AS, 1),
+    Note(ASharp, 1),
     Rest(1),
     Note(G, 1),
     Rest(1),
-    Note(AS, 1),
+    Note(ASharp, 1),
     Rest(1),
-    Note(AS, 1),
+    Note(ASharp, 1),
     Rest(1),
     Note(G, 1),
     Rest(1),

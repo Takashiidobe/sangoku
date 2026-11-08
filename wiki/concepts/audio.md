@@ -29,8 +29,10 @@ The built-in runner does not emulate the APU or frame timing.
 [`audio.rs`](../../examples/audio.rs) initializes the APU and advances the
 player once per video frame. The [score](../../examples/audio/bike_riding.rs)
 uses Rust events for notes, rests, octaves, duty cycles, envelopes, vibrato, and
-loops. The [player](../../examples/audio/player.rs) writes the sound registers
-directly and uses no heap or floating-point arithmetic.
+loops. Pitches use the shared `Note` enum, including `CSharp`, `FSharp`, and
+other semitones, so score entries such as `Note(CSharp, 2)` cannot contain an
+invalid numeric pitch. The [player](../../examples/audio/player.rs) writes the
+sound registers directly and uses no heap or floating-point arithmetic.
 
 Note durations carry an 8-bit fractional frame remainder between notes.
 `tempo 144` is the original engine's timing parameter, not a BPM value. All four
