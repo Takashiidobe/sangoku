@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Report how much of Rust `core` compiles to CLIF and lowers for LR35902.
+"""Report how much of Rust `core` (and optionally `alloc`) compiles to CLIF and lowers for LR35902.
 
 Builds core through the backend in CLIF-only mode, then compiles
 tests/core_driver/driver.rs against it so generic core code is instantiated.
 Each CLIF function is lowered separately with `sangoku-lower --probe`.
 
 Usage:
-    tools/core_report.py [--json] [--keep DIR] [--skip-backend-build]
+    tools/core_report.py [--alloc] [--json] [--keep DIR] [--skip-backend-build]
 """
 import argparse
 import json
@@ -122,6 +122,15 @@ def summarise(label, rows, backend_errors):
     }
 
 
+def compilation_report(label, result, clif_path):
+    report = summarise(label, probe(clif_path) if clif_path.exists() else [],
+                       backend_errors(result.stderr))
+    report["returncode"] = result.returncode
+    if result.returncode and not report["backend_errors"]:
+        report["backend_errors"] = [result.stderr[-4000:]]
+    return report
+
+
 def backend_errors(stderr):
     return sorted({line.strip() for line in stderr.splitlines() if line.startswith("error")})
 
@@ -129,6 +138,7 @@ def backend_errors(stderr):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--json", action="store_true")
+    parser.add_argument("--alloc", action="store_true")
     parser.add_argument("--keep", type=Path)
     parser.add_argument("--skip-backend-build", action="store_true")
     args = parser.parse_args()
@@ -160,7 +170,24 @@ def main():
         driver_clif = out / "driver.ll"
         rows = probe(driver_clif) if driver_clif.exists() else []
         reports.append(summarise("core generics (driver)", rows, errors))
-        undefined = undefined_symbols([out / "core.clif", out / "compiler_builtins.clif", out / "driver.clif"])
+        clif_dirs = [out / "core.clif", out / "compiler_builtins.clif", out / "driver.clif"]
+        if args.alloc:
+            alloc_result = rustc(["--crate-name", "alloc", *deps],
+                                 ROOT / "third_party/rust/library/alloc/src/lib.rs",
+                                 out / "alloc.s", env)
+            (out / "alloc.stderr").write_text(alloc_result.stderr)
+            clif_dirs.append(out / "alloc.clif")
+            alloc_clif = out / "alloc.ll"
+            reports.append(compilation_report("alloc", alloc_result, alloc_clif))
+            if alloc_result.returncode == 0:
+                alloc_driver = rustc(["--crate-name", "alloc_driver", *deps, "--extern",
+                                      f"alloc={out / 'liballoc.rmeta'}"],
+                                     ROOT / "tests/alloc_driver/driver.rs", out / "alloc_driver.s", env)
+                (out / "alloc_driver.stderr").write_text(alloc_driver.stderr)
+                clif_dirs.append(out / "alloc_driver.clif")
+                driver_clif = out / "alloc_driver.ll"
+                reports.append(compilation_report("alloc generics (driver)", alloc_driver, driver_clif))
+        undefined = undefined_symbols(clif_dirs)
         inventory, unmapped = runtime_inventory([out / "core.clif", out / "compiler_builtins.clif"])
 
 

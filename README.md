@@ -1,7 +1,7 @@
 # sangoku
 
-Compile Rust into Game Boy and Game Boy Color ROMs. Rust `core` compiles; the
-next goal is compiling `alloc`.
+Compile Rust into Game Boy and Game Boy Color ROMs. Rust `core` and representative
+`alloc` collections compile and lower for LR35902; heap execution is pending.
 
 ## Standalone compiler
 
@@ -56,3 +56,29 @@ See the [wiki](wiki/index.md) for backend details and
 Frontend regression coverage, including f16 arithmetic and shared 64/128-bit
 overflowing multiplication, is described in
 [frontend fixtures](wiki/concepts/frontend-fixtures.md).
+
+## Core and alloc roadmap
+
+Run `python3 tools/core_report.py --alloc --json` to compile the libraries and
+representative generic drivers to CLIF and probe LR35902 lowering. Use
+`--keep build/alloc-report` to retain CLIF and alloc compiler diagnostics.
+The regression check is `cargo nextest run --no-fail-fast --test alloc_report`.
+
+The 2026-11-07 survey at opt-level 0 with immediate-abort panic reports:
+
+| Coverage | Functions lowered | Failures |
+| --- | ---: | ---: |
+| core | 3,184 | 0 |
+| compiler_builtins | 2,043 | 0 |
+| core generic driver | 921 | 0 |
+| alloc | 1,137 | 0 |
+| alloc collection driver | 1,238 | 0 |
+
+No alloc compilation blockers were observed in this coverage
+(`sangoku-30k.9.2`). The driver instantiates `Vec`, UTF-8 `String`, `Box`, `Rc`,
+`BTreeMap`, `BTreeSet`, `VecDeque`, `BinaryHeap`, and `LinkedList`; other generic
+instantiations can still expose gaps. Long per-function CLIF filename warnings
+remain tracked in `sangoku-30k.9.1.11`.
+
+Heap ROM execution still needs allocator hooks and a WRAM heap policy
+(`sangoku-30k.9.3`). This survey checks compilation and lowering, without linking or running collections.
