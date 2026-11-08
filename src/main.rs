@@ -196,9 +196,13 @@ fn rustc_command(root: &Path, opt_level: &str) -> Command {
             "--crate-type=lib",
             "-Cpanic=immediate-abort",
             "-Cdebug-assertions=off",
+            "-Zinline-mir=yes",
         ])
         .arg(format!("--remap-path-prefix={}=.", root.display()))
         .arg(format!("-Copt-level={opt_level}"));
+    if opt_level == "0" {
+        command.arg("-Zinline-mir-hint-threshold=50");
+    }
     command
 }
 

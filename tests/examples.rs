@@ -54,24 +54,23 @@ fn primes_prints_the_primes_below_fifty() -> Result<()> {
 }
 
 #[test]
-fn standard_sort_reports_retained_formatting_and_rom_capacity() -> Result<()> {
+fn oversized_program_reports_retained_formatting_and_rom_capacity() -> Result<()> {
     let directory = sangoku_test_support::tempfile::tempdir()?;
-    let rom = directory.path().join("sort.gb");
+    let rom = directory.path().join("oversized.gb");
     let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
         .current_dir(env!("CARGO_MANIFEST_DIR"))
-        .args(["build", "tests/fixtures/programs/sort_formatting.rs"])
+        .args(["build", "tests/fixtures/programs/oversized_formatting.rs"])
         .arg(&rom)
         .output()?;
     ensure!(
         !output.status.success(),
-        "oversized sort unexpectedly linked"
+        "oversized program unexpectedly linked"
     );
     let report = String::from_utf8(output.stderr)?;
     for expected in [
         "sangoku::retained_formatting",
         "sangoku::rom_capacity",
-        "slice_index_fail",
-        "new_display",
+        "encode_utf8_raw",
         "32768",
         "Largest retained sections",
         "probe.map",

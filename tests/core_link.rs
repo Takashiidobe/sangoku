@@ -57,7 +57,7 @@ fn program_using_core_links_and_runs() -> Result<()> {
     sangoku_test_support::bail!("program did not halt")
 }
 
-fn run_core_rom(source: &str, opt_level: &str) -> Result<u8> {
+fn run_core_rom(source: &str, opt_level: &str) -> Result<(u8, Vec<u8>)> {
     let directory = sangoku_test_support::tempfile::tempdir()?;
     let rom = directory.path().join("core_rom.gb");
     let output = Command::new(env!("CARGO_BIN_EXE_sangoku"))
@@ -77,7 +77,7 @@ fn run_core_rom(source: &str, opt_level: &str) -> Result<u8> {
         let before = emulator.pc;
         emulator.step()?;
         if emulator.pc == before {
-            return Ok(emulator.a);
+            return Ok((emulator.a, emulator.serial));
         }
     }
     sangoku_test_support::bail!("{source} did not halt")
@@ -85,14 +85,33 @@ fn run_core_rom(source: &str, opt_level: &str) -> Result<u8> {
 
 #[test]
 fn utf8_iteration_matches_at_every_width_boundary() -> Result<()> {
-    let result = run_core_rom("tests/core_rom/utf8.rs", "z")?;
+    let (result, _) = run_core_rom("tests/core_rom/utf8.rs", "z")?;
     ensure!(result == 25, "gbc_main returned {result}");
     Ok(())
 }
 
 #[test]
 fn unicode_properties_match_upstream() -> Result<()> {
-    let result = run_core_rom("tests/core_rom/unicode_properties.rs", "z")?;
+    let (result, _) = run_core_rom("tests/core_rom/unicode_properties.rs", "z")?;
     ensure!(result == 3, "gbc_main returned {result}");
+    Ok(())
+}
+
+#[test]
+fn inlined_volatile_poll_rereads_the_register() -> Result<()> {
+    let (result, serial) = run_core_rom("tests/core_rom/volatile_poll.rs", "2")?;
+    ensure!(
+        serial == b"ok\n",
+        "serial {:?}",
+        String::from_utf8_lossy(&serial)
+    );
+    ensure!(result == 7, "gbc_main returned {result}");
+    Ok(())
+}
+
+#[test]
+fn core_sort_unstable_links_and_runs() -> Result<()> {
+    let (result, _) = run_core_rom("tests/core_rom/sort_unstable.rs", "z")?;
+    ensure!(result == 96, "gbc_main returned {result}");
     Ok(())
 }
