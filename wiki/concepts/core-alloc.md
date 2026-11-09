@@ -57,9 +57,10 @@ width boundary, alphabetic/whitespace/numeric properties, and `str` character
 counting and prefix/suffix checks with non-ASCII text. At opt-level z, separate
 `unicode_case.rs` and `unicode_upper.rs` ROMs execute upstream case mappings for
 Ä, ß, ǅ, and emoji, including the two-character uppercase expansion ß → SS
-(`sangoku-6o2`). A combined fixture measured 32,864 bytes on 2026-11-09, exceeding
-the 32 KiB capacity by 96 bytes; larger combinations still need size reductions
-or banking (`sangoku-30k.9.1.12`).
+(`sangoku-6o2`). Whole-byte logical right-shift lowering (`sangoku-dr7`) reduced
+the combined fixture from 32,864 to 32,715 bytes, leaving only 53 bytes of section
+capacity. Larger combinations still need size reductions or banking
+(`sangoku-30k.9.1.12`).
 
 `cargo run -- run examples/heap.rs --alloc` executes `Vec` and `Box` allocations
 in WRAM and returns 52, including at opt-level 0. The collection survey above

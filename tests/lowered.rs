@@ -1315,6 +1315,35 @@ fn division_traps_reach_the_rst_vector() -> Result<()> {
 }
 
 #[test]
+fn i32_whole_byte_right_shifts_match_host() -> Result<()> {
+    let program = program("shift-byte-i32")?;
+    for value in [0u32, 1, 0x8000_0000, 0xffff, 0x1234_5678, u32::MAX] {
+        for count in [0u32, 8, 16, 24, 32, 48] {
+            let expected = value.wrapping_shr(count);
+            assert_eq!(
+                invoke(
+                    &program,
+                    &format!("__rust_ushr{count}"),
+                    &value.to_le_bytes()
+                )?,
+                expected,
+                "{value:#x} >> {count}"
+            );
+            assert_eq!(
+                invoke(
+                    &program,
+                    &format!("__rust_ushr{count}_live"),
+                    &value.to_le_bytes()
+                )?,
+                value.wrapping_add(expected),
+                "live input {value:#x} >> {count}"
+            );
+        }
+    }
+    Ok(())
+}
+
+#[test]
 fn i8_constant_shifts_and_rotates_match_host() -> Result<()> {
     let program = program("shift-i8")?;
     let values = [0u8, 1, 0x80, 0xff, 0x5a, 0xa5, 0x7f];

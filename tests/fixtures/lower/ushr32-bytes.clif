@@ -1,0 +1,24 @@
+set enable_verifier=false
+target z80
+
+function %high_half(i32) -> i16 system_v {
+block0(v0: i32):
+    v1 = iconst.i32 16
+    v2 = ushr v0, v1
+    v3 = ireduce.i16 v2
+    return v3
+}
+
+; CHECK: SECTION "__rust_high_half", ROM0
+; CHECK-NEXT: EXPORT __rust_high_half
+; CHECK-NEXT: __rust_high_half::
+; CHECK-NEXT: .block0:
+; CHECK-NEXT:   ld hl, sp + 2
+; CHECK-NEXT:   ld h, [hl]
+; CHECK-NEXT:   ld c, a
+; CHECK-NEXT:   ld b, h
+; CHECK-NEXT:   ld d, $00
+; CHECK-NEXT:   ld d, $00
+; CHECK-NEXT:   ld a, c
+; CHECK-NEXT:   ld b, b
+; CHECK-NEXT:   ret

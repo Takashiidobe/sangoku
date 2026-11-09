@@ -65,14 +65,15 @@ A 2026-11-07 opt-level z probe using the property and case APIs retained about
 `skip_search` instantiations, case-conversion lookup, `u64::rotate_left`) is
 about 42 KB; the tables are about 11 KB. Separate lowercase and uppercase ROM fixtures now link at opt-level z and
 execute upstream results for Ä, ß, ǅ, and emoji (`sangoku-6o2`). The combined
-fixture measured 32,864 bytes on 2026-11-09, exceeding the 32 KiB cartridge
-capacity by 96 bytes. Plain UTF-8 `str` character counting and prefix/suffix
+fixture initially measured 32,864 bytes on 2026-11-09. Whole-byte shift lowering
+reduced it to 32,715 bytes, leaving 53 bytes of section capacity. Plain UTF-8
+`str` character counting and prefix/suffix
 checks also link and execute. Larger Unicode programs can still require banking
 or reduced retained code.
 
 ## Case conversion size breakdown
 
-The 2026-11-09 opt-level z maps count retained section bytes, including fixture
+The 2026-11-09 baseline opt-level z maps count retained section bytes, including fixture
 code and runtime, rather than the padded cartridge file size:
 
 | Fixture | Total bytes | Data bytes | Code and runtime bytes |
@@ -103,6 +104,13 @@ Further table compression could pack range fields or delta-encode sorted keys,
 but requires decoding code and changes to the Unicode generator. Startup
 decompression also consumes scarce WRAM. Measure the combined decoder and data
 cost before adopting either scheme.
+
+Whole-byte `u32` logical right shifts now lower to byte moves and zero fills.
+`tests/core_rom/unicode_plane.rs` reproduces the lookup's plane/low-half split
+with volatile input: its entry point shrank from 208 to 76 bytes. Lookup shrank
+from 3,882 to 3,733 bytes, with its 213-byte frame unchanged. Lowercase and
+uppercase fixtures shrank to 24,627 and 26,314 bytes. Other constant shift counts
+retain their existing lowering; further stack/copy improvements remain open.
 
 For fixed game text, convert case in host asset processing. For dynamic text,
 use ASCII conversion or an explicit game-specific alphabet when appropriate.

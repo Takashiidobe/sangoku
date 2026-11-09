@@ -1,0 +1,104 @@
+set enable_verifier=false
+target z80
+
+function %ushr0(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = iconst.i32 0
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr0_live(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = iconst.i32 0
+    v3 = ushr v1, v2
+    v4 = iadd v1, v3
+    return v4
+}
+
+function %ushr8(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = iconst.i32 8
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr8_live(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = iconst.i32 8
+    v3 = ushr v1, v2
+    v4 = iadd v1, v3
+    return v4
+}
+
+function %ushr16(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = iconst.i32 16
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr16_live(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = iconst.i32 16
+    v3 = ushr v1, v2
+    v4 = iadd v1, v3
+    return v4
+}
+
+function %ushr24(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = iconst.i32 24
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr24_live(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = iconst.i32 24
+    v3 = ushr v1, v2
+    v4 = iadd v1, v3
+    return v4
+}
+
+function %ushr32(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = iconst.i32 32
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr32_live(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = iconst.i32 32
+    v3 = ushr v1, v2
+    v4 = iadd v1, v3
+    return v4
+}
+
+function %ushr48(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = iconst.i32 48
+    v3 = ushr v1, v2
+    return v3
+}
+
+function %ushr48_live(i16) -> i32 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = iconst.i32 48
+    v3 = ushr v1, v2
+    v4 = iadd v1, v3
+    return v4
+}

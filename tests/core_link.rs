@@ -91,6 +91,34 @@ fn utf8_iteration_matches_at_every_width_boundary() -> Result<()> {
 }
 
 #[test]
+fn unicode_plane_extraction_matches_host() -> Result<()> {
+    let (rom, _) = build_mapped_rom("tests/core_rom/unicode_plane.rs", "z")?;
+    for input in [0u32, 0xffff, 0x10000, 0x10ffff, 0x12345678, u32::MAX] {
+        let mut emulator = Emulator::new(&rom, 0x100)?;
+        emulator.memory[0xc000..0xc004].copy_from_slice(&input.to_le_bytes());
+        let mut halted = false;
+        for _ in 0..100_000 {
+            let before = emulator.pc;
+            emulator.step()?;
+            if emulator.pc == before {
+                halted = true;
+                break;
+            }
+        }
+        ensure!(halted && emulator.a == 0, "plane extraction did not return");
+        ensure!(
+            emulator.memory[0xc004..0xc006] == ((input >> 16) as u16).to_le_bytes(),
+            "wrong plane for {input:#x}"
+        );
+        ensure!(
+            emulator.memory[0xc006..0xc008] == (input as u16).to_le_bytes(),
+            "wrong low bits for {input:#x}"
+        );
+    }
+    Ok(())
+}
+
+#[test]
 fn unicode_case_conversion_matches_upstream() -> Result<()> {
     let (result, _) = run_core_rom("tests/core_rom/unicode_case.rs", "z")?;
     ensure!(result == 4, "gbc_main returned {result}");
