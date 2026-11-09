@@ -460,6 +460,30 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
     }
 
     #[test]
+    fn widening_multiplication_links_only_its_variant_and_shared_unsigned_core() {
+        for level in ["0", "1", "2", "3", "s", "z"] {
+            let variant = if matches!(level, "s" | "z") {
+                "size"
+            } else {
+                "opt"
+            };
+            let unsigned = format!("umul16wide_{variant}");
+            assert_eq!(
+                runtime_objects("call __gbc_umul16wide", level),
+                [unsigned.as_str()]
+            );
+            assert_eq!(
+                runtime_objects("call __gbc_smul16wide", level),
+                [unsigned.as_str(), "smul16wide"]
+            );
+            assert_eq!(
+                runtime_objects("call __gbc_umul16wide\ncall __gbc_smul16wide", level).len(),
+                2
+            );
+        }
+    }
+
+    #[test]
     fn multiplication_selects_one_width_and_variant() {
         for level in ["0", "1", "2", "3", "s", "z"] {
             let variant = if matches!(level, "s" | "z") {

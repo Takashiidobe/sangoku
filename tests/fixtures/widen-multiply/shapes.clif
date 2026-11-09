@@ -1,0 +1,91 @@
+set enable_multi_ret_implicit_sret=true
+set opt_level=none
+target z80
+
+function %umulhi8(i8, i8) -> i8 system_v {
+block0(v0: i8, v1: i8):
+    v2 = umulhi v0, v1
+    return v2
+}
+
+function %smulhi8(i8, i8) -> i8 system_v {
+block0(v0: i8, v1: i8):
+    v2 = smulhi v0, v1
+    return v2
+}
+
+function %umul_overflow8(i8, i8) -> i8, i8 system_v {
+block0(v0: i8, v1: i8):
+    v2, v3 = umul_overflow v0, v1
+    return v2, v3
+}
+
+function %smul_overflow8(i8, i8) -> i8, i8 system_v {
+block0(v0: i8, v1: i8):
+    v2, v3 = smul_overflow v0, v1
+    return v2, v3
+}
+
+function %umulhi16(i16, i16) -> i16 system_v {
+block0(v0: i16, v1: i16):
+    v2 = umulhi v0, v1
+    return v2
+}
+
+function %smulhi16(i16, i16) -> i16 system_v {
+block0(v0: i16, v1: i16):
+    v2 = smulhi v0, v1
+    return v2
+}
+
+function %umul_overflow16(i16, i16) -> i16, i8 system_v {
+block0(v0: i16, v1: i16):
+    v2, v3 = umul_overflow v0, v1
+    return v2, v3
+}
+
+function %smul_overflow16(i16, i16) -> i16, i8 system_v {
+block0(v0: i16, v1: i16):
+    v2, v3 = smul_overflow v0, v1
+    return v2, v3
+}
+
+function %umulhi32(i32, i32) -> i32 system_v {
+block0(v0: i32, v1: i32):
+    v2 = umulhi v0, v1
+    return v2
+}
+
+function %smulhi32(i32, i32) -> i32 system_v {
+block0(v0: i32, v1: i32):
+    v2 = smulhi v0, v1
+    return v2
+}
+
+function %umul_overflow32(i32, i32) -> i32, i8 system_v {
+block0(v0: i32, v1: i32):
+    v2, v3 = umul_overflow v0, v1
+    return v2, v3
+}
+
+function %smul_overflow32(i32, i32) -> i32, i8 system_v {
+block0(v0: i32, v1: i32):
+    v2, v3 = smul_overflow v0, v1
+    return v2, v3
+}
+
+function %full_u16(i16, i16) -> i32 system_v {
+block0(v0: i16, v1: i16):
+    v2 = uextend.i32 v0
+    v3 = uextend.i32 v1
+    v4 = imul v2, v3
+    return v4
+}
+
+function %full_s16(i16, i16) -> i32 system_v {
+block0(v0: i16, v1: i16):
+    v2 = sextend.i32 v0
+    v3 = sextend.i32 v1
+    v4 = imul v2, v3
+    return v4
+}

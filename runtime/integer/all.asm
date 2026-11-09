@@ -1,3 +1,5 @@
+INCLUDE "runtime/integer/mulwide/speed/i16.asm"
+INCLUDE "runtime/integer/mulwide/common/signed16.asm"
 INCLUDE "runtime/integer/mul/speed/i8.asm"
 INCLUDE "runtime/integer/mul/speed/i32.asm"
 INCLUDE "runtime/integer/div/common/i32_core.asm"

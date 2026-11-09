@@ -121,6 +121,39 @@ small no_core Rust probes at 0/z for signed results and live inputs. They do
 not build core or run an exhaustive audit. The legacy runtime audit's `mul16`
 name retains the compact implementation for historical measurement stability.
 
+## Widen multiplication
+
+`__gbc_umul16wide` and `__gbc_smul16wide` multiply two native 16-bit arguments
+and return the full 32-bit product. Inputs use B/C and A/[SP+2]; output bytes
+use A/B/C/D, least significant first. Incoming stack arguments stay unchanged.
+
+| Shape | Size / speed linked bytes | Size / speed cycles, 0xffff × 0xffff | Extra stack |
+| --- | --- | --- | --- |
+| unsigned 16×16→32 | 32 / 252 | 1292 / 1072 | 0 |
+| signed 16×16→32 | 93 / 313 | 1688 / 1468 | 8 |
+
+The unsigned kernel uses 16 combined add/right-shift steps; size loops and
+speed unrolls them and returns early for a zero operand. A common signed wrapper calls the selected unsigned kernel,
+then subtracts the other operand from the high half for each negative input.
+Both signed and unsigned callers retain one unsigned kernel. There are no
+lookup tables or scratch RAM; all public registers and flags are caller-saved.
+Cycle counts cover entry through RET, excluding caller packing/CALL/spills.
+
+Cranelift uses the helpers for signed/unsigned 16-bit high halves and checked
+overflow, and i32 multiplies of two matching sign- or zero-extended i16 values.
+Masked low limbs and logical shifts exposing at most 16 bits also qualify.
+This lets the existing 32-bit high-half/overflow expansion reuse native
+widening products. Mixed signed/unsigned extensions keep the generic i32 path.
+Eight-bit high halves/overflow keep their existing i16-product path. General
+low-32-bit wrapping multiplication remains separate; no new >32-bit kernel is
+introduced.
+
+Run `cargo nextest run --no-fail-fast -E 'binary(widen_multiply)'` after the
+backend and standalone CLIF tool are rebuilt. Tests use nine explicit direct
+pairs, tiny no_core Rust at 0/z, and six representative cases per width for
+8/16/32-bit high halves and overflow flags. This does not require core or a
+complete application ROM.
+
 ## Scan and reverse bits
 
 CLZ, CTZ and bit reversal have native i8/i16/i32 entries selected by Cranelift.

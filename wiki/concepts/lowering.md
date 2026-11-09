@@ -14,6 +14,10 @@ operations. [Legalization](legalization.md) handles wider values first.
 The runtime provides wrapping multiplication at native 8-, 16- and 32-bit
 widths for signed and unsigned operands. Levels s/z select compact loops;
 0–3 select unrolled speed variants. i8 multiplication no longer widens to i16.
+Native 16×16→32 helpers handle widening, high halves and checked 16-bit
+multiplication. Matching i32 products and known unsigned 16-bit limbs also use
+them; mixed signed/unsigned extensions retain the generic i32 path. Existing
+32-bit high-half and overflow expansion can reuse these partial products.
 Unsigned 16-bit division and remainder share an SM83 core and reach the trap
 vector for a zero divisor. Spills and reloads preserve live registers and flags.
 
