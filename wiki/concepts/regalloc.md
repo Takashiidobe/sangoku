@@ -32,6 +32,7 @@ counted. Keep kernels call-free.
 | baseline (2026-11-09) | 1190 | 426 | 2.79 |
 | sangoku-dq5: offset-0 byte loads/stores via `ld a,[de]`/`ld [de],a` | 1153 | 426 | 2.71 |
 | sangoku-2mv: `inc`/`dec` for constant +-1 on bytes and words | 942 | 426 | 2.21 |
+| sangoku-i70: fused `cp` + `jp cc` for unsigned/eq/ne byte compares feeding `brif` | 868 | 426 | 2.04 |
 
 ## Findings (2026-11-09)
 
@@ -53,8 +54,9 @@ Allocator and spill losses:
 Lowering losses that dominate the byte gap:
 
 - `p.add(1)` and `n -= 1` go through A instead of `inc`/`dec`. (sangoku-2mv)
-- Comparisons build a boolean from a raw `db` run before branching.
-  (sangoku-i70)
+- Signed byte, 16-bit and 32-bit comparisons still build a boolean from a raw
+  `db` run before branching; unsigned/eq/ne byte compares are fused
+  (sangoku-i70).
 - `jp` where `jr` fits, and `ret` placed in the fall-through. (sangoku-2ea)
 - Moves through A where `ld [hl], r` exists, and no `[hl]` ALU operands.
   (sangoku-98d)
@@ -126,3 +128,22 @@ where `dec b` already set Z (sangoku-1de, sangoku-i70).
 0x00 boundaries on the emulator at opt 0, 2 and z. The backend's own unit tests
 in `isa/lr35902` did not compile before this change (missing imports in the
 `emit.rs` test module); they now do and pass.
+
+## sangoku-i70: fused byte compare and branch
+
+A `brif` whose condition is a single-use 8-bit `icmp` with an equality or
+unsigned condition lowers to `CompareBranch8`: `ld a,lhs; cp rhs` then `jp cc`
+on the flags (`lower.rs` `fuse_compare_branch`). Only A is clobbered, so B, C
+and H are no longer pinned by the compare. `>` and `<=` use two conditional
+jumps plus a final `jp`. Still unfused: signed byte, 16-bit and 32-bit compares,
+and compares with more than one use.
+
+| kernel | before | after |
+| ------ | -----: | ----: |
+| max_u8 | 69 | 40 |
+| count_eq | 77 | 45 |
+| sat_chain | 143 | 130 |
+
+Remaining in the fused sequences: `jp` where `jr` fits (sangoku-2ea), and
+`ld a,a` is skipped but `ld a,r` before `cp` is not folded when the left
+operand could already be in A.

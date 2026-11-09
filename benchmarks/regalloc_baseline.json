@@ -8,11 +8,11 @@
       "stack": 12
     },
     "count_eq": {
-      "bytes": 77,
-      "insns": 47,
+      "bytes": 45,
+      "insns": 34,
       "jp": 4,
-      "moves": 11,
-      "stack": 16
+      "moves": 16,
+      "stack": 3
     },
     "fib16": {
       "bytes": 34,
@@ -29,11 +29,11 @@
       "stack": 3
     },
     "max_u8": {
-      "bytes": 69,
-      "insns": 39,
-      "jp": 4,
-      "moves": 12,
-      "stack": 10
+      "bytes": 40,
+      "insns": 28,
+      "jp": 5,
+      "moves": 14,
+      "stack": 0
     },
     "mix16": {
       "bytes": 66,
@@ -57,10 +57,10 @@
       "stack": 61
     },
     "sat_chain": {
-      "bytes": 143,
-      "insns": 67,
-      "jp": 2,
-      "moves": 39,
+      "bytes": 130,
+      "insns": 66,
+      "jp": 3,
+      "moves": 37,
       "stack": 4
     },
     "strlen16": {

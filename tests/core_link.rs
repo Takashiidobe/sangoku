@@ -581,3 +581,28 @@ fn unit_steps_carry_across_byte_boundaries() -> Result<()> {
     }
     Ok(())
 }
+
+#[test]
+fn fused_byte_compares_branch_on_every_unsigned_condition() -> Result<()> {
+    let values = [0u8, 1, 127, 128, 255];
+    let mut expected = 0u8;
+    for a in values {
+        for b in values {
+            let bits = u8::from(a == b)
+                | u8::from(a != b) << 1
+                | u8::from(a < b) << 2
+                | u8::from(a <= b) << 3
+                | u8::from(a > b) << 4
+                | u8::from(a >= b) << 5;
+            expected = expected.wrapping_mul(3).wrapping_add(bits);
+        }
+    }
+    for opt_level in ["0", "2", "z"] {
+        let (result, _) = run_core_rom("tests/core_rom/compare_branches.rs", opt_level)?;
+        ensure!(
+            result == expected,
+            "opt {opt_level}: gbc_main returned {result}, expected {expected}"
+        );
+    }
+    Ok(())
+}
