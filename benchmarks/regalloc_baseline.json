@@ -1,0 +1,174 @@
+{
+  "rust": {
+    "copy_u8": {
+      "bytes": 131,
+      "insns": 96,
+      "jp": 2,
+      "moves": 18,
+      "stack": 38
+    },
+    "count_eq": {
+      "bytes": 99,
+      "insns": 61,
+      "jp": 4,
+      "moves": 20,
+      "stack": 13
+    },
+    "fib16": {
+      "bytes": 40,
+      "insns": 31,
+      "jp": 2,
+      "moves": 19,
+      "stack": 0
+    },
+    "fill": {
+      "bytes": 47,
+      "insns": 35,
+      "jp": 2,
+      "moves": 16,
+      "stack": 5
+    },
+    "max_u8": {
+      "bytes": 100,
+      "insns": 64,
+      "jp": 4,
+      "moves": 23,
+      "stack": 18
+    },
+    "mix16": {
+      "bytes": 66,
+      "insns": 51,
+      "jp": 0,
+      "moves": 22,
+      "stack": 7
+    },
+    "pressure": {
+      "bytes": 66,
+      "insns": 56,
+      "jp": 0,
+      "moves": 23,
+      "stack": 14
+    },
+    "pressure16": {
+      "bytes": 182,
+      "insns": 151,
+      "jp": 0,
+      "moves": 44,
+      "stack": 61
+    },
+    "sat_chain": {
+      "bytes": 143,
+      "insns": 67,
+      "jp": 2,
+      "moves": 39,
+      "stack": 4
+    },
+    "strlen16": {
+      "bytes": 83,
+      "insns": 64,
+      "jp": 2,
+      "moves": 23,
+      "stack": 19
+    },
+    "sum_u16": {
+      "bytes": 133,
+      "insns": 104,
+      "jp": 2,
+      "moves": 25,
+      "stack": 44
+    },
+    "sum_u8": {
+      "bytes": 100,
+      "insns": 72,
+      "jp": 2,
+      "moves": 20,
+      "stack": 20
+    }
+  },
+  "sdcc": {
+    "copy_u8": {
+      "bytes": 18,
+      "insns": 15,
+      "jp": 0,
+      "moves": 0,
+      "stack": 5
+    },
+    "count_eq": {
+      "bytes": 25,
+      "insns": 20,
+      "jp": 0,
+      "moves": 2,
+      "stack": 5
+    },
+    "fib16": {
+      "bytes": 24,
+      "insns": 18,
+      "jp": 0,
+      "moves": 10,
+      "stack": 0
+    },
+    "fill": {
+      "bytes": 15,
+      "insns": 12,
+      "jp": 0,
+      "moves": 0,
+      "stack": 3
+    },
+    "max_u8": {
+      "bytes": 20,
+      "insns": 16,
+      "jp": 0,
+      "moves": 6,
+      "stack": 0
+    },
+    "mix16": {
+      "bytes": 56,
+      "insns": 46,
+      "jp": 0,
+      "moves": 13,
+      "stack": 8
+    },
+    "pressure": {
+      "bytes": 34,
+      "insns": 31,
+      "jp": 0,
+      "moves": 13,
+      "stack": 4
+    },
+    "pressure16": {
+      "bytes": 95,
+      "insns": 84,
+      "jp": 0,
+      "moves": 20,
+      "stack": 19
+    },
+    "sat_chain": {
+      "bytes": 68,
+      "insns": 50,
+      "jp": 0,
+      "moves": 7,
+      "stack": 12
+    },
+    "strlen16": {
+      "bytes": 10,
+      "insns": 7,
+      "jp": 0,
+      "moves": 0,
+      "stack": 0
+    },
+    "sum_u16": {
+      "bytes": 42,
+      "insns": 31,
+      "jp": 0,
+      "moves": 4,
+      "stack": 9
+    },
+    "sum_u8": {
+      "bytes": 19,
+      "insns": 15,
+      "jp": 0,
+      "moves": 5,
+      "stack": 0
+    }
+  }
+}

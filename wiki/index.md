@@ -10,6 +10,7 @@
 - [Intrinsic call audit](intrinsics.md)
 - [Unicode lookup tables](concepts/concepts.md)
 - [ROM size baseline against SDCC](concepts/size-baseline.md)
+- [Register allocation audit against SDCC](concepts/regalloc.md)
 - [Legalization](concepts/legalization.md)
 - [Lowering](concepts/lowering.md)
 - [Runtime libraries](concepts/runtime-libraries.md)
