@@ -57,8 +57,9 @@ behavior in the relevant wiki concept page.
   is complete.
 - Run `cargo clippy --allow-dirty --fix` and `cargo fmt` before finishing a
   turn.
-- Add an up to 50 line `llog` and commit at the end of a turn. Don't push unless
-  asked.
+- Add an `llog` of around 60 lines at most and commit at the end of a turn,
+  following "Writing an llog" below. Don't push unless asked. Format logs with
+  `prettier <file> --print-width 80 --prose-wrap always --write`.
 - Use the LSP tool (definitions, references, symbols, diagnostics) to navigate
   and check Rust code, especially in the large `third_party` backends, instead
   of reading files or grepping blindly.
@@ -76,12 +77,48 @@ behavior in the relevant wiki concept page.
 - Backend crates depend on each other by `path`, not git, so edits are picked up
   immediately. Use path dependencies wherever possible.
 
-## Current Constraints
+## Writing an llog
 
-- LR35902 code generation is incomplete. Check the wiki concept pages and
-  current backend support before assuming an instruction or Rust feature is
-  available.
-- Rust `core` support is the priority. Runtime, graphics, input, and audio work
-  comes after it can compile.
-- The fork's ASCII-only string changes are a known mistake being reverted
-  (sangoku-30k); do not build on them.
+Logs live in `wiki/log/<date>-<time>.md`. They are Markdown: backticks for
+code, identifiers, files, registers and issue ids, and fenced blocks
+with a language (`asm`, `rust`, `text`) for listings. Inline what a reader needs
+from the bead (why it was filed, what it asked for, how it closed) so nobody has
+to run `bd show`. Title line is `# <summary> (<issue id>)`, then the timestamp.
+Pick the kind that fits; stay around 60 lines or fewer.
+
+### Optimization
+
+Sections in order:
+
+1. **Context**: why we looked (what we noticed), what this change does, the
+   issue id and the measured result.
+2. **Case**: the source pattern, in one or two lines.
+3. **Currently emits**: output before the change, as a fenced listing.
+4. **Should emit**: the intended output as a fenced listing; if the real output
+   differs from the ideal, show the real one and name the gap.
+5. **How**: the lowering rule, pass or files changed, and the tests.
+6. **Alternatives**: approaches considered or deferred, and why. Known leftovers
+   go here too.
+
+### Feature
+
+Something had to lower, link or run at all. Sections: **Context** (what was
+failing or missing, from the bead, and why it mattered for the milestone),
+**Case** (the Rust or CLIF that failed and how: error text, missing symbol,
+trap), **Before** and **After** (error output or generated code, whichever shows
+the change), **How**, **Alternatives**.
+
+### Bug
+
+Sections: **Context** (symptom and how it was found), **Case** (minimal
+reproducer), **Cause** (the verified root cause, not a guess), **Fix** (what
+changed and the regression test), **Alternatives** (other fixes, and related
+suspects not checked).
+
+### Bookkeeping
+
+Docs, issue triage, renames, regenerated snapshots, tool or CI tweaks. Say
+plainly what was done and why in a few lines; no sections needed.
+
+For optimizations also mirror the case, rule and before/after in the relevant
+`wiki/concepts/` page.

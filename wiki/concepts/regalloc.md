@@ -138,6 +138,30 @@ and H are no longer pinned by the compare. `>` and `<=` use two conditional
 jumps plus a final `jp`. Still unfused: signed byte, 16-bit and 32-bit compares,
 and compares with more than one use.
 
+Case: `if x > m { m = x }`. Rule: `Brif(Icmp(i8, eq/ne/unsigned))` with a
+unique-use icmp was `Compare8` plus `BranchIf`, now `CompareBranch8`.
+
+Before:
+
+```asm
+db $79, $BD, ...   ; 0/1 into L
+ld b, c
+ld a, l
+or a
+jp nz, .block6
+```
+
+After:
+
+```asm
+ld a, h
+cp c
+jp z, .block5
+jp nc, .block6
+```
+
+The boolean no longer pins L, B and A, and the second test is gone.
+
 | kernel | before | after |
 | ------ | -----: | ----: |
 | max_u8 | 69 | 40 |
