@@ -572,3 +572,12 @@ fn pointer_loops_load_and_store_through_register_pairs() -> Result<()> {
     }
     Ok(())
 }
+
+#[test]
+fn unit_steps_carry_across_byte_boundaries() -> Result<()> {
+    for opt_level in ["0", "2", "z"] {
+        let (result, _) = run_core_rom("tests/core_rom/unit_steps.rs", opt_level)?;
+        ensure!(result == 243, "opt {opt_level}: gbc_main returned {result}");
+    }
+    Ok(())
+}

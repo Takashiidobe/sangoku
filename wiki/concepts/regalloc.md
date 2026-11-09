@@ -31,6 +31,7 @@ counted. Keep kernels call-free.
 | ------ | ---------: | ---------: | ----: |
 | baseline (2026-11-09) | 1190 | 426 | 2.79 |
 | sangoku-dq5: offset-0 byte loads/stores via `ld a,[de]`/`ld [de],a` | 1153 | 426 | 2.71 |
+| sangoku-2mv: `inc`/`dec` for constant +-1 on bytes and words | 942 | 426 | 2.21 |
 
 ## Findings (2026-11-09)
 
@@ -89,3 +90,39 @@ the reverse of hardware BC, so a BC load would need a swap for every pointer
 argument. DE costs one `ld d,c; ld e,b` at entry. A pointer that is accessed
 at both offset 0 (DE) and another offset (BC/HL path) is shuffled between them;
 see `load-store-i32.clif`.
+
+## sangoku-2mv: inc and dec for constant steps
+
+`iadd`/`isub` by 1 or -1 (either operand order for `iadd`) lowers to
+`IncDec8` and `IncDec16` instead of loading a constant register and adding
+through A. A byte step is `inc r` / `dec r`. A word step is `inc rr` / `dec rr`
+when the allocator placed the value in BC, DE or HL (low, high in C/B, E/D,
+L/H); otherwise `inc lo; jr nz,@+3; inc hi`, and for decrement `inc lo; dec lo;
+jr nz,@+3; dec hi; dec lo` (the `inc`/`dec` pair sets Z when `lo` was zero
+without touching A). Both reuse their source register, so they add no move and
+no A clobber. `unit_step` in `lower.rs` does the constant match.
+
+| kernel | before | after |
+| ------ | -----: | ----: |
+| copy_u8 | 130 | 53 |
+| fill | 43 | 27 |
+| strlen16 | 64 | 33 |
+| count_eq | 104 | 77 |
+| sum_u8 | 104 | 75 |
+| max_u8 | 78 | 69 |
+| sum_u16 | 133 | 117 |
+| fib16 | 40 | 34 |
+
+This also removed the `sum_u8` and `count_eq` regressions from sangoku-dq5.
+Most of the saving is the constant registers it no longer needs, which was
+pressure on the allocator, so loops that spilled now stay in registers.
+
+Left over in these loops: the word increment still lands in a scratch pair and
+is moved back (`ld c,d; inc e; jr nz; inc c; ld d,c`) instead of `inc de`, a
+no-op `ld a, a` follows each `ld a,[de]`, and the loop test is `ld a,b; or a`
+where `dec b` already set Z (sangoku-1de, sangoku-i70).
+
+`tests/core_rom/unit_steps.rs` runs word and byte steps across the 0xFF and
+0x00 boundaries on the emulator at opt 0, 2 and z. The backend's own unit tests
+in `isa/lr35902` did not compile before this change (missing imports in the
+`emit.rs` test module); they now do and pass.
