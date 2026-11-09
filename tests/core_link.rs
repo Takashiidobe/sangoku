@@ -91,6 +91,22 @@ fn utf8_iteration_matches_at_every_width_boundary() -> Result<()> {
 }
 
 #[test]
+fn unicode_case_conversion_matches_upstream() -> Result<()> {
+    let (result, _) = run_core_rom("tests/core_rom/unicode_case.rs", "z")?;
+    ensure!(result == 4, "gbc_main returned {result}");
+    let (result, _) = run_core_rom("tests/core_rom/unicode_upper.rs", "z")?;
+    ensure!(result == 4, "gbc_main returned {result}");
+    Ok(())
+}
+
+#[test]
+fn unicode_str_methods_execute() -> Result<()> {
+    let (result, _) = run_core_rom("tests/core_rom/unicode_str.rs", "z")?;
+    ensure!(result == 3, "gbc_main returned {result}");
+    Ok(())
+}
+
+#[test]
 fn unicode_properties_match_upstream() -> Result<()> {
     let (result, _) = run_core_rom("tests/core_rom/unicode_properties.rs", "z")?;
     ensure!(result == 3, "gbc_main returned {result}");

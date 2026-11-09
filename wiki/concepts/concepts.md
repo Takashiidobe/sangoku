@@ -63,7 +63,9 @@ whitespace and numeric properties.
 A 2026-11-07 opt-level z probe using the property and case APIs retained about
 47 KB of Unicode code and data. The lookup code (two `bitset_search` and two
 `skip_search` instantiations, case-conversion lookup, `u64::rotate_left`) is
-about 42 KB; the tables are about 11 KB. A ROM calling only
-`char::to_lowercase` needs 40 KB. Compacting tables cannot make this fit, so
-Unicode stays for correctness and testing, and games should use an ASCII string
-crate (`sangoku-yjb`).
+about 42 KB; the tables are about 11 KB. Separate lowercase and uppercase ROM fixtures now link at opt-level z and
+execute upstream results for Ä, ß, ǅ, and emoji (`sangoku-6o2`). The combined
+fixture measured 32,864 bytes on 2026-11-09, exceeding the 32 KiB cartridge
+capacity by 96 bytes. Plain UTF-8 `str` character counting and prefix/suffix
+checks also link and execute. Larger Unicode programs can still require banking
+or reduced retained code.

@@ -53,11 +53,13 @@ generic instantiations can still expose gaps. Long per-function CLIF filename
 warnings remain tracked in `sangoku-30k.9.1.11`.
 
 Target ROM tests in `tests/core_link.rs` execute UTF-8 iteration across every
-width boundary and the alphabetic, whitespace and numeric properties. Upstream
-Unicode support is kept for correctness but costs about 47 KB at opt-level z
-(about 42 KB lookup code, 11 KB tables); one `char::to_lowercase` needs a 40 KB
-ROM, so case conversion cannot run on a 32 KiB cartridge yet (`sangoku-6o2`).
-Games should use an ASCII string crate instead (`sangoku-yjb`).
+width boundary, alphabetic/whitespace/numeric properties, and `str` character
+counting and prefix/suffix checks with non-ASCII text. At opt-level z, separate
+`unicode_case.rs` and `unicode_upper.rs` ROMs execute upstream case mappings for
+Ä, ß, ǅ, and emoji, including the two-character uppercase expansion ß → SS
+(`sangoku-6o2`). A combined fixture measured 32,864 bytes on 2026-11-09, exceeding
+the 32 KiB capacity by 96 bytes; larger combinations still need size reductions
+or banking (`sangoku-30k.9.1.12`).
 
 `cargo run -- run examples/heap.rs --alloc` executes `Vec` and `Box` allocations
 in WRAM and returns 52, including at opt-level 0. The collection survey above
