@@ -19,15 +19,13 @@ block0(v0: i16):
 ; CHECK-NEXT: __rust_ld::
 ; CHECK-NEXT:   add sp, -4
 ; CHECK-NEXT: .block0:
-; CHECK-NEXT:   ld d, b
-; CHECK-NEXT:   ld b, c
-; CHECK-NEXT:   ld c, d
-; CHECK-NEXT:   ld h, b
-; CHECK-NEXT:   ld l, c
-; CHECK-NEXT:   ld a, [hl]
-; CHECK-NEXT:   ld e, a
+; CHECK-NEXT:   ld d, c
+; CHECK-NEXT:   ld e, b
+; CHECK-NEXT:   ld a, [de]
+; CHECK-NEXT:   ld b, d
+; CHECK-NEXT:   ld c, e
 ; CHECK-NEXT:   ld hl, sp + 0
-; CHECK-NEXT:   ld [hl], e
+; CHECK-NEXT:   ld [hl], a
 ; CHECK-NEXT:   ld h, b
 ; CHECK-NEXT:   ld l, c
 ; CHECK-NEXT:   inc hl
@@ -54,41 +52,43 @@ block0(v0: i16):
 ; CHECK-NEXT: SECTION "__rust_st", ROM0
 ; CHECK-NEXT: EXPORT __rust_st
 ; CHECK-NEXT: __rust_st::
-; CHECK-NEXT:   add sp, -6
+; CHECK-NEXT:   add sp, -4
 ; CHECK-NEXT: .block0:
-; CHECK-NEXT:   ld e, $78
-; CHECK-NEXT:   ld d, $56
-; CHECK-NEXT:   ld hl, sp + 0
-; CHECK-NEXT:   ld [hl], d
+; CHECK-NEXT:   ld a, $78
+; CHECK-NEXT:   ld e, $56
+; CHECK-NEXT:   ld h, e
 ; CHECK-NEXT:   ld d, $34
+; CHECK-NEXT:   push hl
 ; CHECK-NEXT:   ld hl, sp + 2
 ; CHECK-NEXT:   ld [hl], d
+; CHECK-NEXT:   pop hl
 ; CHECK-NEXT:   ld d, $12
+; CHECK-NEXT:   push hl
 ; CHECK-NEXT:   ld hl, sp + 4
-; CHECK-NEXT:   ld [hl], b
-; CHECK-NEXT:   ld b, c
-; CHECK-NEXT:   ld hl, sp + 4
-; CHECK-NEXT:   ld c, [hl]
-; CHECK-NEXT:   ld h, b
-; CHECK-NEXT:   ld l, c
-; CHECK-NEXT:   ld a, e
-; CHECK-NEXT:   ld [hl], a
-; CHECK-NEXT:   ld hl, sp + 0
-; CHECK-NEXT:   ld e, [hl]
+; CHECK-NEXT:   ld [hl], d
+; CHECK-NEXT:   pop hl
+; CHECK-NEXT:   ld e, b
+; CHECK-NEXT:   ld d, c
+; CHECK-NEXT:   ld [de], a
+; CHECK-NEXT:   ld c, e
+; CHECK-NEXT:   ld e, h
+; CHECK-NEXT:   ld b, d
 ; CHECK-NEXT:   ld h, b
 ; CHECK-NEXT:   ld l, c
 ; CHECK-NEXT:   inc hl
 ; CHECK-NEXT:   ld a, e
 ; CHECK-NEXT:   ld [hl], a
-; CHECK-NEXT:   ld hl, sp + 2
-; CHECK-NEXT:   ld e, [hl]
+; CHECK-NEXT:   ld hl, sp + 0
+; CHECK-NEXT:   ld d, [hl]
 ; CHECK-NEXT:   ld hl, $0002
 ; CHECK-NEXT:   add hl, bc
-; CHECK-NEXT:   ld a, e
+; CHECK-NEXT:   ld a, d
 ; CHECK-NEXT:   ld [hl], a
+; CHECK-NEXT:   ld hl, sp + 2
+; CHECK-NEXT:   ld d, [hl]
 ; CHECK-NEXT:   ld hl, $0003
 ; CHECK-NEXT:   add hl, bc
 ; CHECK-NEXT:   ld a, d
 ; CHECK-NEXT:   ld [hl], a
-; CHECK-NEXT:   add sp, 6
+; CHECK-NEXT:   add sp, 4
 ; CHECK-NEXT:   ret

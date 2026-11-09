@@ -30,6 +30,7 @@ counted. Keep kernels call-free.
 | change | rust bytes | sdcc bytes | ratio |
 | ------ | ---------: | ---------: | ----: |
 | baseline (2026-11-09) | 1190 | 426 | 2.79 |
+| sangoku-dq5: offset-0 byte loads/stores via `ld a,[de]`/`ld [de],a` | 1153 | 426 | 2.71 |
 
 ## Findings (2026-11-09)
 
@@ -61,3 +62,30 @@ Lowering losses that dominate the byte gap:
 - Arguments past the third byte arrive on the stack, which is an ABI choice.
 
 Work is tracked under epic sangoku-otw.
+
+## sangoku-dq5: byte loads and stores through DE
+
+Byte loads and stores with offset 0 now emit `ld a,[de]` / `ld [de],a` instead
+of copying the pointer into HL. The pointer is a fixed D/E use, a load defines
+A directly and a store uses A directly, so H, L and a scratch A are no longer
+clobbered. Other offsets and 16-bit accesses still use the HL path.
+
+| kernel | before | after |
+| ------ | -----: | ----: |
+| strlen16 | 83 | 64 |
+| max_u8 | 100 | 78 |
+| fill | 47 | 43 |
+| copy_u8 | 131 | 130 |
+| count_eq | 99 | 104 |
+| sum_u8 | 100 | 104 |
+
+`count_eq` and `sum_u8` grew. Their loops still build `p.add(1)` and `n -= 1`
+through A with constant registers (sangoku-2mv) and `count_eq` compares through
+a fixed-register `db` sequence (sangoku-i70), so the allocator now has A and DE
+pinned on top of that pressure. Re-measure both after those land.
+
+DE and not BC because the byte ABI passes a 16-bit argument as low=B, high=C,
+the reverse of hardware BC, so a BC load would need a swap for every pointer
+argument. DE costs one `ld d,c; ld e,b` at entry. A pointer that is accessed
+at both offset 0 (DE) and another offset (BC/HL path) is shuffled between them;
+see `load-store-i32.clif`.

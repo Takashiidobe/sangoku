@@ -1,18 +1,18 @@
 {
   "rust": {
     "copy_u8": {
-      "bytes": 131,
-      "insns": 96,
+      "bytes": 130,
+      "insns": 103,
       "jp": 2,
-      "moves": 18,
-      "stack": 38
+      "moves": 21,
+      "stack": 50
     },
     "count_eq": {
-      "bytes": 99,
-      "insns": 61,
+      "bytes": 104,
+      "insns": 66,
       "jp": 4,
-      "moves": 20,
-      "stack": 13
+      "moves": 17,
+      "stack": 21
     },
     "fib16": {
       "bytes": 40,
@@ -22,18 +22,18 @@
       "stack": 0
     },
     "fill": {
-      "bytes": 47,
-      "insns": 35,
+      "bytes": 43,
+      "insns": 31,
       "jp": 2,
-      "moves": 16,
-      "stack": 5
+      "moves": 10,
+      "stack": 7
     },
     "max_u8": {
-      "bytes": 100,
-      "insns": 64,
+      "bytes": 78,
+      "insns": 46,
       "jp": 4,
-      "moves": 23,
-      "stack": 18
+      "moves": 17,
+      "stack": 10
     },
     "mix16": {
       "bytes": 66,
@@ -64,11 +64,11 @@
       "stack": 4
     },
     "strlen16": {
-      "bytes": 83,
-      "insns": 64,
+      "bytes": 64,
+      "insns": 48,
       "jp": 2,
-      "moves": 23,
-      "stack": 19
+      "moves": 15,
+      "stack": 14
     },
     "sum_u16": {
       "bytes": 133,
@@ -78,11 +78,11 @@
       "stack": 44
     },
     "sum_u8": {
-      "bytes": 100,
-      "insns": 72,
+      "bytes": 104,
+      "insns": 76,
       "jp": 2,
-      "moves": 20,
-      "stack": 20
+      "moves": 18,
+      "stack": 26
     }
   },
   "sdcc": {

@@ -563,3 +563,12 @@ fn ufmt_formats_edge_values_without_core_fmt_or_panic_handler() -> Result<()> {
     }
     Ok(())
 }
+
+#[test]
+fn pointer_loops_load_and_store_through_register_pairs() -> Result<()> {
+    for opt_level in ["0", "2", "z"] {
+        let (result, _) = run_core_rom("tests/core_rom/pointer_loops.rs", opt_level)?;
+        ensure!(result == 68, "opt {opt_level}: gbc_main returned {result}");
+    }
+    Ok(())
+}
