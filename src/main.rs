@@ -91,18 +91,21 @@ fn run() -> Result<()> {
             }
             emit_mir(&root, source, &output, &opt_level, alloc)
         }
-        Some("clif") => {
+        Some("clif" | "asm") => {
+            let clif_only = command == "clif";
             let Some(source) = paths.first() else {
                 return Err(usage());
             };
             let output = paths.get(1).cloned().unwrap_or_else(|| {
                 let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
-                PathBuf::from("build").join(name).with_extension("clif")
+                PathBuf::from("build")
+                    .join(name)
+                    .with_extension(if clif_only { "clif" } else { "asm" })
             });
             if paths.len() > 2 {
                 return Err(usage());
             }
-            emit_clif(&root, source, &output, &opt_level, alloc)
+            emit_code(&root, source, &output, &opt_level, alloc, clif_only)
         }
         Some("lower") => {
             let Some(source) = paths.first() else {
@@ -149,7 +152,7 @@ fn run_rom(rom: &Path) -> Result<()> {
 }
 
 fn usage() -> Error {
-    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku run <source.rs> [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku frontend <source.rs> [output.mir|-] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku clif <source.rs> [output.clif|-] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku lower <input.clif> [output.s|-]".into()
+    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku run <source.rs> [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku frontend <source.rs> [output.mir|-] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku clif <source.rs> [output.clif|-] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku asm <source.rs> [output.asm|-] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku lower <input.clif> [output.s|-]".into()
 }
 
 fn parse_build_args(
@@ -264,12 +267,13 @@ fn lower_clif(root: &Path, input: &Path, output: &Path) -> Result<()> {
     write_output(output, result.stdout)
 }
 
-fn emit_clif(
+fn emit_code(
     root: &Path,
     source: &Path,
     output: &Path,
     opt_level: &str,
     alloc: bool,
+    clif_only: bool,
 ) -> Result<()> {
     let source = absolute_path(source)?;
     if !source.is_file() {
@@ -280,21 +284,29 @@ fn emit_clif(
     let artifacts = ArtifactDir::new(&source)?;
     let libraries = core_libraries(root, &backend, opt_level)?;
     let console = console::libraries(root, &backend, opt_level, &libraries)?;
+    let mut command = rustc_command(root, opt_level);
+    if clif_only {
+        command.env("CG_CLIF_CLIF_ONLY", "1");
+    }
     run_command(
-        rustc_command(root, opt_level)
+        command
             .arg("--edition=2024")
-            .env("CG_CLIF_CLIF_ONLY", "1")
             .arg(format!("-Zcodegen-backend={}", backend.display()))
             .args(libraries.externs(if alloc { 4 } else { 2 }))
             .args(console.externs())
-            .arg("--emit=asm,llvm-ir")
+            .arg(if clif_only {
+                "--emit=asm,llvm-ir"
+            } else {
+                "--emit=asm"
+            })
             .arg(&source)
             .arg("-o")
             .arg(artifacts.path().join("game.s")),
     )?;
-    let clif = fs::read(artifacts.path().join("game.ll"))
-        .map_err(|error| Error::io("backend did not write CLIF".to_string(), error))?;
-    write_output(output, clif)
+    let emitted = if clif_only { "game.ll" } else { "game.s" };
+    let contents = fs::read(artifacts.path().join(emitted))
+        .map_err(|error| Error::io(format!("backend did not write {emitted}"), error))?;
+    write_output(output, contents)
 }
 
 fn write_output(output: &Path, contents: Vec<u8>) -> Result<()> {

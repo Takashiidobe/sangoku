@@ -12,6 +12,19 @@ Build a ROM:
 cargo run -- build examples/sort.rs build/sort.gb
 ```
 
+Inspect the compiler's RGBDS assembly before assembling or linking:
+
+```bash
+cargo run -- asm examples/hello.rs
+cargo run -- asm examples/hello.rs build/hello.asm --opt-level z
+cargo run -- asm examples/hello.rs - --opt-level z > hello.asm
+```
+
+The default output is `build/<source-name>.asm`. Use `-` for stdout.
+`asm` accepts `--opt-level` and `--alloc`, like `build`, and does not require
+RGBDS. It emits the source's compiler output; runtime and library helpers
+remain external references until the ROM build links them.
+
 Build the screen demo and open it in SameBoy:
 
 ```bash
