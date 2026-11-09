@@ -1,6 +1,11 @@
 use super::Object;
 
 pub(super) const OBJECTS: &[Object] = &[
+    object!("sdiv8", "runtime/integer/sdiv/common/i8.asm"),
+    object!("srem8", "runtime/integer/srem/common/i8.asm"),
+    object!("sdiv16", "runtime/integer/sdiv/common/i16.asm"),
+    object!("srem16", "runtime/integer/srem/common/i16.asm"),
+    object!("div8_core", "runtime/integer/div/common/i8_core.asm"),
     object!("udiv16", "runtime/integer/udiv/common/i16.asm"),
     object!("urem16", "runtime/integer/urem/common/i16.asm"),
     object!("div16_core", "runtime/integer/div/common/i16_core.asm"),

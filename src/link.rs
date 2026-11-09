@@ -366,6 +366,20 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
     }
 
     #[test]
+    fn signed_division_selects_native_helpers_and_shared_core() {
+        for bits in [8, 16, 32] {
+            for op in ["sdiv", "srem"] {
+                for level in ["0", "z"] {
+                    let selected = runtime_objects(&format!("call __gbc_{op}{bits}"), level);
+                    assert_eq!(selected.len(), 2, "{selected:?}");
+                    assert!(selected.contains(&format!("{op}{bits}").as_str()));
+                    assert!(selected.contains(&format!("div{bits}_core").as_str()));
+                }
+            }
+        }
+    }
+
+    #[test]
     fn exported_runtime_entries_select_their_objects() {
         for object in sangoku::runtime::objects() {
             if object.name == "panic" {

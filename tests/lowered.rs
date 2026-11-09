@@ -34,7 +34,6 @@ fn lower_program(path: &str) -> Result<harness::Program> {
         .contains("__gbc_f");
     let mut sources = vec![
         ("lowered.s", assembly),
-        ("udiv16.asm", harness::runtime("division16")?),
         (
             "mul16.asm",
             harness::read("runtime/integer/mul/size/i16.asm")?,
@@ -3144,6 +3143,10 @@ fn signed_division_overflow_and_remainder_follow_clif() -> Result<()> {
                 (minimum, -2),
                 (minimum + 1, -1),
                 (maximum, -1),
+                (-7, 3),
+                (7, -3),
+                (-7, -3),
+                (7, 3),
                 (-1, -1),
                 (0, -1),
                 (1, 0),

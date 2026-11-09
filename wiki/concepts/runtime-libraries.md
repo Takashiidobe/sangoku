@@ -91,6 +91,23 @@ Production linkage uses individual registered objects. The f64/f128 and wide
 conversion runtimes retain their existing operation-code dispatchers; their
 internal operations are still bundled within each dispatcher object.
 
+## Divide signed integers
+
+Cranelift calls `__gbc_sdiv8`/`__gbc_srem8`,
+`__gbc_sdiv16`/`__gbc_srem16`, or the existing i32 entries by operand width.
+The i8 helpers use eight division steps; i16 shares the unsigned 16-bit core.
+Each operation links independently with its core. No compiler-rt fallback or
+inline division is needed for these widths, including at opt-levels 0 and z.
+
+Division truncates toward zero; remainder follows the dividend sign. Zero
+operands in the divisor trap. Signed division traps on `MIN / -1`; CLIF signed
+remainder returns zero for `MIN % -1`. Rust can add its own panic checks before
+calling the helper.
+
+Run `cargo nextest run --no-fail-fast -E 'binary(signed_division)'` for bounded
+semantic, ABI, and compiled-Rust call checks. See the
+[implementation log](../log/2026-11-08-21-11.md) for input classes and costs.
+
 ## Multiply integers
 
 Wrapping multiplication uses `__gbc_mul8`, `__gbc_mul16` and `__gbc_mul32` with
