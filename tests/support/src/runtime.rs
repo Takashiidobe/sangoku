@@ -115,10 +115,10 @@ pub fn measure_using(
             Some(42),
         )
     } else {
-        let source = harness::read(if helper == "mul16" {
-            "runtime/mul16.asm"
+        let source = harness::runtime(if helper == "mul16" {
+            "mul16"
         } else {
-            "runtime/udiv16.asm"
+            "division16"
         })?
         .replacen("ROM0", "ROM0[$200]", 1);
         let expected = if helper == "mul16" {

@@ -8,7 +8,10 @@ fn u128_overflow_multiply_matches_host() -> Result<()> {
                 "stop.asm",
                 "SECTION \"reserved\", ROM0[$0000]\nds $100, 0\ndone::\nnop\n".into(),
             ),
-            ("mulo128.asm", harness::read("runtime/mulo128.asm")?),
+            (
+                "mulo128.asm",
+                harness::read("runtime/integer/mulo/common/i128.asm")?,
+            ),
         ],
         None,
     )?;
@@ -99,7 +102,10 @@ fn i128_overflow_multiply_matches_host() -> Result<()> {
                 "stop.asm",
                 "SECTION \"reserved\", ROM0[$0000]\nds $100, 0\ndone::\nnop\n".into(),
             ),
-            ("mulo128.asm", harness::read("runtime/mulo128.asm")?),
+            (
+                "mulo128.asm",
+                harness::read("runtime/integer/mulo/common/i128.asm")?,
+            ),
         ],
         None,
     )?;

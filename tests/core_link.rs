@@ -278,6 +278,44 @@ fn popcnt32_links_only_its_runtime_helper() -> Result<()> {
 }
 
 #[test]
+fn f32_add_links_without_other_float_operations() -> Result<()> {
+    for level in ["0", "z"] {
+        let (rom, map) = build_mapped_rom("tests/core_rom/runtime_fadd32.rs", level)?;
+        ensure!(map.contains("__gbc_fadd32"), "missing f32 add");
+        for helper in [
+            "__gbc_fmul32",
+            "__gbc_fdiv32",
+            "__gbc_fsqrt32",
+            "__gbc_ffma32",
+            "__gbc_fround32",
+            "__gbc_fcmp32",
+        ] {
+            ensure!(!map.contains(helper), "retained unrelated helper {helper}");
+        }
+        for (lhs, rhs) in [(1.5f32, 2.25f32), (-7.0, 3.0), (0.0, 0.0)] {
+            let mut emulator = Emulator::new(&rom, 0x100)?;
+            emulator.memory[0xc000..0xc004].copy_from_slice(&lhs.to_le_bytes());
+            emulator.memory[0xc004..0xc008].copy_from_slice(&rhs.to_le_bytes());
+            let mut halted = false;
+            for _ in 0..100_000 {
+                let before = emulator.pc;
+                emulator.step()?;
+                if emulator.pc == before {
+                    halted = true;
+                    break;
+                }
+            }
+            ensure!(halted, "f32 add did not halt");
+            ensure!(
+                emulator.memory[0xc008..0xc00c] == (lhs + rhs).to_le_bytes(),
+                "wrong sum for {lhs} + {rhs}"
+            );
+        }
+    }
+    Ok(())
+}
+
+#[test]
 fn mul32_links_only_its_runtime_helper() -> Result<()> {
     check_single_runtime_helper("mul32", "__gbc_mul32", 4, u32::wrapping_mul)
 }

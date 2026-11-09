@@ -35,7 +35,7 @@ mod multiply {
             h::assemble(
                 &[(
                     "multiply.asm",
-                    h::read("runtime/mul16.asm")
+                    h::read("runtime/integer/mul/common/i16.asm")
                         .unwrap()
                         .replacen("ROM0", "ROM0[$100]", 1),
                 )],
@@ -143,7 +143,17 @@ mod runtime_division {
     }
     #[test]
     fn runtime_costs() -> Result<()> {
-        assert_eq!(runtime().size("ROM0", &["Audit division"]), 95);
+        assert_eq!(
+            runtime().size(
+                "ROM0",
+                &[
+                    "Audit division",
+                    "Unsigned 16-bit remainder",
+                    "Unsigned 16-bit division core"
+                ]
+            ),
+            95
+        );
         assert!(!runtime().symbols.contains_key("audit_both"));
         for (op, cost) in [("q", 1236), ("r", 1240)] {
             let v = d::run_case(runtime(), op, 1, 1, false, 0x55)?;

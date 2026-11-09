@@ -1,0 +1,29 @@
+SECTION "softfloat32 state", WRAM0
+
+wA:: ds 4
+wB:: ds 4
+wR:: ds 4
+wXa:: ds 7
+wXb:: ds 7
+wE:: ds 2
+wS:: ds 1
+wM:: ds 4
+wP:: ds 6
+wMc:: ds 3
+wMask:: ds 1
+wCnt:: ds 1
+wRm:: ds 4
+wMk:: ds 4
+wFr:: ds 4
+wHf:: ds 4
+wRad:: ds 8
+wC:: ds 4
+wKa:: ds 1
+wKb:: ds 1
+wKc:: ds 1
+wSp:: ds 1
+wSc:: ds 1
+wEp:: ds 2
+wEc:: ds 2
+wFp:: ds 8
+wFc:: ds 8

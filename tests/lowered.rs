@@ -34,32 +34,44 @@ fn lower_program(path: &str) -> Result<harness::Program> {
         .contains("__gbc_f");
     let mut sources = vec![
         ("lowered.s", assembly),
-        ("udiv16.asm", harness::read("runtime/udiv16.asm")?),
-        ("mul16.asm", harness::read("runtime/mul16.asm")?),
-        ("wide32.asm", harness::read("runtime/wide32.asm")?),
+        ("udiv16.asm", harness::runtime("division16")?),
+        (
+            "mul16.asm",
+            harness::read("runtime/integer/mul/common/i16.asm")?,
+        ),
+        ("wide32.asm", harness::read("runtime/integer/all.asm")?),
         (
             "stop.s",
             "SECTION \"done\", ROM0\nEXPORT done\ndone::\n  nop\n".into(),
         ),
     ];
     if needs_float32 {
-        sources.push(("softfloat32.asm", harness::read("runtime/softfloat32.asm")?));
+        sources.push((
+            "softfloat32.asm",
+            harness::read("runtime/float/all_f32.asm")?,
+        ));
     }
     if needs_float64 {
-        sources.push(("softfloat64.asm", harness::read("runtime/softfloat64.asm")?));
+        sources.push((
+            "softfloat64.asm",
+            harness::read("runtime/float/f64/common/dispatch.asm")?,
+        ));
     }
     if needs_float128 {
         sources.push((
             "softfloat128.asm",
-            harness::read("runtime/softfloat128.asm")?,
+            harness::read("runtime/float/f128/common/dispatch.asm")?,
         ));
     }
     if needs_convert {
-        sources.push(("convert.asm", harness::read("runtime/convert.asm")?));
+        sources.push((
+            "convert.asm",
+            harness::read("runtime/float/convert/common/dispatch.asm")?,
+        ));
     }
     if needs_memory {
         for name in ["memset_opt", "memmove_opt", "memcpy_opt"] {
-            sources.push((name, harness::read(format!("runtime/{name}.asm"))?));
+            sources.push((name, harness::runtime(name)?));
         }
     }
     harness::assemble(&sources, None)
@@ -2515,14 +2527,17 @@ fn split_i128_remaining_arithmetic_matches_host() -> Result<()> {
 #[test]
 fn f64_shared_runtime_matches_host() -> Result<()> {
     let source = include_str!("fixtures/emulate/softfloat-f64.clif");
-    let mut input = harness::read("runtime/softfloat64.c")?.into_bytes();
+    let mut input = harness::read("runtime/float/f64/common/implementation.c")?.into_bytes();
     input.extend(harness::read("tools/generate_softfloat64.py")?.into_bytes());
     let header = format!(
         "; generated from softfloat64.c, sha256 {}",
         harness::hash(&input)
     );
     ensure!(
-        harness::read("runtime/softfloat64.asm")?.lines().next() == Some(header.as_str()),
+        harness::read("runtime/float/f64/common/dispatch.asm")?
+            .lines()
+            .next()
+            == Some(header.as_str()),
         "stale f64 runtime; run tools/generate_softfloat64.py"
     );
     for level in ["none", "speed"] {
@@ -2760,14 +2775,17 @@ fn rust_f64_memory_add_lowers_and_executes() -> Result<()> {
 #[test]
 fn f128_shared_runtime_matches_reference() -> Result<()> {
     use sangoku_test_support::{Value, serde_json};
-    let mut input = harness::read("runtime/softfloat128.c")?.into_bytes();
+    let mut input = harness::read("runtime/float/f128/common/implementation.c")?.into_bytes();
     input.extend(harness::read("tools/generate_softfloat64.py")?.into_bytes());
     let header = format!(
         "; generated from softfloat128.c, sha256 {}",
         harness::hash(&input)
     );
     ensure!(
-        harness::read("runtime/softfloat128.asm")?.lines().next() == Some(header.as_str()),
+        harness::read("runtime/float/f128/common/dispatch.asm")?
+            .lines()
+            .next()
+            == Some(header.as_str()),
         "stale f128 runtime; regenerate with --width 128"
     );
     let reference: Value =
@@ -2939,14 +2957,17 @@ fn rust_f128_arithmetic_lowers_and_executes() -> Result<()> {
 #[test]
 fn wide_numeric_conversions_match_reference() -> Result<()> {
     use sangoku_test_support::{Value, serde_json};
-    let mut input = harness::read("runtime/convert.c")?.into_bytes();
+    let mut input = harness::read("runtime/float/convert/common/implementation.c")?.into_bytes();
     input.extend(harness::read("tools/generate_convert.py")?.into_bytes());
     let header = format!(
         "; generated from convert.c, sha256 {}",
         harness::hash(&input)
     );
     ensure!(
-        harness::read("runtime/convert.asm")?.lines().next() == Some(header.as_str()),
+        harness::read("runtime/float/convert/common/dispatch.asm")?
+            .lines()
+            .next()
+            == Some(header.as_str()),
         "stale conversion runtime; run tools/generate_convert.py"
     );
     let reference: Value =
@@ -3197,7 +3218,10 @@ fn branch_tables_handle_full_width_indices() -> Result<()> {
 fn memset_runtime_obeys_split_abi_and_bounds() -> Result<()> {
     let program = harness::assemble(
         &[
-            ("memset.asm", harness::read("runtime/memset_opt.asm")?),
+            (
+                "memset.asm",
+                harness::read("runtime/memory/memset/speed/pointer.asm")?,
+            ),
             ("stop.asm", "SECTION \"done\", ROM0\ndone::\nnop\n".into()),
         ],
         None,

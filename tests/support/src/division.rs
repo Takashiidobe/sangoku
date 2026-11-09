@@ -26,7 +26,7 @@ fn fixture(name: &str) -> Result<String> {
 }
 pub fn source_for(variant: &str) -> Result<String> {
     if variant == "runtime" {
-        return Ok(harness::read("runtime/udiv16.asm")?
+        return Ok(harness::runtime("division16")?
             .replacen(
                 "SECTION \"Unsigned 16-bit division\", ROM0",
                 "SECTION \"Audit division\", ROM0[$400]",
@@ -34,7 +34,7 @@ pub fn source_for(variant: &str) -> Result<String> {
             )
             .replace("__gbc_udiv16::", "audit_q::\n__gbc_udiv16::")
             .replace("__gbc_urem16::", "audit_r::\n__gbc_urem16::")
-            .replace("div16_core:", "audit_core::\ndiv16_core:"));
+            .replace("div16_core::", "audit_core::\ndiv16_core::"));
     }
     if variant == "raw" || variant == "raw-alt" {
         return Ok(fixture(if variant == "raw" {

@@ -86,11 +86,11 @@ fn main() -> Result<()> {
                 ("callers.asm", assembly.clone()),
                 (
                     "memcpy.asm",
-                    harness::read(format!("runtime/memcpy_{variant}.asm"))?,
+                    harness::runtime(&format!("memcpy_{variant}"))?,
                 ),
                 (
                     "memset.asm",
-                    harness::read(format!("runtime/memset_{variant}.asm"))?,
+                    harness::runtime(&format!("memset_{variant}"))?,
                 ),
                 (
                     "stop.asm",

@@ -14,15 +14,15 @@ fn program(variant: &str) -> Result<harness::Program> {
             ),
             (
                 "memmove.asm",
-                harness::read(format!("runtime/memmove_{variant}.asm"))?,
+                harness::runtime(&format!("memmove_{variant}"))?,
             ),
             (
                 "memset.asm",
-                harness::read(format!("runtime/memset_{variant}.asm"))?,
+                harness::runtime(&format!("memset_{variant}"))?,
             ),
             (
                 "memcpy.asm",
-                harness::read(format!("runtime/memcpy_{variant}.asm"))?,
+                harness::runtime(&format!("memcpy_{variant}"))?,
             ),
         ],
         None,

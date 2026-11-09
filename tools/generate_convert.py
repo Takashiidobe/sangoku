@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def generate():
-    source = ROOT / "runtime/convert.c"
+    source = ROOT / "runtime/float/convert/common/implementation.c"
     with tempfile.TemporaryDirectory() as directory:
         assembly = Path(directory) / "convert.asm"
         try:
@@ -57,7 +57,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    output = ROOT / "runtime/convert.asm"
+    output = ROOT / "runtime/float/convert/common/dispatch.asm"
     text = generate()
     if args.check:
         if not output.exists() or output.read_text() != text:

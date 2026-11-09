@@ -74,13 +74,13 @@ fn upstream_u64_decimal_formatting_matches_host() -> Result<()> {
     ];
     for name in [
         "wide32",
-        "udiv16",
+        "division16",
         "mul16",
         "memset_opt",
         "memmove_opt",
         "memcpy_opt",
     ] {
-        sources.push((name, harness::read(format!("runtime/{name}.asm"))?));
+        sources.push((name, harness::runtime(name)?));
     }
     let program = harness::assemble_tiny(&sources, None)?;
     let stop = program.symbols["done"];

@@ -21,7 +21,7 @@ fn popcount32_variants_preserve_abi_and_trade_rom_for_speed() -> Result<()> {
             &[
                 (
                     "helper.asm",
-                    harness::read(format!("runtime/popcnt32_{variant}.asm"))?,
+                    harness::runtime(&format!("popcnt32_{variant}"))?,
                 ),
                 (
                     "stop.asm",

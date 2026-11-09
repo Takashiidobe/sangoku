@@ -421,7 +421,7 @@ fn build_rom(
     let mut fixed_objects = vec![header_object];
     for name in link::runtime_objects(&linked, opt_level) {
         let object = artifacts.path().join(format!("{name}.o"));
-        let mut source = root.join(format!("runtime/{name}.asm"));
+        let mut source = root.join(sangoku::runtime::object(name).path);
         if name == "panic"
             && let Some(symbol) = link::panic_symbol(&linked)
         {

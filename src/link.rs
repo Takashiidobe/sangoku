@@ -235,40 +235,6 @@ pub fn panic_symbol(assembly: &str) -> Option<&str> {
         .filter(|name| !exported_labels(assembly).any(|label| label == *name))
 }
 
-const RUNTIME_OBJECTS: &[(&str, &str)] = &[
-    ("udiv16", include_str!("../runtime/udiv16.asm")),
-    ("mul16", include_str!("../runtime/mul16.asm")),
-    ("mul32", include_str!("../runtime/mul32.asm")),
-    ("div32_core", include_str!("../runtime/div32_core.asm")),
-    ("udiv32", include_str!("../runtime/udiv32.asm")),
-    ("urem32", include_str!("../runtime/urem32.asm")),
-    ("sdiv32", include_str!("../runtime/sdiv32.asm")),
-    ("srem32", include_str!("../runtime/srem32.asm")),
-    (
-        "popcnt32_size",
-        include_str!("../runtime/popcnt32_size.asm"),
-    ),
-    ("popcnt32_opt", include_str!("../runtime/popcnt32_opt.asm")),
-    ("ctz32", include_str!("../runtime/ctz32.asm")),
-    ("clz32", include_str!("../runtime/clz32.asm")),
-    ("bitrev32", include_str!("../runtime/bitrev32.asm")),
-    ("shift8", include_str!("../runtime/shift8.asm")),
-    ("shift16", include_str!("../runtime/shift16.asm")),
-    ("mulo128", include_str!("../runtime/mulo128.asm")),
-    ("softfloat32", include_str!("../runtime/softfloat32.asm")),
-    ("softfloat64", include_str!("../runtime/softfloat64.asm")),
-    ("softfloat128", include_str!("../runtime/softfloat128.asm")),
-    ("convert", include_str!("../runtime/convert.asm")),
-    ("memset_size", include_str!("../runtime/memset_size.asm")),
-    ("memset_opt", include_str!("../runtime/memset_opt.asm")),
-    ("memmove_size", include_str!("../runtime/memmove_size.asm")),
-    ("memmove_opt", include_str!("../runtime/memmove_opt.asm")),
-    ("memcpy_size", include_str!("../runtime/memcpy_size.asm")),
-    ("memcpy_opt", include_str!("../runtime/memcpy_opt.asm")),
-    ("panic", include_str!("../runtime/panic.asm")),
-    ("heap", include_str!("../runtime/heap.asm")),
-];
-
 pub fn runtime_objects(assembly: &str, opt_level: &str) -> Vec<&'static str> {
     let mut referenced: HashSet<_> = identifiers(assembly).collect();
     let mut defined: HashSet<_> = exported_labels(assembly).collect();
@@ -278,12 +244,13 @@ pub fn runtime_objects(assembly: &str, opt_level: &str) -> Vec<&'static str> {
     if assembly.contains("___rust_alloc") {
         referenced.insert("__gbc_heap_init");
     }
-    let size = matches!(opt_level, "s" | "z");
-    let mut selected = vec![false; RUNTIME_OBJECTS.len()];
+    let objects: Vec<_> = sangoku::runtime::objects().collect();
+    let mut selected = vec![false; objects.len()];
     loop {
         let mut changed = false;
-        for (index, (object, source)) in RUNTIME_OBJECTS.iter().enumerate() {
-            if (object.ends_with("_size") && !size) || (object.ends_with("_opt") && size) {
+        for (index, object) in objects.iter().enumerate() {
+            let source = object.source;
+            if !object.supports(opt_level) {
                 continue;
             }
             if !selected[index]
@@ -300,10 +267,10 @@ pub fn runtime_objects(assembly: &str, opt_level: &str) -> Vec<&'static str> {
             break;
         }
     }
-    RUNTIME_OBJECTS
+    objects
         .iter()
         .zip(selected)
-        .filter_map(|(&(name, _), selected)| selected.then_some(name))
+        .filter_map(|(object, selected)| selected.then_some(object.name))
         .collect()
 }
 
@@ -393,33 +360,39 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
 
     #[test]
     fn exported_runtime_entries_select_their_objects() {
-        let directory = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("runtime");
-        for entry in std::fs::read_dir(directory).unwrap() {
-            let path = entry.unwrap().path();
-            if path.extension().and_then(|s| s.to_str()) != Some("asm") {
+        for object in sangoku::runtime::objects() {
+            if object.name == "panic" {
                 continue;
             }
-            let object = path.file_stem().unwrap().to_str().unwrap();
-            if object == "panic" {
-                continue;
+            for name in exported_labels(object.source) {
+                assert!(
+                    runtime_objects(
+                        &format!("call {name}"),
+                        if object.path.contains("/size/") {
+                            "z"
+                        } else {
+                            "0"
+                        }
+                    )
+                    .contains(&object.name),
+                    "{name} did not select {}",
+                    object.name
+                );
             }
-            for line in std::fs::read_to_string(&path).unwrap().lines() {
-                let Some(name) = line.strip_suffix("::") else {
-                    continue;
-                };
-                if name.starts_with("__gbc_")
-                    || name.starts_with("__rust___gbc_")
-                    || ["memcpy", "memmove"].contains(&name)
-                {
-                    assert!(
-                        runtime_objects(
-                            &format!("call {name}"),
-                            if object.ends_with("_size") { "z" } else { "0" }
-                        )
-                        .contains(&object),
-                        "{name} did not select {object}"
-                    );
-                }
+        }
+    }
+
+    #[test]
+    fn division16_entries_link_independently() {
+        for (symbol, object, unused) in [
+            ("__gbc_udiv16", "udiv16", "urem16"),
+            ("__gbc_urem16", "urem16", "udiv16"),
+        ] {
+            for level in ["0", "z"] {
+                let selected = runtime_objects(&format!("call {symbol}"), level);
+                assert!(selected.contains(&object));
+                assert!(selected.contains(&"div16_core"));
+                assert!(!selected.contains(&unused));
             }
         }
     }
@@ -452,7 +425,10 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
             ["udiv32"]
         );
         assert_eq!(runtime_objects("call __gbc_mul16", "0"), ["mul16"]);
-        assert_eq!(runtime_objects("call __gbc_udiv16", "0"), ["udiv16"]);
+        assert_eq!(
+            runtime_objects("call __gbc_udiv16", "0"),
+            ["udiv16", "div16_core"]
+        );
         assert!(runtime_objects("__gbc_mul32::\nret", "0").is_empty());
         for level in ["0", "1", "2", "3", "s", "z"] {
             let suffix = if matches!(level, "s" | "z") {

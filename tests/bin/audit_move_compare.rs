@@ -108,7 +108,7 @@ fn main() -> Result<()> {
                 ("compare.asm", source),
                 (
                     "move.asm",
-                    harness::read(format!("runtime/memmove_{move_variant}.asm"))?,
+                    harness::runtime(&format!("memmove_{move_variant}"))?,
                 ),
                 (
                     "stop.asm",

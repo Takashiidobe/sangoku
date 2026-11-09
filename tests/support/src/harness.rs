@@ -62,6 +62,20 @@ pub fn root() -> PathBuf {
 pub fn read(path: impl AsRef<Path>) -> Result<String> {
     Ok(fs::read_to_string(root().join(path))?)
 }
+pub fn runtime(name: &str) -> Result<String> {
+    if name == "division16" || name == "udiv16" {
+        return Ok(["udiv16", "urem16", "div16_core"]
+            .into_iter()
+            .map(|name| read(sangoku::runtime::object(name).path))
+            .collect::<Result<Vec<_>>>()?
+            .join("\n"));
+    }
+    read(match name {
+        "wide32" => "runtime/integer/all.asm",
+        "softfloat32" => "runtime/float/all_f32.asm",
+        _ => sangoku::runtime::object(name).path,
+    })
+}
 pub fn hash(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
 }

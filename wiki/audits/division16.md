@@ -173,7 +173,7 @@ symbol so multiple caller fixtures can share one linked candidate image.
 
 ## Runtime verification (sangoku-88j)
 
-`runtime/udiv16.asm` now uses the compact port with independent quotient and
+`runtime/integer/udiv/common/i16.asm` now uses the compact port with independent quotient and
 remainder ABI wrappers. The linked object is 95 bytes, including both wrappers
 and the 70-byte shared core. At the same fixed link address, its instruction
 bytes match the audited q/r-only object exactly. The unused combined wrapper is

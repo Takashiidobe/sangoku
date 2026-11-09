@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def generate(width=64):
-    source = ROOT / f"runtime/softfloat{width}.c"
+    source = ROOT / f"runtime/float/f{width}/common/implementation.c"
     with tempfile.TemporaryDirectory() as directory:
         assembly = Path(directory) / f"softfloat{width}.asm"
         try:
@@ -58,7 +58,7 @@ def main():
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--width", type=int, choices=[64, 128], default=64)
     args = parser.parse_args()
-    output = ROOT / f"runtime/softfloat{args.width}.asm"
+    output = ROOT / f"runtime/float/f{args.width}/common/dispatch.asm"
     text = generate(args.width)
     if args.check:
         if not output.exists() or output.read_text() != text:

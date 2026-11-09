@@ -92,9 +92,9 @@ def main():
                 copy(source / "console" / name, staging / "libraries" / f"opt-{level}" / "console" / name)
             shared_libraries(source / "console/libufmt_macros.so", staging / "toolchain/lib", compiler / "lib")
         for directory in ["runtime", "targets", "rom", "examples"]:
-            for source in (ROOT / directory).iterdir():
+            for source in (ROOT / directory).rglob("*"):
                 if source.is_file() and source.suffix in {".asm", ".inc", ".rs", ".json"}:
-                    copy(source, staging / directory / source.name)
+                    copy(source, staging / source.relative_to(ROOT))
         for source in [ROOT / "runtime/COPYING", ROOT / "runtime/NOTICE",
                        ROOT / "third_party/rust/LICENSE-APACHE", ROOT / "third_party/rust/LICENSE-MIT",
                        ROOT / "third_party/rust/COPYRIGHT"]:
