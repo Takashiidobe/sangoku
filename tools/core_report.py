@@ -63,7 +63,7 @@ def undefined_symbols(clif_dirs):
             defined.update(re.findall(r"^; symbol (\S+)", text, re.M))
             imported.update(re.findall(r'^\s*fn\d+ = u0:\d+ sig\d+ ; "([^"]+)"', text, re.M))
     runtime = set()
-    for path in (ROOT / "runtime").glob("*.asm"):
+    for path in (ROOT / "runtime").rglob("*.asm"):
         runtime.update(re.findall(r"^([A-Za-z_][A-Za-z0-9_]*)::", path.read_text(), re.M))
     return sorted(name for name in imported - defined
                   if name not in runtime and f"__rust_{name}" not in runtime)
@@ -71,7 +71,7 @@ def undefined_symbols(clif_dirs):
 
 def runtime_inventory(clif_dirs):
     providers = {}
-    for path in (ROOT / "runtime").glob("*.asm"):
+    for path in (ROOT / "runtime").rglob("*.asm"):
         for name in re.findall(r"^([A-Za-z_][A-Za-z0-9_]*)::", path.read_text(), re.M):
             providers[name] = str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else path.name
     for directory in clif_dirs:

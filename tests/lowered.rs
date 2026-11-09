@@ -28,6 +28,8 @@ fn lower_program(path: &str) -> Result<harness::Program> {
     let needs_convert = assembly.contains("__gbc_convert");
     let needs_shift64 = assembly.contains("__gbc_shift64");
     let needs_shift128 = assembly.contains("__gbc_shift128");
+    let needs_wide64 = assembly.contains("__gbc_wide64");
+    let needs_wide128 = assembly.contains("__gbc_wide128");
     let needs_float128 = assembly.contains("__gbc_f128");
     let needs_float64 = assembly.contains("__gbc_f64");
     let needs_float32 = assembly
@@ -73,16 +75,20 @@ fn lower_program(path: &str) -> Result<harness::Program> {
     for (needed, names) in [
         (
             needs_shift64,
-            ["shift64_opt", "shift_bit64_opt", "shift_byte64_opt"],
+            &["shift64_opt", "shift_bit64_opt", "shift_byte64_opt"][..],
         ),
         (
             needs_shift128,
-            ["shift128_opt", "shift_bit128_opt", "shift_byte128_opt"],
+            &["shift128_opt", "shift_bit128_opt", "shift_byte128_opt"][..],
         ),
+        (needs_wide64, &["wide64", "wide_core"][..]),
+        (needs_wide128, &["wide128", "wide_core"][..]),
     ] {
         if needed {
-            for name in names {
-                sources.push((name, harness::runtime(name)?));
+            for &name in names {
+                if !sources.iter().any(|(existing, _)| *existing == name) {
+                    sources.push((name, harness::runtime(name)?));
+                }
             }
         }
     }

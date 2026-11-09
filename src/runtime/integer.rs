@@ -24,4 +24,7 @@ pub(super) const OBJECTS: &[Object] = &[
     object!("sdiv32", "runtime/integer/sdiv/common/i32.asm"),
     object!("srem32", "runtime/integer/srem/common/i32.asm"),
     object!("mulo128", "runtime/integer/mulo/common/i128.asm"),
+    object!("wide64", "runtime/integer/wide/common/i64.asm"),
+    object!("wide128", "runtime/integer/wide/common/i128.asm"),
+    object!("wide_core", "runtime/integer/wide/common/core.asm"),
 ];

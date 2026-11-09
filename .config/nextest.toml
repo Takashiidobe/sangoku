@@ -24,6 +24,8 @@ not (
     | test(=scalar_integer_gaps_match_host)
     | test(=split_i64_remaining_arithmetic_matches_host)
     | test(=split_i128_remaining_arithmetic_matches_host)
+    | test(=wide_arithmetic_helpers_match_host)
+    | test(=rust_wide_division_and_multiplication_call_the_helpers_and_match_host)
 )
 """
 

@@ -249,6 +249,55 @@ every op against the host for boundary counts (0, 1, 7, 8, 9, 31, 32, 33, 63,
 the helper and returns the host result. Counts are bounded samples, not an
 exhaustive sweep.
 
+## Divide and multiply wide integers
+
+i64/u64 and i128/u128 `udiv`, `urem`, `sdiv`, `srem`, `umulhi` and `smulhi`,
+and i128 `imul` (plus the 64-bit overflow multiplies, which widen to i128), call
+`__gbc_wide64` or `__gbc_wide128` instead of expanding inline. On this target
+cg_clif also emits CLIF `udiv`/`sdiv`/`urem`/`srem` for i128 instead of calling
+compiler-builtins `__udivti3` and friends. The legalizer stores both operands
+and an op byte in a stack buffer and passes its address in B/C; the result
+replaces the first operand. All registers are clobbered.
+
+| Offset  | Contents                                                           |
+| ------- | ------------------------------------------------------------------ |
+| 0..W    | a, least significant byte first (W = 8 or 16)                      |
+| W..2W   | b                                                                  |
+| 2W      | op: 0 udiv, 1 urem, 2 sdiv, 3 srem, 4 umulhi, 5 smulhi, 6 imul     |
+| 2W+1    | status written by the helper: 0 ok, 1 zero divisor, 2 sdiv overflow |
+
+The caller loads the status after a division and traps with
+`INTEGER_DIVISION_BY_ZERO` or `INTEGER_OVERFLOW`. Both entries are three-instruction
+shims over one length-parameterised core (`runtime/integer/wide/common/core.asm`),
+so there is a single copy of the algorithm: restoring bit-serial division
+and shift-add multiplication over byte arrays, with sign handled by negating
+operands and the result. Reentrant: all state lives in a 40-byte stack frame.
+There is no size/speed split yet.
+
+| Linked | Bytes | Worst sampled T-cycles (64 / 128) |
+| ------ | ----- | --------------------------------- |
+| entry + core | 502 | 153916 / 494172 |
+
+Rust probes at `-z` that divide or multiply through a pointer:
+
+| Shape | Inline bytes | Helper caller bytes |
+| ----- | ------------ | ------------------- |
+| udiv/urem u64 | 3476 / 3430 | 574 / 578 |
+| sdiv/srem i64 | 6359 / 5779 | 596 / 574 |
+| imul u128 | 5641 | 1014 |
+| div/rem u128/i128 | 841 + linked compiler-builtins | 1078–1101 |
+
+The i128 divide callers grow because the old call hid its body in a linked
+compiler-builtins function that is no longer needed; the helper itself is
+shared. Callers are now dominated by operand marshaling, tracked in
+sangoku-57q.10.9.
+
+Run `cargo nextest run --no-fail-fast -E 'binary(wide_arith)'`. It checks every
+op against the host on a bounded value grid (including minimum, maximum and
+sign-boundary values) for both widths, checks statuses, and compiles
+`tests/fixtures/wide-arith/native.rs` at 0 and z to confirm each probe calls
+the helper and returns the host result.
+
 ## Replace a compiler builtin
 
 `memcmp` exports `__rust_memcmp`, the symbol used by both the compiler libcall

@@ -72,7 +72,15 @@ fn upstream_u64_decimal_formatting_matches_host() -> Result<()> {
             "SECTION \"reserved\", ROM0[$0000]\nds $100, 0\ndone::\nnop\n".into(),
         ),
     ];
-    for name in ["wide32", "mul16", "memset_opt", "memmove_opt", "memcpy_opt"] {
+    for name in [
+        "wide32",
+        "mul16",
+        "wide64",
+        "wide_core",
+        "memset_opt",
+        "memmove_opt",
+        "memcpy_opt",
+    ] {
         sources.push((name, harness::runtime(name)?));
     }
     let program = harness::assemble_tiny(&sources, None)?;

@@ -107,7 +107,7 @@ bswap_u8	rust-functions	1	before-runtime-objects
 bswap_usize	callees	no-external-call	
 bswap_usize	lowering	ok	
 bswap_usize	rust-functions	1	before-runtime-objects
-carrying_mul_add_i128	callees	external	__gbc_shift128
+carrying_mul_add_i128	callees	external	__gbc_shift128, __gbc_wide128
 carrying_mul_add_i128	lowering	ok	
 carrying_mul_add_i128	rust-functions	4	before-runtime-objects
 carrying_mul_add_i16	callees	external	__gbc_shift16, __gbc_smul16wide
@@ -116,7 +116,7 @@ carrying_mul_add_i16	rust-functions	3	before-runtime-objects
 carrying_mul_add_i32	callees	external	__gbc_mul32, __gbc_shift64, __gbc_umul16wide
 carrying_mul_add_i32	lowering	ok	
 carrying_mul_add_i32	rust-functions	3	before-runtime-objects
-carrying_mul_add_i64	callees	external	__gbc_shift128
+carrying_mul_add_i64	callees	external	__gbc_shift128, __gbc_wide128
 carrying_mul_add_i64	lowering	ok	
 carrying_mul_add_i64	rust-functions	3	before-runtime-objects
 carrying_mul_add_i8	callees	external	__gbc_mul16
@@ -125,7 +125,7 @@ carrying_mul_add_i8	rust-functions	3	before-runtime-objects
 carrying_mul_add_isize	callees	external	__gbc_smul16wide
 carrying_mul_add_isize	lowering	ok	
 carrying_mul_add_isize	rust-functions	3	before-runtime-objects
-carrying_mul_add_u128	callees	external	__gbc_shift128
+carrying_mul_add_u128	callees	external	__gbc_shift128, __gbc_wide128
 carrying_mul_add_u128	lowering	ok	
 carrying_mul_add_u128	rust-functions	4	before-runtime-objects
 carrying_mul_add_u16	callees	external	__gbc_umul16wide
@@ -134,7 +134,7 @@ carrying_mul_add_u16	rust-functions	3	before-runtime-objects
 carrying_mul_add_u32	callees	external	__gbc_mul32, __gbc_shift64, __gbc_umul16wide
 carrying_mul_add_u32	lowering	ok	
 carrying_mul_add_u32	rust-functions	3	before-runtime-objects
-carrying_mul_add_u64	callees	external	__gbc_shift128
+carrying_mul_add_u64	callees	external	__gbc_shift128, __gbc_wide128
 carrying_mul_add_u64	lowering	ok	
 carrying_mul_add_u64	rust-functions	3	before-runtime-objects
 carrying_mul_add_u8	callees	external	__gbc_mul16
@@ -497,15 +497,15 @@ fmuladd_f64	rust-functions	1	before-runtime-objects
 frem_algebraic_f128	callees	external	__rust_fmodf128
 frem_algebraic_f128	lowering	ok	
 frem_algebraic_f128	rust-functions	1	before-runtime-objects
-frem_algebraic_f16	callees	external	__gbc_clz32, __gbc_f16tof32, __gbc_f32tof16, __gbc_fdiv32, __gbc_fmul32, __gbc_mul32, __gbc_shift16, __gbc_shift64, __gbc_umul16wide, __gbc_urem32
+frem_algebraic_f16	callees	external	__gbc_clz32, __gbc_f16tof32, __gbc_f32tof16, __gbc_fdiv32, __gbc_fmul32, __gbc_mul32, __gbc_shift16, __gbc_shift64, __gbc_umul16wide, __gbc_urem32, __gbc_wide64
 frem_algebraic_f16	lowering	ok	
 frem_algebraic_f16	rust-functions	63	before-runtime-objects
-frem_algebraic_f32	callees	external	__gbc_clz32, __gbc_fdiv32, __gbc_fmul32, __gbc_mul32, __gbc_shift16, __gbc_shift64, __gbc_umul16wide, __gbc_urem32
+frem_algebraic_f32	callees	external	__gbc_clz32, __gbc_fdiv32, __gbc_fmul32, __gbc_mul32, __gbc_shift16, __gbc_shift64, __gbc_umul16wide, __gbc_urem32, __gbc_wide64
 frem_algebraic_f32	lowering	ok	
 frem_algebraic_f32	rust-functions	63	before-runtime-objects
-frem_algebraic_f64	callees	external	__gbc_clz32, __gbc_f64, __gbc_shift128, __gbc_shift64
+frem_algebraic_f64	callees	external	__gbc_clz32, __gbc_f64, __gbc_shift128, __gbc_shift64, __gbc_wide128, __gbc_wide64
 frem_algebraic_f64	lowering	ok	
-frem_algebraic_f64	rust-functions	71	before-runtime-objects
+frem_algebraic_f64	rust-functions	65	before-runtime-objects
 fsub_algebraic_f128	callees	external	__gbc_f128
 fsub_algebraic_f128	lowering	ok	
 fsub_algebraic_f128	rust-functions	1	before-runtime-objects
@@ -719,7 +719,7 @@ powf_f16	rust-functions	54	before-runtime-objects
 powf_f32	callees	external	__gbc_fadd32, __gbc_fcmp32, __gbc_fcvtfromint32, __gbc_fdiv32, __gbc_fmul32, __gbc_mul16, __gbc_mul32, __gbc_shift16, __gbc_shift64, __gbc_umul16wide
 powf_f32	lowering	ok	
 powf_f32	rust-functions	52	before-runtime-objects
-powf_f64	callees	external	__gbc_convert, __gbc_f64, __gbc_mul16, __gbc_mul32, __gbc_shift128, __gbc_shift16, __gbc_shift64, __gbc_umul16wide
+powf_f64	callees	external	__gbc_convert, __gbc_f64, __gbc_mul16, __gbc_mul32, __gbc_shift128, __gbc_shift16, __gbc_shift64, __gbc_umul16wide, __gbc_wide128
 powf_f64	lowering	ok	
 powf_f64	rust-functions	62	before-runtime-objects
 powi_f128	callees	external	__rust___powitf2
