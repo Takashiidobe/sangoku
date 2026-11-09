@@ -33,9 +33,14 @@ runtime entries, with size/speed selection. Counts of zero return the native
 width. Speed scans share their eight-bit scanner, and bit reversal shares a
 byte kernel. See [runtime libraries](runtime-libraries.md) for costs and ABI.
 
-Signed i8/i16 division and remainder widen through the i32 helpers. Division
-checks that the result fits the original width and traps on `MIN / -1`.
+Signed i8/i16 division and remainder call native-width runtime helpers.
+Division traps on `MIN / -1`.
 Remainder returns zero for `MIN % -1`; both operations trap on division by zero.
+
+Memory loads and stores form `base + offset` in HL. Offsets 0 and ±1 use a
+register-pair copy with at most one increment/decrement. Larger offsets use
+`ld hl, offset; add hl, bc`, so address calculation stays four bytes rather
+than growing with the offset. Offsets wrap to the 16-bit address space.
 
 Truncating stores accept a wider input and write only its low bits. `istore8`,
 `istore16` and `istore32` lower for every CLIF-expressible input width through

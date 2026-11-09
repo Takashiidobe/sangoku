@@ -129,6 +129,60 @@ fn call(
 }
 
 #[test]
+fn memory_offsets_preserve_live_bases_and_wrap_at_sixteen_bits() -> Result<()> {
+    let offsets = [
+        0i32,
+        1,
+        -1,
+        2,
+        -2,
+        30,
+        -30,
+        300,
+        -200,
+        32768,
+        65535,
+        65536,
+        i32::MIN,
+        i32::MAX,
+    ];
+    let directory = sangoku_test_support::tempfile::tempdir()?;
+    let path = directory.path().join("offsets.clif");
+    let mut source = "set opt_level=none\ntarget z80\n".to_owned();
+    for (i, offset) in offsets.iter().enumerate() {
+        source.push_str(&format!(
+            "function %offset_load_{i}(i16) -> i16 system_v {{\nblock0(v0: i16):\n v1 = load.i16 v0{offset:+}\n return v1\n}}\nfunction %offset_store_{i}(i16) -> i16 system_v {{\nblock0(v0: i16):\n v1 = iconst.i16 0x6a39\n store v1, v0{offset:+}\n return v0\n}}\n"
+        ));
+    }
+    std::fs::write(&path, source)?;
+    let program = lower_program(path.to_str().unwrap())?;
+    for (i, offset) in offsets.iter().enumerate() {
+        for target in [0xc0ffu16, 0xc100] {
+            let base = target.wrapping_sub(*offset as u16);
+            for op in ["load", "store"] {
+                let mut e = program.emulator(&format!("__rust_offset_{op}_{i}"))?;
+                [e.b, e.c] = base.to_le_bytes();
+                e.memory[target as usize] = 0xde;
+                e.memory[target as usize + 1] = 0xbc;
+                e.set_sp(STACK - 2);
+                e.write16(STACK - 2, program.symbols["done"]);
+                e.run_until(program.symbols["done"], 4096)?;
+                let expected = if op == "load" { 0xbcde } else { base };
+                ensure!(
+                    u16::from_le_bytes([e.a, e.b]) == expected,
+                    "{op} offset {offset}, base {base:x}"
+                );
+                if op == "store" {
+                    ensure!(e.memory[target as usize..target as usize + 2] == [0x39, 0x6a]);
+                }
+                ensure!(e.sp() == STACK);
+            }
+        }
+    }
+    Ok(())
+}
+
+#[test]
 fn memory_offsets_beyond_a_signed_byte() -> Result<()> {
     let program = program("load-store-offsets")?;
 
