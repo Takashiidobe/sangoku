@@ -432,6 +432,23 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
     }
 
     #[test]
+    fn multiplication_selects_one_width_and_variant() {
+        for level in ["0", "1", "2", "3", "s", "z"] {
+            let variant = if matches!(level, "s" | "z") {
+                "size"
+            } else {
+                "opt"
+            };
+            for width in [8, 16, 32] {
+                assert_eq!(
+                    runtime_objects(&format!("call __gbc_mul{width}"), level),
+                    [format!("mul{width}_{variant}")]
+                );
+            }
+        }
+    }
+
+    #[test]
     fn popcount_widths_select_independently_and_share_one_core() {
         for level in ["0", "1", "2", "3", "s", "z"] {
             let size = matches!(level, "s" | "z");
@@ -477,7 +494,7 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
     fn selects_runtime_objects_from_the_assembly() {
         assert_eq!(runtime_objects("call __gbc_f64", "0"), ["softfloat64"]);
         assert!(runtime_objects("ret", "0").is_empty());
-        assert_eq!(runtime_objects("call __gbc_mul32", "0"), ["mul32"]);
+        assert_eq!(runtime_objects("call __gbc_mul32", "0"), ["mul32_opt"]);
         assert_eq!(runtime_objects("call __gbc_shift8", "0"), ["shift8"]);
         assert_eq!(
             runtime_objects("call __gbc_udiv32", "0"),
@@ -509,7 +526,7 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
             runtime_objects("__gbc_div32_core::\nret\ncall __gbc_udiv32", "0"),
             ["udiv32"]
         );
-        assert_eq!(runtime_objects("call __gbc_mul16", "0"), ["mul16"]);
+        assert_eq!(runtime_objects("call __gbc_mul16", "0"), ["mul16_opt"]);
         assert_eq!(
             runtime_objects("call __gbc_udiv16", "0"),
             ["udiv16", "div16_core"]

@@ -37,7 +37,7 @@ fn lower_program(path: &str) -> Result<harness::Program> {
         ("udiv16.asm", harness::runtime("division16")?),
         (
             "mul16.asm",
-            harness::read("runtime/integer/mul/common/i16.asm")?,
+            harness::read("runtime/integer/mul/size/i16.asm")?,
         ),
         ("wide32.asm", harness::read("runtime/integer/all.asm")?),
         (

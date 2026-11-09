@@ -11,10 +11,11 @@ i16 shifts and rotates expand inline; variable counts use `__gbc_shift8` and
 `__gbc_shift16`. Generated i32 variable shifts split further into i16
 operations. [Legalization](legalization.md) handles wider values first.
 
-The runtime provides wrapping 16-bit multiplication for signed and unsigned
-operands, and unsigned 16-bit division/remainder. Division and remainder share
-an SM83 core and reach the trap vector for a zero divisor. Spills and reloads
-preserve live registers and flags.
+The runtime provides wrapping multiplication at native 8-, 16- and 32-bit
+widths for signed and unsigned operands. Levels s/z select compact loops;
+0–3 select unrolled speed variants. i8 multiplication no longer widens to i16.
+Unsigned 16-bit division and remainder share an SM83 core and reach the trap
+vector for a zero divisor. Spills and reloads preserve live registers and flags.
 
 Population count has native 8-, 16- and 32-bit runtime entries. Levels `s`/`z`
 select independent compact shift loops; `0`–`3` select wrappers sharing one

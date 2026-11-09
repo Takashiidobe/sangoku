@@ -71,6 +71,8 @@ pub fn runtime(name: &str) -> Result<String> {
             .join("\n"));
     }
     read(match name {
+        "mul16" => "runtime/integer/mul/size/i16.asm",
+        "mul32" => "runtime/integer/mul/speed/i32.asm",
         "wide32" => "runtime/integer/all.asm",
         "softfloat32" => "runtime/float/all_f32.asm",
         _ => sangoku::runtime::object(name).path,

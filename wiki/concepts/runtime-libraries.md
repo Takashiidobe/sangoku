@@ -91,6 +91,36 @@ Production linkage uses individual registered objects. The f64/f128 and wide
 conversion runtimes retain their existing operation-code dispatchers; their
 internal operations are still bundled within each dispatcher object.
 
+## Multiply integers
+
+Wrapping multiplication uses `__gbc_mul8`, `__gbc_mul16` and `__gbc_mul32` with
+the public byte ABI. Signed and unsigned inputs share the same low-bit result.
+Cranelift selects the native entry; no compiler-builtins override is needed.
+
+| Width | Size ROM bytes | Speed ROM bytes | Size / speed cycles, max × max |
+| --- | --- | --- | --- |
+| i8 | 13 | 50 | 344 / 212 |
+| i16 | 30 | 171 | 912 / 672 |
+| i32 | 108 | 236 | 12060 / 10208 |
+
+Size builds use compact loops. Speed builds unroll all i8/i16 steps and four
+i32 steps per iteration. Shared assembly includes keep the step logic together;
+no additional runtime objects or tables are linked. Only one width/variant
+is selected for each referenced entry. All general registers and flags may be
+clobbered; i32 allocates eight stack bytes, and i8/i16 allocate none.
+
+Cycles cover helper entry through RET; argument packing, CALL and caller spills
+add separate costs. i16 retains the shortcut for an eight-bit right operand.
+i32 unrolling can be slower for tiny operands: 1 × 1 takes 776 size cycles or
+1424 speed cycles. The table is a representative cost comparison, not an
+exhaustive performance claim.
+
+Run `cargo nextest run --no-fail-fast -E 'binary(multiply)'` after rebuilding
+the affected backend. Tests use eight explicit operand pairs per width and
+small no_core Rust probes at 0/z for signed results and live inputs. They do
+not build core or run an exhaustive audit. The legacy runtime audit's `mul16`
+name retains the compact implementation for historical measurement stability.
+
 ## Replace a compiler builtin
 
 `memcmp` exports `__rust_memcmp`, the symbol used by both the compiler libcall

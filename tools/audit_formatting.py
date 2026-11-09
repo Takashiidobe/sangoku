@@ -64,7 +64,7 @@ def main():
             if size:
                 entry['code_section_bytes'] = int(size[1], 16)
             continue
-        names = ['integer/all', 'integer/udiv/common/i16', 'integer/urem/common/i16', 'integer/div/common/i16_core', 'integer/mul/common/i16', 'memory/memcpy/speed/pointer', 'memory/memmove/speed/pointer', 'memory/memset/speed/pointer']
+        names = ['integer/all', 'integer/udiv/common/i16', 'integer/urem/common/i16', 'integer/div/common/i16_core', 'integer/mul/size/i16', 'memory/memcpy/speed/pointer', 'memory/memmove/speed/pointer', 'memory/memset/speed/pointer']
         if '__gbc_f64' in text:
             names.append('softfloat64')
         if '__gbc_f128' in text:

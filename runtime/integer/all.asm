@@ -1,4 +1,5 @@
-INCLUDE "runtime/integer/mul/common/i32.asm"
+INCLUDE "runtime/integer/mul/speed/i8.asm"
+INCLUDE "runtime/integer/mul/speed/i32.asm"
 INCLUDE "runtime/integer/div/common/i32_core.asm"
 INCLUDE "runtime/integer/udiv/common/i32.asm"
 INCLUDE "runtime/integer/urem/common/i32.asm"

@@ -35,7 +35,7 @@ mod multiply {
             h::assemble(
                 &[(
                     "multiply.asm",
-                    h::read("runtime/integer/mul/common/i16.asm")
+                    h::read("runtime/integer/mul/size/i16.asm")
                         .unwrap()
                         .replacen("ROM0", "ROM0[$100]", 1),
                 )],
