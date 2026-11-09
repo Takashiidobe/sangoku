@@ -24,6 +24,11 @@ inline to avoid call overhead. Other i16 builds call the native helper, and
 i8 no longer widens to i32. See [runtime libraries](runtime-libraries.md) for
 the calling convention and measured size/speed tradeoffs.
 
+Leading/trailing-zero counts and bit reversal also use native i8/i16/i32
+runtime entries, with size/speed selection. Counts of zero return the native
+width. Speed scans share their eight-bit scanner, and bit reversal shares a
+byte kernel. See [runtime libraries](runtime-libraries.md) for costs and ABI.
+
 Signed i8/i16 division and remainder widen through the i32 helpers. Division
 checks that the result fits the original width and traps on `MIN / -1`.
 Remainder returns zero for `MIN % -1`; both operations trap on division by zero.

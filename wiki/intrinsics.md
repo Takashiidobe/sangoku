@@ -72,7 +72,7 @@ are not evidence that atomic operations are available on this target.
 | Rust path at level 0                                      | Terminal calls / implementation                                                        | Follow-up                         |
 | --------------------------------------------------------- | -------------------------------------------------------------------------------------- | --------------------------------- |
 | `u8::count_ones`                                          | `__gbc_popcnt8/16/32` size/speed variants; optimized non-size `u16` stays inline     | `sangoku-57q.10.4`                |
-| narrow leading/trailing-zero counts and bit reversal      | `__gbc_clz32`, `__gbc_ctz32`, `__gbc_bitrev32` after widening                          | `sangoku-57q.10.4`                |
+| narrow leading/trailing-zero counts and bit reversal      | native-width `__gbc_clz8/16/32`, `__gbc_ctz8/16/32`, `__gbc_bitrev8/16/32`                          | `sangoku-mt4.9`                |
 | 32/64-bit counts and bit reversal                         | existing 32-bit helpers, repeated for wider values                                     | `sangoku-57q.10.1`                |
 | variable rotate and unsigned funnel shifts                | `__gbc_shift8` for 8-bit; `__gbc_shift16` through 64-bit; inline expansion for 128-bit | `sangoku-clp`, `sangoku-57q.10.1` |
 | `carrying_mul_add`                                        | wide Rust arithmetic; no dedicated shared helper for 64/128-bit                        | `sangoku-7qz.9.8`                 |

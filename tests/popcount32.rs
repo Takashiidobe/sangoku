@@ -249,7 +249,18 @@ fn rust_popcounts_compile_without_core_and_preserve_live_inputs() -> Result<()> 
         if level != "z" {
             sources.push(("byte.asm", harness::runtime("popcnt_byte")?));
         }
-        sources.push(("clz.asm", harness::runtime("clz32")?));
+        for (width, filename) in [(8, "clz8.asm"), (16, "clz16.asm"), (32, "clz32.asm")] {
+            sources.push((
+                filename,
+                harness::runtime(&format!(
+                    "clz{width}_{}",
+                    if level == "z" { "size" } else { "opt" }
+                ))?,
+            ));
+        }
+        if level != "z" {
+            sources.push(("clz-byte.asm", harness::runtime("clz_byte_opt")?));
+        }
         let program = harness::assemble_tiny(&sources, None)?;
         for width in [8, 16, 32] {
             let mask = u32::MAX >> (32 - width);

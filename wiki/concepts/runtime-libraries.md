@@ -64,9 +64,9 @@ Sharing replaces the previous unrolled i32 speed helper's 112 bytes and 468
 cycles with 55 bytes and 624 cycles. Optimized non-size i16 lowering keeps its
 inline parallel sequence; levels 0/s/z use the native runtime entry.
 
-Leading-zero counts already link through `__gbc_clz32`. Narrow widths widen
-and subtract the leading padding count. The register-shift CLZ candidate is
-validated and used; it needs no additional wiring. Original pointer and table
+Leading-zero, trailing-zero and bit-reversal operations have native-width
+size/speed helpers; see the bit-operation section below.
+Original pointer and table
 popcount proposals are retained under `tests/fixtures/popcount/candidates/`.
 They use different ABIs; the table proposal clobbers the pointer loop's HL and
 its 256-byte placement constraint can leave gaps. At a fixed `$400` entry,
@@ -120,6 +120,42 @@ the affected backend. Tests use eight explicit operand pairs per width and
 small no_core Rust probes at 0/z for signed results and live inputs. They do
 not build core or run an exhaustive audit. The legacy runtime audit's `mul16`
 name retains the compact implementation for historical measurement stability.
+
+## Scan and reverse bits
+
+CLZ, CTZ and bit reversal have native i8/i16/i32 entries selected by Cranelift.
+They follow the public byte ABI and preserve zero semantics: CLZ/CTZ of zero
+returns the operand width. Narrow operations no longer widen to i32, insert a
+CTZ marker bit, adjust the CLZ count or extract reversed high bytes.
+
+| Operation | Width | Size / speed linked bytes | Size / speed zero cycles |
+| --- | --- | --- | --- |
+| CLZ or CTZ | i8 | 11 / 52 | 336 / 44 |
+| CLZ or CTZ | i16 | 15 / 69 | 792 / 72 |
+| CLZ or CTZ | i32 | 25 / 99 | 2104 / 144 |
+| bit reversal | i8 | 15 / 29 | 272 / 132 |
+| bit reversal | i16 | 20 / 34 | 556 / 276 |
+| bit reversal | i32 | 38 / 52 | 1184 / 624 |
+
+Linked bytes include required shared helpers. Speed scans skip empty bytes and
+reuse a private unrolled byte scanner. Its `__gbc_clz_byte` or
+`__gbc_ctz_byte` entry takes a nonzero byte in A and returns its count in A.
+The first byte's fast path uses a tail jump. Private kernels are separate
+objects, so a wider-only caller does not retain the public i8 wrapper. Compact scans use bounded whole-word shift loops. Speed scans can
+be slower for short counts: 32-bit CLZ of the top bit costs 108 cycles versus
+104 compact cycles; CTZ of one has the same costs.
+
+Bit reversal shares one A-to-A byte kernel across widths. It preserves B/C/D/E
+and clobbers H/L and flags. Size uses a rotate loop; speed swaps nibbles and
+masked bit pairs without a table. Reversal timing is input-independent. All
+costs cover helper entry through RET, excluding caller packing, CALL and spills.
+Nested byte calls use at most two additional stack bytes. No scratch RAM or
+lookup tables are used. Only required variant and byte dependencies are linked.
+
+Run `cargo nextest run --no-fail-fast -E 'binary(bitops)'` after rebuilding the
+backend. Tests cover zero, all ones, every single-bit position and a few mixed
+patterns; no_core Rust probes at 0/z check signed results, zero extension and
+live inputs. They do not build core or perform an exhaustive byte sweep.
 
 ## Replace a compiler builtin
 

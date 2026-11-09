@@ -432,6 +432,34 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
     }
 
     #[test]
+    fn bit_operations_select_native_variants_and_required_shared_entries() {
+        for level in ["0", "1", "2", "3", "s", "z"] {
+            let size = matches!(level, "s" | "z");
+            let variant = if size { "size" } else { "opt" };
+            for op in ["clz", "ctz", "bitrev"] {
+                for width in [8, 16, 32] {
+                    let selected = runtime_objects(&format!("call __gbc_{op}{width}"), level);
+                    assert!(selected.contains(&format!("{op}{width}_{variant}").as_str()));
+                    if op == "bitrev" {
+                        assert_eq!(selected.len(), 2);
+                        assert!(selected.contains(&format!("bitrev_byte_{variant}").as_str()));
+                    } else if !size {
+                        assert_eq!(selected.len(), 2);
+                        assert!(selected.contains(&format!("{op}_byte_opt").as_str()));
+                    } else {
+                        assert_eq!(selected.len(), 1);
+                    }
+                }
+            }
+            let all = "call __gbc_clz8\ncall __gbc_clz16\ncall __gbc_clz32\ncall __gbc_ctz8\ncall __gbc_ctz16\ncall __gbc_ctz32\ncall __gbc_bitrev8\ncall __gbc_bitrev16\ncall __gbc_bitrev32";
+            assert_eq!(
+                runtime_objects(all, level).len(),
+                if size { 10 } else { 12 }
+            );
+        }
+    }
+
+    #[test]
     fn multiplication_selects_one_width_and_variant() {
         for level in ["0", "1", "2", "3", "s", "z"] {
             let variant = if matches!(level, "s" | "z") {

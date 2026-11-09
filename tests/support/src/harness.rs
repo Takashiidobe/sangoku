@@ -70,7 +70,16 @@ pub fn runtime(name: &str) -> Result<String> {
             .collect::<Result<Vec<_>>>()?
             .join("\n"));
     }
+    if name == "bitrev32" {
+        return Ok(format!(
+            "{}\n{}",
+            read(sangoku::runtime::object("bitrev32_opt").path)?,
+            read(sangoku::runtime::object("bitrev_byte_opt").path)?
+        ));
+    }
     read(match name {
+        "clz32" => "runtime/bitshift/clz/size/i32.asm",
+        "ctz32" => "runtime/bitshift/ctz/size/i32.asm",
         "mul16" => "runtime/integer/mul/size/i16.asm",
         "mul32" => "runtime/integer/mul/speed/i32.asm",
         "wide32" => "runtime/integer/all.asm",
