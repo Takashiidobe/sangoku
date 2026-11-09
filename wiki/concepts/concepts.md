@@ -76,11 +76,11 @@ or reduced retained code.
 The 2026-11-09 baseline opt-level z maps count retained section bytes, including fixture
 code and runtime, rather than the padded cartridge file size:
 
-| Fixture | Total bytes | Data bytes | Code and runtime bytes |
-| --- | ---: | ---: | ---: |
-| Lowercase | 24,776 | 1,317 | 23,459 |
-| Uppercase | 26,463 | 2,217 | 24,246 |
-| Both directions | 32,864 | 3,413 | 29,451 |
+| Fixture         | Total bytes | Data bytes | Code and runtime bytes |
+| --------------- | ----------: | ---------: | ---------------------: |
+| Lowercase       |      24,776 |      1,317 |                 23,459 |
+| Uppercase       |      26,463 |      2,217 |                 24,246 |
+| Both directions |      32,864 |      3,413 |                 29,451 |
 
 Data includes fixture constants as well as Unicode tables. The conversion tables
 already store ranges with signed deltas, parity for alternating case pairs,
@@ -121,11 +121,11 @@ remains available when its measured ROM cost fits the game.
 Minimal opt-level z probes reading dynamic input through `read_volatile` and
 returning the low byte give a cleaner comparison than the multi-case fixtures:
 
-| Operation | Retained section bytes | Entry point bytes |
-| --- | ---: | ---: |
-| `u8::to_ascii_uppercase` | 170 | 78 |
-| `char::to_ascii_uppercase` | 544 | 452 |
-| `char::to_uppercase().next().unwrap_or('\0')` | 17,483 | 602 |
+| Operation                                     | Retained section bytes | Entry point bytes |
+| --------------------------------------------- | ---------------------: | ----------------: |
+| `u8::to_ascii_uppercase`                      |                    170 |                78 |
+| `char::to_ascii_uppercase`                    |                    544 |               452 |
+| `char::to_uppercase().next().unwrap_or('\0')` |                 17,483 |               602 |
 
 ASCII probes retain no tables or other functions. Unicode retains 2,106 data
 bytes, including its 24-byte table descriptor, and 15,377 code/runtime bytes.

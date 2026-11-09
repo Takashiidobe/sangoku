@@ -49,7 +49,7 @@ removed by constant evaluation or MIR lowering.
 | `assert_inhabited`                                                                                  | type-validity check at compilation; surveyed callers lower              |
 | `align_of_val`, `size_of_val`                                                                       | layout and pointer metadata operations                                  |
 | `arith_offset`, `ptr_offset_from`, `ptr_offset_from_unsigned`                                       | pointer arithmetic                                                      |
-| `copy`, `write_bytes`, `compare_bytes`                                                              | memory runtime routines; see below                         |
+| `copy`, `write_bytes`, `compare_bytes`                                                              | memory runtime routines; see below                                      |
 | `typed_swap_nonoverlapping`, `disjoint_bitor`                                                       | Rust fallback bodies                                                    |
 | `exact_div`, `saturating_add`, `saturating_sub`                                                     | integer operations and overflow/select sequences                        |
 | `integer_min`, `integer_max`                                                                        | CLIF min/max for narrower integers; Rust comparisons for 128-bit values |
@@ -71,15 +71,15 @@ are not evidence that atomic operations are available on this target.
 
 | Rust path at level 0                                      | Terminal calls / implementation                                                        | Follow-up                         |
 | --------------------------------------------------------- | -------------------------------------------------------------------------------------- | --------------------------------- |
-| `u8::count_ones`                                          | `__gbc_popcnt8/16/32` size/speed variants; optimized non-size `u16` stays inline     | `sangoku-57q.10.4`                |
-| narrow leading/trailing-zero counts and bit reversal      | native-width `__gbc_clz8/16/32`, `__gbc_ctz8/16/32`, `__gbc_bitrev8/16/32`                          | `sangoku-mt4.9`                |
+| `u8::count_ones`                                          | `__gbc_popcnt8/16/32` size/speed variants; optimized non-size `u16` stays inline       | `sangoku-57q.10.4`                |
+| narrow leading/trailing-zero counts and bit reversal      | native-width `__gbc_clz8/16/32`, `__gbc_ctz8/16/32`, `__gbc_bitrev8/16/32`             | `sangoku-mt4.9`                   |
 | 32/64-bit counts and bit reversal                         | existing 32-bit helpers, repeated for wider values                                     | `sangoku-57q.10.1`                |
 | variable rotate and unsigned funnel shifts                | `__gbc_shift8` for 8-bit; `__gbc_shift16` through 64-bit; inline expansion for 128-bit | `sangoku-clp`, `sangoku-57q.10.1` |
 | `carrying_mul_add`                                        | wide Rust arithmetic; no dedicated shared helper for 64/128-bit                        | `sangoku-7qz.9.8`                 |
 | wide `mul_with_overflow`                                  | `__rust___gbc_u128_mulo` / `__rust___gbc_i128_mulo`                                    | `sangoku-7qz.9.8`                 |
 | unsigned `carryless_mul`                                  | Rust loop and shift operations; no dedicated helper                                    | `sangoku-57q.10.5`                |
 | dynamic byte `copy`, `copy_nonoverlapping`, `write_bytes` | `memmove`, `memcpy`, `__gbc_memset`; separate objects, size/speed variants             | `sangoku-9bq.1`                   |
-| `compare_bytes`, fixed-size `raw_eq`                      | runtime `memcmp` size/speed helpers or inline loads                                      | `sangoku-mt4.11`                  |
+| `compare_bytes`, fixed-size `raw_eq`                      | runtime `memcmp` size/speed helpers or inline loads                                    | `sangoku-mt4.11`                  |
 | saturation, byte swap, integer min/max                    | inline operations or Rust comparisons; preserve cheap forms                            | no new helper proposed            |
 
 For prioritization, counting nonlabel assembly lines in reachable Rust bodies at

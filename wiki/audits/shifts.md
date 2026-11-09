@@ -18,13 +18,13 @@ random samples requires `--full`; exhaustive checks require both `--full` and
 
 ## Decisions
 
-| Operation | 16-bit constant | 32-bit constant | Variable, both widths |
-| --- | --- | --- | --- |
-| Left shift | Replace: YES | Adopt: YES; currently absent | Adopt: YES |
-| Logical right shift | Replace: YES | Replace: YES | Adopt: YES |
-| Arithmetic right shift | Adopt: YES; currently absent | Adopt: YES; currently absent | Adopt: YES |
-| Rotate left | Adopt: YES; currently absent | Adopt: YES; currently absent | Adopt: YES |
-| Rotate right | Adopt: YES; currently absent | Adopt: YES; currently absent | Adopt: YES |
+| Operation              | 16-bit constant              | 32-bit constant              | Variable, both widths |
+| ---------------------- | ---------------------------- | ---------------------------- | --------------------- |
+| Left shift             | Replace: YES                 | Adopt: YES; currently absent | Adopt: YES            |
+| Logical right shift    | Replace: YES                 | Replace: YES                 | Adopt: YES            |
+| Arithmetic right shift | Adopt: YES; currently absent | Adopt: YES; currently absent | Adopt: YES            |
+| Rotate left            | Adopt: YES; currently absent | Adopt: YES; currently absent | Adopt: YES            |
+| Rotate right           | Adopt: YES; currently absent | Adopt: YES; currently absent | Adopt: YES            |
 
 For constants, select byte moves plus residual bit operations (`lanes`). For
 16-bit left shifts by 2–7, prefer the `pair` candidate using `ADD HL,HL`.
@@ -48,28 +48,28 @@ These body figures include RET in CPU T-cycles. Bytes are linked instruction
 bytes. Candidates use the audit ABI; their costs are targets for implementation,
 not guarantees about future allocated compiler output.
 
-| Constant case | Current bytes / clocks | Selected bytes / clocks |
-| --- | --- | --- |
-| 16-bit left by 1 | 7 / 40 | 6 / 36 |
-| 16-bit left by 7 | 31 / 136 | 12 / 88 (`pair`) |
-| 16-bit left by 8 | 35 / 152 | 2 / 20 |
-| 16-bit right by 8 | 35 / 152 | 4 / 28 |
-| 16-bit right by 15 | 63 / 264 | 7 / 40 |
-| 32-bit right by 1 | 25 / 168 | 16 / 84 |
-| 32-bit right by 8 | 81 / 392 | 10 / 60 |
-| 32-bit right by 31 | 265 / 1128 | 14 / 76 |
+| Constant case      | Current bytes / clocks | Selected bytes / clocks |
+| ------------------ | ---------------------- | ----------------------- |
+| 16-bit left by 1   | 7 / 40                 | 6 / 36                  |
+| 16-bit left by 7   | 31 / 136               | 12 / 88 (`pair`)        |
+| 16-bit left by 8   | 35 / 152               | 2 / 20                  |
+| 16-bit right by 8  | 35 / 152               | 4 / 28                  |
+| 16-bit right by 15 | 63 / 264               | 7 / 40                  |
+| 32-bit right by 1  | 25 / 168               | 16 / 84                 |
+| 32-bit right by 8  | 81 / 392               | 10 / 60                 |
+| 32-bit right by 31 | 265 / 1128             | 14 / 76                 |
 
 Variable means below give equal weight to every legal normalized count, from
 the retained full run. They are not averages over the sparse default cases.
 
-| Width / operation | Bit loop bytes / mean clocks | Byte loop bytes / mean clocks | Byte loop min–max clocks |
-| --- | --- | --- | --- |
-| 16 / logical shifts | 16 / 284.5 | 30 / 213 | 80–352 |
-| 16 / arithmetic right | 16 / 284.5 | 32 / 217 | 80–360 |
-| 16 / rotations | 18 / 344.5 | 32 / 241 | 80–408 |
-| 32 / logical shifts | 28 / 836.25 | 44 / 385 | 128–648 |
-| 32 / arithmetic right | 28 / 836.25 | 46 / 397 | 128–672 |
-| 32 / rotations | 30 / 960.25 | 46 / 413 | 128–704 |
+| Width / operation     | Bit loop bytes / mean clocks | Byte loop bytes / mean clocks | Byte loop min–max clocks |
+| --------------------- | ---------------------------- | ----------------------------- | ------------------------ |
+| 16 / logical shifts   | 16 / 284.5                   | 30 / 213                      | 80–352                   |
+| 16 / arithmetic right | 16 / 284.5                   | 32 / 217                      | 80–360                   |
+| 16 / rotations        | 18 / 344.5                   | 32 / 241                      | 80–408                   |
+| 32 / logical shifts   | 28 / 836.25                  | 44 / 385                      | 128–648                  |
+| 32 / arithmetic right | 28 / 836.25                  | 46 / 397                      | 128–672                  |
+| 32 / rotations        | 30 / 960.25                  | 46 / 413                      | 128–704                  |
 
 Manual helper body stack is 2 bytes for 16-bit and 4 for 32-bit, including the
 return address and incoming arguments. Table ROM and owned scratch RAM are

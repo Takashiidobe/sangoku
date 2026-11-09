@@ -57,12 +57,12 @@ The fork is `patches/rust/*.patch` applied on the upstream commit recorded in
 this), touching two files in
 `compiler/rustc_target/src/callconv/` (`library/` must stay identical).
 
-| Command                             | Effect                                                                     |
-| ----------------------------------- | -------------------------------------------------------------------------- |
-| `tools/rust_fork.sh check`          | Lists fork commits and diffstat; fails if the fork differs from base + patches or touches `library/`. |
-| `tools/rust_fork.sh core`           | `check`, then compiles `core` metadata for `targets/lr35902.json`.          |
-| `tools/rust_fork.sh export`         | Regenerates the patch from the fork's net diff after an intentional change. |
-| `tools/rust_fork.sh rebase [ref]`   | Fetches upstream `ref` (default `HEAD`), applies the patches on a new branch, updates `BASE`. |
+| Command                           | Effect                                                                                                |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `tools/rust_fork.sh check`        | Lists fork commits and diffstat; fails if the fork differs from base + patches or touches `library/`. |
+| `tools/rust_fork.sh core`         | `check`, then compiles `core` metadata for `targets/lr35902.json`.                                    |
+| `tools/rust_fork.sh export`       | Regenerates the patch from the fork's net diff after an intentional change.                           |
+| `tools/rust_fork.sh rebase [ref]` | Fetches upstream `ref` (default `HEAD`), applies the patches on a new branch, updates `BASE`.         |
 
 `tools/rebuild_toolchain.sh` runs `check` first and `core` last. To move to a
 newer upstream: `tools/rust_fork.sh rebase`, commit the submodule pointer and

@@ -32,11 +32,11 @@ first. Arguments consume `B`, `C`, `A` across arguments, then stack bytes;
 at helper entry the first stacked byte is at `SP+2`, above the return address.
 The caller cleans up stack arguments. The stack alignment is two bytes.
 
-| Single argument | Input | Return |
-| --- | --- | --- |
-| i8 | B | A |
-| i16 | B, C | A, B |
-| i32 | B, C, A, [SP+2] | A, B, C, D |
+| Single argument | Input           | Return     |
+| --------------- | --------------- | ---------- |
+| i8              | B               | A          |
+| i16             | B, C            | A, B       |
+| i32             | B, C, A, [SP+2] | A, B, C, D |
 
 All general registers and flags are caller-saved. Restore SP before returning;
 do not remove incoming arguments. Pointer values use the i16 convention.
@@ -49,10 +49,10 @@ It uses no table or scratch RAM. Only speed wrappers reference it, and linking
 several widths retains one copy.
 
 | Popcount width | Size ROM / cycles | Speed ROM / cycles |
-| --- | --- | --- |
-| i8 | 11 / 280 | 28 / 128 |
-| i16 | 15 / 672 | 37 / 304 |
-| i32 | 25 / 1856 | 55 / 624 |
+| -------------- | ----------------- | ------------------ |
+| i8             | 11 / 280          | 28 / 128           |
+| i16            | 15 / 672          | 37 / 304           |
+| i32            | 25 / 1856         | 55 / 624           |
 
 ROM counts include the shared core for a single speed entry. All three speed
 entries together occupy 72 bytes. Cycles cover entry through RET; an outer
@@ -115,10 +115,10 @@ the public byte ABI. Signed and unsigned inputs share the same low-bit result.
 Cranelift selects the native entry; no compiler-builtins override is needed.
 
 | Width | Size ROM bytes | Speed ROM bytes | Size / speed cycles, max × max |
-| --- | --- | --- | --- |
-| i8 | 13 | 50 | 344 / 212 |
-| i16 | 30 | 171 | 912 / 672 |
-| i32 | 108 | 236 | 12060 / 10208 |
+| ----- | -------------- | --------------- | ------------------------------ |
+| i8    | 13             | 50              | 344 / 212                      |
+| i16   | 30             | 171             | 912 / 672                      |
+| i32   | 108            | 236             | 12060 / 10208                  |
 
 Size builds use compact loops. Speed builds unroll all i8/i16 steps and four
 i32 steps per iteration. Shared assembly includes keep the step logic together;
@@ -144,10 +144,10 @@ name retains the compact implementation for historical measurement stability.
 and return the full 32-bit product. Inputs use B/C and A/[SP+2]; output bytes
 use A/B/C/D, least significant first. Incoming stack arguments stay unchanged.
 
-| Shape | Size / speed linked bytes | Size / speed cycles, 0xffff × 0xffff | Extra stack |
-| --- | --- | --- | --- |
-| unsigned 16×16→32 | 32 / 252 | 1292 / 1072 | 0 |
-| signed 16×16→32 | 93 / 313 | 1688 / 1468 | 8 |
+| Shape             | Size / speed linked bytes | Size / speed cycles, 0xffff × 0xffff | Extra stack |
+| ----------------- | ------------------------- | ------------------------------------ | ----------- |
+| unsigned 16×16→32 | 32 / 252                  | 1292 / 1072                          | 0           |
+| signed 16×16→32   | 93 / 313                  | 1688 / 1468                          | 8           |
 
 The unsigned kernel uses 16 combined add/right-shift steps; size loops and
 speed unrolls them and returns early for a zero operand. A common signed wrapper calls the selected unsigned kernel,
@@ -178,14 +178,14 @@ They follow the public byte ABI and preserve zero semantics: CLZ/CTZ of zero
 returns the operand width. Narrow operations no longer widen to i32, insert a
 CTZ marker bit, adjust the CLZ count or extract reversed high bytes.
 
-| Operation | Width | Size / speed linked bytes | Size / speed zero cycles |
-| --- | --- | --- | --- |
-| CLZ or CTZ | i8 | 11 / 52 | 336 / 44 |
-| CLZ or CTZ | i16 | 15 / 69 | 792 / 72 |
-| CLZ or CTZ | i32 | 25 / 99 | 2104 / 144 |
-| bit reversal | i8 | 15 / 29 | 272 / 132 |
-| bit reversal | i16 | 20 / 34 | 556 / 276 |
-| bit reversal | i32 | 38 / 52 | 1184 / 624 |
+| Operation    | Width | Size / speed linked bytes | Size / speed zero cycles |
+| ------------ | ----- | ------------------------- | ------------------------ |
+| CLZ or CTZ   | i8    | 11 / 52                   | 336 / 44                 |
+| CLZ or CTZ   | i16   | 15 / 69                   | 792 / 72                 |
+| CLZ or CTZ   | i32   | 25 / 99                   | 2104 / 144               |
+| bit reversal | i8    | 15 / 29                   | 272 / 132                |
+| bit reversal | i16   | 20 / 34                   | 556 / 276                |
+| bit reversal | i32   | 38 / 52                   | 1184 / 624               |
 
 Linked bytes include required shared helpers. Speed scans skip empty bytes and
 reuse a private unrolled byte scanner. Its `__gbc_clz_byte` or

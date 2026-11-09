@@ -24,12 +24,12 @@ let sum = values.iter().copied().fold(0, u8::wrapping_add);
 Linked bytes at opt z for two pushes and a sum (see
 [size-baseline](size-baseline.md) for the method):
 
-| implementation | total |
-| --- | ---: |
-| `alloc::Vec` | 12,498 |
-| `heapless::Vec<u8, 16>` 0.9.3 | 3,035 |
-| inline single-file `FixedVec` | 1,763 |
-| `sangoku_vec::FixedVec<u8, 16>` | 1,976 |
+| implementation                  |  total |
+| ------------------------------- | -----: |
+| `alloc::Vec`                    | 12,498 |
+| `heapless::Vec<u8, 16>` 0.9.3   |  3,035 |
+| inline single-file `FixedVec`   |  1,763 |
+| `sangoku_vec::FixedVec<u8, 16>` |  1,976 |
 
 `heapless` is generic over a storage type and a length type, which leaves
 non-inlined `push`, `deref` and index functions (about 1.1 KB) plus panic
