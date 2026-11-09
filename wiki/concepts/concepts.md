@@ -69,3 +69,43 @@ fixture measured 32,864 bytes on 2026-11-09, exceeding the 32 KiB cartridge
 capacity by 96 bytes. Plain UTF-8 `str` character counting and prefix/suffix
 checks also link and execute. Larger Unicode programs can still require banking
 or reduced retained code.
+
+## Case conversion size breakdown
+
+The 2026-11-09 opt-level z maps count retained section bytes, including fixture
+code and runtime, rather than the padded cartridge file size:
+
+| Fixture | Total bytes | Data bytes | Code and runtime bytes |
+| --- | ---: | ---: | ---: |
+| Lowercase | 24,776 | 1,317 | 23,459 |
+| Uppercase | 26,463 | 2,217 | 24,246 |
+| Both directions | 32,864 | 3,413 | 29,451 |
+
+Data includes fixture constants as well as Unicode tables. The conversion tables
+already store ranges with signed deltas, parity for alternating case pairs,
+16-bit code points within each plane, and separate expansion/exception tables.
+Compressing all data to zero would save at most 3,413 bytes in the combined ROM.
+
+The shared lookup alone emits 3,882 bytes and reserves 213 stack bytes. Its
+`c >> 16` becomes sixteen rounds of `srl`/`rr` across four byte registers.
+Selecting the upper two bytes directly should remove those shifts. Lowercase
+and uppercase entry points cost 2,546 and 3,333 bytes; `CaseMappingIter::new`
+costs 1,887 bytes and reserves 132 stack bytes. The combined fixture entry point
+also costs 5,437 bytes, and expected-string UTF-8 decoding costs 1,870 bytes.
+These totals measure more than an isolated table lookup.
+
+Prioritize backend improvements to constant wide shifts, comparisons and
+stack traffic before changing the table representation. These preserve upstream
+Rust semantics and benefit unrelated code. Inspect missed inlining and retained
+array/iterator adapters next; measure both code size and stack usage.
+
+Further table compression could pack range fields or delta-encode sorted keys,
+but requires decoding code and changes to the Unicode generator. Startup
+decompression also consumes scarce WRAM. Measure the combined decoder and data
+cost before adopting either scheme.
+
+For fixed game text, convert case in host asset processing. For dynamic text,
+use ASCII conversion or an explicit game-specific alphabet when appropriate.
+Keep upstream `core` Unicode behavior intact: UTF-8 storage and iteration do not
+require retaining every case-conversion table. Full dynamic Unicode casing
+remains available when its measured ROM cost fits the game.
