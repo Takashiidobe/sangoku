@@ -17,6 +17,8 @@ mod integer;
 mod memory;
 mod system;
 
+pub const BUILTIN_REPLACEMENTS: &[&str] = &["__rust_memcmp"];
+
 pub struct Object {
     pub name: &'static str,
     pub path: &'static str,

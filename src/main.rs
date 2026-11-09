@@ -382,11 +382,10 @@ fn build_rom(
         .arg(&rust_asm);
     run_command(&mut command)?;
 
-    let mut texts = vec![
-        read_text(&rust_asm)?,
-        read_text(&libraries.core_asm())?,
-        read_text(&libraries.builtins_asm())?,
-    ];
+    let program = read_text(&rust_asm)?;
+    let core = read_text(&libraries.core_asm())?;
+    let builtins = read_text(&libraries.builtins_asm())?;
+    let mut texts = Vec::new();
     for path in console.assembly() {
         texts.push(read_text(&path)?);
     }
@@ -394,9 +393,11 @@ fn build_rom(
         texts.push(read_text(&libraries.alloc_asm())?);
         texts.push(read_text(&libraries.heap_asm())?);
     }
-    let sections: Vec<_> = texts
-        .iter()
-        .flat_map(|text| link::split_sections(text))
+    let sections: Vec<_> = link::split_sections(&program)
+        .into_iter()
+        .chain(link::split_sections(&core))
+        .chain(link::builtin_sections(&builtins))
+        .chain(texts.iter().flat_map(|text| link::split_sections(text)))
         .collect();
     let kept: Vec<_> = link::reachable(&sections, &[link::ENTRY])
         .into_iter()

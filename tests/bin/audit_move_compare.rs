@@ -65,17 +65,22 @@ fn main() -> Result<()> {
             .unwrap_or_else(|| PathBuf::from("build/move-compare")),
     );
     harness::write(&directory.join("callers.clif"), callers())?;
-    harness::command(&[
-        "cargo".into(),
-        "run".into(),
-        "-q".into(),
-        "--".into(),
-        "build".into(),
-        "examples/hello.rs".into(),
-        directory.join("hello.gb").display().to_string(),
-        "--opt-level".into(),
-        "z".into(),
-    ])?;
+    if !harness::root()
+        .join("build/core/immediate-abort/opt-z/compiler_builtins.s")
+        .is_file()
+    {
+        harness::command(&[
+            "cargo".into(),
+            "run".into(),
+            "-q".into(),
+            "--".into(),
+            "build".into(),
+            "examples/hello.rs".into(),
+            directory.join("hello.gb").display().to_string(),
+            "--opt-level".into(),
+            "z".into(),
+        ])?;
+    }
     let assembly = harness::command(&[
         "cargo".into(),
         "run".into(),
@@ -99,7 +104,7 @@ fn main() -> Result<()> {
         let source = if variant == "builtins" {
             builtins[start..end].to_owned()
         } else {
-            harness::read(format!("tests/fixtures/audit/memcmp_{variant}.asm"))?
+            harness::runtime(&format!("memcmp_{variant}"))?
         };
         let move_variant = if variant == "size" { "size" } else { "opt" };
         let program = harness::assemble_tiny(

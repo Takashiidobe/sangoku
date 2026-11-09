@@ -91,6 +91,25 @@ Production linkage uses individual registered objects. The f64/f128 and wide
 conversion runtimes retain their existing operation-code dispatchers; their
 internal operations are still bundled within each dispatcher object.
 
+## Replace a compiler builtin
+
+`memcmp` exports `__rust_memcmp`, the symbol used by both the compiler libcall
+and named Rust call paths. Production linkage excludes that definition from
+compiler-builtins before selecting reachable sections. This also removes its
+otherwise-unused dependencies; it prevents duplicate definitions when the
+runtime variant is added. Program-provided definitions remain intact.
+
+`memory/memcmp/size/pointer.asm` is 48 bytes; the speed variant is 89 bytes.
+Levels s/z choose size and 0–3 choose speed. Both compare unsigned bytes,
+return a signed i32 ordering result, preserve caller-owned stack arguments,
+and accept zero lengths without reading either buffer. Small equality loads
+remain inline. Use `cargo nextest run --no-fail-fast -E 'binary(memcmp)'`
+for bounded ABI and no_core Rust/CLIF call tests.
+
+The move/compare audit uses the promoted runtime files and the cached builtins
+assembly as a baseline. It builds the baseline only if that cache is missing.
+Run `cargo run --example audit-move-compare` to reproduce its comparison.
+
 ## Check changes
 
 For popcount changes, rebuild the backend once using the documented toolchain

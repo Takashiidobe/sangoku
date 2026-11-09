@@ -108,9 +108,13 @@ compact byte loops for all three helpers; levels `0`, `1`, `2`, and `3` select
 four-byte-unrolled implementations. `memmove` unrolls both copy directions. Only
 the selected variant of each referenced helper is linked. All three return the
 destination pointer and accept zero lengths; `memmove` also handles overlap.
-`memcmp` is supplied by compiler-builtins, including calls used by ordering and
-equality intrinsics. Branch-table assembly uses executable comparisons and jumps
-for full-width indices.
+`memcmp` uses the runtime's independently selected size/speed implementations
+for both compiler libcalls and Rust named calls. They export `__rust_memcmp`,
+replacing compiler-builtins' definition during linkage. Ordering compares
+unsigned bytes and returns a negative, zero or positive i32; zero lengths are
+accepted. Small fixed-size equality comparisons retain their inline loads.
+Branch-table assembly uses executable comparisons and jumps for full-width
+indices.
 
 Run `cargo run --example audit-memory-inline` for a bounded comparison of
 backend-generated inline copy/fill sequences and helper calls at 1–16 bytes.

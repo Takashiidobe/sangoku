@@ -1,0 +1,10 @@
+set opt_level=none
+target z80
+
+function %audit_libcall(i16, i16, i16) -> i32 system_v {
+    sig0 = (i16, i16, i16) -> i32 system_v
+    fn0 = %Memcmp sig0
+block0(v0: i16, v1: i16, v2: i16):
+    v3 = call fn0(v0, v1, v2)
+    return v3
+}

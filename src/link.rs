@@ -26,6 +26,13 @@ pub fn split_sections(text: &str) -> Vec<Section<'_>> {
         .collect()
 }
 
+pub fn builtin_sections(assembly: &str) -> impl Iterator<Item = Section<'_>> {
+    split_sections(assembly).into_iter().filter(|section| {
+        !exported_labels(section.text)
+            .any(|name| sangoku::runtime::BUILTIN_REPLACEMENTS.contains(&name))
+    })
+}
+
 fn is_identifier_start(byte: u8) -> bool {
     byte.is_ascii_alphabetic() || byte == b'_'
 }
@@ -383,6 +390,48 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
     }
 
     #[test]
+    fn runtime_memcmp_replaces_only_the_builtin_definition() -> sangoku_test_support::Result<()> {
+        use sangoku_test_support::harness;
+        let user = "SECTION \"entry\", ROM0\n__rust_gbc_main::\ncall __rust_memcmp\nret\n";
+        let builtins = "SECTION \"builtin memcmp\", ROM0\n__rust_memcmp::\ncall old_compare_dependency\nret\nSECTION \"old dependency\", ROM0\nold_compare_dependency::\nret\n";
+        let sections: Vec<_> = split_sections(user)
+            .into_iter()
+            .chain(builtin_sections(builtins))
+            .collect();
+        let linked: String = reachable(&sections, &[ENTRY])
+            .into_iter()
+            .map(|index| sections[index].text)
+            .collect();
+        assert!(!linked.contains("old_compare_dependency"));
+        for level in ["0", "z"] {
+            let selected = runtime_objects(&linked, level);
+            assert_eq!(
+                selected,
+                [if level == "z" {
+                    "memcmp_size"
+                } else {
+                    "memcmp_opt"
+                }]
+            );
+            let program = harness::assemble_tiny(
+                &[
+                    ("program.asm", linked.clone()),
+                    (
+                        "runtime.asm",
+                        sangoku::runtime::object(selected[0]).source.to_owned(),
+                    ),
+                ],
+                None,
+            )?;
+            assert!(program.symbols.contains_key("__rust_memcmp"));
+            assert!(!program.sections.contains_key("builtin memcmp"));
+            assert!(!program.symbols.contains_key("old_compare_dependency"));
+        }
+        assert!(runtime_objects("__rust_memcmp::\nret", "0").is_empty());
+        Ok(())
+    }
+
+    #[test]
     fn popcount_widths_select_independently_and_share_one_core() {
         for level in ["0", "1", "2", "3", "s", "z"] {
             let size = matches!(level, "s" | "z");
@@ -474,6 +523,7 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
             };
             for (symbol, helper) in [
                 ("memcpy", "memcpy"),
+                ("__rust_memcmp", "memcmp"),
                 ("memmove", "memmove"),
                 ("__gbc_memset", "memset"),
             ] {
