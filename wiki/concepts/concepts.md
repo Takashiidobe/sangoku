@@ -109,3 +109,25 @@ use ASCII conversion or an explicit game-specific alphabet when appropriate.
 Keep upstream `core` Unicode behavior intact: UTF-8 storage and iteration do not
 require retaining every case-conversion table. Full dynamic Unicode casing
 remains available when its measured ROM cost fits the game.
+
+Minimal opt-level z probes reading dynamic input through `read_volatile` and
+returning the low byte give a cleaner comparison than the multi-case fixtures:
+
+| Operation | Retained section bytes | Entry point bytes |
+| --- | ---: | ---: |
+| `u8::to_ascii_uppercase` | 170 | 78 |
+| `char::to_ascii_uppercase` | 544 | 452 |
+| `char::to_uppercase().next().unwrap_or('\0')` | 17,483 | 602 |
+
+ASCII probes retain no tables or other functions. Unicode retains 2,106 data
+bytes, including its 24-byte table descriptor, and 15,377 code/runtime bytes.
+The larger multi-case fixture additionally pays for iteration and comparisons
+against expected UTF-8 strings. Even taking only the first uppercase character
+retains the complete conversion: a general `char` may expand into three outputs.
+`lookup` also retains generic binary searches and the array `map` machinery
+(`try_map`, `try_from_fn`, and drain helpers) used to reconstruct those outputs.
+These abstractions remain as emitted calls in the current toolchain.
+
+The probes are under `build/case-probes/`. Constant `black_box` inputs still
+allowed constant-specific simplification in these probes; use volatile inputs
+for size comparisons that must retain dynamic behavior.
