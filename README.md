@@ -28,6 +28,13 @@ sangoku build game.rs game.gb --opt-level z
 sangoku run game.rs
 ```
 
+To use `alloc` (`Vec`, `Box`), add `extern crate alloc;` to the source and pass
+`--alloc`:
+
+```bash
+sangoku build --alloc examples/heap.rs build/heap.gb
+```
+
 For visible output, build the screen example from a source checkout and open it
 in SameBoy:
 
