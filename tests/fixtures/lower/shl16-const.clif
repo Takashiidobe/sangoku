@@ -14,9 +14,9 @@ block0(v0: i16):
 ; CHECK-NEXT:   ld a, b
 ; CHECK-NEXT:   ld b, c
 ; CHECK-NEXT:   sla a
-; CHECK-NEXT: rl b
-; CHECK-NEXT: sla a
-; CHECK-NEXT: rl b
-; CHECK-NEXT: sla a
-; CHECK-NEXT: rl b
+; CHECK-NEXT:   rl b
+; CHECK-NEXT:   sla a
+; CHECK-NEXT:   rl b
+; CHECK-NEXT:   sla a
+; CHECK-NEXT:   rl b
 ; CHECK-NEXT:   ret

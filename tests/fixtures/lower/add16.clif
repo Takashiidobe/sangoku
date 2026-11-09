@@ -12,12 +12,12 @@ block0(v0: i16, v1: i16):
 ; CHECK-NEXT: .block0:
 ; CHECK-NEXT:   ld e, a
 ; CHECK-NEXT:   ld hl, sp + 2
-; CHECK-NEXT: ld h, [hl]
+; CHECK-NEXT:   ld h, [hl]
 ; CHECK-NEXT:   ld a, b
-; CHECK-NEXT: add a, e
-; CHECK-NEXT: ld d, a
-; CHECK-NEXT: ld a, c
-; CHECK-NEXT: adc a, h
-; CHECK-NEXT: ld b, a
+; CHECK-NEXT:   add a, e
+; CHECK-NEXT:   ld d, a
+; CHECK-NEXT:   ld a, c
+; CHECK-NEXT:   adc a, h
+; CHECK-NEXT:   ld b, a
 ; CHECK-NEXT:   ld a, d
 ; CHECK-NEXT:   ret
