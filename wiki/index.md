@@ -4,6 +4,7 @@
 - [Building and running ROMs](concepts/building-roms.md)
 - [Testing](concepts/testing.md)
 - [Core and alloc support](concepts/core-alloc.md)
+- [Fixed-capacity vector](concepts/fixed-vec.md)
 - [Compilation support and hardware limits](concepts/practical-limits.md)
 - [Frontend fixtures](concepts/frontend-fixtures.md)
 - [Intrinsic call audit](intrinsics.md)

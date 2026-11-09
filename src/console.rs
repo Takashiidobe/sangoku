@@ -20,6 +20,8 @@ pub const FILES: &[&str] = &[
     "libsangoku_console.rmeta",
     "sangoku_audio.s",
     "libsangoku_audio.rmeta",
+    "sangoku_vec.s",
+    "libsangoku_vec.rmeta",
     "libufmt_macros.so",
 ];
 
@@ -36,6 +38,7 @@ impl Libraries {
             ("ufmt", "libufmt.rmeta"),
             ("sangoku_console", "libsangoku_console.rmeta"),
             ("sangoku_audio", "libsangoku_audio.rmeta"),
+            ("sangoku_vec", "libsangoku_vec.rmeta"),
             ("ufmt_macros", "libufmt_macros.so"),
         ] {
             args.push("--extern".into());
@@ -50,6 +53,7 @@ impl Libraries {
             "ufmt.s",
             "sangoku_console.s",
             "sangoku_audio.s",
+            "sangoku_vec.s",
         ]
         .into_iter()
         .map(|file| self.0.join(file))
@@ -115,6 +119,8 @@ pub fn libraries(
         root.join("runtime/console/src/lib.rs"),
         root.join("runtime/audio/Cargo.toml"),
         root.join("runtime/audio/src/lib.rs"),
+        root.join("runtime/vec/Cargo.toml"),
+        root.join("runtime/vec/src/lib.rs"),
     ]
     .iter()
     .filter_map(|path| modified(path))
@@ -204,6 +210,10 @@ pub fn libraries(
         (
             "sangoku_audio",
             (root.join("runtime/audio/src/lib.rs"), "2024".to_owned()),
+        ),
+        (
+            "sangoku_vec",
+            (root.join("runtime/vec/src/lib.rs"), "2024".to_owned()),
         ),
     ] {
         let mut command = rustc_command(root, opt_level);

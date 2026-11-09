@@ -6,7 +6,7 @@ autoexamples = false
 default-run = "sangoku"
 
 [workspace]
-members = ["tests/support", "tools/lower", "runtime/console", "runtime/audio"]
+members = ["tests/support", "tools/lower", "runtime/console", "runtime/audio", "runtime/vec"]
 exclude = [
   "third_party/rust",
   "third_party/wasmtime",
@@ -28,6 +28,7 @@ thiserror = "2.0.21"
 [dev-dependencies]
 sangoku-test-support = { path = "tests/support" }
 sangoku-audio = { path = "runtime/audio" }
+sangoku-vec = { path = "runtime/vec" }
 
 [[example]]
 name = "audit-runtime"
