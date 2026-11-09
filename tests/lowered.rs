@@ -26,6 +26,8 @@ fn lower_program(path: &str) -> Result<harness::Program> {
         || assembly.contains("memcpy")
         || assembly.contains("memmove");
     let needs_convert = assembly.contains("__gbc_convert");
+    let needs_shift64 = assembly.contains("__gbc_shift64");
+    let needs_shift128 = assembly.contains("__gbc_shift128");
     let needs_float128 = assembly.contains("__gbc_f128");
     let needs_float64 = assembly.contains("__gbc_f64");
     let needs_float32 = assembly
@@ -67,6 +69,22 @@ fn lower_program(path: &str) -> Result<harness::Program> {
             "convert.asm",
             harness::read("runtime/float/convert/common/dispatch.asm")?,
         ));
+    }
+    for (needed, names) in [
+        (
+            needs_shift64,
+            ["shift64_opt", "shift_bit64_opt", "shift_byte64_opt"],
+        ),
+        (
+            needs_shift128,
+            ["shift128_opt", "shift_bit128_opt", "shift_byte128_opt"],
+        ),
+    ] {
+        if needed {
+            for name in names {
+                sources.push((name, harness::runtime(name)?));
+            }
+        }
     }
     if needs_memory {
         for name in ["memset_opt", "memmove_opt", "memcpy_opt"] {

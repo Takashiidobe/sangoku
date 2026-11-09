@@ -666,6 +666,13 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
         root.join("build/core/immediate-abort")
             .join(format!("opt-{opt_level}")),
     );
+    let lock_path = root.join(format!("build/core/immediate-abort/opt-{opt_level}.lock"));
+    fs::create_dir_all(libraries.0.as_path())
+        .map_err(|error| Error::io(format!("could not create {}", libraries.0.display()), error))?;
+    let lock = fs::File::create(&lock_path)
+        .map_err(|error| Error::io(format!("could not create {}", lock_path.display()), error))?;
+    lock.lock()
+        .map_err(|error| Error::io(format!("could not lock {}", lock_path.display()), error))?;
     let backend_time = modified(backend);
     let options = format!(
         "{:?}",
@@ -687,8 +694,6 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
     if fresh {
         return Ok(libraries);
     }
-    fs::create_dir_all(&libraries.0)
-        .map_err(|error| Error::io(format!("could not create {}", libraries.0.display()), error))?;
     fs::write(&options_file, "")
         .map_err(|error| Error::io(format!("could not write {}", options_file.display()), error))?;
     let library = root.join("third_party/rust/library");

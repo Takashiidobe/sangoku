@@ -587,6 +587,20 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
                 !matches!(level, "s" | "z")
             );
         }
+        for level in ["0", "1", "2", "3", "s", "z"] {
+            let size = matches!(level, "s" | "z");
+            let (suffix, count) = if size { ("size", 2) } else { ("opt", 3) };
+            for bits in [64, 128] {
+                let selected = runtime_objects(&format!("call __gbc_shift{bits}"), level);
+                assert_eq!(selected.len(), count, "{level}");
+                assert!(selected.contains(&format!("shift{bits}_{suffix}").as_str()));
+                assert!(selected.contains(&format!("shift_bit{bits}_{suffix}").as_str()));
+                assert_eq!(
+                    selected.contains(&format!("shift_byte{bits}_opt").as_str()),
+                    !size
+                );
+            }
+        }
         assert!(runtime_objects("call __gbc_shift8_unused", "0").is_empty());
         assert_eq!(
             runtime_objects("__gbc_div32_core::\nret\ncall __gbc_udiv32", "0"),

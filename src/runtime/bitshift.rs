@@ -32,4 +32,32 @@ pub(super) const OBJECTS: &[Object] = &[
     object!("bitrev_byte_opt", "runtime/bitshift/bitrev/speed/byte.asm"),
     object!("shift8", "runtime/bitshift/shift/common/i8.asm"),
     object!("shift16", "runtime/bitshift/shift/common/i16.asm"),
+    object!("shift64_size", "runtime/bitshift/wshift/size/i64.asm"),
+    object!("shift64_opt", "runtime/bitshift/wshift/speed/i64.asm"),
+    object!(
+        "shift_bit64_size",
+        "runtime/bitshift/wshift_bit/size/bit64.asm"
+    ),
+    object!(
+        "shift_bit64_opt",
+        "runtime/bitshift/wshift_bit/speed/bit64.asm"
+    ),
+    object!(
+        "shift_byte64_opt",
+        "runtime/bitshift/wshift_byte/speed/byte64.asm"
+    ),
+    object!("shift128_size", "runtime/bitshift/wshift/size/i128.asm"),
+    object!("shift128_opt", "runtime/bitshift/wshift/speed/i128.asm"),
+    object!(
+        "shift_bit128_size",
+        "runtime/bitshift/wshift_bit/size/bit128.asm"
+    ),
+    object!(
+        "shift_bit128_opt",
+        "runtime/bitshift/wshift_bit/speed/bit128.asm"
+    ),
+    object!(
+        "shift_byte128_opt",
+        "runtime/bitshift/wshift_byte/speed/byte128.asm"
+    ),
 ];

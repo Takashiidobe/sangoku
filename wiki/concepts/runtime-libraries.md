@@ -207,6 +207,48 @@ backend. Tests cover zero, all ones, every single-bit position and a few mixed
 patterns; no_core Rust probes at 0/z check signed results, zero extension and
 live inputs. They do not build core or perform an exhaustive byte sweep.
 
+## Shift and rotate wide integers
+
+i64/u64 and i128/u128 variable shifts and rotates (`ishl`, `ushr`, `sshr`,
+`rotl`, `rotr`, including `rotate_left`/`rotate_right` and funnel shifts that
+reduce to them) call `__gbc_shift64` or `__gbc_shift128` instead of expanding
+inline. The legalizer stores the value, an op byte and the count into a stack
+buffer and passes its address in B/C; the result is written back in place.
+All registers are clobbered; there are no incoming stack arguments. The count
+is taken modulo the width.
+
+| Offset  | Contents                                           |
+| ------- | -------------------------------------------------- |
+| 0..W    | value, least significant byte first (W = 8 or 16)  |
+| W       | op: 0 shl, 1 ushr, 2 sshr, 3 rotl, 4 rotr          |
+| W+1     | count                                              |
+
+Levels s/z link the `size` entry, which repeats a one-bit step `count` times.
+Levels 0–3 link the `speed` entry, which first moves whole bytes
+(`count / 8` times) and then runs at most seven bit steps. Each width has its
+own private bit-step object; speed also links a byte-step object. Constant
+counts use the same call.
+
+| Width | Size linked bytes | Speed linked bytes | Worst sampled T-cycles, size / speed |
+| ----- | ----------------- | ------------------ | ------------------------------------ |
+| 64    | 81                | 211                | 29564 / 6428                         |
+| 128   | 81                | 259                | 100156 / 17020                       |
+
+Linked bytes include the entry and its step objects, not the caller. Each
+Rust probe that shifts or rotates through a pointer shrinks at both 0 and z:
+
+| Shape | Inline caller bytes at 0 / z | Libcall caller bytes at 0 / z |
+| ----- | ---------------------------- | ----------------------------- |
+| u64/i64 | 2161–4817 / 2051–4152 | 373 / 369 |
+| u128/i128 | 1739–2350 / 1577–2350 | 687 / 681 |
+
+Run `cargo nextest run --no-fail-fast -E 'binary(wide_shift)'`. It checks
+every op against the host for boundary counts (0, 1, 7, 8, 9, 31, 32, 33, 63,
+64, 127, 255) and four values per width, and compiles
+`tests/fixtures/wide-shift/native.rs` at 0 and z to confirm each probe calls
+the helper and returns the host result. Counts are bounded samples, not an
+exhaustive sweep.
+
 ## Replace a compiler builtin
 
 `memcmp` exports `__rust_memcmp`, the symbol used by both the compiler libcall
