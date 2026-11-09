@@ -42,8 +42,15 @@ player once per video frame. The [score](../../examples/audio/bike_riding.rs)
 uses Rust events for notes, rests, octaves, duty cycles, envelopes, vibrato, and
 loops. Pitches use the shared `Note` enum, including `CSharp`, `FSharp`, and
 other semitones, so score entries such as `Note(CSharp, 2)` cannot contain an
-invalid numeric pitch. The [player](../../examples/audio/player.rs) writes the
-sound registers directly and uses no heap or floating-point arithmetic.
+invalid numeric pitch. The player is the runtime crate
+[`sangoku_audio`](../../runtime/audio/src/lib.rs), linked like `sangoku_console`:
+programs and scores write `use sangoku_audio::{Event, Note::*};` and need no
+`#[path]` module. It writes the sound registers directly and uses no heap or
+floating-point arithmetic. Only the player items a program reaches are linked.
+
+Moving the player out of each example into the crate made all five audio ROMs
+196 bytes smaller (for example Surfing 9944 to 9747 used bytes at opt z). The
+cause was not investigated.
 
 ## Shared phrases
 

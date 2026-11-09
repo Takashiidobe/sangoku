@@ -88,7 +88,8 @@ def main():
             for name in ["core.s", "compiler_builtins.s", "alloc.s", "gbc_heap.s", "libcore.rmeta", "libcompiler_builtins.rmeta", "liballoc.rmeta", "libgbc_heap.rmeta"]:
                 copy(source / name, staging / "libraries" / f"opt-{level}" / name)
             for name in ["ufmt_write.s", "libufmt_write.rmeta", "ufmt.s", "libufmt.rmeta",
-                         "sangoku_console.s", "libsangoku_console.rmeta", "libufmt_macros.so"]:
+                         "sangoku_console.s", "libsangoku_console.rmeta", "sangoku_audio.s", "libsangoku_audio.rmeta",
+                         "libufmt_macros.so"]:
                 copy(source / "console" / name, staging / "libraries" / f"opt-{level}" / "console" / name)
             shared_libraries(source / "console/libufmt_macros.so", staging / "toolchain/lib", compiler / "lib")
         for directory in ["runtime", "targets", "rom", "examples"]:

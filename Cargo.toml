@@ -3,9 +3,10 @@ name = "sangoku"
 version = "0.1.0"
 edition = "2024"
 autoexamples = false
+default-run = "sangoku"
 
 [workspace]
-members = ["tests/support", "tools/lower", "runtime/console"]
+members = ["tests/support", "tools/lower", "runtime/console", "runtime/audio"]
 exclude = [
   "third_party/rust",
   "third_party/wasmtime",
@@ -14,6 +15,7 @@ exclude = [
 resolver = "3"
 
 [dependencies]
+clap = { version = "4.6.7", features = ["derive"] }
 flate2 = "1.1.11"
 miette = { version = "7.6.0", features = ["fancy"] }
 rustc-demangle = "0.1.28"
@@ -25,6 +27,7 @@ thiserror = "2.0.21"
 
 [dev-dependencies]
 sangoku-test-support = { path = "tests/support" }
+sangoku-audio = { path = "runtime/audio" }
 
 [[example]]
 name = "audit-runtime"

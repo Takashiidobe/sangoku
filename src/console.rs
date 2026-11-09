@@ -18,6 +18,8 @@ pub const FILES: &[&str] = &[
     "libufmt.rmeta",
     "sangoku_console.s",
     "libsangoku_console.rmeta",
+    "sangoku_audio.s",
+    "libsangoku_audio.rmeta",
     "libufmt_macros.so",
 ];
 
@@ -33,6 +35,7 @@ impl Libraries {
             ("ufmt_write", "libufmt_write.rmeta"),
             ("ufmt", "libufmt.rmeta"),
             ("sangoku_console", "libsangoku_console.rmeta"),
+            ("sangoku_audio", "libsangoku_audio.rmeta"),
             ("ufmt_macros", "libufmt_macros.so"),
         ] {
             args.push("--extern".into());
@@ -42,9 +45,14 @@ impl Libraries {
     }
 
     pub fn assembly(&self) -> impl Iterator<Item = PathBuf> + '_ {
-        ["ufmt_write.s", "ufmt.s", "sangoku_console.s"]
-            .into_iter()
-            .map(|file| self.0.join(file))
+        [
+            "ufmt_write.s",
+            "ufmt.s",
+            "sangoku_console.s",
+            "sangoku_audio.s",
+        ]
+        .into_iter()
+        .map(|file| self.0.join(file))
     }
 }
 
@@ -105,6 +113,8 @@ pub fn libraries(
         root.join("src/console.rs"),
         root.join("runtime/console/Cargo.toml"),
         root.join("runtime/console/src/lib.rs"),
+        root.join("runtime/audio/Cargo.toml"),
+        root.join("runtime/audio/src/lib.rs"),
     ]
     .iter()
     .filter_map(|path| modified(path))
@@ -191,6 +201,10 @@ pub fn libraries(
             "sangoku_console",
             (root.join("runtime/console/src/lib.rs"), "2024".to_owned()),
         ),
+        (
+            "sangoku_audio",
+            (root.join("runtime/audio/src/lib.rs"), "2024".to_owned()),
+        ),
     ] {
         let mut command = rustc_command(root, opt_level);
         command
@@ -201,10 +215,10 @@ pub fn libraries(
             .args(core.externs(2))
             .arg("-L")
             .arg(format!("dependency={}", libraries.0.display()));
-        if name != "sangoku_console" {
+        if matches!(name, "ufmt_write" | "ufmt") {
             command.args(["--cap-lints", "allow"]);
         }
-        if name != "ufmt_write" {
+        if matches!(name, "ufmt" | "sangoku_console") {
             command.arg("--extern").arg(format!(
                 "ufmt_write={}",
                 libraries.0.join("libufmt_write.rmeta").display()

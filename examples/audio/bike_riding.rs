@@ -3,9 +3,9 @@ pub const WAVE: [u8; 16] = [
     0x02, 0x46, 0x8a, 0xcd, 0xef, 0xfe, 0xde, 0xff, 0xee, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10,
 ];
 
-use super::player::Event;
-use super::player::Note::{A, ASharp, B, C, D, E, F, FSharp, G};
 use Event::*;
+use sangoku_audio::Event;
+use sangoku_audio::Note::{A, ASharp, B, C, D, E, F, FSharp, G};
 
 pub static CH1: &[Event] = &[
     Duty(3),

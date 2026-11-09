@@ -1,6 +1,6 @@
-use super::player::Event;
-use super::player::Note::*;
 use Event::*;
+use sangoku_audio::Event;
+use sangoku_audio::Note::*;
 
 pub const TEMPO: u8 = 137;
 pub const WAVE: [u8; 16] = [

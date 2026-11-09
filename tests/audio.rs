@@ -2,10 +2,6 @@
 #[path = "../examples/audio/bike_riding.rs"]
 mod bike_riding;
 #[allow(dead_code)]
-#[path = "../examples/audio/player.rs"]
-mod player;
-
-#[allow(dead_code)]
 #[path = "../examples/audio/surfing.rs"]
 mod surfing;
 
@@ -21,7 +17,7 @@ mod let_down;
 #[path = "../examples/audio/creep.rs"]
 mod creep;
 
-use player::{Event, Note, Sequence};
+use sangoku_audio::{Event, Note, Sequence};
 
 fn expand(events: &[Event], depth: usize) -> Vec<Event> {
     assert!(depth <= 4);

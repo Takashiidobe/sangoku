@@ -1,3 +1,4 @@
+use clap::{Args, Parser, Subcommand, ValueEnum};
 use std::env;
 use std::ffi::{OsStr, OsString};
 use std::fs;
@@ -18,6 +19,98 @@ mod link;
 
 const TOOLCHAIN: &str = "gbc-lr35902";
 
+#[derive(Parser)]
+#[command(name = "sangoku", about = "Compile and run Game Boy programs")]
+struct Cli {
+    #[command(subcommand)]
+    command: CliCommand,
+}
+
+#[derive(Subcommand)]
+enum CliCommand {
+    Example(ExampleArgs),
+    Build(SourceArgs),
+    Run(RunArgs),
+    Frontend(CompileArgs),
+    Clif(CompileArgs),
+    Asm(CompileArgs),
+    Lower(LowerArgs),
+}
+
+#[derive(Clone, Copy, ValueEnum, Default)]
+enum OptLevel {
+    #[value(name = "0")]
+    #[default]
+    Zero,
+    #[value(name = "1")]
+    One,
+    #[value(name = "2")]
+    Two,
+    #[value(name = "3")]
+    Three,
+    #[value(name = "s")]
+    Size,
+    #[value(name = "z")]
+    MinSize,
+}
+
+impl OptLevel {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::Zero => "0",
+            Self::One => "1",
+            Self::Two => "2",
+            Self::Three => "3",
+            Self::Size => "s",
+            Self::MinSize => "z",
+        }
+    }
+}
+
+#[derive(Args)]
+struct BuildOptions {
+    #[arg(long, value_enum, default_value_t)]
+    opt_level: OptLevel,
+    #[arg(long)]
+    alloc: bool,
+}
+
+#[derive(Args)]
+struct ExampleArgs {
+    output: Option<PathBuf>,
+    #[command(flatten)]
+    options: BuildOptions,
+}
+
+#[derive(Args)]
+struct SourceArgs {
+    source: PathBuf,
+    output: Option<PathBuf>,
+    #[command(flatten)]
+    options: BuildOptions,
+}
+
+#[derive(Args)]
+struct RunArgs {
+    source: PathBuf,
+    #[command(flatten)]
+    options: BuildOptions,
+}
+
+#[derive(Args)]
+struct CompileArgs {
+    source: PathBuf,
+    output: Option<PathBuf>,
+    #[command(flatten)]
+    options: BuildOptions,
+}
+
+#[derive(Args)]
+struct LowerArgs {
+    input: PathBuf,
+    output: Option<PathBuf>,
+}
+
 fn main() -> ExitCode {
     match run() {
         Ok(()) => ExitCode::SUCCESS,
@@ -29,99 +122,94 @@ fn main() -> ExitCode {
 }
 
 fn run() -> Result<()> {
-    let mut args = env::args_os().skip(1);
-    let Some(command) = args.next() else {
-        return Err(usage());
-    };
-
+    let cli = Cli::parse();
     let root = bundle::root()?;
-    let (paths, opt_level, alloc) = parse_build_args(args)?;
-    match command.to_str() {
-        Some("example") => {
-            let output = paths
-                .first()
-                .cloned()
+    match cli.command {
+        CliCommand::Example(args) => {
+            let output = args
+                .output
                 .unwrap_or_else(|| PathBuf::from("build/hello.gb"));
-            if paths.len() > 1 {
-                return Err(usage());
-            }
             build_rom(
                 &root,
                 &root.join("examples/hello.rs"),
                 &output,
-                &opt_level,
-                alloc,
+                args.options.opt_level.as_str(),
+                args.options.alloc,
             )
         }
-        Some("build") => {
-            let Some(source) = paths.first() else {
-                return Err(usage());
-            };
-            let output = paths.get(1).cloned().unwrap_or_else(|| {
-                let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
-                PathBuf::from("build").join(name).with_extension("gb")
-            });
-            if paths.len() > 2 {
-                return Err(usage());
-            }
-            build_rom(&root, source, &output, &opt_level, alloc)
+        CliCommand::Build(args) => {
+            let output = args
+                .output
+                .unwrap_or_else(|| default_output(&args.source, "gb"));
+            build_rom(
+                &root,
+                &args.source,
+                &output,
+                args.options.opt_level.as_str(),
+                args.options.alloc,
+            )
         }
-        Some("run") => {
-            let Some(source) = paths.first() else {
-                return Err(usage());
-            };
-            if paths.len() > 1 {
-                return Err(usage());
-            }
-            let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
-            let output = PathBuf::from("build").join(name).with_extension("gb");
-            build_rom(&root, source, &output, &opt_level, alloc)?;
+        CliCommand::Run(args) => {
+            let output = default_output(&args.source, "gb");
+            build_rom(
+                &root,
+                &args.source,
+                &output,
+                args.options.opt_level.as_str(),
+                args.options.alloc,
+            )?;
             run_rom(&output)
         }
-        Some("frontend") => {
-            let Some(source) = paths.first() else {
-                return Err(usage());
-            };
-            let output = paths.get(1).cloned().unwrap_or_else(|| {
-                let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
-                PathBuf::from("build").join(name).with_extension("mir")
-            });
-            if paths.len() > 2 {
-                return Err(usage());
-            }
-            emit_mir(&root, source, &output, &opt_level, alloc)
+        CliCommand::Frontend(args) => {
+            let output = args
+                .output
+                .unwrap_or_else(|| default_output(&args.source, "mir"));
+            emit_mir(
+                &root,
+                &args.source,
+                &output,
+                args.options.opt_level.as_str(),
+                args.options.alloc,
+            )
         }
-        Some("clif" | "asm") => {
-            let clif_only = command == "clif";
-            let Some(source) = paths.first() else {
-                return Err(usage());
-            };
-            let output = paths.get(1).cloned().unwrap_or_else(|| {
-                let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
-                PathBuf::from("build")
-                    .join(name)
-                    .with_extension(if clif_only { "clif" } else { "asm" })
-            });
-            if paths.len() > 2 {
-                return Err(usage());
-            }
-            emit_code(&root, source, &output, &opt_level, alloc, clif_only)
+        CliCommand::Clif(args) => {
+            let output = args
+                .output
+                .unwrap_or_else(|| default_output(&args.source, "clif"));
+            emit_code(
+                &root,
+                &args.source,
+                &output,
+                args.options.opt_level.as_str(),
+                args.options.alloc,
+                true,
+            )
         }
-        Some("lower") => {
-            let Some(source) = paths.first() else {
-                return Err(usage());
-            };
-            let output = paths.get(1).cloned().unwrap_or_else(|| {
-                let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
-                PathBuf::from("build").join(name).with_extension("s")
-            });
-            if paths.len() > 2 {
-                return Err(usage());
-            }
-            lower_clif(&root, source, &output)
+        CliCommand::Asm(args) => {
+            let output = args
+                .output
+                .unwrap_or_else(|| default_output(&args.source, "asm"));
+            emit_code(
+                &root,
+                &args.source,
+                &output,
+                args.options.opt_level.as_str(),
+                args.options.alloc,
+                false,
+            )
         }
-        _ => Err(usage()),
+        CliCommand::Lower(args) => {
+            let output = args
+                .output
+                .unwrap_or_else(|| default_output(&args.input, "s"));
+            lower_clif(&root, &args.input, &output)
+        }
     }
+}
+
+fn default_output(source: &Path, extension: &str) -> PathBuf {
+    let name = source.file_stem().unwrap_or_else(|| OsStr::new("game"));
+    PathBuf::from("build").join(name).with_extension(extension)
 }
 
 const MAX_INSTRUCTIONS: u64 = 2_000_000_000;
@@ -149,49 +237,6 @@ fn run_rom(rom: &Path) -> Result<()> {
         }
     }
     Err(format!("program did not halt within {MAX_INSTRUCTIONS} instructions").into())
-}
-
-fn usage() -> Error {
-    "usage: sangoku example [output.gb] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku build <source.rs> [output.gb] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku run <source.rs> [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku frontend <source.rs> [output.mir|-] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku clif <source.rs> [output.clif|-] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku asm <source.rs> [output.asm|-] [--opt-level 0|1|2|3|s|z] [--alloc] | sangoku lower <input.clif> [output.s|-]".into()
-}
-
-fn parse_build_args(
-    args: impl IntoIterator<Item = OsString>,
-) -> Result<(Vec<PathBuf>, String, bool)> {
-    let mut args = args.into_iter();
-    let mut paths = Vec::new();
-    let mut opt_level = "0".to_owned();
-    let mut alloc = false;
-    while let Some(arg) = args.next() {
-        if arg == "--alloc" {
-            alloc = true;
-            continue;
-        }
-        let level = if arg == "--opt-level" {
-            Some(
-                args.next()
-                    .ok_or("--opt-level requires 0, 1, 2, 3, s or z")?,
-            )
-        } else {
-            arg.to_str()
-                .and_then(|value| value.strip_prefix("--opt-level="))
-                .map(OsString::from)
-        };
-        if let Some(level) = level {
-            match level.to_str() {
-                Some(value @ ("0" | "1" | "2" | "3" | "s" | "z")) => opt_level = value.into(),
-                _ => return Err("--opt-level requires 0, 1, 2, 3, s or z".into()),
-            }
-        } else if arg
-            .to_str()
-            .is_some_and(|value| value.starts_with('-') && value != "-")
-        {
-            return Err(format!("unknown build option: {}", arg.to_string_lossy()).into());
-        } else {
-            paths.push(PathBuf::from(arg));
-        }
-    }
-    Ok((paths, opt_level, alloc))
 }
 
 fn rustc_command(root: &Path, opt_level: &str) -> Command {
@@ -381,6 +426,44 @@ fn build_rom(
     let rust_asm = artifacts.path().join("game.asm");
     let libraries = core_libraries(root, &backend, opt_level)?;
     let console = console::libraries(root, &backend, opt_level, &libraries)?;
+
+    let mut mir = rustc_command(root, opt_level);
+    mir.arg("--edition=2024")
+        .args(libraries.externs(if alloc { 4 } else { 2 }))
+        .args(console.externs())
+        .arg("-Zunpretty=mir")
+        .arg(&source);
+    let mir_output = mir
+        .output()
+        .map_err(|error| Error::io(format!("could not run {mir:?}"), error))?;
+    if !mir_output.status.success() {
+        return Err(Error::CommandFailed {
+            command: format!("{mir:?}"),
+            status: mir_output.status,
+        });
+    }
+    fs::write(artifacts.path().join("game.mir"), mir_output.stdout).map_err(|error| {
+        Error::io(
+            format!(
+                "could not write {}",
+                artifacts.path().join("game.mir").display()
+            ),
+            error,
+        )
+    })?;
+
+    let mut clif = rustc_command(root, opt_level);
+    clif.env("CG_CLIF_CLIF_ONLY", "1");
+    run_command(
+        clif.arg("--edition=2024")
+            .arg(format!("-Zcodegen-backend={}", backend.display()))
+            .args(libraries.externs(if alloc { 4 } else { 2 }))
+            .args(console.externs())
+            .arg("--emit=asm,llvm-ir")
+            .arg(&source)
+            .arg("-o")
+            .arg(artifacts.path().join("game.s")),
+    )?;
 
     let mut command = rustc_command(root, opt_level);
     command.arg("--edition=2024");
@@ -710,55 +793,5 @@ impl ArtifactDir {
 
     fn path(&self) -> &Path {
         &self.0
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::parse_build_args;
-    use std::ffi::OsString;
-    use std::path::PathBuf;
-
-    #[test]
-    fn accepts_optimization_levels_around_paths() {
-        for level in ["0", "1", "2", "3", "s", "z"] {
-            for args in [
-                vec!["--opt-level", level, "game.rs", "game.gb"],
-                vec!["game.rs", "game.gb", "--opt-level", level],
-            ] {
-                let (paths, selected, _) =
-                    parse_build_args(args.into_iter().map(OsString::from)).unwrap();
-                assert_eq!(paths, [PathBuf::from("game.rs"), PathBuf::from("game.gb")]);
-                assert_eq!(selected, level);
-            }
-        }
-        let (_, selected, _) = parse_build_args([OsString::from("--opt-level=z")]).unwrap();
-        assert_eq!(selected, "z");
-        let (paths, selected, _) = parse_build_args([]).unwrap();
-        assert!(paths.is_empty());
-        assert_eq!(selected, "0");
-    }
-
-    #[test]
-    fn alloc_is_opt_in() {
-        let (_, _, alloc) = parse_build_args([]).unwrap();
-        assert!(!alloc);
-        for args in [["--alloc", "game.rs"], ["game.rs", "--alloc"]] {
-            let (paths, _, alloc) = parse_build_args(args.into_iter().map(OsString::from)).unwrap();
-            assert!(alloc);
-            assert_eq!(paths, [PathBuf::from("game.rs")]);
-        }
-    }
-
-    #[test]
-    fn rejects_missing_or_invalid_optimization_levels() {
-        for args in [
-            vec!["--opt-level"],
-            vec!["--opt-level", "4"],
-            vec!["--opt-level="],
-            vec!["--unknown"],
-        ] {
-            assert!(parse_build_args(args.into_iter().map(OsString::from)).is_err());
-        }
     }
 }

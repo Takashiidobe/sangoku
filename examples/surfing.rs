@@ -1,23 +1,21 @@
 #![no_std]
 
-#[path = "audio/player.rs"]
-mod player;
 #[path = "audio/surfing.rs"]
 mod surfing;
 
 #[unsafe(no_mangle)]
 pub fn gbc_main() -> u8 {
-    player::initialize(&surfing::WAVE);
+    sangoku_audio::initialize(&surfing::WAVE);
     let mut channels = const {
         [
-            player::Channel::new(surfing::CH1, surfing::TEMPO),
-            player::Channel::new(surfing::CH2, surfing::TEMPO),
-            player::Channel::new(surfing::CH3, surfing::TEMPO),
+            sangoku_audio::Channel::new(surfing::CH1, surfing::TEMPO),
+            sangoku_audio::Channel::new(surfing::CH2, surfing::TEMPO),
+            sangoku_audio::Channel::new(surfing::CH3, surfing::TEMPO),
         ]
     };
-    let mut drum = player::Drum::new();
+    let mut drum = sangoku_audio::Drum::new();
     loop {
-        player::wait_frame();
+        sangoku_audio::wait_frame();
         drum.tick();
         for (index, channel) in channels.iter_mut().enumerate() {
             channel.tick(index as u8, &mut drum);
