@@ -25,6 +25,54 @@ Existing ABIs and supported widths are unchanged. Operations without native
 helpers still use the backend's inline lowering or wider implementations;
 adding an empty width file does not add support.
 
+## Follow the calling convention
+
+Public helpers use the backend ABI. Integer bytes are ordered least significant
+first. Arguments consume `B`, `C`, `A` across arguments, then stack bytes;
+at helper entry the first stacked byte is at `SP+2`, above the return address.
+The caller cleans up stack arguments. The stack alignment is two bytes.
+
+| Single argument | Input | Return |
+| --- | --- | --- |
+| i8 | B | A |
+| i16 | B, C | A, B |
+| i32 | B, C, A, [SP+2] | A, B, C, D |
+
+All general registers and flags are caller-saved. Restore SP before returning;
+do not remove incoming arguments. Pointer values use the i16 convention.
+Population-count results zero their upper return bytes. The Rust methods
+return u32, so callers extend native i8/i16 helper results as needed.
+
+Private shared routines may use narrower contracts. `__gbc_popcnt_byte` takes
+and returns A, clobbers H/L and flags, and preserves B/C/D/E for its wrappers.
+It uses no table or scratch RAM. Only speed wrappers reference it, and linking
+several widths retains one copy.
+
+| Popcount width | Size ROM / cycles | Speed ROM / cycles |
+| --- | --- | --- |
+| i8 | 11 / 280 | 28 / 128 |
+| i16 | 15 / 672 | 37 / 304 |
+| i32 | 25 / 1856 | 55 / 624 |
+
+ROM counts include the shared core for a single speed entry. All three speed
+entries together occupy 72 bytes. Cycles cover entry through RET; an outer
+CALL adds 24 cycles. Speed i16/i32 wrappers use two additional stack bytes for
+nested calls; speed i8 tail-jumps to the byte core. Compact entries allocate no
+stack. Caller argument packing and spills add separate costs.
+
+Sharing replaces the previous unrolled i32 speed helper's 112 bytes and 468
+cycles with 55 bytes and 624 cycles. Optimized non-size i16 lowering keeps its
+inline parallel sequence; levels 0/s/z use the native runtime entry.
+
+Leading-zero counts already link through `__gbc_clz32`. Narrow widths widen
+and subtract the leading padding count. The register-shift CLZ candidate is
+validated and used; it needs no additional wiring. Original pointer and table
+popcount proposals are retained under `tests/fixtures/popcount/candidates/`.
+They use different ABIs; the table proposal clobbers the pointer loop's HL and
+its 256-byte placement constraint can leave gaps. At a fixed `$400` entry,
+explicitly padding its table produces a 272-byte object; a floating section
+could instead satisfy the alignment through placement.
+
 ## Share implementation code
 
 Unsigned 16-bit division and remainder have separate entry objects and share
@@ -45,7 +93,12 @@ internal operations are still bundled within each dispatcher object.
 
 ## Check changes
 
-Run `cargo nextest run --no-fail-fast`. Linkage tests check that f32 addition
+For popcount changes, rebuild the backend once using the documented toolchain
+build, then run `cargo nextest run --no-fail-fast -E 'binary(popcount32)'`.
+This compiles small `no_core` Rust probes at 0/2/z and links only the relevant
+helpers; it does not build core or a complete application ROM.
+
+Run `cargo nextest run --no-fail-fast` for the default suite. Linkage tests check that f32 addition
 excludes other float operations and that 16-bit quotient and remainder select
 separate wrappers. Assembly tests cover existing arithmetic behavior.
 

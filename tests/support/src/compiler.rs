@@ -496,14 +496,16 @@ fn kernels(directory: &Path) -> Result<BTreeMap<&'static str, Vec<u8>>> {
     for opt in ["none", "speed", "speed_and_size"] {
         for size in [false, true] {
             let actual = fs::read(directory.join("kernels").join(format!("{opt}-{size}.bin")))?;
-            let mut expected = result[if size || opt == "none" {
-                "shift"
+            if !size && opt != "none" {
+                let mut expected = result["swar"].clone();
+                expected.push(0xC9);
+                ensure!(actual == expected, "kernel differs for {opt}/{size}");
             } else {
-                "swar"
-            }]
-            .clone();
-            expected.push(0xC9);
-            ensure!(actual == expected, "kernel differs for {opt}/{size}");
+                ensure!(
+                    actual.contains(&0xCD),
+                    "missing native helper call for {opt}/{size}"
+                );
+            }
         }
     }
     Ok(result)
@@ -576,6 +578,15 @@ fn check_level(
         &[
             ("probes.asm", source),
             (
+                "popcnt16.asm",
+                harness::runtime(if ["s", "z"].contains(&level) {
+                    "popcnt16_size"
+                } else {
+                    "popcnt16_opt"
+                })?,
+            ),
+            ("popcnt-byte.asm", harness::runtime("popcnt_byte")?),
+            (
                 "stop.asm",
                 "SECTION \"Stop\", ROM0[$100]\naudit_stop::\n nop\n".into(),
             ),
@@ -595,11 +606,12 @@ fn check_level(
         .chain([(65535, 65535), (0x5555, 0xAAAA), (0x8001, 0x1234)])
         .collect();
     cases.extend((0..1024).map(|_| (rng.range(0, 65536), rng.range(0, 65536))));
-    let kernel = &reference[if ["1", "2", "3"].contains(&level) {
-        "swar"
+    let kernel = if ["1", "2", "3"].contains(&level) {
+        reference["swar"].clone()
     } else {
-        "shift"
-    }];
+        let address = p.symbols["__gbc_popcnt16"].to_le_bytes();
+        vec![0xCD, address[0], address[1]]
+    };
     let mut results = serde_json::Map::new();
     for &probe in PROBES {
         println!("checking opt={level} {probe}");

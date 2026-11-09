@@ -20,9 +20,8 @@ __gbc_clz32::
         or a
         jr z, .empty{u:I}
 .shift{u:I}
-        bit 7, {REG}
-        jr nz, .found
-        sla {REG}
+        add a, a
+        jr c, .found
         inc h
         jr .shift{u:I}
 .empty{u:I}

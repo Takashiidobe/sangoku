@@ -5,7 +5,14 @@ The spill defect below was subsequently fixed in `sangoku-7em`; see the
 describe the compiler at audit time. The replacement is implemented in
 `sangoku-pg3`; see the current results below.
 
-## Current compiler implementation
+## Current selection
+
+Native i8/i16/i32 size/speed helpers and shared byte counting supersede the
+selection described below. Optimized non-size i16 remains inline. See
+[runtime libraries](../concepts/runtime-libraries.md) for the current ABI,
+selection policy, measurements and bounded test command.
+
+## Earlier inline implementation
 
 Rust optimization level `0` uses the compact loop, `1`/`2`/`3` use parallel
 counting, and `s`/`z` use the compact loop. The compiler bridge preserves the

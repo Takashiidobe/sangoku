@@ -6,9 +6,12 @@ prefer size.
 
 ## Population counts
 
-For `popcnt.i16`, speed builds use parallel counting. Unoptimized and size
-builds use a compact shift loop. Lowering supports narrow and zero-extended
-results with live inputs and register pressure.
+For `popcnt.i16`, levels `1`–`3` keep inline parallel counting. Other levels
+call a native-width runtime helper: `0` uses the shared speed implementation,
+and `s`/`z` use compact shift loops. All widths have independent size/speed
+entries; speed entries share one byte counter. Lowering supports narrow and
+zero-extended results with live inputs and register pressure. See
+[runtime libraries](runtime-libraries.md) for ABI and measured costs.
 
 ## Wide-operation expansion
 

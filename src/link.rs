@@ -383,6 +383,33 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
     }
 
     #[test]
+    fn popcount_widths_select_independently_and_share_one_core() {
+        for level in ["0", "1", "2", "3", "s", "z"] {
+            let size = matches!(level, "s" | "z");
+            for width in [8, 16, 32] {
+                let selected = runtime_objects(&format!("call __gbc_popcnt{width}"), level);
+                assert!(
+                    selected.contains(
+                        &if size {
+                            format!("popcnt{width}_size")
+                        } else {
+                            format!("popcnt{width}_opt")
+                        }
+                        .as_str()
+                    )
+                );
+                assert_eq!(selected.len(), if size { 1 } else { 2 });
+                assert_eq!(selected.contains(&"popcnt_byte"), !size);
+            }
+            let selected = runtime_objects(
+                "call __gbc_popcnt8\ncall __gbc_popcnt16\ncall __gbc_popcnt32",
+                level,
+            );
+            assert_eq!(selected.len(), if size { 3 } else { 4 });
+        }
+    }
+
+    #[test]
     fn division16_entries_link_independently() {
         for (symbol, object, unused) in [
             ("__gbc_udiv16", "udiv16", "urem16"),
@@ -417,7 +444,16 @@ SECTION \"__rust__RNvNtC4core3fmt9write_fmt\", ROM0\n__rust__RNvNtC4core3fmt9wri
             } else {
                 "popcnt32_opt"
             };
-            assert_eq!(runtime_objects("call __gbc_popcnt32", level), [expected]);
+            let selected = runtime_objects("call __gbc_popcnt32", level);
+            assert!(selected.contains(&expected));
+            assert_eq!(
+                selected.len(),
+                if matches!(level, "s" | "z") { 1 } else { 2 }
+            );
+            assert_eq!(
+                selected.contains(&"popcnt_byte"),
+                !matches!(level, "s" | "z")
+            );
         }
         assert!(runtime_objects("call __gbc_shift8_unused", "0").is_empty());
         assert_eq!(
