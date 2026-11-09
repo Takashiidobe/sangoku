@@ -134,14 +134,14 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Stack(ss0), offset: Offset32(0) }, None): Record <- ByRef(Pointer { base: Addr(v3), offset: Offset32(0) }, None): Record
 // CHECK-NEXT:     v4 = stack_addr.i16 ss0
 // CHECK-NEXT:     v5 = load.i16 notrap aligned v3
-// CHECK-NEXT:     v6 = load.i16 notrap aligned v3+2
-// CHECK-NEXT:     v7 = load.i16 notrap aligned v3+4
-// CHECK-NEXT:     v8 = load.i16 notrap aligned v3+6
-// CHECK-NEXT:     v9 = load.i16 notrap aligned v3+8
 // CHECK-NEXT:     store notrap aligned v5, v4
+// CHECK-NEXT:     v6 = load.i16 notrap aligned v3+2
 // CHECK-NEXT:     store notrap aligned v6, v4+2
+// CHECK-NEXT:     v7 = load.i16 notrap aligned v3+4
 // CHECK-NEXT:     store notrap aligned v7, v4+4
+// CHECK-NEXT:     v8 = load.i16 notrap aligned v3+6
 // CHECK-NEXT:     store notrap aligned v8, v4+6
+// CHECK-NEXT:     v9 = load.i16 notrap aligned v3+8
 // CHECK-NEXT:     store notrap aligned v9, v4+8
 // CHECK-NEXT:     jump block9
 // CHECK-EMPTY:

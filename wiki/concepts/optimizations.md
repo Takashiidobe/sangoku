@@ -58,3 +58,17 @@ allocation. Live HL values and any A scratch value remain preserved.
 `tests/fixtures/lower/stack-liveness.clif` covers the shorter assembly;
 `cargo run --example check-spills` checks native bytes against RGBDS and runs
 register-preservation and stack-pressure cases in the emulator.
+
+Small non-overlapping copies on 16-bit targets interleave loads and stores to
+reduce register pressure. Overlapping copies still load the complete source
+before storing. i32 comparisons compose native i16 comparisons, and scalar
+`select_unpredictable` intrinsics lower directly to CLIF selects; aggregate
+intrinsics retain the fallback.
+
+The [selected comparison cases](testing.md#selected-optimization-comparisons)
+measured these changes together: uppercase dropped from 17,761 to 17,130 section
+bytes, lowercase from 16,074 to 15,413, the iterator repro from 2,994 to 2,957,
+and each search repro lost 65 bytes. These are distinct volatile-input fixtures;
+they include runtime and fixture code. Sampled casing paths use 36–60 fewer
+peak stack bytes, and search paths use 16 fewer. Full upstream Rust Unicode
+behavior is preserved on the covered inputs.

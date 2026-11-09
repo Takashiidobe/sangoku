@@ -255,14 +255,14 @@ pub fn gbc_main() -> u8 {
 // CHECK-NEXT: ; _0 = copy _1
 // CHECK-NEXT: ; write_cvalue: Addr(Pointer { base: Addr(v0), offset: Offset32(0) }, None): [u16; 5_usize] <- ByRef(Pointer { base: Addr(v1), offset: Offset32(0) }, None): [u16; 5_usize]
 // CHECK-NEXT:     v17 = load.i16 notrap aligned v1
-// CHECK-NEXT:     v18 = load.i16 notrap aligned v1+2
-// CHECK-NEXT:     v19 = load.i16 notrap aligned v1+4
-// CHECK-NEXT:     v20 = load.i16 notrap aligned v1+6
-// CHECK-NEXT:     v21 = load.i16 notrap aligned v1+8
 // CHECK-NEXT:     store notrap aligned v17, v0
+// CHECK-NEXT:     v18 = load.i16 notrap aligned v1+2
 // CHECK-NEXT:     store notrap aligned v18, v0+2
+// CHECK-NEXT:     v19 = load.i16 notrap aligned v1+4
 // CHECK-NEXT:     store notrap aligned v19, v0+4
+// CHECK-NEXT:     v20 = load.i16 notrap aligned v1+6
 // CHECK-NEXT:     store notrap aligned v20, v0+6
+// CHECK-NEXT:     v21 = load.i16 notrap aligned v1+8
 // CHECK-NEXT:     store notrap aligned v21, v0+8
 // CHECK-NEXT: ;
 // CHECK-NEXT: ; return

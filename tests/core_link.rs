@@ -91,6 +91,53 @@ fn utf8_iteration_matches_at_every_width_boundary() -> Result<()> {
 }
 
 #[test]
+fn unpredictable_select_preserves_scalars_aggregates_and_drops() -> Result<()> {
+    let (rom, _) = build_mapped_rom("tests/core_rom/select_unpredictable.rs", "z")?;
+    for (flag, a, b) in [
+        (false, 0x12345678u32, 0x87654321u32),
+        (true, 0x8000ffff, 0x7fff0000),
+    ] {
+        let mut e = Emulator::new(&rom, 0x100)?;
+        e.memory[0xc000] = u8::from(flag);
+        e.memory[0xc004..0xc008].copy_from_slice(&a.to_le_bytes());
+        e.memory[0xc008..0xc00c].copy_from_slice(&b.to_le_bytes());
+        let mut halted = false;
+        for _ in 0..100_000 {
+            let pc = e.pc;
+            e.step()?;
+            if e.pc == pc {
+                halted = true;
+                break;
+            }
+        }
+        ensure!(halted && e.a == 0, "select did not return");
+        let selected = if flag { a } else { b };
+        ensure!(
+            e.memory[0xc010..0xc014] == selected.to_le_bytes(),
+            "wrong scalar selection"
+        );
+        ensure!(e.read16(0xc014) == selected as u16, "wrong usize selection");
+        let expected = if flag {
+            [a as u16, 2, 3]
+        } else {
+            [b as u16, 5, 6]
+        };
+        for (index, value) in expected.into_iter().enumerate() {
+            ensure!(
+                e.read16(0xc016 + index as u16 * 2) == value,
+                "wrong aggregate selection"
+            );
+        }
+        ensure!(e.memory[0xc01c] == selected as u8, "wrong Drop selection");
+        ensure!(
+            e.memory[0xc020] == (a as u8).wrapping_add(b as u8),
+            "values were not dropped exactly once"
+        );
+    }
+    Ok(())
+}
+
+#[test]
 fn unicode_plane_extraction_matches_host() -> Result<()> {
     let (rom, _) = build_mapped_rom("tests/core_rom/unicode_plane.rs", "z")?;
     for input in [0u32, 0xffff, 0x10000, 0x10ffff, 0x12345678, u32::MAX] {

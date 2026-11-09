@@ -1,0 +1,82 @@
+set enable_verifier=false
+target z80
+
+function %cmp_eq(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = icmp eq v1, v2
+    return v3
+}
+
+function %cmp_ne(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = icmp ne v1, v2
+    return v3
+}
+
+function %cmp_slt(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = icmp slt v1, v2
+    return v3
+}
+
+function %cmp_sle(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = icmp sle v1, v2
+    return v3
+}
+
+function %cmp_sgt(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = icmp sgt v1, v2
+    return v3
+}
+
+function %cmp_sge(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = icmp sge v1, v2
+    return v3
+}
+
+function %cmp_ult(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = icmp ult v1, v2
+    return v3
+}
+
+function %cmp_ule(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = icmp ule v1, v2
+    return v3
+}
+
+function %cmp_ugt(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = icmp ugt v1, v2
+    return v3
+}
+
+function %cmp_uge(i16) -> i8 system_v {
+block0(v0: i16):
+    v1 = load.i32 v0
+    v2 = load.i32 v0+4
+    v3 = icmp uge v1, v2
+    return v3
+}

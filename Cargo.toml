@@ -65,3 +65,7 @@ path = "tests/bin/audit_memory_inline.rs"
 [[example]]
 name = "audit-move-compare"
 path = "tests/bin/audit_move_compare.rs"
+
+[[example]]
+name = "audit-optimizations"
+path = "tests/bin/audit_optimizations.rs"

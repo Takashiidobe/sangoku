@@ -2,6 +2,7 @@
 default-filter = """
 not (
     binary(=core_report)
+    | binary(=optimization)
     | binary(=alloc_report)
     | binary(=coverage)
     | binary(=panic_profiles)

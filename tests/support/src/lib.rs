@@ -40,4 +40,5 @@ pub fn number(v: &Value) -> u64 {
 }
 pub use serde_json;
 pub use tempfile;
+pub mod optimization;
 pub mod shifts;

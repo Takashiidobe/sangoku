@@ -1315,6 +1315,46 @@ fn division_traps_reach_the_rst_vector() -> Result<()> {
 }
 
 #[test]
+fn i32_comparisons_match_host_at_half_boundaries() -> Result<()> {
+    let program = program("icmp-i32")?;
+    for (a, b) in [
+        (0u32, 0u32),
+        (0, 1),
+        (1, 0),
+        (0xffff, 0x10000),
+        (0x10000, 0xffff),
+        (0x80000000, 0x7fffffff),
+        (0x7fffffff, 0x80000000),
+        (u32::MAX, 0),
+        (0x12345678, 0x12345679),
+        (0x12345679, 0x12345678),
+        (0x12345678, 0x12355678),
+        (0x80008000, 0x80007fff),
+        (u32::MAX, u32::MAX),
+    ] {
+        for (cc, expected) in [
+            ("eq", a == b),
+            ("ne", a != b),
+            ("ult", a < b),
+            ("ule", a <= b),
+            ("ugt", a > b),
+            ("uge", a >= b),
+            ("slt", (a as i32) < b as i32),
+            ("sle", (a as i32) <= b as i32),
+            ("sgt", (a as i32) > b as i32),
+            ("sge", (a as i32) >= b as i32),
+        ] {
+            assert_eq!(
+                invoke(&program, &format!("__rust_cmp_{cc}"), &operands::<4>(a, b))? & 0xff,
+                u32::from(expected),
+                "{cc}({a:#x}, {b:#x})"
+            );
+        }
+    }
+    Ok(())
+}
+
+#[test]
 fn i32_whole_byte_right_shifts_match_host() -> Result<()> {
     let program = program("shift-byte-i32")?;
     for value in [0u32, 1, 0x8000_0000, 0xffff, 0x1234_5678, u32::MAX] {

@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 sangoku = { path = "../.." }
 regex = "1"
+rustc-demangle = "0.1"
 serde_json = { version = "1", features = ["preserve_order"] }
 sha2 = "0.10"
 tempfile = "3"
