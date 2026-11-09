@@ -40,11 +40,13 @@ def defining_crate(name):
 
 
 def rust_sizes(source, opt_level, out):
-    subprocess.run(
-        ["cargo", "run", "-q", "--", "build", source, out, "--opt-level", opt_level],
+    flags = ["--alloc"] if source.stem == "heap" else []
+    build = subprocess.run(
+        ["cargo", "run", "-q", "--", "build", *flags, source, out, "--opt-level", opt_level],
         cwd=ROOT,
         capture_output=True,
     )
+    build.check_returncode()
     maps = sorted(
         (ROOT / "build/artifacts").glob(f"{source.stem}-*/probe.map"),
         key=lambda path: path.stat().st_mtime,

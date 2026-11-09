@@ -12,27 +12,28 @@ Before MIR inlining was forced on (2026-11-07, opt z): hello 6866, primes
 22894, sort 18316, heap 63682.
 
 With `-Zinline-mir=yes` at every level (`-Zinline-mir-hint-threshold=50` at
-opt 0):
+opt 0), re-measured 2026-11-08 (the script now passes `--alloc` for heap and
+fails on a build error; before, the heap row silently read a stale map):
 
-| program | opt | asm | user | core | alloc | heap | total | SDCC |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| empty | z | 1283 | 3 | 0 | 0 | 0 | 1286 | 2 |
-| hello | 0 | 1283 | 1124 | 1209 | 0 | 0 | 3616 | 67 |
-| hello | z | 1283 | 982 | 0 | 0 | 0 | 2265 | 67 |
-| primes | 0 | 1388 | 4206 | 8709 | 0 | 0 | 14303 | 355 |
-| primes | z | 1388 | 3743 | 4425 | 0 | 0 | 9556 | 355 |
-| sort | 0 | 1283 | 4811 | 5312 | 0 | 0 | 11406 | 613 |
-| sort | z | 1283 | 5735 | 1759 | 0 | 0 | 8777 | 613 |
-| heap | 0 | 1401 | 4468 | 15370 | 29461 | 4682 | 55382 | 2000 |
-| heap | z | 1401 | 3384 | 3287 | 21236 | 2723 | 32031 | 2000 |
+| program | opt | asm | user | core | builtins | alloc | heap | total | SDCC |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| empty | z | 92 | 3 | 0 | 0 | 0 | 0 | 95 | 2 |
+| empty | 0 | 92 | 3 | 0 | 0 | 0 | 0 | 95 | 2 |
+| hello | z | 315 | 3578 | 0 | 0 | 0 | 0 | 3893 | 67 |
+| hello | 0 | 358 | 1409 | 403 | 0 | 0 | 0 | 2170 | 67 |
+| primes | z | 381 | 5615 | 3537 | 0 | 0 | 0 | 9533 | 355 |
+| primes | 0 | 401 | 3521 | 5855 | 0 | 0 | 0 | 9777 | 355 |
+| sort | z | 403 | 8706 | 5740 | 0 | 0 | 0 | 14849 | 613 |
+| sort | 0 | 529 | 8315 | 8550 | 0 | 0 | 0 | 17394 | 613 |
+| heap | z | 223 | 2746 | 2571 | 0 | 17224 | 2211 | 24975 | 2000 |
+| heap | 0 | 710 | 1848 | 6051 | 0 | 18912 | 2795 | 30316 | 2000 |
 
-opt 1/2/3/s produce the same bytes as z.
+Only opt 0 and z were re-measured; opt 1/2/3/s are not.
 
 ## Findings
 
-- Core has no fixed cost; an empty program retains no core code. The 1283
-  asm bytes are startup and header (~220) plus the 32-bit runtime (1066), which
-  is linked unconditionally (`sangoku-30k.9.1.9.6`).
+- Core has no fixed cost; an empty program retains no core code, and its
+  92 asm bytes are startup and header only.
 - rustc only MIR-inlines by default at opt 2/3 and Cranelift never inlines, so
   `sangoku` passes `-Zinline-mir=yes` everywhere. At opt 0 Cranelift does not
   clean up inlined bodies, and the default hint threshold made one fixture's
@@ -45,5 +46,13 @@ opt 1/2/3/s produce the same bytes as z.
 - Even fully inlined, user code is 10-15x SDCC: hello's `write_str` alone is
   855 bytes against 67 for the whole SDCC program. Spill and stack-slot code
   dominate (`sangoku-30k.9.1.9`).
-- `alloc` adds 21-25 KB plus a 2.7-3 KB heap for one `Vec`/`Box` demo, against
-  about 1.6 KB for SDCC `malloc`/`realloc`/`free`.
+- `alloc` adds 17-19 KB plus a 2.2-2.8 KB heap for the `heap.rs` demo, against
+  about 2 KB for the SDCC equivalent. `heap.rs` uses both `Global` and
+  `&BumpAllocator`, so `RawVecInner::{finish_grow, grow_amortized, deallocate}`
+  (2981 + 2273 + 737 bytes) are instantiated twice: 12 KB of the 17 KB. With a
+  single allocator (`Vec` push twice, opt z) the program is 13.3 KB with
+  10.6 KB of `alloc`; a `Vec` alone is 10 KB of that, `Box` is nearly free.
+- The large `alloc` functions are not missing inlining. 77% of
+  `finish_grow`'s 2243 instructions are `ld`, the same spill and stack-slot
+  traffic as above (`sangoku-30k.9.1.9`); register allocation, not MIR
+  inlining, is the lever.
