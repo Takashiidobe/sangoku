@@ -43,18 +43,18 @@
       "stack": 7
     },
     "pressure": {
-      "bytes": 66,
-      "insns": 56,
+      "bytes": 64,
+      "insns": 54,
       "jp": 0,
       "moves": 23,
-      "stack": 14
+      "stack": 12
     },
     "pressure16": {
-      "bytes": 182,
-      "insns": 151,
+      "bytes": 178,
+      "insns": 147,
       "jp": 0,
       "moves": 44,
-      "stack": 61
+      "stack": 57
     },
     "sat_chain": {
       "bytes": 130,
@@ -71,11 +71,11 @@
       "stack": 0
     },
     "sum_u16": {
-      "bytes": 117,
-      "insns": 89,
+      "bytes": 115,
+      "insns": 87,
       "jp": 2,
       "moves": 21,
-      "stack": 34
+      "stack": 32
     },
     "sum_u8": {
       "bytes": 75,

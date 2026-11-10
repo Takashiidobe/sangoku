@@ -171,3 +171,24 @@ The boolean no longer pins L, B and A, and the second test is gone.
 Remaining in the fused sequences: `jp` where `jr` fits (sangoku-2ea), and
 `ld a,a` is skipped but `ld a,r` before `cp` is not folded when the left
 operand could already be in A.
+
+## sangoku-e6w: omit dead-A spill saves
+
+Stack loads into H or L preserve the other half through A. When A is dead, the
+emitter now omits the AF save and restore. Stores from H or L also omit the AF
+save when A is dead, while preserving live HL. Each affected access saves two
+bytes and a push/pop pair; stack offsets account for the omitted push. Live A
+still receives the original preservation sequence.
+
+Spills remain relative to each invocation's SP, so recursion and interrupt
+reentry do not share scratch storage. Static or HRAM slots need a separate
+allocation and ownership scheme before they can replace stack slots safely.
+Reserving a scratch register would reduce the allocator's seven-byte register
+pool; this change uses existing liveness instead.
+
+Run `cargo run --example check-spills` to compare native emission with RGBDS and
+execute the accesses for live/dead H, L and A at short and large offsets. The
+default unknown-liveness path continues to preserve all scratch registers.
+
+Measured against the stored baseline: `pressure` shrinks from 66 to 64 bytes,
+`pressure16` from 182 to 178, and `sum_u16` from 117 to 115. No kernel grows.
