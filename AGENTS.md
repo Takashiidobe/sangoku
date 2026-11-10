@@ -57,8 +57,8 @@ behavior in the relevant wiki concept page.
   is complete.
 - Run `cargo clippy --allow-dirty --fix` and `cargo fmt` before finishing a
   turn.
-- Add an `llog` of around 60 lines at most and commit at the end of a turn,
-  following "Writing an llog" below. Don't push unless asked. Format logs with
+- Add an `llog` and commit at the end of a turn, following "Writing an llog"
+  below. around 50 lines without code references included. Format logs with
   `prettier <file> --print-width 80 --prose-wrap always --write`.
 - Use the LSP tool (definitions, references, symbols, diagnostics) to navigate
   and check Rust code, especially in the large `third_party` backends, instead
@@ -79,46 +79,42 @@ behavior in the relevant wiki concept page.
 
 ## Writing an llog
 
-Logs live in `wiki/log/<date>-<time>.md`. They are Markdown: backticks for
-code, identifiers, files, registers and issue ids, and fenced blocks
-with a language (`asm`, `rust`, `text`) for listings. Inline what a reader needs
-from the bead (why it was filed, what it asked for, how it closed) so nobody has
-to run `bd show`. Title line is `# <summary> (<issue id>)`, then the timestamp.
-Pick the kind that fits; stay around 60 lines or fewer.
+`llog new "<title>" @<path> -k bead -v <id> -k kind -v <kind> -k area -v <paths>`.
+Search returns only file paths, so the title, metadata, and first lines decide
+whether a future agent opens the entry. Write for someone who will not reread
+the code or run `bd show`.
 
-### Optimization
+Metadata (`-k`/`-v` pairs, written under the date line and searchable):
 
-Sections in order:
+- `bead`: the bead id (required).
+- `kind`: `bug`, `feature`, or `bookkeeping` (required).
+- `area`: crate and paths touched, for example `rustc_codegen_cranelift` or
+  `cranelift` or `rustc` (required; repeat the pair for several paths).
+- Add others when they help later searches, such as `legalization`,
+  `instruction selection`, `regalloc`, `floats`, `arithmetic` for optimizations
+  of those types.
 
-1. **Context**: why we looked (what we noticed), what this change does, the
-   issue id and the measured result.
-2. **Case**: the source pattern, in one or two lines.
-3. **Currently emits**: output before the change, as a fenced listing.
-4. **Should emit**: the intended output as a fenced listing; if the real output
-   differs from the ideal, show the real one and name the gap.
-5. **How**: the lowering rule, pass or files changed, and the tests.
-6. **Alternatives**: approaches considered or deferred, and why. Known leftovers
-   go here too.
+Title: `<bead-id> <component>: <symptom or capability>`, using the words a
+future search would use.
 
-### Feature
+For compiler changes, name the component and stage. Say whether the change is in
+`rustc_codegen_cranelift`'s MIR-to-CLIF translation or in CLIF-level lowering or
+emission, and identify the relevant Rust construct or CLIF instruction when
+applicable.
 
-Something had to lower, link or run at all. Sections: **Context** (what was
-failing or missing, from the bead, and why it mattered for the milestone),
-**Case** (the Rust or CLIF that failed and how: error text, missing symbol,
-trap), **Before** and **After** (error output or generated code, whichever shows
-the change), **How**, **Alternatives**.
+Write multiline entries to a file with the Write tool (fish has no heredoc) and
+pass `@<path>`. Keep the entry around 40 lines, excluding code snippets. Start
+it with `Outcome: <one sentence: what is true now that was not before>`, then
+use the sections for the kind, skipping any that do not apply:
 
-### Bug
+- **bug**: Symptom, Reproducer (minimal Rust, CLIF, or other relevant input),
+  Cause (verified, with the Rust construct or CLIF instruction), Fix, Regression
+  w/ small fixture inlined.
+- **feature**: Gap and why it mattered, three line summary of implementation, w/
+  small fixture before and after the change.
+- **bookkeeping**: a few lines, no sections.
 
-Sections: **Context** (symptom and how it was found), **Case** (minimal
-reproducer), **Cause** (the verified root cause, not a guess), **Fix** (what
-changed and the regression test), **Alternatives** (other fixes, and related
-suspects not checked).
-
-### Bookkeeping
-
-Docs, issue triage, renames, regenerated snapshots, tool or CI tweaks. Say
-plainly what was done and why in a few lines; no sections needed.
-
-For optimizations also mirror the case, rule and before/after in the relevant
-`wiki/concepts/` page.
+Before/After use the same short source program. Before is the error, failure to
+translate, or old output; After is the success or new output. End with `Limits:`
+when the fix is partial or leaves a known gap, and `See:` for related beads or
+logs.
