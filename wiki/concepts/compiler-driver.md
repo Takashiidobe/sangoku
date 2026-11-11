@@ -44,14 +44,21 @@ including a host build script and host procedural macro:
 cargo nextest run --test compiler_driver --no-fail-fast
 ```
 
+Target library builds can emit native objects, `.rlib` archives, and `.a` static
+libraries. The [object artifact guide](objects.md#compiler-artifacts) covers the
+output and Cargo's separate metadata files. Its archive regression builds a
+source path dependency, preserves cross-crate relocations and generic
+instantiation, and reuses copied artifacts after removing the original
+dependency and target tree.
+
 This verifies target probing, metadata checking, direct assembly emission, and
 host tools. It does not establish that `cargo build --target` can produce a ROM.
 The target still disables executables. The P0 `sangoku-61a` epic tracks a native
 pipeline: structured LR35902 code and data, relocatable objects, a Rust ROM
 linker, and cartridge header finalization. Cargo also needs matching target
 libraries and archived code/metadata across dependencies. `sangoku-61a.2` tracks
-that Cargo integration. The [shared object format](objects.md) is the first
-implemented foundation; the existing ROM path still uses RGBDS.
+that Cargo integration. Native object/archive emission is implemented; the
+existing ROM path still uses RGBDS until the native ROM linker is integrated.
 
 ## Distribution limits
 

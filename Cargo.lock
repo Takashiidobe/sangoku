@@ -841,6 +841,7 @@ dependencies = [
  "clap",
  "flate2",
  "miette",
+ "object",
  "rustc-demangle",
  "sangoku-audio",
  "sangoku-object",

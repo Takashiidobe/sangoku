@@ -11,9 +11,47 @@ Run the format and validation regressions:
 cargo nextest run --test object --no-fail-fast
 ```
 
-The current compiler still emits assembly for ROM builds. The object format is
-the first implemented part of `sangoku-61a.3`; direct compiler emission and the
-native linker are separate tasks in the P0 `sangoku-61a` toolchain epic.
+The compiler emits this format for target object and archive output. Existing
+standalone ROM builds still use the separate RGBDS assembly path. Native ROM
+linking remains in the P0 `sangoku-61a` toolchain epic.
+
+## Compiler artifacts
+
+After building the [linked compiler](compiler-driver.md), emit an object, Rust
+metadata, and a crate archive from the minimal fixture:
+
+```bash
+third_party/rustc_codegen_cranelift/target/release/sangoku-rustc \
+  -Zunstable-options --target targets/lr35902.json \
+  --crate-type=rlib --emit=obj,metadata,link -Cpanic=immediate-abort \
+  tests/fixtures/driver/answer.rs --out-dir build
+```
+
+`build/answer.o` is a normalized object readable with `Object::decode`.
+`build/libanswer.rlib` is a standard archive containing native codegen-unit
+objects, `lib.rmeta`, and rustc's archive-member manifest. Its symbol index
+lists externally visible definitions. Static libraries combine dependency
+objects and omit Rust metadata. These archives contain sangoku objects, not ELF
+objects; they require the native ROM linker rather than a system linker.
+
+Cargo's default `-Cembed-metadata=no` puts a metadata stub in the archive and
+full metadata in a separate `.rmeta`. Preserve both artifacts and pass both
+through `--extern` when moving that dependency outside Cargo. With
+`-Cembed-metadata=yes`, the archive embeds full metadata and can supply it
+alone. The backend honors these rustc options rather than changing Cargo's
+contract.
+
+Test Cargo archive output, reuse, copied dependency artifacts, generics,
+codegen-unit preservation, and code/data relocations:
+
+```bash
+cargo nextest run --test archives --no-fail-fast
+```
+
+Native emission currently rejects global/inline/naked assembly, TLS, custom
+sections, and `#[used]` statics. Staticlib symbol hiding/renaming is also
+unsupported. Normal `no_std` Cargo projects still need a matching native target
+sysroot; the archive regression supplies minimal language items with `no_core`.
 
 ## Object contents
 
@@ -81,5 +119,6 @@ version, currently 1. The remaining bytes are UTF-8 JSON containing the three
 ordered vectors. Encoding preserves their order and IDs. Unsupported versions,
 unknown fields or enum values, trailing non-whitespace content, invalid
 placement, invalid references, and overlapping relocation patches are errors.
-The serializer does not package Rust crate metadata; Cargo archive integration
-is tracked in `sangoku-61a.2`.
+The serializer does not package Rust crate metadata. The compiler's archive
+builder packages code and metadata as separate members; `sangoku-61a.2` tracks
+the remaining Cargo integration and executable ROM output.
