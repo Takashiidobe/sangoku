@@ -20,5 +20,6 @@ rustup toolchain link gbc-lr35902 "$build/stage2"
 cargo +gbc-lr35902 clean --manifest-path "$root/third_party/wasmtime/cranelift/codegen/Cargo.toml"
 cargo +gbc-lr35902 clean --manifest-path "$root/third_party/rustc_codegen_cranelift/Cargo.toml"
 cargo +gbc-lr35902 build --release --manifest-path "$root/third_party/rustc_codegen_cranelift/Cargo.toml"
+install -m755 "$root/third_party/rustc_codegen_cranelift/target/release/sangoku-rustc" "$build/stage2/bin/sangoku-rustc"
 
 "$root/tools/rust_fork.sh" core

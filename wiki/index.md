@@ -2,6 +2,7 @@
 
 - [Playing audio](concepts/audio.md)
 - [Building and running ROMs](concepts/building-roms.md)
+- [Linked compiler driver and Cargo integration](concepts/compiler-driver.md)
 - [Testing](concepts/testing.md)
 - [Core and alloc support](concepts/core-alloc.md)
 - [Fixed-capacity vector](concepts/fixed-vec.md)

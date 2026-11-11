@@ -245,9 +245,7 @@ fn rustc_command(root: &Path, opt_level: &str) -> Command {
         command.arg("--sysroot").arg(root.join("toolchain"));
         command
     } else {
-        let mut command = Command::new("rustc");
-        command.arg(format!("+{TOOLCHAIN}"));
-        command
+        Command::new(root.join("third_party/rustc_codegen_cranelift/target/release/sangoku-rustc"))
     };
     command
         .current_dir(root)
@@ -271,9 +269,9 @@ fn rustc_command(root: &Path, opt_level: &str) -> Command {
     command
 }
 
-fn build_backend(root: &Path) -> Result<PathBuf> {
+fn build_compiler(root: &Path) -> Result<PathBuf> {
     if bundle::is_bundled(root) {
-        return Ok(root.join("backend/librustc_codegen_cranelift.so"));
+        return Ok(root.join("toolchain/bin/rustc"));
     }
     run_command(
         Command::new("cargo")
@@ -282,8 +280,7 @@ fn build_backend(root: &Path) -> Result<PathBuf> {
             .args(["build", "--release", "--locked", "--manifest-path"])
             .arg(root.join("third_party/rustc_codegen_cranelift/Cargo.toml")),
     )?;
-    Ok(root
-        .join("third_party/rustc_codegen_cranelift/target/release/librustc_codegen_cranelift.so"))
+    Ok(root.join("third_party/rustc_codegen_cranelift/target/release/sangoku-rustc"))
 }
 
 fn lower_clif(root: &Path, input: &Path, output: &Path) -> Result<()> {
@@ -325,10 +322,10 @@ fn emit_code(
         return Err(format!("Rust source does not exist: {}", source.display()).into());
     }
 
-    let backend = build_backend(root)?;
+    let compiler = build_compiler(root)?;
     let artifacts = ArtifactDir::new(&source)?;
-    let libraries = core_libraries(root, &backend, opt_level)?;
-    let console = console::libraries(root, &backend, opt_level, &libraries)?;
+    let libraries = core_libraries(root, &compiler, opt_level)?;
+    let console = console::libraries(root, &compiler, opt_level, &libraries)?;
     let mut command = rustc_command(root, opt_level);
     if clif_only {
         command.env("CG_CLIF_CLIF_ONLY", "1");
@@ -336,7 +333,6 @@ fn emit_code(
     run_command(
         command
             .arg("--edition=2024")
-            .arg(format!("-Zcodegen-backend={}", backend.display()))
             .args(libraries.externs(if alloc { 4 } else { 2 }))
             .args(console.externs())
             .arg(if clif_only {
@@ -377,9 +373,9 @@ fn emit_mir(root: &Path, source: &Path, output: &Path, opt_level: &str, alloc: b
         return Err(format!("Rust source does not exist: {}", source.display()).into());
     }
 
-    let backend = build_backend(root)?;
-    let libraries = core_libraries(root, &backend, opt_level)?;
-    let console = console::libraries(root, &backend, opt_level, &libraries)?;
+    let compiler = build_compiler(root)?;
+    let libraries = core_libraries(root, &compiler, opt_level)?;
+    let console = console::libraries(root, &compiler, opt_level, &libraries)?;
     let mut command = rustc_command(root, opt_level);
     command.arg("--edition=2024");
     command
@@ -421,11 +417,11 @@ fn build_rom(
             .map_err(|error| Error::io(format!("could not create {}", parent.display()), error))?;
     }
 
-    let backend = build_backend(root)?;
+    let compiler = build_compiler(root)?;
     let artifacts = ArtifactDir::new(&source)?;
     let rust_asm = artifacts.path().join("game.asm");
-    let libraries = core_libraries(root, &backend, opt_level)?;
-    let console = console::libraries(root, &backend, opt_level, &libraries)?;
+    let libraries = core_libraries(root, &compiler, opt_level)?;
+    let console = console::libraries(root, &compiler, opt_level, &libraries)?;
 
     let mut mir = rustc_command(root, opt_level);
     mir.arg("--edition=2024")
@@ -456,7 +452,6 @@ fn build_rom(
     clif.env("CG_CLIF_CLIF_ONLY", "1");
     run_command(
         clif.arg("--edition=2024")
-            .arg(format!("-Zcodegen-backend={}", backend.display()))
             .args(libraries.externs(if alloc { 4 } else { 2 }))
             .args(console.externs())
             .arg("--emit=asm,llvm-ir")
@@ -468,7 +463,6 @@ fn build_rom(
     let mut command = rustc_command(root, opt_level);
     command.arg("--edition=2024");
     command
-        .arg(format!("-Zcodegen-backend={}", backend.display()))
         .arg("--emit=asm")
         .args(libraries.externs(if alloc { 4 } else { 2 }))
         .args(console.externs())
@@ -640,7 +634,7 @@ fn modified(path: &Path) -> Option<SystemTime> {
         .ok()
 }
 
-fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLibraries> {
+fn core_libraries(root: &Path, compiler: &Path, opt_level: &str) -> Result<CoreLibraries> {
     if bundle::is_bundled(root) {
         let directory = root.join("libraries").join(format!("opt-{opt_level}"));
         for name in [
@@ -673,7 +667,7 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
         .map_err(|error| Error::io(format!("could not create {}", lock_path.display()), error))?;
     lock.lock()
         .map_err(|error| Error::io(format!("could not lock {}", lock_path.display()), error))?;
-    let backend_time = modified(backend);
+    let compiler_time = modified(compiler);
     let options = format!(
         "{:?}",
         rustc_command(root, opt_level)
@@ -690,7 +684,7 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
             libraries.heap_asm(),
         ]
         .iter()
-        .all(|path| modified(path).is_some_and(|time| Some(time) >= backend_time));
+        .all(|path| modified(path).is_some_and(|time| Some(time) >= compiler_time));
     if fresh {
         return Ok(libraries);
     }
@@ -701,7 +695,6 @@ fn core_libraries(root: &Path, backend: &Path, opt_level: &str) -> Result<CoreLi
         run_command(
             rustc_command(root, opt_level)
                 .args(["--edition=2024", "-Awarnings", "--emit=asm,metadata"])
-                .arg(format!("-Zcodegen-backend={}", backend.display()))
                 .args(["--crate-name", name])
                 .args(extra)
                 .arg(source)

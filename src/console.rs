@@ -76,7 +76,7 @@ fn output(command: &mut Command) -> Result<Vec<u8>> {
 
 pub fn libraries(
     root: &Path,
-    backend: &Path,
+    compiler: &Path,
     opt_level: &str,
     core: &CoreLibraries,
 ) -> Result<Libraries> {
@@ -111,7 +111,7 @@ pub fn libraries(
     );
     let stamp = libraries.0.join("rustc-options");
     let newest_input = [
-        backend.to_path_buf(),
+        compiler.to_path_buf(),
         core.0.join("libcore.rmeta"),
         root.join("Cargo.lock"),
         root.join("src/console.rs"),
@@ -221,7 +221,6 @@ pub fn libraries(
             .arg(format!("--edition={edition}"))
             .arg(format!("-Cmetadata=sangoku-{name}"))
             .args(["-Awarnings", "--emit=asm,metadata", "--crate-name", name])
-            .arg(format!("-Zcodegen-backend={}", backend.display()))
             .args(core.externs(2))
             .arg("-L")
             .arg(format!("dependency={}", libraries.0.display()));

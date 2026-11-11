@@ -25,10 +25,15 @@ All six optimization levels are included in the same executable. Use
 libraries.
 
 The launcher is statically linked against musl. Its appended gzip archive
-contains the dynamically linked compiler, backend, loader, and their shared
-libraries. On first use, the launcher verifies the archive checksum and extracts
-it into a cache; later invocations reuse that directory. The compiler and
-libraries are not statically linked into the launcher.
+contains the dynamically linked `sangoku-rustc` compiler, loader, and shared
+libraries. The LR35902 Cranelift backend is linked into the compiler executable;
+the bundle does not need a backend plugin. On first use, the launcher verifies
+the archive checksum and extracts it into a cache; later invocations reuse that
+directory. The compiler and libraries are not statically linked into the
+launcher.
+
+For the compiler integration and remaining Cargo ROM support, see the
+[linked driver](concepts/compiler-driver.md).
 
 The cache defaults to `$XDG_CACHE_HOME/sangoku` or `~/.cache/sangoku`. Override
 it with `SANGOKU_CACHE_DIR`. Build artifacts stay in the caller's

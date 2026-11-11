@@ -72,16 +72,15 @@ def main():
     run(["cargo", "build", "--release", "-p", "sangoku-lower"])
     run(["cargo", "build", "--release", "--target", LAUNCHER, "--bin", "sangoku"])
     compiler = ROOT / "third_party/rust/build" / HOST / "stage2"
-    backend = ROOT / "third_party/rustc_codegen_cranelift/target/release/librustc_codegen_cranelift.so"
+    driver = ROOT / "third_party/rustc_codegen_cranelift/target/release/sangoku-rustc"
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="sangoku-package-") as temporary:
         staging = Path(temporary) / "payload"
         staging.mkdir()
         (staging / "bundle-version").write_text("1\n")
-        copy(compiler / "bin/rustc", staging / "toolchain/bin/rustc")
+        copy(driver, staging / "toolchain/bin/rustc")
         copy(ROOT / "target/release/sangoku-lower", staging / "toolchain/bin/sangoku-lower")
-        copy(backend, staging / "backend" / backend.name)
-        for executable in [compiler / "bin/rustc", backend, ROOT / "target/release/sangoku-lower"]:
+        for executable in [driver, ROOT / "target/release/sangoku-lower"]:
             shared_libraries(executable, staging / "toolchain/lib", compiler / "lib")
         for level in args.levels:
             source = ROOT / "build/core/immediate-abort" / f"opt-{level}"
