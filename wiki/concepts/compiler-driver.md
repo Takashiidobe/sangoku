@@ -46,11 +46,12 @@ cargo nextest run --test compiler_driver --no-fail-fast
 
 This verifies target probing, metadata checking, direct assembly emission, and
 host tools. It does not establish that `cargo build --target` can produce a ROM.
-The target still disables executables. Cargo needs target crate artifacts that
-preserve metadata and generated code across dependencies, target library
-support, and a final ROM link stage using runtime selection, section placement,
-and RGBDS. `sangoku-61a.2` tracks artifacts and ROM linking; `sangoku-61a`
-tracks the complete Cargo workflow.
+The target still disables executables. The P0 `sangoku-61a` epic tracks a native
+pipeline: structured LR35902 code and data, relocatable objects, a Rust ROM
+linker, and cartridge header finalization. Cargo also needs matching target
+libraries and archived code/metadata across dependencies. `sangoku-61a.2` tracks
+that Cargo integration. The [shared object format](objects.md) is the first
+implemented foundation; the existing ROM path still uses RGBDS.
 
 ## Distribution limits
 

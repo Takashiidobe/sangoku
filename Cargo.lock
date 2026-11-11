@@ -843,6 +843,7 @@ dependencies = [
  "miette",
  "rustc-demangle",
  "sangoku-audio",
+ "sangoku-object",
  "sangoku-test-support",
  "sangoku-vec",
  "serde_json",
@@ -869,6 +870,15 @@ version = "0.1.0"
 dependencies = [
  "cranelift-codegen",
  "cranelift-reader",
+]
+
+[[package]]
+name = "sangoku-object"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror",
 ]
 
 [[package]]
